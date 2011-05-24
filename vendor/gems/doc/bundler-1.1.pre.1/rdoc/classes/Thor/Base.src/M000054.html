@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Thor::Base)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/base.rb, line 40</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">args</span>=[], <span class="ruby-identifier">options</span>={}, <span class="ruby-identifier">config</span>={})
+      <span class="ruby-identifier">args</span> = <span class="ruby-constant">Thor</span><span class="ruby-operator">::</span><span class="ruby-constant">Arguments</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">arguments</span>, <span class="ruby-identifier">args</span>)
+      <span class="ruby-identifier">args</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span> <span class="ruby-identifier">send</span>(<span class="ruby-node">&quot;#{key}=&quot;</span>, <span class="ruby-identifier">value</span>) }
+
+      <span class="ruby-identifier">parse_options</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">class_options</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+        <span class="ruby-identifier">task_options</span>  = <span class="ruby-identifier">config</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">:task_options</span>) <span class="ruby-comment cmt"># hook for start</span>
+        <span class="ruby-identifier">parse_options</span> = <span class="ruby-identifier">parse_options</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">task_options</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">task_options</span>
+        <span class="ruby-identifier">array_options</span>, <span class="ruby-identifier">hash_options</span> = <span class="ruby-identifier">options</span>, {}
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">array_options</span>, <span class="ruby-identifier">hash_options</span> = [], <span class="ruby-identifier">options</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">opts</span> = <span class="ruby-constant">Thor</span><span class="ruby-operator">::</span><span class="ruby-constant">Options</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">parse_options</span>, <span class="ruby-identifier">hash_options</span>)
+      <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">options</span> = <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">array_options</span>)
+      <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">check_unknown!</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">check_unknown_options?</span>(<span class="ruby-identifier">config</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

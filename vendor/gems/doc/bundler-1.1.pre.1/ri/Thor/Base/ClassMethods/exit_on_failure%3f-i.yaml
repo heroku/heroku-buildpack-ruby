@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: A flag that makes the process exit with status 1 if any error happens.
+full_name: Thor::Base::ClassMethods#exit_on_failure?
+is_singleton: false
+name: exit_on_failure?
+params: ()
+visibility: protected

@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Add runtime options that help actions execution.
+full_name: Thor::Actions::ClassMethods#add_runtime_options!
+is_singleton: false
+name: add_runtime_options!
+params: ()
+visibility: public

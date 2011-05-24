@@ -1,0 +1,39 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: name
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: platform
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: source
+  rw: RW
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: version
+  rw: R
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Represents a lazily loaded gem specification, where the full specification is on the source server in rubygems' &quot;quick&quot; index. The proxy object is to be seeded with what we're given from the source's abbreviated index - the full specification will only be fetched when necesary.
+constants: []
+
+full_name: Bundler::RemoteSpecification
+includes: 
+- !ruby/object:RI::IncludedModule 
+  name: MatchPlatform
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: __swap__
+- !ruby/object:RI::MethodSummary 
+  name: fetch_platform
+- !ruby/object:RI::MethodSummary 
+  name: full_name
+name: RemoteSpecification
+superclass: Object

@@ -1,0 +1,30 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  name: REGEXPS
+  value: "[       /^no such file to load -- (.+)$/i,       /^Missing \\w+ (?:file\\s*)?([^\\s]+.rb)$/i,       /^Missing API definition file in (.+)$/i,       /^cannot load such file -- (.+)$/i,     ]"
+full_name: Bundler::Runtime
+includes: 
+- !ruby/object:RI::IncludedModule 
+  name: SharedHelpers
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: cache
+- !ruby/object:RI::MethodSummary 
+  name: clean
+- !ruby/object:RI::MethodSummary 
+  name: dependencies_for
+- !ruby/object:RI::MethodSummary 
+  name: prune_cache
+- !ruby/object:RI::MethodSummary 
+  name: require
+- !ruby/object:RI::MethodSummary 
+  name: setup
+name: Runtime
+superclass: Environment

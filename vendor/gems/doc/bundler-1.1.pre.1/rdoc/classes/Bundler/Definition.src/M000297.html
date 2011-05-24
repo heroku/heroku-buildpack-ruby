@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>lock (Bundler::Definition)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/definition.rb, line 180</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">lock</span>(<span class="ruby-identifier">file</span>)
+      <span class="ruby-identifier">contents</span> = <span class="ruby-identifier">to_lock</span>
+
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@lockfile_contents</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">contents</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Bundler</span>.<span class="ruby-identifier">settings</span>[<span class="ruby-identifier">:frozen</span>]
+        <span class="ruby-comment cmt"># TODO: Warn here if we got here.</span>
+        <span class="ruby-keyword kw">return</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt"># Convert to \r\n if the existing lock has them</span>
+      <span class="ruby-comment cmt"># i.e., Windows with `git config core.autocrlf=true`</span>
+      <span class="ruby-identifier">contents</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/\n/</span>, <span class="ruby-value str">&quot;\r\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@lockfile_contents</span>.<span class="ruby-identifier">match</span>(<span class="ruby-value str">&quot;\r\n&quot;</span>)
+
+      <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">'wb'</span>){<span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-identifier">contents</span>) }
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

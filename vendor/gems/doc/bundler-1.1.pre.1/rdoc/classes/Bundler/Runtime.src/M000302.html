@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>require (Bundler::Runtime)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/runtime.rb, line 51</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">require</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">groups</span>)
+      <span class="ruby-identifier">groups</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">g</span><span class="ruby-operator">|</span> <span class="ruby-identifier">g</span>.<span class="ruby-identifier">to_sym</span> }
+      <span class="ruby-identifier">groups</span> = [<span class="ruby-identifier">:default</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">groups</span>.<span class="ruby-identifier">empty?</span>
+
+      <span class="ruby-ivar">@definition</span>.<span class="ruby-identifier">dependencies</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">dep</span><span class="ruby-operator">|</span>
+        <span class="ruby-comment cmt"># Skip the dependency if it is not in any of the requested</span>
+        <span class="ruby-comment cmt"># groups</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> ((<span class="ruby-identifier">dep</span>.<span class="ruby-identifier">groups</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">groups</span>).<span class="ruby-identifier">any?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">dep</span>.<span class="ruby-identifier">current_platform?</span>)
+
+        <span class="ruby-identifier">required_file</span> = <span class="ruby-keyword kw">nil</span>
+
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-comment cmt"># Loop through all the specified autorequires for the</span>
+          <span class="ruby-comment cmt"># dependency. If there are none, use the dependency's name</span>
+          <span class="ruby-comment cmt"># as the autorequire.</span>
+          <span class="ruby-constant">Array</span>(<span class="ruby-identifier">dep</span>.<span class="ruby-identifier">autorequire</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">dep</span>.<span class="ruby-identifier">name</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">required_file</span> = <span class="ruby-identifier">file</span>
+            <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">require</span> <span class="ruby-identifier">file</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+          <span class="ruby-constant">REGEXPS</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">message</span> }
+          <span class="ruby-identifier">raise</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dep</span>.<span class="ruby-identifier">autorequire</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">$1</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">required_file</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

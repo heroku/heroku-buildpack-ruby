@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Thor::Shell::Basic#truncate
+is_singleton: false
+name: truncate
+params: (string, width)
+visibility: protected

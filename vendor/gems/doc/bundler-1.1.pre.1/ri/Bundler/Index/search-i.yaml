@@ -1,0 +1,11 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: 
+- !ruby/object:RI::AliasName 
+  name: "[]"
+block_params: 
+comment: 
+full_name: Bundler::Index#search
+is_singleton: false
+name: search
+params: (query)
+visibility: public

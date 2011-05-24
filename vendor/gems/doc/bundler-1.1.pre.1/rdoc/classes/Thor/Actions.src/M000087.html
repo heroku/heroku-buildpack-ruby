@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>thor (Thor::Actions)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/actions.rb, line 265</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">thor</span>(<span class="ruby-identifier">task</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+      <span class="ruby-identifier">config</span>  = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">last</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">pop</span> <span class="ruby-operator">:</span> {}
+      <span class="ruby-identifier">verbose</span> = <span class="ruby-identifier">config</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">:verbose</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">:verbose</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword kw">true</span>
+      <span class="ruby-identifier">pretend</span> = <span class="ruby-identifier">config</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">:pretend</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">config</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">:pretend</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword kw">false</span>
+
+      <span class="ruby-identifier">args</span>.<span class="ruby-identifier">unshift</span> <span class="ruby-identifier">task</span>
+      <span class="ruby-identifier">args</span>.<span class="ruby-identifier">push</span> <span class="ruby-constant">Thor</span><span class="ruby-operator">::</span><span class="ruby-constant">Options</span>.<span class="ruby-identifier">to_switches</span>(<span class="ruby-identifier">config</span>)
+      <span class="ruby-identifier">command</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">' '</span>).<span class="ruby-identifier">strip</span>
+
+      <span class="ruby-identifier">run</span> <span class="ruby-identifier">command</span>, <span class="ruby-identifier">:with</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">:thor</span>, <span class="ruby-identifier">:verbose</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">verbose</span>, <span class="ruby-identifier">:pretend</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">pretend</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

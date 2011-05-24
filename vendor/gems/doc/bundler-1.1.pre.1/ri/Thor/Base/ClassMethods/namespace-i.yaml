@@ -1,0 +1,30 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: "Sets the namespace for the Thor or Thor::Group class. By default the namespace is retrieved from the class name. If your Thor class is named Scripts::MyScript, the help method, for example, will be called as:"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  thor scripts:my_script -h\n"
+- !ruby/struct:SM::Flow::P 
+  body: "If you change the namespace:"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  namespace :my_scripts\n"
+- !ruby/struct:SM::Flow::P 
+  body: "You change how your tasks are invoked:"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  thor my_scripts -h\n"
+- !ruby/struct:SM::Flow::P 
+  body: "Finally, if you change your namespace to default:"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  namespace :default\n"
+- !ruby/struct:SM::Flow::P 
+  body: "Your tasks can be invoked with a shortcut. Instead of:"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  thor :my_task\n"
+full_name: Thor::Base::ClassMethods#namespace
+is_singleton: false
+name: namespace
+params: (name=nil)
+visibility: public

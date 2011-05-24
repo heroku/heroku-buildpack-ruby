@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>search (Bundler::Resolver)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/resolver.rb, line 357</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">search</span>(<span class="ruby-identifier">dep</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">base</span> = <span class="ruby-ivar">@base</span>[<span class="ruby-identifier">dep</span>.<span class="ruby-identifier">name</span>] <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">base</span>.<span class="ruby-identifier">any?</span>
+        <span class="ruby-identifier">d</span> = <span class="ruby-constant">Gem</span><span class="ruby-operator">::</span><span class="ruby-constant">Dependency</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">base</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span>[<span class="ruby-identifier">dep</span>.<span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">as_list</span>, <span class="ruby-identifier">base</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">version</span>].<span class="ruby-identifier">flatten</span>)
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">d</span> = <span class="ruby-identifier">dep</span>.<span class="ruby-identifier">dep</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">index</span> = <span class="ruby-ivar">@source_requirements</span>[<span class="ruby-identifier">d</span>.<span class="ruby-identifier">name</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@index</span>
+      <span class="ruby-identifier">results</span> = <span class="ruby-identifier">index</span>.<span class="ruby-identifier">search_for_all_platforms</span>(<span class="ruby-identifier">d</span>, <span class="ruby-ivar">@base</span>[<span class="ruby-identifier">d</span>.<span class="ruby-identifier">name</span>])
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">any?</span>
+        <span class="ruby-identifier">version</span> = <span class="ruby-identifier">results</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">version</span>
+        <span class="ruby-identifier">nested</span>  = [[]]
+        <span class="ruby-identifier">results</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">spec</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">version</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">version</span>
+            <span class="ruby-identifier">nested</span> <span class="ruby-operator">&lt;&lt;</span> []
+            <span class="ruby-identifier">version</span> = <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">version</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">nested</span>.<span class="ruby-identifier">last</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">spec</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">nested</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-constant">SpecGroup</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">a</span>) }.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">sg</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sg</span>.<span class="ruby-identifier">for?</span>(<span class="ruby-identifier">dep</span>.<span class="ruby-identifier">__platform</span>) }
+      <span class="ruby-keyword kw">else</span>
+        []
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

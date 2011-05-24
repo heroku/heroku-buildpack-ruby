@@ -1,0 +1,52 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: options
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: ref
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: submodules
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: uri
+  rw: R
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: from_lock
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: []
+
+full_name: Bundler::Source::Git
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: ==
+- !ruby/object:RI::MethodSummary 
+  name: eql?
+- !ruby/object:RI::MethodSummary 
+  name: install
+- !ruby/object:RI::MethodSummary 
+  name: load_spec_files
+- !ruby/object:RI::MethodSummary 
+  name: name
+- !ruby/object:RI::MethodSummary 
+  name: path
+- !ruby/object:RI::MethodSummary 
+  name: specs
+- !ruby/object:RI::MethodSummary 
+  name: to_lock
+- !ruby/object:RI::MethodSummary 
+  name: to_s
+- !ruby/object:RI::MethodSummary 
+  name: unlock!
+name: Git
+superclass: Path

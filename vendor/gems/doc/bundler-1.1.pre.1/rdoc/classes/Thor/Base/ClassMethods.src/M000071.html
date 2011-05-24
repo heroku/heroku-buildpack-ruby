@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>print_options (Thor::Base::ClassMethods)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/base.rb, line 430</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">print_options</span>(<span class="ruby-identifier">shell</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">group_name</span>=<span class="ruby-keyword kw">nil</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">empty?</span>
+
+          <span class="ruby-identifier">list</span> = []
+          <span class="ruby-identifier">padding</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">collect</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">aliases</span>.<span class="ruby-identifier">size</span> }.<span class="ruby-identifier">max</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">*</span> <span class="ruby-value">4</span>
+
+          <span class="ruby-identifier">options</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">option</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">item</span> = [ <span class="ruby-identifier">option</span>.<span class="ruby-identifier">usage</span>(<span class="ruby-identifier">padding</span>) ]
+            <span class="ruby-identifier">item</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">option</span>.<span class="ruby-identifier">description</span> <span class="ruby-value">? </span><span class="ruby-node">&quot;# #{option.description}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-value str">&quot;&quot;</span>)
+
+            <span class="ruby-identifier">list</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">item</span>
+            <span class="ruby-identifier">list</span> <span class="ruby-operator">&lt;&lt;</span> [ <span class="ruby-value str">&quot;&quot;</span>, <span class="ruby-node">&quot;# Default: #{option.default}&quot;</span> ] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">option</span>.<span class="ruby-identifier">show_default?</span>
+          <span class="ruby-keyword kw">end</span>
+
+          <span class="ruby-identifier">shell</span>.<span class="ruby-identifier">say</span>(<span class="ruby-identifier">group_name</span> <span class="ruby-value">? </span><span class="ruby-node">&quot;#{group_name} options:&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-value str">&quot;Options:&quot;</span>)
+          <span class="ruby-identifier">shell</span>.<span class="ruby-identifier">print_table</span>(<span class="ruby-identifier">list</span>, <span class="ruby-identifier">:ident</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span>)
+          <span class="ruby-identifier">shell</span>.<span class="ruby-identifier">say</span> <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

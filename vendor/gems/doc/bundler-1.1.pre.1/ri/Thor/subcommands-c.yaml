@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Thor::subcommands
+is_singleton: true
+name: subcommands
+params: ()
+visibility: public

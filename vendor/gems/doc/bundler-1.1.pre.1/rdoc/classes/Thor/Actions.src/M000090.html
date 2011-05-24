@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>inject_into_file (Thor::Actions)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/actions/inject_into_file.rb, line 25</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inject_into_file</span>(<span class="ruby-identifier">destination</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-identifier">data</span>, <span class="ruby-identifier">config</span> = <span class="ruby-identifier">block</span>, <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">data</span>, <span class="ruby-identifier">config</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>, <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">action</span> <span class="ruby-constant">InjectIntoFile</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">destination</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">config</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

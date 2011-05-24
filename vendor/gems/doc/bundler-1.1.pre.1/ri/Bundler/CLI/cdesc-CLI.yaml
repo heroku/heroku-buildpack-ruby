@@ -1,0 +1,50 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: new
+- !ruby/object:RI::MethodSummary 
+  name: source_root
+comment: 
+constants: []
+
+full_name: Bundler::CLI
+includes: 
+- !ruby/object:RI::IncludedModule 
+  name: Thor::Actions
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: cache
+- !ruby/object:RI::MethodSummary 
+  name: check
+- !ruby/object:RI::MethodSummary 
+  name: clean
+- !ruby/object:RI::MethodSummary 
+  name: config
+- !ruby/object:RI::MethodSummary 
+  name: console
+- !ruby/object:RI::MethodSummary 
+  name: exec
+- !ruby/object:RI::MethodSummary 
+  name: gem
+- !ruby/object:RI::MethodSummary 
+  name: help
+- !ruby/object:RI::MethodSummary 
+  name: init
+- !ruby/object:RI::MethodSummary 
+  name: install
+- !ruby/object:RI::MethodSummary 
+  name: open
+- !ruby/object:RI::MethodSummary 
+  name: package
+- !ruby/object:RI::MethodSummary 
+  name: show
+- !ruby/object:RI::MethodSummary 
+  name: update
+- !ruby/object:RI::MethodSummary 
+  name: version
+- !ruby/object:RI::MethodSummary 
+  name: viz
+name: CLI
+superclass: Thor

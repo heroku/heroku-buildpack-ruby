@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Deprecated methods
+full_name: Bundler::Dsl::deprecate
+is_singleton: true
+name: deprecate
+params: (name, replacement = nil)
+visibility: public

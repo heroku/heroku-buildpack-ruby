@@ -1,0 +1,33 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: dependencies
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: is_user
+  rw: RW
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: name
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: version
+  rw: R
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Add version info
+constants: []
+
+full_name: Bundler::GraphNode
+includes: []
+
+instance_methods: []
+
+name: GraphNode
+superclass: Object

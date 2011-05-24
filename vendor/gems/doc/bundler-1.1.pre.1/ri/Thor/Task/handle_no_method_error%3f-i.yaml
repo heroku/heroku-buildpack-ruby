@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Thor::Task#handle_no_method_error?
+is_singleton: false
+name: handle_no_method_error?
+params: (instance, error, caller)
+visibility: protected

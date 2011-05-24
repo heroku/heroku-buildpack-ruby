@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Is <tt>req</tt> idempotent according to RFC 2616?
+full_name: Net::HTTP::Persistent#idempotent?
+is_singleton: false
+name: idempotent?
+params: (req)
+visibility: public

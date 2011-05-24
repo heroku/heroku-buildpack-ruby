@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Fire this callback whenever a method is added. Added methods are tracked as tasks by invoking the create_task method.
+full_name: Thor::Base::ClassMethods#method_added
+is_singleton: false
+name: method_added
+params: (meth)
+visibility: protected

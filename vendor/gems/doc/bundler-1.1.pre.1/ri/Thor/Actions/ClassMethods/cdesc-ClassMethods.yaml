@@ -1,0 +1,22 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+constants: []
+
+full_name: Thor::Actions::ClassMethods
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: add_runtime_options!
+- !ruby/object:RI::MethodSummary 
+  name: source_paths
+- !ruby/object:RI::MethodSummary 
+  name: source_paths_for_search
+- !ruby/object:RI::MethodSummary 
+  name: source_root
+name: ClassMethods
+superclass: 

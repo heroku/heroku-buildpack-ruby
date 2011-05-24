@@ -1,0 +1,133 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Inherit from Thor::Shell::Basic and add set_color behavior. Check Thor::Shell::Basic to see all available methods.
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: The start of an HTML bold sequence.
+  name: BOLD
+  value: "\"<strong>\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: The end of an HTML bold sequence.
+  name: END_BOLD
+  value: "\"</strong>\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Embed in a String to clear previous color selection.
+  name: CLEAR
+  value: "\"</span>\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground HTML color to black.
+  name: BLACK
+  value: "'<span style=\"color: black;\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground HTML color to red.
+  name: RED
+  value: "'<span style=\"color: red;\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground HTML color to green.
+  name: GREEN
+  value: "'<span style=\"color: green;\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground HTML color to yellow.
+  name: YELLOW
+  value: "'<span style=\"color: yellow;\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground HTML color to blue.
+  name: BLUE
+  value: "'<span style=\"color: blue;\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground HTML color to magenta.
+  name: MAGENTA
+  value: "'<span style=\"color: magenta;\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground HTML color to cyan.
+  name: CYAN
+  value: "'<span style=\"color: cyan;\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground HTML color to white.
+  name: WHITE
+  value: "'<span style=\"color: white;\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background HTML color to black.
+  name: ON_BLACK
+  value: "'<span style=\"background-color: black\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background HTML color to red.
+  name: ON_RED
+  value: "'<span style=\"background-color: red\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background HTML color to green.
+  name: ON_GREEN
+  value: "'<span style=\"background-color: green\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background HTML color to yellow.
+  name: ON_YELLOW
+  value: "'<span style=\"background-color: yellow\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background HTML color to blue.
+  name: ON_BLUE
+  value: "'<span style=\"background-color: blue\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background HTML color to magenta.
+  name: ON_MAGENTA
+  value: "'<span style=\"background-color: magenta\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background HTML color to cyan.
+  name: ON_CYAN
+  value: "'<span style=\"background-color: cyan\">'"
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background HTML color to white.
+  name: ON_WHITE
+  value: "'<span style=\"background-color: white\">'"
+full_name: Thor::Shell::HTML
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: ask
+- !ruby/object:RI::MethodSummary 
+  name: set_color
+name: HTML
+superclass: Basic

@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::GemHelper#guard_already_tagged
+is_singleton: false
+name: guard_already_tagged
+params: ()
+visibility: protected

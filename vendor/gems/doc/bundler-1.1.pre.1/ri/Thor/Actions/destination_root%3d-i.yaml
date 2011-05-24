@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Sets the root for this thor class. Relatives path are added to the directory where the script was invoked and expanded.
+full_name: Thor::Actions#destination_root=
+is_singleton: false
+name: destination_root=
+params: (root)
+visibility: public

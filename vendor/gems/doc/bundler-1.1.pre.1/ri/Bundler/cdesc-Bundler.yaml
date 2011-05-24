@@ -1,0 +1,98 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: bundle_path
+  rw: W
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: ui
+  rw: W
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: app_cache
+- !ruby/object:RI::MethodSummary 
+  name: app_config_path
+- !ruby/object:RI::MethodSummary 
+  name: bin_path
+- !ruby/object:RI::MethodSummary 
+  name: bundle_path
+- !ruby/object:RI::MethodSummary 
+  name: cache
+- !ruby/object:RI::MethodSummary 
+  name: configure
+- !ruby/object:RI::MethodSummary 
+  name: default_gemfile
+- !ruby/object:RI::MethodSummary 
+  name: default_lockfile
+- !ruby/object:RI::MethodSummary 
+  name: definition
+- !ruby/object:RI::MethodSummary 
+  name: environment
+- !ruby/object:RI::MethodSummary 
+  name: home
+- !ruby/object:RI::MethodSummary 
+  name: install_path
+- !ruby/object:RI::MethodSummary 
+  name: load
+- !ruby/object:RI::MethodSummary 
+  name: load_gemspec
+- !ruby/object:RI::MethodSummary 
+  name: mkdir_p
+- !ruby/object:RI::MethodSummary 
+  name: read_file
+- !ruby/object:RI::MethodSummary 
+  name: require
+- !ruby/object:RI::MethodSummary 
+  name: requires_sudo?
+- !ruby/object:RI::MethodSummary 
+  name: root
+- !ruby/object:RI::MethodSummary 
+  name: ruby_scope
+- !ruby/object:RI::MethodSummary 
+  name: settings
+- !ruby/object:RI::MethodSummary 
+  name: setup
+- !ruby/object:RI::MethodSummary 
+  name: specs_path
+- !ruby/object:RI::MethodSummary 
+  name: sudo
+- !ruby/object:RI::MethodSummary 
+  name: tmp
+- !ruby/object:RI::MethodSummary 
+  name: ui
+- !ruby/object:RI::MethodSummary 
+  name: user_bundle_path
+- !ruby/object:RI::MethodSummary 
+  name: with_clean_env
+comment: 
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: We're doing this because we might write tests that deal with other versions of bundler and we are unsure how to handle this better.
+  name: VERSION
+  value: "\"1.1.pre.1\" unless defined?(::Bundler::VERSION)"
+- !ruby/object:RI::Constant 
+  comment: 
+  name: ORIGINAL_ENV
+  value: ENV.to_hash
+- !ruby/object:RI::Constant 
+  comment: 
+  name: WINDOWS
+  value: RbConfig::CONFIG["host_os"] =~ %r!(msdos|mswin|djgpp|mingw)!
+- !ruby/object:RI::Constant 
+  comment: 
+  name: FREEBSD
+  value: RbConfig::CONFIG["host_os"] =~ /bsd/
+- !ruby/object:RI::Constant 
+  comment: 
+  name: "NULL"
+  value: "WINDOWS ? \"NUL\" : \"/dev/null\""
+full_name: Bundler
+includes: []
+
+instance_methods: []
+
+name: Bundler
+superclass: 

@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Gem::Specification#groups
+is_singleton: false
+name: groups
+params: ()
+visibility: public

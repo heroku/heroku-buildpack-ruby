@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>run (Thor::DynamicTask)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/task.rb, line 106</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run</span>(<span class="ruby-identifier">instance</span>, <span class="ruby-identifier">args</span>=[])
+      <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">instance</span>.<span class="ruby-identifier">methods</span> <span class="ruby-operator">&amp;</span> [<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>]).<span class="ruby-identifier">empty?</span>
+        <span class="ruby-keyword kw">super</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">handle_no_task_error</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

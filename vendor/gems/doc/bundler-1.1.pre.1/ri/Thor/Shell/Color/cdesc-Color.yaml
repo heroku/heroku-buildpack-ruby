@@ -1,0 +1,125 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Inherit from Thor::Shell::Basic and add set_color behavior. Check Thor::Shell::Basic to see all available methods.
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Embed in a String to clear all previous ANSI sequences.
+  name: CLEAR
+  value: "\"\\e[0m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: The start of an ANSI bold sequence.
+  name: BOLD
+  value: "\"\\e[1m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground ANSI color to black.
+  name: BLACK
+  value: "\"\\e[30m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground ANSI color to red.
+  name: RED
+  value: "\"\\e[31m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground ANSI color to green.
+  name: GREEN
+  value: "\"\\e[32m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground ANSI color to yellow.
+  name: YELLOW
+  value: "\"\\e[33m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground ANSI color to blue.
+  name: BLUE
+  value: "\"\\e[34m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground ANSI color to magenta.
+  name: MAGENTA
+  value: "\"\\e[35m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground ANSI color to cyan.
+  name: CYAN
+  value: "\"\\e[36m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's foreground ANSI color to white.
+  name: WHITE
+  value: "\"\\e[37m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background ANSI color to black.
+  name: ON_BLACK
+  value: "\"\\e[40m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background ANSI color to red.
+  name: ON_RED
+  value: "\"\\e[41m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background ANSI color to green.
+  name: ON_GREEN
+  value: "\"\\e[42m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background ANSI color to yellow.
+  name: ON_YELLOW
+  value: "\"\\e[43m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background ANSI color to blue.
+  name: ON_BLUE
+  value: "\"\\e[44m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background ANSI color to magenta.
+  name: ON_MAGENTA
+  value: "\"\\e[45m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background ANSI color to cyan.
+  name: ON_CYAN
+  value: "\"\\e[46m\""
+- !ruby/object:RI::Constant 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Set the terminal's background ANSI color to white.
+  name: ON_WHITE
+  value: "\"\\e[47m\""
+full_name: Thor::Shell::Color
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: set_color
+name: Color
+superclass: Basic

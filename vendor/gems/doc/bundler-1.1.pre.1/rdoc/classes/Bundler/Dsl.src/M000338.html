@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>git (Bundler::Dsl)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/dsl.rb, line 99</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">git</span>(<span class="ruby-identifier">uri</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">source_options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-identifier">msg</span> = <span class="ruby-value str">&quot;You can no longer specify a git source by itself. Instead, \n&quot;</span> \
+              <span class="ruby-value str">&quot;either use the :git option on a gem, or specify the gems that \n&quot;</span> \
+              <span class="ruby-value str">&quot;bundler should find in the git source by passing a block to \n&quot;</span> \
+              <span class="ruby-value str">&quot;the git method, like: \n\n&quot;</span> \
+              <span class="ruby-value str">&quot;  git 'git://github.com/rails/rails.git' do\n&quot;</span> \
+              <span class="ruby-value str">&quot;    gem 'rails'\n&quot;</span> \
+              <span class="ruby-value str">&quot;  end&quot;</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">DeprecatedError</span>, <span class="ruby-identifier">msg</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">source</span> <span class="ruby-constant">Source</span><span class="ruby-operator">::</span><span class="ruby-constant">Git</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">_normalize_hash</span>(<span class="ruby-identifier">options</span>).<span class="ruby-identifier">merge</span>(<span class="ruby-value str">&quot;uri&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">uri</span>)), <span class="ruby-identifier">source_options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

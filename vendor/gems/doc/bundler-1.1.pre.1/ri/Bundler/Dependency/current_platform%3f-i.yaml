@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::Dependency#current_platform?
+is_singleton: false
+name: current_platform?
+params: ()
+visibility: public

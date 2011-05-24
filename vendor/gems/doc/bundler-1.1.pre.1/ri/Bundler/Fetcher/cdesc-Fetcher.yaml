@@ -1,0 +1,22 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  name: REDIRECT_LIMIT
+  value: "5"
+full_name: Bundler::Fetcher
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: fetch_remote_specs
+- !ruby/object:RI::MethodSummary 
+  name: fetch_spec
+name: Fetcher
+superclass: Object

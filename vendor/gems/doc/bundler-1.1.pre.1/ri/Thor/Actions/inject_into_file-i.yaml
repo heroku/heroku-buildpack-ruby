@@ -1,0 +1,32 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Injects the given content into a file. Different from gsub_file, this method is reversible.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Parameters
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "destination<String>:"
+    body: Relative path to the destination root
+  - !ruby/struct:SM::Flow::LI 
+    label: "data<String>:"
+    body: Data to add to the file. Can be given as a block.
+  - !ruby/struct:SM::Flow::LI 
+    label: "config<Hash>:"
+    body: give :verbose =&gt; false to not log the status and the flag for injection (:after or :before) or :force =&gt; true for insert two or more times the same content.
+  type: :NOTE
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Examples
+- !ruby/struct:SM::Flow::VERB 
+  body: "  inject_into_file &quot;config/environment.rb&quot;, &quot;config.gem :thor&quot;, :after =&gt; &quot;Rails::Initializer.run do |config|\\n&quot;\n\n  inject_into_file &quot;config/environment.rb&quot;, :after =&gt; &quot;Rails::Initializer.run do |config|\\n&quot; do\n    gems = ask &quot;Which gems would you like to add?&quot;\n    gems.split(&quot; &quot;).map{ |gem| &quot;  config.gem :#{gem}&quot; }.join(&quot;\\n&quot;)\n  end\n"
+full_name: Thor::Actions#inject_into_file
+is_singleton: false
+name: inject_into_file
+params: (destination, *args, &block)
+visibility: public

@@ -1,0 +1,11 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: 
+- !ruby/object:RI::AliasName 
+  name: ==
+block_params: 
+comment: 
+full_name: Bundler::Source::Git#eql?
+is_singleton: false
+name: eql?
+params: (o)
+visibility: public

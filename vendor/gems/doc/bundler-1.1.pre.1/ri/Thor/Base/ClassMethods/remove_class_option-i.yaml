@@ -1,0 +1,26 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Removes a previous defined class option.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Paremeters
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "names<Array>:"
+    body: Class options to be removed
+  type: :NOTE
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Examples
+- !ruby/struct:SM::Flow::VERB 
+  body: "  remove_class_option :foo\n  remove_class_option :foo, :bar, :baz\n"
+full_name: Thor::Base::ClassMethods#remove_class_option
+is_singleton: false
+name: remove_class_option
+params: (*names)
+visibility: public

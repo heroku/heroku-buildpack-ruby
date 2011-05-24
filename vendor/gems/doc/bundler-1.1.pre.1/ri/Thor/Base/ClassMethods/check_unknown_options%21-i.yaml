@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: If you want to raise an error for unknown options, call check_unknown_options! This is disabled by default to allow dynamic invocations.
+full_name: Thor::Base::ClassMethods#check_unknown_options!
+is_singleton: false
+name: check_unknown_options!
+params: ()
+visibility: public

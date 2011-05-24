@@ -1,0 +1,32 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Receives a constant and converts it to a Thor namespace. Since Thor tasks can be added to a sandbox, this method is also responsable for removing the sandbox namespace.
+- !ruby/struct:SM::Flow::P 
+  body: This method should not be used in general because it's used to deal with older versions of Thor. On current versions, if you need to get the namespace from a class, just call namespace on it.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Parameters
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "constant<Object>:"
+    body: The constant to be converted to the thor path.
+  type: :NOTE
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Returns
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "String:"
+    body: If we receive Foo::Bar::Baz it returns &quot;foo:bar:baz&quot;
+  type: :NOTE
+full_name: Thor::Util::namespace_from_thor_class
+is_singleton: true
+name: namespace_from_thor_class
+params: (constant)
+visibility: public

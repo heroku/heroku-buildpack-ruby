@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>find_in_source_paths (Thor::Actions)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/actions.rb, line 127</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">find_in_source_paths</span>(<span class="ruby-identifier">file</span>)
+      <span class="ruby-identifier">relative_root</span> = <span class="ruby-identifier">relative_to_original_destination_root</span>(<span class="ruby-identifier">destination_root</span>, <span class="ruby-keyword kw">false</span>)
+
+      <span class="ruby-identifier">source_paths</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">source</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">source_file</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">file</span>, <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">source</span>, <span class="ruby-identifier">relative_root</span>))
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">source_file</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exists?</span>(<span class="ruby-identifier">source_file</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">message</span> = <span class="ruby-node">&quot;Could not find #{file.inspect} in any of your source paths. &quot;</span>
+
+      <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">source_root</span>
+        <span class="ruby-identifier">message</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Please invoke #{self.class.name}.source_root(PATH) with the PATH containing your templates. &quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">source_paths</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">message</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;Currently you have no source paths.&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">message</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Your current source paths are: \n#{source_paths.join(&quot;\n&quot;)}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">Error</span>, <span class="ruby-identifier">message</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

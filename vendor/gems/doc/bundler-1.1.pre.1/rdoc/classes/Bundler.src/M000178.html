@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>load_gemspec (Bundler)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler.rb, line 231</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_gemspec</span>(<span class="ruby-identifier">file</span>)
+      <span class="ruby-identifier">path</span> = <span class="ruby-constant">Pathname</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">file</span>)
+      <span class="ruby-comment cmt"># Eval the gemspec from its parent directory</span>
+      <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-identifier">path</span>.<span class="ruby-identifier">dirname</span>.<span class="ruby-identifier">to_s</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">contents</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">path</span>.<span class="ruby-identifier">basename</span>.<span class="ruby-identifier">to_s</span>)
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-constant">Gem</span><span class="ruby-operator">::</span><span class="ruby-constant">Specification</span>.<span class="ruby-identifier">from_yaml</span>(<span class="ruby-identifier">contents</span>)
+          <span class="ruby-comment cmt"># Raises ArgumentError if the file is not valid YAML</span>
+        <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-constant">SyntaxError</span>, <span class="ruby-constant">Gem</span><span class="ruby-operator">::</span><span class="ruby-constant">EndOfYAMLException</span>, <span class="ruby-constant">Gem</span><span class="ruby-operator">::</span><span class="ruby-constant">Exception</span>
+          <span class="ruby-keyword kw">begin</span>
+            <span class="ruby-identifier">eval</span>(<span class="ruby-identifier">contents</span>, <span class="ruby-constant">TOPLEVEL_BINDING</span>, <span class="ruby-identifier">path</span>.<span class="ruby-identifier">expand_path</span>.<span class="ruby-identifier">to_s</span>)
+          <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+            <span class="ruby-identifier">original_line</span> = <span class="ruby-identifier">e</span>.<span class="ruby-identifier">backtrace</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span> <span class="ruby-identifier">line</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">path</span>.<span class="ruby-identifier">to_s</span>) }
+            <span class="ruby-identifier">msg</span>  = <span class="ruby-node">&quot;There was a LoadError while evaluating #{path.basename}:\n  #{e.message}&quot;</span>
+            <span class="ruby-identifier">msg</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot; from\n  #{original_line}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">original_line</span>
+            <span class="ruby-identifier">msg</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n&quot;</span>
+
+            <span class="ruby-keyword kw">if</span> <span class="ruby-constant">RUBY_VERSION</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value str">&quot;1.9.0&quot;</span>
+              <span class="ruby-identifier">msg</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\nDoes it try to require a relative path? That doesn't work in Ruby 1.9.&quot;</span>
+            <span class="ruby-keyword kw">end</span>
+
+            <span class="ruby-identifier">raise</span> <span class="ruby-constant">GemspecError</span>, <span class="ruby-identifier">msg</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

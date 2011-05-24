@@ -1,0 +1,32 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Run a thor command. A hash of options can be given and it's converted to switches.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Parameters
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "task<String>:"
+    body: the task to be invoked
+  - !ruby/struct:SM::Flow::LI 
+    label: "args<Array>:"
+    body: arguments to the task
+  - !ruby/struct:SM::Flow::LI 
+    label: "config<Hash>:"
+    body: give :verbose =&gt; false to not log the status. Other options are given as parameter to Thor.
+  type: :NOTE
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Examples
+- !ruby/struct:SM::Flow::VERB 
+  body: "  thor :install, &quot;http://gist.github.com/103208&quot;\n  #=&gt; thor install http://gist.github.com/103208\n\n  thor :list, :all =&gt; true, :substring =&gt; 'rails'\n  #=&gt; thor list --all --substring=rails\n"
+full_name: Thor::Actions#thor
+is_singleton: false
+name: thor
+params: (task, *args)
+visibility: public

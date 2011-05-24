@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::BundlerError::status_code
+is_singleton: true
+name: status_code
+params: (code = nil)
+visibility: public

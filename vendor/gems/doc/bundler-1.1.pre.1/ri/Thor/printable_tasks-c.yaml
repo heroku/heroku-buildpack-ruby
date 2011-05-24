@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Returns tasks ready to be printed.
+full_name: Thor::printable_tasks
+is_singleton: true
+name: printable_tasks
+params: (all = true, subcommand = false)
+visibility: public

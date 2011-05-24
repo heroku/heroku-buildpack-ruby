@@ -1,0 +1,65 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: dependencies
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: platforms
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: sources
+  rw: R
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: build
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: []
+
+full_name: Bundler::Definition
+includes: 
+- !ruby/object:RI::IncludedModule 
+  name: GemHelpers
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: current_dependencies
+- !ruby/object:RI::MethodSummary 
+  name: ensure_equivalent_gemfile_and_lockfile
+- !ruby/object:RI::MethodSummary 
+  name: groups
+- !ruby/object:RI::MethodSummary 
+  name: index
+- !ruby/object:RI::MethodSummary 
+  name: lock
+- !ruby/object:RI::MethodSummary 
+  name: missing_specs
+- !ruby/object:RI::MethodSummary 
+  name: new_platform?
+- !ruby/object:RI::MethodSummary 
+  name: new_specs
+- !ruby/object:RI::MethodSummary 
+  name: no_sources?
+- !ruby/object:RI::MethodSummary 
+  name: removed_specs
+- !ruby/object:RI::MethodSummary 
+  name: requested_specs
+- !ruby/object:RI::MethodSummary 
+  name: resolve
+- !ruby/object:RI::MethodSummary 
+  name: resolve_remotely!
+- !ruby/object:RI::MethodSummary 
+  name: resolve_with_cache!
+- !ruby/object:RI::MethodSummary 
+  name: rubygems_index
+- !ruby/object:RI::MethodSummary 
+  name: specs
+- !ruby/object:RI::MethodSummary 
+  name: specs_for
+- !ruby/object:RI::MethodSummary 
+  name: to_lock
+name: Definition
+superclass: Object

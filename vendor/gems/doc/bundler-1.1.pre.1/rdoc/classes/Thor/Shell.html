@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Thor::Shell</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Thor::Shell</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/bundler/vendor/thor/shell/html_rb.html">
+                lib/bundler/vendor/thor/shell/html.rb
+                </a>
+        <br />
+                <a href="../../files/lib/bundler/vendor/thor/shell/color_rb.html">
+                lib/bundler/vendor/thor/shell/color.rb
+                </a>
+        <br />
+                <a href="../../files/lib/bundler/vendor/thor/shell/basic_rb.html">
+                lib/bundler/vendor/thor/shell/basic.rb
+                </a>
+        <br />
+                <a href="../../files/lib/bundler/vendor/thor/shell_rb.html">
+                lib/bundler/vendor/thor/shell.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000016">new</a>&nbsp;&nbsp;
+      <a href="#M000017">shell</a>&nbsp;&nbsp;
+      <a href="#M000018">shell=</a>&nbsp;&nbsp;
+      <a href="#M000019">with_padding</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Shell/Basic.html" class="link">Thor::Shell::Basic</a><br />
+Class <a href="Shell/Color.html" class="link">Thor::Shell::Color</a><br />
+Class <a href="Shell/HTML.html" class="link">Thor::Shell::HTML</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SHELL_DELEGATED_METHODS</td>
+          <td>=</td>
+          <td class="context-item-value">[:ask, :yes?, :no?, :say, :say_status, :print_table]</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000016" class="method-detail">
+        <a name="M000016"></a>
+
+        <div class="method-heading">
+          <a href="Shell.src/M000016.html" target="Code" class="method-signature"
+            onclick="popupCode('Shell.src/M000016.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(args=[], options={}, config={})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add <a href="Shell.html#M000017">shell</a> to initialize config values.
+</p>
+<h4>Configuration</h4>
+<table>
+<tr><td valign="top"><a href="Shell.html#M000017">shell</a>&lt;Object&gt;:</td><td>An instance of the <a href="Shell.html#M000017">shell</a> to be used.
+
+</td></tr>
+</table>
+<h4>Examples</h4>
+<pre>
+  class MyScript &lt; Thor
+    argument :first, :type =&gt; :numeric
+  end
+
+  MyScript.new [1.0], { :foo =&gt; :bar }, :shell =&gt; Thor::Shell::Basic.new
+</pre>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000017" class="method-detail">
+        <a name="M000017"></a>
+
+        <div class="method-heading">
+          <a href="Shell.src/M000017.html" target="Code" class="method-signature"
+            onclick="popupCode('Shell.src/M000017.html');return false;">
+          <span class="method-name">shell</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Holds the <a href="Shell.html#M000017">shell</a> for the given <a
+href="../Thor.html">Thor</a> instance. If no <a
+href="Shell.html#M000017">shell</a> is given, it gets a default <a
+href="Shell.html#M000017">shell</a> from <a
+href="Base.html#M000052">Thor::Base.shell</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000018" class="method-detail">
+        <a name="M000018"></a>
+
+        <div class="method-heading">
+          <a href="Shell.src/M000018.html" target="Code" class="method-signature"
+            onclick="popupCode('Shell.src/M000018.html');return false;">
+          <span class="method-name">shell=</span><span class="method-args">(shell)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the <a href="Shell.html#M000017">shell</a> for this thor class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000019" class="method-detail">
+        <a name="M000019"></a>
+
+        <div class="method-heading">
+          <a href="Shell.src/M000019.html" target="Code" class="method-signature"
+            onclick="popupCode('Shell.src/M000019.html');return false;">
+          <span class="method-name">with_padding</span><span class="method-args">() {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Yields the given block with padding.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>snake_case (Thor::Util)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/util.rb, line 90</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">snake_case</span>(<span class="ruby-identifier">str</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^[A-Z_]+$/</span>
+      <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\B[A-Z]/</span>, <span class="ruby-value str">'_\&amp;'</span>).<span class="ruby-identifier">squeeze</span>(<span class="ruby-value str">'_'</span>) <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/_*(.*)/</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">$+</span>.<span class="ruby-identifier">downcase</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

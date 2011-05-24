@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::Definition#new_platform?
+is_singleton: false
+name: new_platform?
+params: ()
+visibility: public

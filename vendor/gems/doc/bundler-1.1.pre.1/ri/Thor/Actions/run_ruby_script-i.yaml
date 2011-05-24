@@ -1,0 +1,24 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Executes a ruby script (taking into account WIN32 platform quirks).
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Parameters
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "command<String>:"
+    body: the command to be executed.
+  - !ruby/struct:SM::Flow::LI 
+    label: "config<Hash>:"
+    body: give :verbose =&gt; false to not log the status.
+  type: :NOTE
+full_name: Thor::Actions#run_ruby_script
+is_singleton: false
+name: run_ruby_script
+params: (command, config={})
+visibility: public

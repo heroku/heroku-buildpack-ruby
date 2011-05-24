@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Say a status with the given color and appends the message. Since this method is used frequently by actions, it allows nil or false to be given in log_status, avoiding the message from being shown. If a Symbol is given in log_status, it's used as the color.
+full_name: Thor::Shell::Basic#say_status
+is_singleton: false
+name: say_status
+params: (status, message, log_status=true)
+visibility: public

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>method_added (Thor::Base::ClassMethods)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/base.rb, line 500</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">method_added</span>(<span class="ruby-identifier">meth</span>)
+          <span class="ruby-identifier">meth</span> = <span class="ruby-identifier">meth</span>.<span class="ruby-identifier">to_s</span>
+
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">meth</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;initialize&quot;</span>
+            <span class="ruby-identifier">initialize_added</span>
+            <span class="ruby-keyword kw">return</span>
+          <span class="ruby-keyword kw">end</span>
+
+          <span class="ruby-comment cmt"># Return if it's not a public instance method</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">public_instance_methods</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">meth</span>) <span class="ruby-operator">||</span>
+                        <span class="ruby-identifier">public_instance_methods</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">meth</span>.<span class="ruby-identifier">to_sym</span>)
+
+          <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@no_tasks</span> <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">create_task</span>(<span class="ruby-identifier">meth</span>)
+
+          <span class="ruby-identifier">is_thor_reserved_word?</span>(<span class="ruby-identifier">meth</span>, <span class="ruby-identifier">:task</span>)
+          <span class="ruby-constant">Thor</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">register_klass_file</span>(<span class="ruby-keyword kw">self</span>)
+        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

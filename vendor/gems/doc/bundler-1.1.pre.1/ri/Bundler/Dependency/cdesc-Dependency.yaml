@@ -1,0 +1,39 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: autorequire
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: groups
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: platforms
+  rw: R
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  name: PLATFORM_MAP
+  value: "{       :ruby     => Gem::Platform::RUBY,       :ruby_18  => Gem::Platform::RUBY,       :ruby_19  => Gem::Platform::RUBY,       :mri      => Gem::Platform::RUBY,       :mri_18   => Gem::Platform::RUBY,       :mri_19   => Gem::Platform::RUBY,       :jruby    => Gem::Platform::JAVA,       :mswin    => Gem::Platform::MSWIN,       :mingw    => Gem::Platform::MINGW,       :mingw_18 => Gem::Platform::MINGW,       :mingw_19 => Gem::Platform::MINGW"
+full_name: Bundler::Dependency
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: current_env?
+- !ruby/object:RI::MethodSummary 
+  name: current_platform?
+- !ruby/object:RI::MethodSummary 
+  name: gem_platforms
+- !ruby/object:RI::MethodSummary 
+  name: should_include?
+- !ruby/object:RI::MethodSummary 
+  name: to_lock
+name: Dependency
+superclass: Gem::Dependency

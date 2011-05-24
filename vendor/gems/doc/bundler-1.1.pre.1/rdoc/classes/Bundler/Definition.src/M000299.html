@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ensure_equivalent_gemfile_and_lockfile (Bundler::Definition)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/definition.rb, line 238</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ensure_equivalent_gemfile_and_lockfile</span>
+      <span class="ruby-identifier">changes</span> = <span class="ruby-keyword kw">false</span>
+
+      <span class="ruby-identifier">msg</span> = <span class="ruby-value str">&quot;You have modified your Gemfile in development but did not check\n&quot;</span> \
+            <span class="ruby-value str">&quot;the resulting snapshot (Gemfile.lock) into version control&quot;</span>
+
+      <span class="ruby-identifier">added</span> =   []
+      <span class="ruby-identifier">deleted</span> = []
+      <span class="ruby-identifier">changed</span> = []
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@locked_sources</span> <span class="ruby-operator">!=</span> <span class="ruby-ivar">@sources</span>
+        <span class="ruby-identifier">new_sources</span> = <span class="ruby-ivar">@sources</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@locked_sources</span>
+        <span class="ruby-identifier">deleted_sources</span> = <span class="ruby-ivar">@locked_sources</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@sources</span>
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">new_sources</span>.<span class="ruby-identifier">any?</span>
+          <span class="ruby-identifier">added</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">new_sources</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">source</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;* source: #{source}&quot;</span> }
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">deleted_sources</span>.<span class="ruby-identifier">any?</span>
+          <span class="ruby-identifier">deleted</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">deleted_sources</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">source</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;* source: #{source}&quot;</span> }
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">changes</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">both_sources</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">h</span>,<span class="ruby-identifier">k</span><span class="ruby-operator">|</span> <span class="ruby-identifier">h</span>[<span class="ruby-identifier">k</span>] = [<span class="ruby-value str">&quot;no specified source&quot;</span>, <span class="ruby-value str">&quot;no specified source&quot;</span>] }
+      <span class="ruby-ivar">@dependencies</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">both_sources</span>[<span class="ruby-identifier">d</span>.<span class="ruby-identifier">name</span>][<span class="ruby-value">0</span>] = <span class="ruby-identifier">d</span>.<span class="ruby-identifier">source</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">d</span>.<span class="ruby-identifier">source</span> }
+      <span class="ruby-ivar">@locked_deps</span>.<span class="ruby-identifier">each</span>  { <span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">both_sources</span>[<span class="ruby-identifier">d</span>.<span class="ruby-identifier">name</span>][<span class="ruby-value">1</span>] = <span class="ruby-identifier">d</span>.<span class="ruby-identifier">source</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">d</span>.<span class="ruby-identifier">source</span> }
+      <span class="ruby-identifier">both_sources</span>.<span class="ruby-identifier">delete_if</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">v</span>[<span class="ruby-value">1</span>] }
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@dependencies</span> <span class="ruby-operator">!=</span> <span class="ruby-ivar">@locked_deps</span>
+        <span class="ruby-identifier">new_deps</span> = <span class="ruby-ivar">@dependencies</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@locked_deps</span>
+        <span class="ruby-identifier">deleted_deps</span> = <span class="ruby-ivar">@locked_deps</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@dependencies</span>
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">new_deps</span>.<span class="ruby-identifier">any?</span>
+          <span class="ruby-identifier">added</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">new_deps</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;* #{pretty_dep(d)}&quot;</span> }
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">deleted_deps</span>.<span class="ruby-identifier">any?</span>
+          <span class="ruby-identifier">deleted</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">deleted_deps</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;* #{pretty_dep(d)}&quot;</span> }
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">both_sources</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">sources</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">changed</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;* #{name} from `#{sources[0]}` to `#{sources[1]}`&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">changes</span> = <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">msg</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n\nYou have added to the Gemfile:\n&quot;</span>     <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">added</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">added</span>.<span class="ruby-identifier">any?</span>
+      <span class="ruby-identifier">msg</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n\nYou have deleted from the Gemfile:\n&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">deleted</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">deleted</span>.<span class="ruby-identifier">any?</span>
+      <span class="ruby-identifier">msg</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;\n\nYou have changed in the Gemfile:\n&quot;</span>   <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">changed</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">changed</span>.<span class="ruby-identifier">any?</span>
+
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">ProductionError</span>, <span class="ruby-identifier">msg</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">added</span>.<span class="ruby-identifier">any?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">deleted</span>.<span class="ruby-identifier">any?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">changed</span>.<span class="ruby-identifier">any?</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: ""
+comment: 
+full_name: Bundler::Dsl#group
+is_singleton: false
+name: group
+params: (*args, &blk) {|| ...}
+visibility: public

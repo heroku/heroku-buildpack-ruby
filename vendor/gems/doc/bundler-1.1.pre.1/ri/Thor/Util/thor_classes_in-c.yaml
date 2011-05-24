@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Returns the thor classes declared inside the given class.
+full_name: Thor::Util::thor_classes_in
+is_singleton: true
+name: thor_classes_in
+params: (klass)
+visibility: public

@@ -1,0 +1,17 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Error class for errors raised by Net::HTTP::Persistent. Various SystemCallErrors are re-raised with a human-readable message under this class.
+constants: []
+
+full_name: Net::HTTP::Persistent::Error
+includes: []
+
+instance_methods: []
+
+name: Error
+superclass: StandardError

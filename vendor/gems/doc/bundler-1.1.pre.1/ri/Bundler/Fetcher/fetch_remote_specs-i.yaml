@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: fetch index
+full_name: Bundler::Fetcher#fetch_remote_specs
+is_singleton: false
+name: fetch_remote_specs
+params: (gem_names, full_dependency_list = [], last_spec_list = [], &blk)
+visibility: public

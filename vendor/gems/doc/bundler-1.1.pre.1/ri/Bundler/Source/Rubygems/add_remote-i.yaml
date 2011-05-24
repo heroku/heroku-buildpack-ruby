@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::Source::Rubygems#add_remote
+is_singleton: false
+name: add_remote
+params: (source)
+visibility: public

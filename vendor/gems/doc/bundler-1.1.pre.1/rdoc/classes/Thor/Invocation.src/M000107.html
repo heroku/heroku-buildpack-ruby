@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>invoke (Thor::Invocation)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/invocation.rb, line 96</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">invoke</span>(<span class="ruby-identifier">name</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;[Thor] Calling invoke() without argument is deprecated. Please use invoke_all instead.\n#{caller.join(&quot;\n&quot;)}&quot;</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">invoke_all</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">args</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-keyword kw">nil</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Array</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span> <span class="ruby-operator">||</span> <span class="ruby-constant">NilClass</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span>
+      <span class="ruby-identifier">task</span>, <span class="ruby-identifier">args</span>, <span class="ruby-identifier">opts</span>, <span class="ruby-identifier">config</span> = <span class="ruby-identifier">args</span>
+
+      <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">task</span> = <span class="ruby-identifier">_retrieve_class_and_task</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">task</span>)
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Expected Thor class, got #{klass}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">Thor</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+
+      <span class="ruby-identifier">args</span>, <span class="ruby-identifier">opts</span>, <span class="ruby-identifier">config</span> = <span class="ruby-identifier">_parse_initialization_options</span>(<span class="ruby-identifier">args</span>, <span class="ruby-identifier">opts</span>, <span class="ruby-identifier">config</span>)
+      <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">:dispatch</span>, <span class="ruby-identifier">task</span>, <span class="ruby-identifier">args</span>, <span class="ruby-identifier">opts</span>, <span class="ruby-identifier">config</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

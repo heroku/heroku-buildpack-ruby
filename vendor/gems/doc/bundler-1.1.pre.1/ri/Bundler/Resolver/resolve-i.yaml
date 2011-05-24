@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::Resolver#resolve
+is_singleton: false
+name: resolve
+params: (reqs, activated)
+visibility: public

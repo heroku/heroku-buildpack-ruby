@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: The banner for this class. You can customize it if you are invoking the thor class by another ways which is not the Thor::Runner. It receives the task that is going to be invoked and a boolean which indicates if the namespace should be displayed as arguments.
+full_name: Thor::banner
+is_singleton: true
+name: banner
+params: (task, namespace = nil, subcommand = false)
+visibility: protected

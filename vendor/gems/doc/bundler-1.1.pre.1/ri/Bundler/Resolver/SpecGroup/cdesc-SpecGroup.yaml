@@ -1,0 +1,39 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: activated
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: required_by
+  rw: R
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: []
+
+full_name: Bundler::Resolver::SpecGroup
+includes: 
+- !ruby/object:RI::IncludedModule 
+  name: GemHelpers
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: activate_platform
+- !ruby/object:RI::MethodSummary 
+  name: for?
+- !ruby/object:RI::MethodSummary 
+  name: initialize_copy
+- !ruby/object:RI::MethodSummary 
+  name: name
+- !ruby/object:RI::MethodSummary 
+  name: source
+- !ruby/object:RI::MethodSummary 
+  name: to_s
+- !ruby/object:RI::MethodSummary 
+  name: to_specs
+- !ruby/object:RI::MethodSummary 
+  name: version
+name: SpecGroup
+superclass: Array

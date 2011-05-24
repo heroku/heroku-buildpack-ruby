@@ -1,0 +1,32 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Figures out the best possible configuration of gems that satisfies the list of passed dependencies and any child dependencies without causing any gem activation errors.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Parameters
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "*dependencies<Gem::Dependency>:"
+    body: The list of dependencies to resolve
+  type: :NOTE
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Returns
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "<GemBundle>,nil:"
+    body: If the list of dependencies can be resolved, a
+  type: :NOTE
+- !ruby/struct:SM::Flow::VERB 
+  body: "  collection of gemspecs is returned. Otherwise, nil is returned.\n"
+full_name: Bundler::Resolver::resolve
+is_singleton: true
+name: resolve
+params: (requirements, index, source_requirements = {}, base = [])
+visibility: public

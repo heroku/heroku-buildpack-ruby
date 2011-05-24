@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Return the path to the ruby interpreter taking into account multiple installations and windows extensions.
+full_name: Thor::Util::ruby_command
+is_singleton: true
+name: ruby_command
+params: ()
+visibility: public

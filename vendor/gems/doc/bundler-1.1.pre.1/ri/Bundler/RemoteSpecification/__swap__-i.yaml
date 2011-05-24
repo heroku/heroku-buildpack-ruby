@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Because Rubyforge cannot be trusted to provide valid specifications once the remote gem is downloaded, the backend specification will be swapped out.
+full_name: Bundler::RemoteSpecification#__swap__
+is_singleton: false
+name: __swap__
+params: (spec)
+visibility: public

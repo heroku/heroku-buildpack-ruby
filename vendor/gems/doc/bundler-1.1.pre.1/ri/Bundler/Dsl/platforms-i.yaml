@@ -1,0 +1,11 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: 
+- !ruby/object:RI::AliasName 
+  name: platform
+block_params: ""
+comment: 
+full_name: Bundler::Dsl#platforms
+is_singleton: false
+name: platforms
+params: (*platforms) {|| ...}
+visibility: public

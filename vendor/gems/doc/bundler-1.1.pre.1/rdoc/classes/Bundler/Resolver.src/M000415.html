@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>error_message (Bundler::Resolver)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/resolver.rb, line 409</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">error_message</span>
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-value str">&quot;&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">o</span>, (<span class="ruby-identifier">conflict</span>, (<span class="ruby-identifier">origin</span>, <span class="ruby-identifier">requirement</span>))<span class="ruby-operator">|</span>
+
+        <span class="ruby-comment cmt"># origin is the SpecSet of specs from the Gemfile that is conflicted with</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">origin</span>
+
+          <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">%{Bundler could not find compatible versions for gem &quot;#{origin.name}&quot;:\n}</span>
+          <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;  In Gemfile:\n&quot;</span>
+
+          <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">gem_message</span>(<span class="ruby-identifier">requirement</span>)
+
+          <span class="ruby-comment cmt"># If the origin is &quot;bundler&quot;, the conflict is us</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">origin</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;bundler&quot;</span>
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;  Current Bundler version:\n&quot;</span>
+            <span class="ruby-identifier">newer_bundler_required</span> = <span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">requirement</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">Gem</span><span class="ruby-operator">::</span><span class="ruby-constant">Requirement</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">origin</span>.<span class="ruby-identifier">version</span>)
+          <span class="ruby-comment cmt"># If the origin is a LockfileParser, it does not respond_to :required_by</span>
+          <span class="ruby-keyword kw">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">origin</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:required_by</span>) <span class="ruby-operator">||</span> <span class="ruby-operator">!</span>(<span class="ruby-identifier">origin</span>.<span class="ruby-identifier">required_by</span>.<span class="ruby-identifier">first</span>)
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;  In snapshot (Gemfile.lock):\n&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+
+          <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">gem_message</span>(<span class="ruby-identifier">origin</span>)
+
+          <span class="ruby-comment cmt"># If the bundle wants a newer bundler than the running bundler, explain</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">origin</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;bundler&quot;</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">newer_bundler_required</span>
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;Your version of Bundler is older than the one requested by the Gemfile.\n&quot;</span>
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;Perhaps you need to update Bundler by running `gem install bundler`.&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-comment cmt"># origin is nil if the required gem and version cannot be found in any of</span>
+        <span class="ruby-comment cmt"># the specified sources</span>
+        <span class="ruby-keyword kw">else</span>
+
+          <span class="ruby-comment cmt"># if the gem cannot be found because of a version conflict between lockfile and gemfile,</span>
+          <span class="ruby-comment cmt"># print a useful error that suggests running `bundle update`, which may fix things</span>
+          <span class="ruby-comment cmt">#</span>
+          <span class="ruby-comment cmt"># @base is a SpecSet of the gems in the lockfile</span>
+          <span class="ruby-comment cmt"># conflict is the name of the gem that could not be found</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">locked</span> = <span class="ruby-ivar">@base</span>[<span class="ruby-identifier">conflict</span>].<span class="ruby-identifier">first</span>
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Bundler could not find compatible versions for gem #{conflict.inspect}:\n&quot;</span>
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;  In snapshot (Gemfile.lock):\n&quot;</span>
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;    #{clean_req(locked)}\n\n&quot;</span>
+
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;  In Gemfile:\n&quot;</span>
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">gem_message</span>(<span class="ruby-identifier">requirement</span>)
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;Running `bundle update` will rebuild your snapshot from scratch, using only\n&quot;</span>
+            <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;the gems in your Gemfile, which may resolve the conflict.\n&quot;</span>
+
+          <span class="ruby-comment cmt"># the rest of the time, the gem cannot be found because it does not exist in the known sources</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">required_by</span>.<span class="ruby-identifier">first</span>
+              <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Could not find gem '#{clean_req(requirement)}', required by '#{clean_req(requirement.required_by.first)}', in any of the sources\n&quot;</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">o</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Could not find gem '#{clean_req(requirement)} in any of the sources\n&quot;</span>
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">o</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

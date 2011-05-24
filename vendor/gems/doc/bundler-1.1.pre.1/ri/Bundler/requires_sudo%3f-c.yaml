@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::requires_sudo?
+is_singleton: true
+name: requires_sudo?
+params: ()
+visibility: public

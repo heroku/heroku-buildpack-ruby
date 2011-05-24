@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Hold source paths for one Thor instance. source_paths_for_search is the method responsible to gather source_paths from this current class, inherited paths and the source root.
+full_name: Thor::Actions::ClassMethods#source_paths
+is_singleton: false
+name: source_paths
+params: ()
+visibility: public

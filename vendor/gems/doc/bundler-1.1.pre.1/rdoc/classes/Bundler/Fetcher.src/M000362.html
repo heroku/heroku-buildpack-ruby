@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>fetch_remote_specs (Bundler::Fetcher)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/fetcher.rb, line 25</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">fetch_remote_specs</span>(<span class="ruby-identifier">gem_names</span>, <span class="ruby-identifier">full_dependency_list</span> = [], <span class="ruby-identifier">last_spec_list</span> = [], <span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">fetch_all_remote_specs</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">gem_names</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@remote_uri</span>.<span class="ruby-identifier">scheme</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;file&quot;</span>
+
+      <span class="ruby-identifier">query_list</span> = <span class="ruby-identifier">gem_names</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">full_dependency_list</span>
+      <span class="ruby-constant">Bundler</span>.<span class="ruby-identifier">ui</span>.<span class="ruby-identifier">debug</span> <span class="ruby-node">&quot;Query List: #{query_list.inspect}&quot;</span>
+      <span class="ruby-keyword kw">return</span> {<span class="ruby-ivar">@remote_uri</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">last_spec_list</span>}.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">query_list</span>.<span class="ruby-identifier">empty?</span>
+
+      <span class="ruby-identifier">spec_list</span>, <span class="ruby-identifier">deps_list</span> = <span class="ruby-identifier">fetch_dependency_remote_specs</span>(<span class="ruby-identifier">query_list</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)
+      <span class="ruby-identifier">returned_gems</span> = <span class="ruby-identifier">spec_list</span>.<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">spec</span><span class="ruby-operator">|</span> <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">first</span> }.<span class="ruby-identifier">uniq</span>
+
+      <span class="ruby-identifier">fetch_remote_specs</span>(<span class="ruby-identifier">deps_list</span>, <span class="ruby-identifier">full_dependency_list</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">returned_gems</span>, <span class="ruby-identifier">spec_list</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">last_spec_list</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)
+    <span class="ruby-comment cmt"># fall back to the legacy index in the following cases</span>
+    <span class="ruby-comment cmt"># 1.) Gemcutter Endpoint doesn't return a 200</span>
+    <span class="ruby-comment cmt"># 2.) Marshal blob doesn't load properly</span>
+    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">HTTPError</span>, <span class="ruby-constant">TypeError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-constant">Bundler</span>.<span class="ruby-identifier">ui</span>.<span class="ruby-identifier">debug</span> <span class="ruby-node">&quot;Error #{e.class} from Gemcutter Dependency Endpoint API: #{e.message}&quot;</span>
+      <span class="ruby-constant">Bundler</span>.<span class="ruby-identifier">ui</span>.<span class="ruby-identifier">debug</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">backtrace</span>
+      <span class="ruby-identifier">fetch_all_remote_specs</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Gem::Dependency#matches_spec?
+is_singleton: false
+name: matches_spec?
+params: (spec)
+visibility: public

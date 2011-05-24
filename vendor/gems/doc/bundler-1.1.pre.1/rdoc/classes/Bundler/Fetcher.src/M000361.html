@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>fetch_spec (Bundler::Fetcher)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/fetcher.rb, line 14</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">fetch_spec</span>(<span class="ruby-identifier">spec</span>)
+      <span class="ruby-identifier">spec</span> = <span class="ruby-identifier">spec</span> <span class="ruby-operator">-</span> [<span class="ruby-keyword kw">nil</span>, <span class="ruby-value str">'ruby'</span>, <span class="ruby-value str">''</span>]
+      <span class="ruby-identifier">spec_file_name</span> = <span class="ruby-node">&quot;#{spec.join '-'}.gemspec.rz&quot;</span>
+
+      <span class="ruby-identifier">uri</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-node">&quot;#{@remote_uri}#{Gem::MARSHAL_SPEC_DIR}#{spec_file_name}&quot;</span>)
+
+      <span class="ruby-identifier">spec_rz</span> = (<span class="ruby-identifier">uri</span>.<span class="ruby-identifier">scheme</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;file&quot;</span>) <span class="ruby-operator">?</span> <span class="ruby-constant">Gem</span>.<span class="ruby-identifier">read_binary</span>(<span class="ruby-identifier">uri</span>.<span class="ruby-identifier">path</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">uri</span>)
+      <span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">load</span> <span class="ruby-constant">Gem</span>.<span class="ruby-identifier">inflate</span>(<span class="ruby-identifier">spec_rz</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

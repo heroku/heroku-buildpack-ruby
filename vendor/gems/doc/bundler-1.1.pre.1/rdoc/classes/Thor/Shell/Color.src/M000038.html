@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>set_color (Thor::Shell::Color)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/shell/color.rb, line 53</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_color</span>(<span class="ruby-identifier">string</span>, <span class="ruby-identifier">color</span>, <span class="ruby-identifier">bold</span>=<span class="ruby-keyword kw">false</span>)
+        <span class="ruby-identifier">color</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">color</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">upcase</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">color</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Symbol</span>)
+        <span class="ruby-identifier">bold</span>  = <span class="ruby-identifier">bold</span> <span class="ruby-value">? </span><span class="ruby-constant">BOLD</span> <span class="ruby-operator">:</span> <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-node">&quot;#{bold}#{color}#{string}#{CLEAR}&quot;</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Make a question the to user and returns true if the user replies &quot;y&quot; or &quot;yes&quot;.
+full_name: Thor::Shell::Basic#yes?
+is_singleton: false
+name: yes?
+params: (statement, color=nil)
+visibility: public

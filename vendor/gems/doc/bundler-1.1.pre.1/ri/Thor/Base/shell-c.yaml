@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Returns the shell used in all Thor classes. If you are in a Unix platform it will use a colored log, otherwise it will use a basic one without color.
+full_name: Thor::Base::shell
+is_singleton: true
+name: shell
+params: ()
+visibility: public

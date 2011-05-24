@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>file_collision (Thor::Shell::Basic)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/shell/basic.rb, line 156</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">file_collision</span>(<span class="ruby-identifier">destination</span>)
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@always_force</span>
+        <span class="ruby-identifier">options</span> = <span class="ruby-identifier">block_given?</span> <span class="ruby-value">? </span><span class="ruby-value str">&quot;[Ynaqdh]&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-value str">&quot;[Ynaqh]&quot;</span>
+
+        <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+          <span class="ruby-identifier">answer</span> = <span class="ruby-identifier">ask</span> <span class="ruby-node">%[Overwrite #{destination}? (enter &quot;h&quot; for help) #{options}]</span>
+
+          <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">answer</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">is?</span>(<span class="ruby-identifier">:yes</span>), <span class="ruby-identifier">is?</span>(<span class="ruby-identifier">:force</span>), <span class="ruby-value str">&quot;&quot;</span>
+              <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">is?</span>(<span class="ruby-identifier">:no</span>), <span class="ruby-identifier">is?</span>(<span class="ruby-identifier">:skip</span>)
+              <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">is?</span>(<span class="ruby-identifier">:always</span>)
+              <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@always_force</span> = <span class="ruby-keyword kw">true</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">is?</span>(<span class="ruby-identifier">:quit</span>)
+              <span class="ruby-identifier">say</span> <span class="ruby-value str">'Aborting...'</span>
+              <span class="ruby-identifier">raise</span> <span class="ruby-constant">SystemExit</span>
+            <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">is?</span>(<span class="ruby-identifier">:diff</span>)
+              <span class="ruby-identifier">show_diff</span>(<span class="ruby-identifier">destination</span>, <span class="ruby-keyword kw">yield</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+              <span class="ruby-identifier">say</span> <span class="ruby-value str">'Retrying...'</span>
+            <span class="ruby-keyword kw">else</span>
+              <span class="ruby-identifier">say</span> <span class="ruby-identifier">file_collision_help</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

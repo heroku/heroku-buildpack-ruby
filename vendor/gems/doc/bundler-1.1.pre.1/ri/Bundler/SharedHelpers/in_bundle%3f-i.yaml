@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::SharedHelpers#in_bundle?
+is_singleton: false
+name: in_bundle?
+params: ()
+visibility: public

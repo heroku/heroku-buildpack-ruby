@@ -1,0 +1,17 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Returns the files where the subclasses are kept.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Returns
+- !ruby/struct:SM::Flow::P 
+  body: Hash[path&lt;String&gt; =&gt; Class]
+full_name: Thor::Base::subclass_files
+is_singleton: true
+name: subclass_files
+params: ()
+visibility: public

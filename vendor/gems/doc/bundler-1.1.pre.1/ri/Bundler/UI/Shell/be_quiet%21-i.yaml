@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::UI::Shell#be_quiet!
+is_singleton: false
+name: be_quiet!
+params: ()
+visibility: public

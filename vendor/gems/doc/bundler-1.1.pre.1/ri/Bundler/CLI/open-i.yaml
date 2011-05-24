@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::CLI#open
+is_singleton: false
+name: open
+params: (name)
+visibility: public

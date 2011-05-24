@@ -1,0 +1,24 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  name: USER_OPTIONS
+  value: "{:style => 'filled', :fillcolor => '#B9B9D5'}.freeze"
+full_name: Bundler::Graph
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: groups
+- !ruby/object:RI::MethodSummary 
+  name: nodes
+- !ruby/object:RI::MethodSummary 
+  name: viz
+name: Graph
+superclass: Object

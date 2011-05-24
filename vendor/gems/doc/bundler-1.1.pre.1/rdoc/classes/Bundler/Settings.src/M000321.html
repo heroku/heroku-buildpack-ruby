@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>pretty_values_for (Bundler::Settings)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/settings.rb, line 44</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pretty_values_for</span>(<span class="ruby-identifier">exposed_key</span>)
+      <span class="ruby-identifier">key</span> = <span class="ruby-identifier">key_for</span>(<span class="ruby-identifier">exposed_key</span>)
+
+      <span class="ruby-identifier">locations</span> = []
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@local_config</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">key</span>)
+        <span class="ruby-identifier">locations</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Set for your local app (#{local_config_file}): #{@local_config[key].inspect}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-identifier">key</span>]
+        <span class="ruby-identifier">locations</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Set via #{key}: #{value.inspect}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@global_config</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">key</span>)
+        <span class="ruby-identifier">locations</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Set for the current user (#{global_config_file}): #{@global_config[key].inspect}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">return</span> [<span class="ruby-node">&quot;You have not configured a value for `#{exposed_key}`&quot;</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">locations</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">locations</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

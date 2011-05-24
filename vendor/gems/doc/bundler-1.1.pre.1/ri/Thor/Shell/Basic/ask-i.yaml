@@ -1,0 +1,17 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Ask something to the user and receives a response.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Example
+- !ruby/struct:SM::Flow::P 
+  body: ask(&quot;What is your name?&quot;)
+full_name: Thor::Shell::Basic#ask
+is_singleton: false
+name: ask
+params: (statement, color=nil)
+visibility: public

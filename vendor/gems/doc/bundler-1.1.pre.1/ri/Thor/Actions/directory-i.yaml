@@ -1,0 +1,42 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: "Copies recursively the files from source directory to root directory. If any of the files finishes with .tt, it's considered to be a template and is placed in the destination without the extension .tt. If any empty directory is found, it's copied and all .empty_directory files are ignored. Remember that file paths can also be encoded, let's suppose a doc directory with the following files:"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  doc/\n    components/.empty_directory\n    README\n    rdoc.rb.tt\n    %app_name%.rb\n"
+- !ruby/struct:SM::Flow::P 
+  body: "When invoked as:"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  directory &quot;doc&quot;\n"
+- !ruby/struct:SM::Flow::P 
+  body: "It will create a doc directory in the destination with the following files (assuming that the app_name is &quot;blog&quot;):"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  doc/\n    components/\n    README\n    rdoc.rb\n    blog.rb\n"
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Parameters
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "source<String>:"
+    body: the relative path to the source root.
+  - !ruby/struct:SM::Flow::LI 
+    label: "destination<String>:"
+    body: the relative path to the destination root.
+  - !ruby/struct:SM::Flow::LI 
+    label: "config<Hash>:"
+    body: give :verbose =&gt; false to not log the status. If :recursive =&gt; false, does not look for paths recursively.
+  type: :NOTE
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Examples
+- !ruby/struct:SM::Flow::VERB 
+  body: "  directory &quot;doc&quot;\n  directory &quot;doc&quot;, &quot;docs&quot;, :recursive =&gt; false\n"
+full_name: Thor::Actions#directory
+is_singleton: false
+name: directory
+params: (source, *args, &block)
+visibility: public

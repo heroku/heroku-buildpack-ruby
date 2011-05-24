@@ -1,0 +1,32 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: shell
+  rw: W
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: []
+
+full_name: Bundler::UI::Shell
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: be_quiet!
+- !ruby/object:RI::MethodSummary 
+  name: confirm
+- !ruby/object:RI::MethodSummary 
+  name: debug
+- !ruby/object:RI::MethodSummary 
+  name: debug!
+- !ruby/object:RI::MethodSummary 
+  name: error
+- !ruby/object:RI::MethodSummary 
+  name: info
+- !ruby/object:RI::MethodSummary 
+  name: warn
+name: Shell
+superclass: UI

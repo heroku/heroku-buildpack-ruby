@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Gem::Specification#git_version
+is_singleton: false
+name: git_version
+params: ()
+visibility: public

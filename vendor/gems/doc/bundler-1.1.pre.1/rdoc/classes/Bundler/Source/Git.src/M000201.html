@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Bundler::Source::Git)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/source.rb, line 455</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">options</span>)
+        <span class="ruby-keyword kw">super</span>
+
+        <span class="ruby-comment cmt"># stringify options that could be set as symbols</span>
+        <span class="ruby-node">%w(ref branch tag revision)</span>.<span class="ruby-identifier">each</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">k</span><span class="ruby-operator">|</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">k</span>].<span class="ruby-identifier">to_s</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">k</span>] }
+
+        <span class="ruby-ivar">@uri</span>        = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;uri&quot;</span>]
+        <span class="ruby-ivar">@ref</span>        = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;ref&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;branch&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;tag&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">'master'</span>
+        <span class="ruby-ivar">@revision</span>   = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;revision&quot;</span>]
+        <span class="ruby-ivar">@submodules</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value str">&quot;submodules&quot;</span>]
+        <span class="ruby-ivar">@update</span>     = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

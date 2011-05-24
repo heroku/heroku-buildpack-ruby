@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Gem::Specification#to_gemfile
+is_singleton: false
+name: to_gemfile
+params: (path = nil)
+visibility: public

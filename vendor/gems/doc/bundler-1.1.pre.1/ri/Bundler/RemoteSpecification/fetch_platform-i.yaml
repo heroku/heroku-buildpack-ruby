@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Needed before installs, since the arch matters then and quick specs don't bother to include the arch in the platform string
+full_name: Bundler::RemoteSpecification#fetch_platform
+is_singleton: false
+name: fetch_platform
+params: ()
+visibility: public

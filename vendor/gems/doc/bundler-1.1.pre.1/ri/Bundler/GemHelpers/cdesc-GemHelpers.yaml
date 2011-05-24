@@ -1,0 +1,23 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  name: GENERIC_CACHE
+  value: "{}"
+- !ruby/object:RI::Constant 
+  comment: 
+  name: GENERICS
+  value: "[       Gem::Platform::JAVA,       Gem::Platform::MSWIN,       Gem::Platform::MINGW,       Gem::Platform::RUBY"
+full_name: Bundler::GemHelpers
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: generic
+name: GemHelpers
+superclass: 

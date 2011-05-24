@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::Resolver#successify
+is_singleton: false
+name: successify
+params: (activated)
+visibility: public

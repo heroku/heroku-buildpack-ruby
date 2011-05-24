@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: ""
+comment: 
+full_name: Bundler::Dsl#env
+is_singleton: false
+name: env
+params: (name) {|| ...}
+visibility: public

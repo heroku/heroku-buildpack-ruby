@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::Definition#specs
+is_singleton: false
+name: specs
+params: ()
+visibility: public

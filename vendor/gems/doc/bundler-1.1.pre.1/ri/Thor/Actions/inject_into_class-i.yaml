@@ -1,0 +1,35 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Injects text right after the class definition. Since it depends on inject_into_file, it's reversible.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Parameters
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "path<String>:"
+    body: path of the file to be changed
+  - !ruby/struct:SM::Flow::LI 
+    label: "klass<String|Class>:"
+    body: the class to be manipulated
+  - !ruby/struct:SM::Flow::LI 
+    label: "data<String>:"
+    body: the data to append to the class, can be also given as a block.
+  - !ruby/struct:SM::Flow::LI 
+    label: "config<Hash>:"
+    body: give :verbose =&gt; false to not log the status.
+  type: :NOTE
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Examples
+- !ruby/struct:SM::Flow::VERB 
+  body: "  inject_into_class &quot;app/controllers/application_controller.rb&quot;, &quot;  filter_parameter :password\\n&quot;\n\n  inject_into_class &quot;app/controllers/application_controller.rb&quot;, ApplicationController do\n    &quot;  filter_parameter :password\\n&quot;\n  end\n"
+full_name: Thor::Actions#inject_into_class
+is_singleton: false
+name: inject_into_class
+params: (path, klass, *args, &block)
+visibility: public

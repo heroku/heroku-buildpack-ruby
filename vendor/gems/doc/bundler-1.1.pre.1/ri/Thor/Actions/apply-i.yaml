@@ -1,0 +1,26 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Loads an external file and execute it in the instance binding.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Parameters
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "path<String>:"
+    body: The path to the file to execute. Can be a web address or a relative path from the source root.
+  type: :NOTE
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Examples
+- !ruby/struct:SM::Flow::VERB 
+  body: "  apply &quot;http://gist.github.com/103208&quot;\n\n  apply &quot;recipes/jquery.rb&quot;\n"
+full_name: Thor::Actions#apply
+is_singleton: false
+name: apply
+params: (path, config={})
+visibility: public

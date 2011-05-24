@@ -1,0 +1,24 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+constants: []
+
+full_name: Bundler::UI
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: confirm
+- !ruby/object:RI::MethodSummary 
+  name: debug
+- !ruby/object:RI::MethodSummary 
+  name: error
+- !ruby/object:RI::MethodSummary 
+  name: info
+- !ruby/object:RI::MethodSummary 
+  name: warn
+name: UI
+superclass: Object

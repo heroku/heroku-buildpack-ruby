@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>install (Bundler::Source::Rubygems)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/source.rb, line 79</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">install</span>(<span class="ruby-identifier">spec</span>)
+        <span class="ruby-identifier">path</span> = <span class="ruby-identifier">cached_gem</span>(<span class="ruby-identifier">spec</span>)
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">installed_specs</span>[<span class="ruby-identifier">spec</span>].<span class="ruby-identifier">any?</span>
+          <span class="ruby-constant">Bundler</span>.<span class="ruby-identifier">ui</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Using #{spec.name} (#{spec.version}) &quot;</span>
+          <span class="ruby-keyword kw">return</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-constant">Bundler</span>.<span class="ruby-identifier">ui</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Installing #{spec.name} (#{spec.version}) &quot;</span>
+
+        <span class="ruby-identifier">install_path</span> = <span class="ruby-constant">Bundler</span>.<span class="ruby-identifier">requires_sudo?</span> <span class="ruby-value">? </span><span class="ruby-constant">Bundler</span>.<span class="ruby-identifier">tmp</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Gem</span>.<span class="ruby-identifier">dir</span>
+        <span class="ruby-identifier">options</span> = { <span class="ruby-identifier">:install_dir</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">install_path</span>,
+                    <span class="ruby-identifier">:ignore_dependencies</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>,
+                    <span class="ruby-identifier">:wrappers</span>            =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>,
+                    <span class="ruby-identifier">:env_shebang</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span> }
+        <span class="ruby-identifier">options</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">:bin_dir</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;#{install_path}/bin&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">executables</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">executables</span>.<span class="ruby-identifier">empty?</span>
+
+        <span class="ruby-identifier">installer</span> = <span class="ruby-constant">Gem</span><span class="ruby-operator">::</span><span class="ruby-constant">Installer</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">path</span>, <span class="ruby-identifier">options</span>
+        <span class="ruby-identifier">installer</span>.<span class="ruby-identifier">install</span>
+
+        <span class="ruby-comment cmt"># SUDO HAX</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Bundler</span>.<span class="ruby-identifier">requires_sudo?</span>
+          <span class="ruby-identifier">sudo</span> <span class="ruby-node">&quot;mkdir -p #{Gem.dir}/gems #{Gem.dir}/specifications&quot;</span>
+          <span class="ruby-identifier">sudo</span> <span class="ruby-node">&quot;cp -R #{Bundler.tmp}/gems/#{spec.full_name} #{Gem.dir}/gems/&quot;</span>
+          <span class="ruby-identifier">sudo</span> <span class="ruby-node">&quot;cp -R #{Bundler.tmp}/specifications/#{spec.full_name}.gemspec #{Gem.dir}/specifications/&quot;</span>
+          <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">executables</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">exe</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">sudo</span> <span class="ruby-node">&quot;mkdir -p #{Gem.bindir}&quot;</span>
+            <span class="ruby-identifier">sudo</span> <span class="ruby-node">&quot;cp -R #{Bundler.tmp}/bin/#{exe} #{Gem.bindir}&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">loaded_from</span> = <span class="ruby-node">&quot;#{Gem.dir}/specifications/#{spec.full_name}.gemspec&quot;</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,11 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: 
+- !ruby/object:RI::AliasName 
+  name: specs
+block_params: 
+comment: 
+full_name: Bundler::Source::Path#local_specs
+is_singleton: false
+name: local_specs
+params: (*)
+visibility: public

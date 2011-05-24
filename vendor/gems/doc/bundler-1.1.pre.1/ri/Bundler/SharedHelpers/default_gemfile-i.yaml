@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::SharedHelpers#default_gemfile
+is_singleton: false
+name: default_gemfile
+params: ()
+visibility: public

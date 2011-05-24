@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>namespaces_in_content (Thor::Util)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/util.rb, line 58</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">namespaces_in_content</span>(<span class="ruby-identifier">contents</span>, <span class="ruby-identifier">file</span>=<span class="ruby-keyword kw">__FILE__</span>)
+      <span class="ruby-identifier">old_constants</span> = <span class="ruby-constant">Thor</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">subclasses</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-constant">Thor</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">subclasses</span>.<span class="ruby-identifier">clear</span>
+
+      <span class="ruby-identifier">load_thorfile</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">contents</span>)
+
+      <span class="ruby-identifier">new_constants</span> = <span class="ruby-constant">Thor</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">subclasses</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-constant">Thor</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">subclasses</span>.<span class="ruby-identifier">replace</span>(<span class="ruby-identifier">old_constants</span>)
+
+      <span class="ruby-identifier">new_constants</span>.<span class="ruby-identifier">map!</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">namespace</span> }
+      <span class="ruby-identifier">new_constants</span>.<span class="ruby-identifier">compact!</span>
+      <span class="ruby-identifier">new_constants</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

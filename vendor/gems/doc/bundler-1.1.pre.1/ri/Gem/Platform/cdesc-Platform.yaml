@@ -1,0 +1,27 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  name: JAVA
+  value: Gem::Platform.new('java')
+- !ruby/object:RI::Constant 
+  comment: 
+  name: MSWIN
+  value: Gem::Platform.new('mswin32')
+- !ruby/object:RI::Constant 
+  comment: 
+  name: MINGW
+  value: Gem::Platform.new('x86-mingw32')
+full_name: Gem::Platform
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: hash
+name: Platform
+superclass: Object

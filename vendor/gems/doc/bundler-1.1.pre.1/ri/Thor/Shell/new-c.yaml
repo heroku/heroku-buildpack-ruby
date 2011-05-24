@@ -1,0 +1,26 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Add shell to initialize config values.
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Configuration
+- !ruby/object:SM::Flow::LIST 
+  contents: 
+  - !ruby/struct:SM::Flow::LI 
+    label: "shell<Object>:"
+    body: An instance of the shell to be used.
+  type: :NOTE
+- !ruby/struct:SM::Flow::H 
+  level: 4
+  text: Examples
+- !ruby/struct:SM::Flow::VERB 
+  body: "  class MyScript &lt; Thor\n    argument :first, :type =&gt; :numeric\n  end\n\n  MyScript.new [1.0], { :foo =&gt; :bar }, :shell =&gt; Thor::Shell::Basic.new\n"
+full_name: Thor::Shell::new
+is_singleton: true
+name: new
+params: (args=[], options={}, config={})
+visibility: public

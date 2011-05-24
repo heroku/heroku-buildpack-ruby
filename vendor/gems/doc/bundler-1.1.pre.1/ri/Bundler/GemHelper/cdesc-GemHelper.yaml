@@ -1,0 +1,62 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: base
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: gemspec
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: spec_path
+  rw: R
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: install_tasks
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: []
+
+full_name: Bundler::GemHelper
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: build_gem
+- !ruby/object:RI::MethodSummary 
+  name: built_gem_path
+- !ruby/object:RI::MethodSummary 
+  name: clean?
+- !ruby/object:RI::MethodSummary 
+  name: git_push
+- !ruby/object:RI::MethodSummary 
+  name: guard_already_tagged
+- !ruby/object:RI::MethodSummary 
+  name: guard_clean
+- !ruby/object:RI::MethodSummary 
+  name: install
+- !ruby/object:RI::MethodSummary 
+  name: install_gem
+- !ruby/object:RI::MethodSummary 
+  name: name
+- !ruby/object:RI::MethodSummary 
+  name: perform_git_push
+- !ruby/object:RI::MethodSummary 
+  name: release_gem
+- !ruby/object:RI::MethodSummary 
+  name: rubygem_push
+- !ruby/object:RI::MethodSummary 
+  name: sh
+- !ruby/object:RI::MethodSummary 
+  name: sh_with_code
+- !ruby/object:RI::MethodSummary 
+  name: tag_version
+- !ruby/object:RI::MethodSummary 
+  name: version
+- !ruby/object:RI::MethodSummary 
+  name: version_tag
+name: GemHelper
+superclass: Object

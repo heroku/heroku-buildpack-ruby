@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>user_home (Thor::Util)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/util.rb, line 165</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">user_home</span>
+      <span class="ruby-ivar">@@user_home</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;HOME&quot;</span>]
+        <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;HOME&quot;</span>]
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;USERPROFILE&quot;</span>]
+        <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;USERPROFILE&quot;</span>]
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;HOMEDRIVE&quot;</span>] <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;HOMEPATH&quot;</span>]
+        <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;HOMEDRIVE&quot;</span>], <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;HOMEPATH&quot;</span>])
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;APPDATA&quot;</span>]
+        <span class="ruby-constant">ENV</span>[<span class="ruby-value str">&quot;APPDATA&quot;</span>]
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">begin</span>
+          <span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-value str">&quot;~&quot;</span>)
+        <span class="ruby-keyword kw">rescue</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span><span class="ruby-operator">::</span><span class="ruby-constant">ALT_SEPARATOR</span>
+            <span class="ruby-value str">&quot;C:/&quot;</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-value str">&quot;/&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

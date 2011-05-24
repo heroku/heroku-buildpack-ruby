@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Bundler::LockfileParser)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/lockfile_parser.rb, line 7</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">lockfile</span>)
+      <span class="ruby-ivar">@platforms</span>    = []
+      <span class="ruby-ivar">@sources</span>      = []
+      <span class="ruby-ivar">@dependencies</span> = []
+      <span class="ruby-ivar">@specs</span>        = []
+      <span class="ruby-ivar">@state</span>        = <span class="ruby-identifier">:source</span>
+
+      <span class="ruby-identifier">lockfile</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/(\r?\n)+/</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;DEPENDENCIES&quot;</span>
+          <span class="ruby-ivar">@state</span> = <span class="ruby-identifier">:dependency</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;PLATFORMS&quot;</span>
+          <span class="ruby-ivar">@state</span> = <span class="ruby-identifier">:platform</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">send</span>(<span class="ruby-node">&quot;parse_#{@state}&quot;</span>, <span class="ruby-identifier">line</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

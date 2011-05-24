@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Creates a new connection for <tt>uri</tt>
+full_name: Net::HTTP::Persistent#connection_for
+is_singleton: false
+name: connection_for
+params: (uri)
+visibility: public

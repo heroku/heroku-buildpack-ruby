@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::Settings#pretty_values_for
+is_singleton: false
+name: pretty_values_for
+params: (exposed_key)
+visibility: public

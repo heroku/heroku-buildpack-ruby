@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::Dsl#to_definition
+is_singleton: false
+name: to_definition
+params: (lockfile, unlock)
+visibility: public

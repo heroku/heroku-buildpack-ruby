@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Thor::Task#not_debugging?
+is_singleton: false
+name: not_debugging?
+params: (instance)
+visibility: protected

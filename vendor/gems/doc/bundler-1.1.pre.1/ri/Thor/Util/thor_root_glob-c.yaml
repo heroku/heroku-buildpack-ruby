@@ -1,0 +1,16 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: "Returns the files in the thor root. On Windows thor_root will be something like this:"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  C:\\Documents and Settings\\james\\.thor\n"
+- !ruby/struct:SM::Flow::P 
+  body: "If we don't #gsub the \\ character, Dir.glob will fail."
+full_name: Thor::Util::thor_root_glob
+is_singleton: true
+name: thor_root_glob
+params: ()
+visibility: public

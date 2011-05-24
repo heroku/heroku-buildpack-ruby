@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::app_config_path
+is_singleton: true
+name: app_config_path
+params: ()
+visibility: public

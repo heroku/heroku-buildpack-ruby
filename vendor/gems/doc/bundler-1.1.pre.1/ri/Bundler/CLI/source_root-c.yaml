@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::CLI::source_root
+is_singleton: true
+name: source_root
+params: ()
+visibility: public

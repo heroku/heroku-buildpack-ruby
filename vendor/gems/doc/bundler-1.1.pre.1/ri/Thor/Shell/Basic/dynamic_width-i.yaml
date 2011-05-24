@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Calculate the dynamic width of the terminal
+full_name: Thor::Shell::Basic#dynamic_width
+is_singleton: false
+name: dynamic_width
+params: ()
+visibility: protected

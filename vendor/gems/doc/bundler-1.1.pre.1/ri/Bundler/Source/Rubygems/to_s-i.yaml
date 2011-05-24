@@ -1,0 +1,11 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: 
+- !ruby/object:RI::AliasName 
+  name: name
+block_params: 
+comment: 
+full_name: Bundler::Source::Rubygems#to_s
+is_singleton: false
+name: to_s
+params: ()
+visibility: public

@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Gem::Specification#load_paths
+is_singleton: false
+name: load_paths
+params: ()
+visibility: public

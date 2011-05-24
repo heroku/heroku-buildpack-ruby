@@ -1,0 +1,14 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: "Parses the task and options from the given args, instantiate the class and invoke the task. This method is used when the arguments must be parsed from an array. If you are inside Ruby and want to use a Thor class, you can simply initialize it:"
+- !ruby/struct:SM::Flow::VERB 
+  body: "  script = MyScript.new(args, options, config)\n  script.invoke(:task, first_arg, second_arg, third_arg)\n"
+full_name: Thor::Base::ClassMethods#start
+is_singleton: false
+name: start
+params: (given_args=ARGV, config={})
+visibility: public

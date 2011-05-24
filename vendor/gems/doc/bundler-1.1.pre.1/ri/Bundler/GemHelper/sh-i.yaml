@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::GemHelper#sh
+is_singleton: false
+name: sh
+params: (cmd, &block)
+visibility: protected

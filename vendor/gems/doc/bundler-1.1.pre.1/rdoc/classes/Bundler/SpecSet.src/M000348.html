@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>for (Bundler::SpecSet)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/spec_set.rb, line 19</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">for</span>(<span class="ruby-identifier">dependencies</span>, <span class="ruby-identifier">skip</span> = [], <span class="ruby-identifier">check</span> = <span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">match_current_platform</span> = <span class="ruby-keyword kw">false</span>)
+      <span class="ruby-identifier">handled</span>, <span class="ruby-identifier">deps</span>, <span class="ruby-identifier">specs</span> = {}, <span class="ruby-identifier">dependencies</span>.<span class="ruby-identifier">dup</span>, []
+      <span class="ruby-identifier">skip</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">'bundler'</span>
+
+      <span class="ruby-keyword kw">until</span> <span class="ruby-identifier">deps</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">dep</span> = <span class="ruby-identifier">deps</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">handled</span>[<span class="ruby-identifier">dep</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">skip</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">dep</span>.<span class="ruby-identifier">name</span>)
+
+        <span class="ruby-identifier">spec</span> = <span class="ruby-identifier">lookup</span>[<span class="ruby-identifier">dep</span>.<span class="ruby-identifier">name</span>].<span class="ruby-identifier">find</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">match_current_platform</span> <span class="ruby-value">?
+</span>            <span class="ruby-constant">Gem</span><span class="ruby-operator">::</span><span class="ruby-constant">Platform</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">s</span>.<span class="ruby-identifier">platform</span>) <span class="ruby-operator">:</span>
+            <span class="ruby-identifier">s</span>.<span class="ruby-identifier">match_platform</span>(<span class="ruby-identifier">dep</span>.<span class="ruby-identifier">__platform</span>)
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">handled</span>[<span class="ruby-identifier">dep</span>] = <span class="ruby-keyword kw">true</span>
+
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spec</span>
+          <span class="ruby-identifier">specs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">spec</span>
+
+          <span class="ruby-identifier">spec</span>.<span class="ruby-identifier">dependencies</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">d</span>.<span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:development</span>
+            <span class="ruby-identifier">d</span> = <span class="ruby-constant">DepProxy</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">d</span>, <span class="ruby-identifier">dep</span>.<span class="ruby-identifier">__platform</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">match_current_platform</span>
+            <span class="ruby-identifier">deps</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">d</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">check</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">spec</span> = <span class="ruby-identifier">lookup</span>[<span class="ruby-value str">'bundler'</span>].<span class="ruby-identifier">first</span>
+        <span class="ruby-identifier">specs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">spec</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">check</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">true</span> <span class="ruby-operator">:</span> <span class="ruby-constant">SpecSet</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">specs</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

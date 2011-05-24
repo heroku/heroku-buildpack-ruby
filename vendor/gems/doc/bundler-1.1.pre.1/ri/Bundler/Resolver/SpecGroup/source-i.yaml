@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::Resolver::SpecGroup#source
+is_singleton: false
+name: source
+params: ()
+visibility: public

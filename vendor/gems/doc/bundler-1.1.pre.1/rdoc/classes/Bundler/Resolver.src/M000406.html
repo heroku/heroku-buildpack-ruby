@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>successify (Bundler::Resolver)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/resolver.rb, line 153</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">successify</span>(<span class="ruby-identifier">activated</span>)
+      <span class="ruby-identifier">activated</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">to_specs</span> }.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">compact</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

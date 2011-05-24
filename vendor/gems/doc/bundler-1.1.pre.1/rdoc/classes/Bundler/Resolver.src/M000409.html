@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>resolve_requirement (Bundler::Resolver)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/resolver.rb, line 315</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">resolve_requirement</span>(<span class="ruby-identifier">spec_group</span>, <span class="ruby-identifier">requirement</span>, <span class="ruby-identifier">reqs</span>, <span class="ruby-identifier">activated</span>)
+      <span class="ruby-comment cmt"># We are going to try activating the spec. We need to keep track of stack of</span>
+      <span class="ruby-comment cmt"># requirements that got us to the point of activating this gem.</span>
+      <span class="ruby-identifier">spec_group</span>.<span class="ruby-identifier">required_by</span>.<span class="ruby-identifier">replace</span> <span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">required_by</span>
+      <span class="ruby-identifier">spec_group</span>.<span class="ruby-identifier">required_by</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">requirement</span>
+
+      <span class="ruby-identifier">activated</span>[<span class="ruby-identifier">spec_group</span>.<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">spec_group</span>
+      <span class="ruby-identifier">debug</span> { <span class="ruby-node">&quot;  Activating: #{spec_group.name} (#{spec_group.version})&quot;</span> }
+      <span class="ruby-identifier">debug</span> { <span class="ruby-identifier">spec_group</span>.<span class="ruby-identifier">required_by</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;    * #{d.name} (#{d.requirement})&quot;</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>) }
+
+      <span class="ruby-identifier">dependencies</span> = <span class="ruby-identifier">spec_group</span>.<span class="ruby-identifier">activate_platform</span>(<span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">__platform</span>)
+
+      <span class="ruby-comment cmt"># Now, we have to loop through all child dependencies and add them to our</span>
+      <span class="ruby-comment cmt"># array of requirements.</span>
+      <span class="ruby-identifier">debug</span> { <span class="ruby-value str">&quot;    Dependencies&quot;</span>}
+      <span class="ruby-identifier">dependencies</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">dep</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dep</span>.<span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:development</span>
+        <span class="ruby-identifier">debug</span> { <span class="ruby-node">&quot;    * #{dep.name} (#{dep.requirement})&quot;</span> }
+        <span class="ruby-identifier">dep</span>.<span class="ruby-identifier">required_by</span>.<span class="ruby-identifier">replace</span>(<span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">required_by</span>)
+        <span class="ruby-identifier">dep</span>.<span class="ruby-identifier">required_by</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">requirement</span>
+        <span class="ruby-identifier">reqs</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">dep</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-comment cmt"># We create a savepoint and mark it by the name of the requirement that caused</span>
+      <span class="ruby-comment cmt"># the gem to be activated. If the activated gem ever conflicts, we are able to</span>
+      <span class="ruby-comment cmt"># jump back to this point and try another version of the gem.</span>
+      <span class="ruby-identifier">length</span> = <span class="ruby-ivar">@stack</span>.<span class="ruby-identifier">length</span>
+      <span class="ruby-ivar">@stack</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">retval</span> = <span class="ruby-identifier">catch</span>(<span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">name</span>) <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">resolve</span>(<span class="ruby-identifier">reqs</span>, <span class="ruby-identifier">activated</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-comment cmt"># Since we're doing a lot of throw / catches. A push does not necessarily match</span>
+      <span class="ruby-comment cmt"># up to a pop. So, we simply slice the stack back to what it was before the catch</span>
+      <span class="ruby-comment cmt"># block.</span>
+      <span class="ruby-ivar">@stack</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-identifier">length</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>)
+      <span class="ruby-identifier">retval</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

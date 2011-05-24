@@ -1,0 +1,15 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+constants: []
+
+full_name: Bundler::GemspecError
+includes: []
+
+instance_methods: []
+
+name: GemspecError
+superclass: BundlerError

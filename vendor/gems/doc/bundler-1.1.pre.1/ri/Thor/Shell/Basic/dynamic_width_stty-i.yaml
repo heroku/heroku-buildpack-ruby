@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Thor::Shell::Basic#dynamic_width_stty
+is_singleton: false
+name: dynamic_width_stty
+params: ()
+visibility: protected

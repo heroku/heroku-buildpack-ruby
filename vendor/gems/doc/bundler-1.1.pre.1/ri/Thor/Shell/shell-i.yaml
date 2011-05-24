@@ -1,0 +1,12 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+- !ruby/struct:SM::Flow::P 
+  body: Holds the shell for the given Thor instance. If no shell is given, it gets a default shell from Thor::Base.shell.
+full_name: Thor::Shell#shell
+is_singleton: false
+name: shell
+params: ()
+visibility: public

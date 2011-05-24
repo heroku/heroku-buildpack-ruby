@@ -1,0 +1,63 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  - !ruby/struct:SM::Flow::P 
+    body: Kind of a hack, but needed for the lock file parser
+  name: name
+  rw: W
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: options
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: path
+  rw: R
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: version
+  rw: RW
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: from_lock
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: 
+- !ruby/object:RI::Constant 
+  comment: 
+  name: DEFAULT_GLOB
+  value: "\"{,*/}*.gemspec\""
+full_name: Bundler::Source::Path
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: ==
+- !ruby/object:RI::MethodSummary 
+  name: cache
+- !ruby/object:RI::MethodSummary 
+  name: cached!
+- !ruby/object:RI::MethodSummary 
+  name: eql?
+- !ruby/object:RI::MethodSummary 
+  name: hash
+- !ruby/object:RI::MethodSummary 
+  name: install
+- !ruby/object:RI::MethodSummary 
+  name: load_spec_files
+- !ruby/object:RI::MethodSummary 
+  name: local_specs
+- !ruby/object:RI::MethodSummary 
+  name: name
+- !ruby/object:RI::MethodSummary 
+  name: remote!
+- !ruby/object:RI::MethodSummary 
+  name: specs
+- !ruby/object:RI::MethodSummary 
+  name: to_lock
+- !ruby/object:RI::MethodSummary 
+  name: to_s
+name: Path
+superclass: Object

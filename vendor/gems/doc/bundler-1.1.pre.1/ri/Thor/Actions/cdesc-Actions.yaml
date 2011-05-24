@@ -1,0 +1,70 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: behavior
+  rw: RW
+class_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: new
+comment: 
+constants: []
+
+full_name: Thor::Actions
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: add_file
+- !ruby/object:RI::MethodSummary 
+  name: append_file
+- !ruby/object:RI::MethodSummary 
+  name: apply
+- !ruby/object:RI::MethodSummary 
+  name: chmod
+- !ruby/object:RI::MethodSummary 
+  name: copy_file
+- !ruby/object:RI::MethodSummary 
+  name: create_file
+- !ruby/object:RI::MethodSummary 
+  name: destination_root
+- !ruby/object:RI::MethodSummary 
+  name: destination_root=
+- !ruby/object:RI::MethodSummary 
+  name: directory
+- !ruby/object:RI::MethodSummary 
+  name: empty_directory
+- !ruby/object:RI::MethodSummary 
+  name: find_in_source_paths
+- !ruby/object:RI::MethodSummary 
+  name: get
+- !ruby/object:RI::MethodSummary 
+  name: gsub_file
+- !ruby/object:RI::MethodSummary 
+  name: in_root
+- !ruby/object:RI::MethodSummary 
+  name: inject_into_class
+- !ruby/object:RI::MethodSummary 
+  name: inject_into_file
+- !ruby/object:RI::MethodSummary 
+  name: inside
+- !ruby/object:RI::MethodSummary 
+  name: prepend_file
+- !ruby/object:RI::MethodSummary 
+  name: relative_to_original_destination_root
+- !ruby/object:RI::MethodSummary 
+  name: remove_dir
+- !ruby/object:RI::MethodSummary 
+  name: remove_file
+- !ruby/object:RI::MethodSummary 
+  name: run
+- !ruby/object:RI::MethodSummary 
+  name: run_ruby_script
+- !ruby/object:RI::MethodSummary 
+  name: source_paths
+- !ruby/object:RI::MethodSummary 
+  name: template
+- !ruby/object:RI::MethodSummary 
+  name: thor
+name: Actions
+superclass: 

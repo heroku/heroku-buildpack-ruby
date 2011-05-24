@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Thor::Shell::Color</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Thor::Shell::Color</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/bundler/vendor/thor/shell/color_rb.html">
+                lib/bundler/vendor/thor/shell/color.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Basic.html">
+                Basic
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Inherit from <a href="Basic.html">Thor::Shell::Basic</a> and add <a
+href="Color.html#M000038">set_color</a> behavior. Check <a
+href="Basic.html">Thor::Shell::Basic</a> to see all available methods.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000038">set_color</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CLEAR</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[0m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Embed in a String to clear all previous ANSI sequences.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BOLD</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[1m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+The start of an ANSI bold sequence.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BLACK</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[30m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s foreground ANSI color to black.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">RED</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[31m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s foreground ANSI color to red.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">GREEN</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[32m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s foreground ANSI color to green.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">YELLOW</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[33m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s foreground ANSI color to yellow.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">BLUE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[34m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s foreground ANSI color to blue.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MAGENTA</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[35m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s foreground ANSI color to magenta.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CYAN</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[36m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s foreground ANSI color to cyan.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">WHITE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[37m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s foreground ANSI color to white.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ON_BLACK</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[40m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s background ANSI color to black.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ON_RED</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[41m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s background ANSI color to red.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ON_GREEN</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[42m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s background ANSI color to green.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ON_YELLOW</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[43m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s background ANSI color to yellow.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ON_BLUE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[44m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s background ANSI color to blue.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ON_MAGENTA</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[45m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s background ANSI color to magenta.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ON_CYAN</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[46m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s background ANSI color to cyan.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ON_WHITE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;\e[47m&quot;</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Set the terminal&#8216;s background ANSI color to white.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000038" class="method-detail">
+        <a name="M000038"></a>
+
+        <div class="method-heading">
+          <a href="Color.src/M000038.html" target="Code" class="method-signature"
+            onclick="popupCode('Color.src/M000038.html');return false;">
+          <span class="method-name">set_color</span><span class="method-args">(string, color, bold=false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set color by using a string or one of the defined constants. If a third
+option is set to true, it also adds bold to the string. This is based on
+Highline implementation and it automatically appends CLEAR to the end of
+the returned String.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

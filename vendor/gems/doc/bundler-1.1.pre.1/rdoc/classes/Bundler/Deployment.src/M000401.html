@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>define_task (Bundler::Deployment)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/deployment.rb, line 3</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">define_task</span>(<span class="ruby-identifier">context</span>, <span class="ruby-identifier">task_method</span> = <span class="ruby-identifier">:task</span>, <span class="ruby-identifier">opts</span> = {})
+      <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">Capistrano</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Capistrano</span><span class="ruby-operator">::</span><span class="ruby-constant">Configuration</span>)
+        <span class="ruby-identifier">context_name</span> = <span class="ruby-value str">&quot;capistrano&quot;</span>
+        <span class="ruby-identifier">role_default</span> = <span class="ruby-value str">&quot;{:except =&gt; {:no_release =&gt; true}}&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">context_name</span> = <span class="ruby-value str">&quot;vlad&quot;</span>
+        <span class="ruby-identifier">role_default</span> = <span class="ruby-value str">&quot;[:app]&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">roles</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">:bundle_roles</span>, <span class="ruby-keyword kw">false</span>)
+      <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:roles</span>] = <span class="ruby-identifier">roles</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">roles</span>
+
+      <span class="ruby-identifier">context</span>.<span class="ruby-identifier">send</span> <span class="ruby-identifier">:namespace</span>, <span class="ruby-identifier">:bundle</span> <span class="ruby-keyword kw">do</span>
+        <span class="ruby-identifier">send</span> <span class="ruby-identifier">:desc</span>, <span class="ruby-value str">&quot;Install the current Bundler environment. By default, gems will be \\\ninstalled to the shared/bundle path. Gems in the development and \\\ntest group will not be installed. The install command is executed \\\nwith the --deployment and --quiet flags. If the bundle cmd cannot \\\nbe found then you can override the bundle_cmd variable to specifiy \\\nwhich one it should use.\n\nYou can override any of these defaults by setting the variables shown below.\n\nN.B. bundle_roles must be defined before you require 'bundler/\#{context_name}' \\\nin your deploy.rb file.\n\nset :bundle_gemfile,  \&quot;Gemfile\&quot;\nset :bundle_dir,      File.join(fetch(:shared_path), 'bundle')\nset :bundle_flags,    \&quot;--deployment --quiet\&quot;\nset :bundle_without,  [:development, :test]\nset :bundle_cmd,      \&quot;bundle\&quot; # e.g. \&quot;/opt/ruby/bin/bundle\&quot;\nset :bundle_roles,    \#{role_default} # e.g. [:app, :batch]\n&quot;</span>
+        <span class="ruby-identifier">send</span> <span class="ruby-identifier">task_method</span>, <span class="ruby-identifier">:install</span>, <span class="ruby-identifier">opts</span> <span class="ruby-keyword kw">do</span>
+          <span class="ruby-identifier">bundle_cmd</span>     = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">:bundle_cmd</span>, <span class="ruby-value str">&quot;bundle&quot;</span>)
+          <span class="ruby-identifier">bundle_flags</span>   = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">:bundle_flags</span>, <span class="ruby-value str">&quot;--deployment --quiet&quot;</span>)
+          <span class="ruby-identifier">bundle_dir</span>     = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">:bundle_dir</span>, <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">context</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">:shared_path</span>), <span class="ruby-value str">'bundle'</span>))
+          <span class="ruby-identifier">bundle_gemfile</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">:bundle_gemfile</span>, <span class="ruby-value str">&quot;Gemfile&quot;</span>)
+          <span class="ruby-identifier">bundle_without</span> = [<span class="ruby-operator">*</span><span class="ruby-identifier">context</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">:bundle_without</span>, [<span class="ruby-identifier">:development</span>, <span class="ruby-identifier">:test</span>])].<span class="ruby-identifier">compact</span>
+
+          <span class="ruby-identifier">args</span> = [<span class="ruby-node">&quot;--gemfile #{File.join(context.fetch(:current_release), bundle_gemfile)}&quot;</span>]
+          <span class="ruby-identifier">args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;--path #{bundle_dir}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">bundle_dir</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">empty?</span>
+          <span class="ruby-identifier">args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">bundle_flags</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-identifier">args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;--without #{bundle_without.join(&quot; &quot;)}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">bundle_without</span>.<span class="ruby-identifier">empty?</span>
+
+          <span class="ruby-identifier">run</span> <span class="ruby-node">&quot;#{bundle_cmd} install #{args.join(' ')}&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

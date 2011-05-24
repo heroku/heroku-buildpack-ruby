@@ -1,0 +1,53 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: 
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: base
+  rw: RW
+- !ruby/object:RI::Attribute 
+  comment: 
+  name: padding
+  rw: RW
+class_methods: []
+
+comment: 
+constants: []
+
+full_name: Thor::Shell::Basic
+includes: []
+
+instance_methods: 
+- !ruby/object:RI::MethodSummary 
+  name: ask
+- !ruby/object:RI::MethodSummary 
+  name: dynamic_width
+- !ruby/object:RI::MethodSummary 
+  name: dynamic_width_stty
+- !ruby/object:RI::MethodSummary 
+  name: dynamic_width_tput
+- !ruby/object:RI::MethodSummary 
+  name: error
+- !ruby/object:RI::MethodSummary 
+  name: file_collision
+- !ruby/object:RI::MethodSummary 
+  name: no?
+- !ruby/object:RI::MethodSummary 
+  name: padding=
+- !ruby/object:RI::MethodSummary 
+  name: print_table
+- !ruby/object:RI::MethodSummary 
+  name: print_wrapped
+- !ruby/object:RI::MethodSummary 
+  name: say
+- !ruby/object:RI::MethodSummary 
+  name: say_status
+- !ruby/object:RI::MethodSummary 
+  name: terminal_width
+- !ruby/object:RI::MethodSummary 
+  name: truncate
+- !ruby/object:RI::MethodSummary 
+  name: unix?
+- !ruby/object:RI::MethodSummary 
+  name: yes?
+name: Basic
+superclass: Object

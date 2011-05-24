@@ -1,0 +1,10 @@
+--- !ruby/object:RI::MethodDescription 
+aliases: []
+
+block_params: 
+comment: 
+full_name: Bundler::SpecSet#for
+is_singleton: false
+name: for
+params: (dependencies, skip = [], check = false, match_current_platform = false)
+visibility: public

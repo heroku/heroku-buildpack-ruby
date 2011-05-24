@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>print_table (Thor::Shell::Basic)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/shell/basic.rb, line 91</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">print_table</span>(<span class="ruby-identifier">table</span>, <span class="ruby-identifier">options</span>={})
+        <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">table</span>.<span class="ruby-identifier">empty?</span>
+
+        <span class="ruby-identifier">formats</span>, <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">colwidth</span> = [], <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:ident</span>].<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:colwidth</span>]
+        <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:truncate</span>] = <span class="ruby-identifier">terminal_width</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:truncate</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">true</span>
+
+        <span class="ruby-identifier">formats</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;%-#{colwidth + 2}s&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">colwidth</span>
+        <span class="ruby-identifier">start</span> = <span class="ruby-identifier">colwidth</span> <span class="ruby-value">? </span><span class="ruby-value">1</span> <span class="ruby-operator">:</span> <span class="ruby-value">0</span>
+
+        <span class="ruby-identifier">start</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">table</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">-</span> <span class="ruby-value">2</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">maxima</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">table</span>.<span class="ruby-identifier">max</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">i</span>].<span class="ruby-identifier">size</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">b</span>[<span class="ruby-identifier">i</span>].<span class="ruby-identifier">size</span> }[<span class="ruby-identifier">i</span>].<span class="ruby-identifier">size</span>
+          <span class="ruby-identifier">formats</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;%-#{maxima + 2}s&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+
+        <span class="ruby-identifier">formats</span>[<span class="ruby-value">0</span>] = <span class="ruby-identifier">formats</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">insert</span>(<span class="ruby-value">0</span>, <span class="ruby-value str">&quot; &quot;</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">ident</span>)
+        <span class="ruby-identifier">formats</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;%s&quot;</span>
+
+        <span class="ruby-identifier">table</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">sentence</span> = <span class="ruby-value str">&quot;&quot;</span>
+
+          <span class="ruby-identifier">row</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">column</span>, <span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">sentence</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">formats</span>[<span class="ruby-identifier">i</span>] <span class="ruby-operator">%</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-keyword kw">end</span>
+
+          <span class="ruby-identifier">sentence</span> = <span class="ruby-identifier">truncate</span>(<span class="ruby-identifier">sentence</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:truncate</span>]) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:truncate</span>]
+          <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span> <span class="ruby-identifier">sentence</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

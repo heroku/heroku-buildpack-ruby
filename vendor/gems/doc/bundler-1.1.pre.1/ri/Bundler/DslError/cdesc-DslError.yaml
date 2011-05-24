@@ -1,0 +1,15 @@
+--- !ruby/object:RI::ClassDescription 
+attributes: []
+
+class_methods: []
+
+comment: 
+constants: []
+
+full_name: Bundler::DslError
+includes: []
+
+instance_methods: []
+
+name: DslError
+superclass: BundlerError

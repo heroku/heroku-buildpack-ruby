@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>viz (Bundler::Graph)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/graph.rb, line 20</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">viz</span>(<span class="ruby-identifier">output_file</span>, <span class="ruby-identifier">show_gem_versions</span> = <span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">show_dependency_requirements</span> = <span class="ruby-keyword kw">false</span>)
+      <span class="ruby-identifier">require</span> <span class="ruby-value str">'graphviz'</span>
+      <span class="ruby-identifier">populate</span>
+
+      <span class="ruby-identifier">graph_viz</span> = <span class="ruby-constant">GraphViz</span><span class="ruby-operator">::</span><span class="ruby-identifier">new</span>(<span class="ruby-value str">'Gemfile'</span>, {<span class="ruby-identifier">:concentrate</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>, <span class="ruby-identifier">:normalize</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>, <span class="ruby-identifier">:nodesep</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span><span class="ruby-value">.55</span>})
+      <span class="ruby-identifier">graph_viz</span>.<span class="ruby-identifier">edge</span>[<span class="ruby-identifier">:fontname</span>] = <span class="ruby-identifier">graph_viz</span>.<span class="ruby-identifier">node</span>[<span class="ruby-identifier">:fontname</span>] = <span class="ruby-value str">'Arial, Helvetica, SansSerif'</span>
+      <span class="ruby-identifier">graph_viz</span>.<span class="ruby-identifier">edge</span>[<span class="ruby-identifier">:fontsize</span>] = <span class="ruby-value">12</span>
+
+      <span class="ruby-identifier">viz_nodes</span> = {}
+
+      <span class="ruby-comment cmt"># populate all of the nodes</span>
+      <span class="ruby-identifier">nodes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">node</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">label</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">dup</span>
+        <span class="ruby-identifier">label</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;\n#{node.version}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">show_gem_versions</span>
+        <span class="ruby-identifier">options</span> = { <span class="ruby-identifier">:label</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">label</span> }
+        <span class="ruby-identifier">options</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-constant">USER_OPTIONS</span> ) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">is_user</span>
+        <span class="ruby-identifier">viz_nodes</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">graph_viz</span>.<span class="ruby-identifier">add_node</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">group_nodes</span> = {}
+      <span class="ruby-ivar">@groups</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">dependencies</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">group_nodes</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">graph_viz</span>.<span class="ruby-identifier">add_node</span>(<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>, { <span class="ruby-identifier">:shape</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'box3d'</span>, <span class="ruby-identifier">:fontsize</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">16</span> }.<span class="ruby-identifier">merge</span>(<span class="ruby-constant">USER_OPTIONS</span>))
+        <span class="ruby-identifier">dependencies</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">dependency</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">options</span> = { <span class="ruby-identifier">:weight</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span> }
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">show_dependency_requirements</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">dependency</span>.<span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;&gt;= 0&quot;</span>)
+            <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:label</span>] = <span class="ruby-identifier">dependency</span>.<span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">graph_viz</span>.<span class="ruby-identifier">add_edge</span>( <span class="ruby-identifier">group_nodes</span>[<span class="ruby-identifier">name</span>], <span class="ruby-identifier">viz_nodes</span>[<span class="ruby-identifier">dependency</span>.<span class="ruby-identifier">name</span>], <span class="ruby-identifier">options</span> )
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-ivar">@groups</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">group</span><span class="ruby-operator">|</span> <span class="ruby-identifier">group</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">:default</span> }.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">group</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">graph_viz</span>.<span class="ruby-identifier">add_edge</span>( <span class="ruby-identifier">group_nodes</span>[<span class="ruby-identifier">group</span>], <span class="ruby-identifier">group_nodes</span>[<span class="ruby-identifier">:default</span>], { <span class="ruby-identifier">:weight</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span> } )
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">viz_nodes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">node</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">nodes</span>[<span class="ruby-identifier">name</span>].<span class="ruby-identifier">dependencies</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">dependency</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">options</span> = { }
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">nodes</span>[<span class="ruby-identifier">dependency</span>.<span class="ruby-identifier">name</span>].<span class="ruby-identifier">is_user</span>
+            <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:constraint</span>] = <span class="ruby-keyword kw">false</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">show_dependency_requirements</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">dependency</span>.<span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;&gt;= 0&quot;</span>)
+            <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:label</span>] = <span class="ruby-identifier">dependency</span>.<span class="ruby-identifier">requirement</span>.<span class="ruby-identifier">to_s</span>
+          <span class="ruby-keyword kw">end</span>
+
+          <span class="ruby-identifier">graph_viz</span>.<span class="ruby-identifier">add_edge</span>( <span class="ruby-identifier">node</span>, <span class="ruby-identifier">viz_nodes</span>[<span class="ruby-identifier">dependency</span>.<span class="ruby-identifier">name</span>], <span class="ruby-identifier">options</span> )
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">graph_viz</span>.<span class="ruby-identifier">output</span>( <span class="ruby-identifier">:png</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">output_file</span> )
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

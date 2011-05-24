@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>get (Thor::Actions)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/actions/file_manipulation.rb, line 50</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get</span>(<span class="ruby-identifier">source</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">config</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">last</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">pop</span> <span class="ruby-operator">:</span> {}
+      <span class="ruby-identifier">destination</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span>
+
+      <span class="ruby-identifier">source</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-identifier">find_in_source_paths</span>(<span class="ruby-identifier">source</span>.<span class="ruby-identifier">to_s</span>)) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">source</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^http\:\/\//</span>
+      <span class="ruby-identifier">render</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">source</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">input</span><span class="ruby-operator">|</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">binmode</span>.<span class="ruby-identifier">read</span> }
+
+      <span class="ruby-identifier">destination</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+        <span class="ruby-identifier">block</span>.<span class="ruby-identifier">arity</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">render</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">source</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">create_file</span> <span class="ruby-identifier">destination</span>, <span class="ruby-identifier">render</span>, <span class="ruby-identifier">config</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

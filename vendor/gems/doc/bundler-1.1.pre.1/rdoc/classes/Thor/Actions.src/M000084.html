@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>apply (Thor::Actions)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/bundler/vendor/thor/actions.rb, line 191</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">apply</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">config</span>={})
+      <span class="ruby-identifier">verbose</span> = <span class="ruby-identifier">config</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">:verbose</span>, <span class="ruby-keyword kw">true</span>)
+      <span class="ruby-identifier">is_uri</span>  = <span class="ruby-identifier">path</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^https?\:\/\//</span>
+      <span class="ruby-identifier">path</span>    = <span class="ruby-identifier">find_in_source_paths</span>(<span class="ruby-identifier">path</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">is_uri</span>
+
+      <span class="ruby-identifier">say_status</span> <span class="ruby-identifier">:apply</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">verbose</span>
+      <span class="ruby-identifier">shell</span>.<span class="ruby-identifier">padding</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">is_uri</span>
+        <span class="ruby-identifier">contents</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">path</span>, <span class="ruby-value str">&quot;Accept&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;application/x-thor-template&quot;</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">io</span><span class="ruby-operator">|</span> <span class="ruby-identifier">io</span>.<span class="ruby-identifier">read</span> }
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">contents</span> = <span class="ruby-identifier">open</span>(<span class="ruby-identifier">path</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">io</span><span class="ruby-operator">|</span> <span class="ruby-identifier">io</span>.<span class="ruby-identifier">read</span> }
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">instance_eval</span>(<span class="ruby-identifier">contents</span>, <span class="ruby-identifier">path</span>)
+      <span class="ruby-identifier">shell</span>.<span class="ruby-identifier">padding</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
