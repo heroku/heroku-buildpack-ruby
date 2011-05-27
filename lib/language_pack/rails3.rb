@@ -10,7 +10,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   end
 
   def name
-    "Rails"
+    "Ruby/Rails"
   end
 
   def default_process_types

@@ -8,7 +8,7 @@ class LanguagePack::Rack < LanguagePack::Ruby
   end
 
   def name
-    "Rack"
+    "Ruby/Rack"
   end
 
   def default_config_vars
