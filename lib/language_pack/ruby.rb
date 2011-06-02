@@ -73,7 +73,7 @@ private
     end
 
     if has_windows_gemfile_lock?
-      File.rm("Gemfile.lock")
+      File.unlink("Gemfile.lock")
     else
       bundle_command += " --deployment"
     end
