@@ -176,10 +176,6 @@ params = CGI.parse(uri.query || "")
   end
 
   def rake_task_defined?(task)
-    output = run("bundle exec rake -T #{task}")
-    return false unless $?.success?
-    (output.split("\n")[1..-1] || []).detect do |line|
-      line.split(" ")[1] == task
-    end
+    run("bundle exec rake #{task} --dry-run") && $?.success?
   end
 end
