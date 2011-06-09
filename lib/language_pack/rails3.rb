@@ -3,6 +3,8 @@ require "language_pack/rails2"
 
 class LanguagePack::Rails3 < LanguagePack::Rails2
 
+  JS_RUNTIME_PATH = File.expand_path(File.join(File.dirname(__FILE__), '../../vendor/node/node-0.4.7'))
+
   def self.use?
     super &&
       File.exists?("config/application.rb") &&
@@ -26,12 +28,23 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 
   def compile
     super
+    run_assets_precompile_task
   end
 
 private
 
   def plugins
     super.concat(%w( rails3_serve_static_assets )).uniq
+  end
+
+  def run_assets_precompile_task
+    if rake_task_defined?("assets:precompile")
+      topic("Running assets:precompile task")
+      pipe("PATH=$PATH:#{JS_RUNTIME_PATH} bundle exec rake assets:precompile 2>&1")
+      unless $?.success?
+        error "assets:precompile task failed"
+      end
+    end
   end
 
 end
