@@ -36,7 +36,8 @@ private
   end
 
   def binaries
-    super + ['node/node-0.4.7/node']
+    node = gem_is_bundled?('execjs') ? ['node/node-0.4.7/node'] : []
+    super + node
   end
 
   def run_assets_precompile_task
