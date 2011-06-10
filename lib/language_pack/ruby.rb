@@ -30,6 +30,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     Dir.chdir(build_path)
+    install_binaries
     setup_language_pack_environment
     git_dir = ENV.delete("GIT_DIR") # can mess with bundler
     build_bundler
@@ -41,7 +42,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 private
 
   def default_path
-    "#{slug_vendor_base}/bin:/usr/local/bin:/usr/bin:/bin"
+    "#{slug_vendor_base}/bin:/usr/local/bin:/usr/bin:/bin:bin"
   end
 
   def language_pack_gems
@@ -62,6 +63,24 @@ private
   def install_language_pack_gems
     FileUtils.mkdir_p(File.dirname(slug_vendor_base))
     FileUtils.cp_r("#{language_pack_gems}/.", slug_vendor_base, :preserve => true)
+  end
+
+  def binaries
+    []
+  end
+
+  def install_binaries
+    FileUtils.mkdir_p "bin"
+    binaries.each {|binary| install_binary(binary) }
+    Dir["bin/*"].each {|path| run("chmod +x #{path}") }
+  end
+
+  def install_binary(path)
+    FileUtils.cp File.join(binary_root, path), File.join('bin', File.basename(path))
+  end
+
+  def binary_root
+    File.expand_path("../../../vendor", __FILE__)
   end
 
   def build_bundler
@@ -168,6 +187,6 @@ params = CGI.parse(uri.query || "")
   end
 
   def rake_task_defined?(task)
-    run("bundle exec rake #{task} --dry-run") && $?.success?
+    run("env PATH=$PATH bundle exec rake #{task} --dry-run") && $?.success?
   end
 end
