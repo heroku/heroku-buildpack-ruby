@@ -65,7 +65,6 @@ private
   end
 
   def build_bundler
-    bundle_vendor = "#{slug_vendor_base}/gems/bundler-1.1.pre.1"
     bundle_command = "bundle install --without development:test --path vendor/bundle"
 
     unless File.exist?("Gemfile.lock")
