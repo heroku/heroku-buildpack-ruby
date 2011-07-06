@@ -30,11 +30,11 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     Dir.chdir(build_path)
+    install_binaries
     setup_language_pack_environment
     git_dir = ENV.delete("GIT_DIR") # can mess with bundler
     build_bundler
     create_database_yml
-    install_binaries
     run_compile_hook
     ENV["GIT_DIR"] = git_dir
   end
