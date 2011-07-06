@@ -40,7 +40,7 @@ private
   def run_assets_precompile_task
     if rake_task_defined?("assets:precompile") && !rake_task_defined?("compile")
       topic("Running assets:precompile task")
-      pipe("PATH=$PATH:#{JS_RUNTIME_PATH} bundle exec rake assets:precompile 2>&1")
+      pipe("env PATH=$PATH:#{JS_RUNTIME_PATH} bundle exec rake assets:precompile 2>&1")
       unless $?.success?
         error "assets:precompile task failed"
       end
