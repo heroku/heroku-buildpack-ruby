@@ -119,6 +119,7 @@ private
 
   def create_database_yml
     return unless File.directory?("config")
+    topic("Creating ERB based database.yml")
     File.open("config/database.yml", "w") do |file|
       file.puts <<-DATABASE_YML
 <%
