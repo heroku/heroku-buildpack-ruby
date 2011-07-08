@@ -85,25 +85,16 @@ private
     version = run("bundle version").strip
     topic("Installing dependencies using #{version}")
 
-    puts "Checking for unresolved dependencies."
-    run "bundle check"
+    puts "Running: #{bundle_command}"
+    pipe("#{bundle_command} 2>&1")
 
     if $?.success?
-      puts "All dependencies are satisfied."
+      puts "Cleaning up the bundler cache."
+      run "bundle clean"
+      cache_store ".bundle"
+      cache_store "vendor/bundle"
     else
-      puts "Unresolved dependencies detected."
-      puts "Running: #{bundle_command}"
-
-      pipe("#{bundle_command} 2>&1")
-
-      if $?.success?
-        puts "Cleaning up the bundler cache."
-        run "bundle clean"
-        cache_store ".bundle"
-        cache_store "vendor/bundle"
-      else
-        error "Failed to install gems via Bundler."
-      end
+      error "Failed to install gems via Bundler."
     end
   end
 
