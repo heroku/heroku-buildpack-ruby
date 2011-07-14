@@ -38,7 +38,7 @@ private
   end
 
   def run_assets_precompile_task
-    if rake_task_defined?("assets:precompile") && !rake_task_defined?("compile")
+    if rake_task_defined?("assets:precompile")
       topic("Running assets:precompile task")
       run("mkdir -p tmp/cache")
       # need to use a dummy DATABASE_URL here, so rails can load the environment
