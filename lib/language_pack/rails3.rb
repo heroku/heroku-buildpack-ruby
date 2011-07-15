@@ -44,7 +44,7 @@ private
       # need to use a dummy DATABASE_URL here, so rails can load the environment
       pipe("env RAILS_ENV=production DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:#{JS_RUNTIME_PATH} bundle exec rake assets:precompile 2>&1")
       unless $?.success?
-        error "assets:precompile task failed"
+        puts "assets:precompile task failed"
       end
     end
   end
