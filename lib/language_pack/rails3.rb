@@ -2,6 +2,7 @@ require "language_pack"
 require "language_pack/rails2"
 
 class LanguagePack::Rails3 < LanguagePack::Rails2
+  NODE_JS_BINARY_PATH = 'node/node-0.4.7/node'
 
   def self.use?
     super &&
@@ -36,7 +37,7 @@ private
   end
 
   def binaries
-    node = gem_is_bundled?('execjs') ? ['node/node-0.4.7/node'] : []
+    node = gem_is_bundled?('execjs') ? [NODE_JS_BINARY_PATH] : []
     super + node
   end
 
@@ -46,8 +47,11 @@ private
       run("mkdir -p tmp/cache")
       # need to use a dummy DATABASE_URL here, so rails can load the environment
       pipe("env RAILS_ENV=production DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
-      unless $?.success?
+      if $?.success?
+        uninstall_binary(NODE_JS_BINARY_PATH)
+      else
         puts "assets:precompile task failed"
+        puts "installing node.js binary to compile assets at bootup"
       end
     end
   end

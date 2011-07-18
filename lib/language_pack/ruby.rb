@@ -79,6 +79,10 @@ private
     FileUtils.cp File.join(binary_root, path), File.join('bin', File.basename(path))
   end
 
+  def uninstall_binary(path)
+    FileUtils.rm File.join('bin', File.basename(path)), :force => true
+  end
+
   def binary_root
     File.expand_path("../../../vendor", __FILE__)
   end
