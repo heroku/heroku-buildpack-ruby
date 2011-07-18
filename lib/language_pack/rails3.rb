@@ -3,8 +3,6 @@ require "language_pack/rails2"
 
 class LanguagePack::Rails3 < LanguagePack::Rails2
 
-  JS_RUNTIME_PATH = File.expand_path(File.join(File.dirname(__FILE__), '../../vendor/node/node-0.4.7'))
-
   def self.use?
     super &&
       File.exists?("config/application.rb") &&
@@ -37,12 +35,16 @@ private
     super.concat(%w( rails3_serve_static_assets )).uniq
   end
 
+  def binaries
+    super + ['node/node-0.4.7/node']
+  end
+
   def run_assets_precompile_task
     if rake_task_defined?("assets:precompile")
       topic("Running assets:precompile task")
       run("mkdir -p tmp/cache")
       # need to use a dummy DATABASE_URL here, so rails can load the environment
-      pipe("env RAILS_ENV=production DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:#{JS_RUNTIME_PATH} bundle exec rake assets:precompile 2>&1")
+      pipe("env RAILS_ENV=production DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
       unless $?.success?
         puts "assets:precompile task failed"
       end
