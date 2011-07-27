@@ -48,7 +48,7 @@ private
       # need to use a dummy DATABASE_URL here, so rails can load the environment
       run("env RAILS_ENV=production DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
       if $?.success?
-        uninstall_binary(NODE_JS_BINARY_PATH)
+        # uninstall_binary(NODE_JS_BINARY_PATH)
       end
     end
   end
