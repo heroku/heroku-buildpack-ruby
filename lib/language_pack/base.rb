@@ -100,7 +100,7 @@ private ##################################
   def cache_copy(from, to)
     return false unless File.exist?(from)
     FileUtils.mkdir_p File.dirname(to)
-    system("cp -ax #{from}/. #{to}")
+    system("cp -a #{from}/. #{to}")
   end
 
 end
