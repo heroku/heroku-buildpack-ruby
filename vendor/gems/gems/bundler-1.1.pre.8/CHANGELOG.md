@@ -1,8 +1,18 @@
+## 1.1.pre.8 (Aug 13, 2011)
+
+Bugfixes:
+
+  - Fix `bundle check` to not print fatal error message (@cldwalker, #1347)
+  - Fix require_sudo when Gem.bindir isn't writeable (#1352)
+  - Fix not asking Gemcutter API for dependency chain of git gems in --deployment (#1254)
+  - Fix `install --binstubs` when using --path (#1332)
+
 ## 1.1.pre.7 (Aug 8, 2011)
 
 Bugfixes:
 
   - Fixed invalid byte sequence error while installing gem on Ruby 1.9 (#1341)
+  - Fixed exception when sudo was needed to install gems (@spastorino)
 
 ## 1.1.pre.6 (Aug 8, 2011)
 
@@ -89,6 +99,20 @@ Removed:
   - Removed bundle install <path>
   - Removed bundle install --production
   - Removed bundle install --disable-shared-gems
+
+## 1.0.18 (Aug 13, 2011)
+
+Bugfixes:
+
+  - Fix typo in DEBUG_RESOLVER (@geemus)
+  - Fixes rake 0.9.x warning (@mtylty, #1333)
+
+Features:
+
+  - Run the bundle install earlier in a Capistrano deployment (@cgriego, #1300)
+  - Support hidden gemspec (@trans, @cldwalker, #827)
+  - Make fetch_specs faster (@zeha, #1294)
+  - Allow overriding development deps loaded by #gemspec (@lgierth, #1245)
 
 ## 1.0.17 (Aug 8, 2011)
 

@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{bundler}
-  s.version = "1.1.pre.7"
+  s.version = "1.1.pre.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.3.6") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{AndrÃ© Arko}, %q{Terence Lee}, %q{Carl Lerche}, %q{Yehuda Katz}]
-  s.date = %q{2011-08-08}
+  s.date = %q{2011-08-15}
   s.description = %q{Bundler manages an application's dependencies through its entire life, across many machines, systematically and repeatably}
   s.email = [%q{andre@arko.net}]
   s.executables = [%q{bundle}]

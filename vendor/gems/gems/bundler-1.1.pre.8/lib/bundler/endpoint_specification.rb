@@ -22,8 +22,21 @@ module Bundler
     # needed for standalone, load required_paths from local gemspec
     # after the gem in installed
     def require_paths
-      if _local_specification
+      if @remote_specification
+        @remote_specification.require_paths
+      elsif _local_specification
         _local_specification.require_paths
+      else
+        super
+      end
+    end
+
+    # needed for binstubs
+    def executables
+      if @remote_specification
+        @remote_specification.executables
+      elsif _local_specification
+        _local_specification.executables
       else
         super
       end
@@ -33,9 +46,13 @@ module Bundler
       eval(File.read(local_specification_path)) if @loaded_from && File.exists?(local_specification_path)
     end
 
+    def __swap__(spec)
+      @remote_specification = spec
+    end
+
     private
     def local_specification_path
-      "#{installation_path}/specifications/#{full_name}.gemspec"
+      "#{base_dir}/specifications/#{full_name}.gemspec"
     end
   end
 end
