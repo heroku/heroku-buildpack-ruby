@@ -31,12 +31,12 @@ class LanguagePack::Ruby < LanguagePack::Base
   def compile
     Dir.chdir(build_path)
     setup_language_pack_environment
-    git_dir = ENV.delete("GIT_DIR") # can mess with bundler
-    build_bundler
-    create_database_yml
-    install_binaries
-    run_compile_hook
-    ENV["GIT_DIR"] = git_dir
+    allow_git do
+      build_bundler
+      create_database_yml
+      install_binaries
+      run_compile_hook
+    end
   end
 
 private
@@ -193,5 +193,11 @@ params = CGI.parse(uri.query || "")
 
   def rake_task_defined?(task)
     run("env PATH=$PATH bundle exec rake #{task} --dry-run") && $?.success?
+  end
+
+  def allow_git(&blk)
+    git_dir = ENV.delete("GIT_DIR") # can mess with bundler
+    blk.call
+    ENV["GIT_DIR"] = git_dir
   end
 end

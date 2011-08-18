@@ -27,9 +27,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 
   def compile
     super
-    git_dir = ENV.delete("GIT_DIR") # can mess with bundler
-    run_assets_precompile_task
-    ENV["GIT_DIR"] = git_dir
+    allow_git { run_assets_precompile_task }
   end
 
 private
