@@ -1,5 +1,7 @@
+$: << File.expand_path(Dir["#{File.join(File.dirname(__FILE__), "../..", "vendor/gems/gems/")}/bundler*/lib"].first)
 require "language_pack"
 require "language_pack/base"
+require "bundler"
 
 class LanguagePack::Ruby < LanguagePack::Base
 
@@ -184,7 +186,10 @@ params = CGI.parse(uri.query || "")
   end
 
   def has_windows_gemfile_lock?
-    File.read("Gemfile.lock") =~ /^PLATFORMS\n  .*(mingw|mswin)/
+    parser = Bundler::LockfileParser.new(File.read("Gemfile.lock"))
+    parser.platforms.detect do |platform|
+      /mingw|mswin/.match(platform.os) if platform.is_a?(Gem::Platform)
+    end
   end
 
   def gem_is_bundled?(gem)
