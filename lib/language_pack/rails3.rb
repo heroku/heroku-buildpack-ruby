@@ -2,7 +2,7 @@ require "language_pack"
 require "language_pack/rails2"
 
 class LanguagePack::Rails3 < LanguagePack::Rails2
-  NODE_JS_BINARY_PATH = 'node/node-0.4.7/node'
+  NODE_JS_BINARY_PATH = 'node-0.4.7/node'
 
   def self.use?
     super &&
