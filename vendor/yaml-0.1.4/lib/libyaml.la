@@ -5,10 +5,10 @@
 # It is necessary for linking the library.
 
 # The name that we can dlopen(3).
-dlname='libyaml-0.so.2'
+dlname=''
 
 # Names of this library.
-library_names='libyaml-0.so.2.0.2 libyaml-0.so.2 libyaml.so'
+library_names=''
 
 # The name of the static archive.
 old_library='libyaml.a'
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/tmp/build_3sfz92nrroe8a/yaml-0.1.4/build/yaml-0.1.4/lib'
+libdir='/tmp/build_igsrx1hg8n7l/yaml-0.1.4/build/yaml-0.1.4/lib'
