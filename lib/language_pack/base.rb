@@ -2,6 +2,8 @@ require "language_pack"
 require "pathname"
 require "yaml"
 
+Encoding.default_external = Encoding::UTF_8
+
 class LanguagePack::Base
 
   attr_reader :build_path, :cache_path
