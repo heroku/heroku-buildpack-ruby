@@ -4,6 +4,7 @@ require "language_pack/base"
 require "bundler"
 
 class LanguagePack::Ruby < LanguagePack::Base
+  YAML_PATH = "yaml-0.1.4"
 
   def self.use?
     File.exist?("Gemfile")
@@ -90,6 +91,9 @@ private
   end
 
   def build_bundler
+    yaml_include   = File.expand_path("#{binary_root}/#{YAML_PATH}/include")
+    yaml_lib       = File.expand_path("#{binary_root}/#{YAML_PATH}/lib")
+    env_vars       = "env CPATH=#{yaml_include} CPPATH=#{yaml_include} LIBRARY_PATH=#{yaml_lib}"
     bundle_command = "bundle install --without development:test --path vendor/bundle"
 
     unless File.exist?("Gemfile.lock")
@@ -111,7 +115,7 @@ private
     topic("Installing dependencies using #{version}")
 
     puts "Running: #{bundle_command}"
-    pipe("#{bundle_command} 2>&1")
+    pipe("#{env_vars} #{bundle_command} 2>&1")
 
     if $?.success?
       puts "Cleaning up the bundler cache."
