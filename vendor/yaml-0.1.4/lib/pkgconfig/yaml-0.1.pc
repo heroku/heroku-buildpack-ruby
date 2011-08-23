@@ -1,0 +1,10 @@
+prefix=/tmp/build_3sfz92nrroe8a/yaml-0.1.4/build/yaml-0.1.4
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+
+Name: LibYAML
+Description: Library to parse and emit YAML
+Version: 0.1.4
+Cflags:
+Libs: -L${libdir} -lyaml
