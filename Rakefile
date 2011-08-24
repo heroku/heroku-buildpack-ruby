@@ -72,3 +72,12 @@ task "gem:install", :gem, :version do |t, args|
   uninstall_gem(gem) if gem_detected?(gem)
   install_gem(gem, version)
 end
+
+desc "update libyaml"
+task "libyaml:update" do
+  sh "curl -o yaml.tgz http://libyaml-compiler.herokuapp.com/yaml.tgz"
+  sh "git rm -rf vendor/yaml-*" if Dir['vendor/yaml-*'].any?
+  sh "cd vendor && tar -zxvf ../yaml.tgz"
+  sh "git add vendor/yaml-*"
+  sh "rm yaml.tgz" if File.exists?("yaml.tgz")
+end
