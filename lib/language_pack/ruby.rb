@@ -27,8 +27,10 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def default_process_types
-    { "rake" => "bundle exec rake",
-      "console" => "bundle exec irb" }
+    {
+      "rake"    => "bundle exec rake",
+      "console" => "bundle exec irb"
+    }
   end
 
   def compile
