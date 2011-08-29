@@ -131,7 +131,7 @@ private
 
   def create_database_yml
     return unless File.directory?("config")
-    topic("Creating generic database.yml")
+    topic("Writing config/database.yml to read from DATABASE_URL")
     File.open("config/database.yml", "w") do |file|
       file.puts <<-DATABASE_YML
 <%
