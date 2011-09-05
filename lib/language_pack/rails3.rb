@@ -27,7 +27,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 
   def compile
     super
-    allow_git { run_assets_precompile_task }
+    allow_git { setup_asset_pipeline }
   end
 
 private
@@ -41,14 +41,23 @@ private
     super + node
   end
 
-  def run_assets_precompile_task
+  def setup_asset_pipeline
     if rake_task_defined?("assets:precompile")
       topic("Preparing app for Rails asset pipeline")
-      run("mkdir -p tmp/cache")
-      # need to use a dummy DATABASE_URL here, so rails can load the environment
-      run("env RAILS_ENV=production RAILS_GROUPS=assets DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
-      if $?.success?
-        # uninstall_binary(NODE_JS_BINARY_PATH)
+      if File.exists?("public/assets/manifest.yml")
+        puts "Local asset compilation detected."
+      else
+        run("mkdir -p tmp/cache")
+        # need to use a dummy DATABASE_URL here, so rails can load the environment
+        run("env RAILS_ENV=production RAILS_GROUPS=assets DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+        if $?.success?
+          puts "assets:precompile run successfully"
+        else
+          puts "Problems running assets:precompile"
+          puts "Setting up runtime asset compilation"
+          install_plugin("rails31_enable_runtime_asset_compilation")
+          # uninstall_binary(NODE_JS_BINARY_PATH)
+        end
       end
     end
   end
