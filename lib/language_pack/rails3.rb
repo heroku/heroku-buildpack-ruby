@@ -48,7 +48,18 @@ private
         puts "Local asset compilation detected."
       else
         # need to use a dummy DATABASE_URL here, so rails can load the environment
-        run("env RAILS_ENV=production RAILS_GROUPS=assets DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+        scheme =
+          if gem_is_bundled?("pg")
+            "postgres"
+          elsif gem_is_bundled?("mysql")
+            "mysql"
+          elsif gem_is_bundled?("mysql2")
+            "mysql2"
+          elsif gem_is_bundled?("sqlite3") || gem_is_bundled?("sqlite3-ruby")
+            "sqlite3"
+          end
+        database_url = "#{scheme}://user:pass@127.0.0.1/dbname"
+        run("env RAILS_ENV=production RAILS_GROUPS=assets DATABASE_URL=#{database_url} PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
         if $?.success?
           puts "assets:precompile successful"
         else
