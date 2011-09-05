@@ -50,10 +50,9 @@ private
         # need to use a dummy DATABASE_URL here, so rails can load the environment
         run("env RAILS_ENV=production RAILS_GROUPS=assets DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
         if $?.success?
-          puts "assets:precompile run successfully"
+          puts "assets:precompile successful"
         else
-          puts "Problems running assets:precompile"
-          puts "Setting up runtime asset compilation"
+          puts "Problem running assets:precompile - enabling runtime asset compilation"
           install_plugin("rails31_enable_runtime_asset_compilation")
           # uninstall_binary(NODE_JS_BINARY_PATH)
         end
@@ -62,4 +61,3 @@ private
   end
 
 end
-
