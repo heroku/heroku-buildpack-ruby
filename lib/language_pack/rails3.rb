@@ -47,7 +47,6 @@ private
       if File.exists?("public/assets/manifest.yml")
         puts "Local asset compilation detected."
       else
-        run("mkdir -p tmp/cache")
         # need to use a dummy DATABASE_URL here, so rails can load the environment
         run("env RAILS_ENV=production RAILS_GROUPS=assets DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
         if $?.success?
