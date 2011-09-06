@@ -46,15 +46,17 @@ private
     if rake_task_defined?("assets:precompile")
       topic("Preparing app for Rails asset pipeline")
       if File.exists?("public/assets/manifest.yml")
-        puts "Local asset compilation detected."
+        puts "Detected manifest.yml, assuming assets were compiled locally"
       else
+        puts "Running: rake assets:precompile"
+        rake_output = ""
         without_database_yml do
-          run("env RAILS_ENV=production RAILS_GROUPS=assets PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+          rake_output << run("env RAILS_ENV=production RAILS_GROUPS=assets PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
         end
-        if $?.success?
-          puts "assets:precompile successful"
-        else
-          puts "Problem running assets:precompile - enabling runtime asset compilation"
+
+        puts rake_output
+        unless $?.success?
+          puts "Precompiling assets failed, enabling runtime asset compilation"
           install_plugin("rails31_enable_runtime_asset_compilation")
           # uninstall_binary(NODE_JS_BINARY_PATH)
         end
