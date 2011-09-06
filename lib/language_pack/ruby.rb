@@ -199,7 +199,8 @@ params = CGI.parse(uri.query || "")
   end
 
   def gem_is_bundled?(gem)
-    run("bundle show").split("\n").detect { |line| line =~ / \* #{gem} / }
+    @bundle_show ||= run("bundle show")
+    @bundle_show.split("\n").detect { |line| line =~ / \* #{gem} / }
   end
 
   def rake_task_defined?(task)
