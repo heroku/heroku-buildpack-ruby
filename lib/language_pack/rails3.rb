@@ -1,5 +1,6 @@
 require "language_pack"
 require "language_pack/rails2"
+require "digest/md5"
 
 class LanguagePack::Rails3 < LanguagePack::Rails2
   NODE_JS_BINARY_PATH = 'node-0.4.7/node'
@@ -47,8 +48,9 @@ private
       if File.exists?("public/assets/manifest.yml")
         puts "Local asset compilation detected."
       else
-        # need to use a dummy DATABASE_URL here, so rails can load the environment
-        run("env RAILS_ENV=production RAILS_GROUPS=assets DATABASE_URL=postgres://user:pass@127.0.0.1/dbname PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+        without_database_yml do
+          run("env RAILS_ENV=production RAILS_GROUPS=assets PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+        end
         if $?.success?
           puts "assets:precompile successful"
         else
@@ -60,4 +62,12 @@ private
     end
   end
 
+  def without_database_yml
+    digest           = Digest::MD5.hexdigest(Time.now.to_s)
+    destination_file = "database-#{digest}.yml"
+
+    run("mv config/database.yml tmp/#{destination_file}")
+    yield
+    run("mv tmp/#{destination_file} config/database.yml")
+  end
 end
