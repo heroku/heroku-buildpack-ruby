@@ -68,8 +68,8 @@ private
     digest           = Digest::MD5.hexdigest(Time.now.to_s)
     destination_file = "database-#{digest}.yml"
 
-    run("mv config/database.yml tmp/#{destination_file}")
+    run("mv config/database.yml config/#{destination_file}")
     yield
-    run("mv tmp/#{destination_file} config/database.yml")
+    run("mv config/#{destination_file} config/database.yml")
   end
 end
