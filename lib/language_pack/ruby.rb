@@ -106,9 +106,9 @@ private
       File.unlink("Gemfile.lock")
     else
       bundle_command += " --deployment"
+      cache_load ".bundle"
     end
 
-    cache_load ".bundle"
     cache_load "vendor/bundle"
 
     install_language_pack_gems
