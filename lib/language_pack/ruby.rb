@@ -117,7 +117,7 @@ private
     topic("Installing dependencies using #{version}")
 
     puts "Running: #{bundle_command}"
-    pipe("#{env_vars} #{bundle_command} 2>&1")
+    pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
 
     if $?.success?
       puts "Cleaning up the bundler cache."
