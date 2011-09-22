@@ -63,6 +63,7 @@ private
       ENV[key] ||= value
     end
     ENV["GEM_HOME"] = slug_vendor_base
+    ENV["PATH"] = default_config_vars["PATH"]
   end
 
   def install_language_pack_gems
