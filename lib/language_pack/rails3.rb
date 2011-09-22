@@ -47,22 +47,27 @@ private
       if File.exists?("public/assets/manifest.yml")
         puts "Detected manifest.yml, assuming assets were compiled locally"
       else
-        # need to use a dummy DATABASE_URL here, so rails can load the environment
-        scheme =
-          if gem_is_bundled?("pg")
-            "postgres"
-          elsif gem_is_bundled?("mysql")
-            "mysql"
-          elsif gem_is_bundled?("mysql2")
-            "mysql2"
-          elsif gem_is_bundled?("sqlite3") || gem_is_bundled?("sqlite3-ruby")
-            "sqlite3"
-          end
-        database_url = "#{scheme}://user:pass@127.0.0.1/dbname"
+        ENV["DATABASE_URL"] ||= begin
+          # need to use a dummy DATABASE_URL here, so rails can load the environment
+          scheme =
+            if gem_is_bundled?("pg")
+              "postgres"
+            elsif gem_is_bundled?("mysql")
+              "mysql"
+            elsif gem_is_bundled?("mysql2")
+              "mysql2"
+            elsif gem_is_bundled?("sqlite3") || gem_is_bundled?("sqlite3-ruby")
+              "sqlite3"
+            end
+          "#{scheme}://user:pass@127.0.0.1/dbname"
+        end
+
+        ENV["RAILS_GROUPS"] ||= "assets"
+        ENV["RAILS_ENV"]    ||= "production"
 
         puts "Running: rake assets:precompile"
         rake_output = ""
-        rake_output << run("env RAILS_ENV=production RAILS_GROUPS=assets DATABASE_URL=#{database_url} PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+        rake_output << run("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
         puts rake_output
         unless $?.success?
           puts "Precompiling assets failed, enabling runtime asset compilation"
