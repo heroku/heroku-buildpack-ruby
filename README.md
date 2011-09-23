@@ -35,6 +35,7 @@ Rack (config.ru is detected)
 Rails 2 (config/environment.rb is detected)
 
 * everything from Rack
+* sets RAILS_ENV=production
 * install rails 2 plugins
   * [rails_log_stdout](http://github.com/ddollar/rails_log_stdout)
 
