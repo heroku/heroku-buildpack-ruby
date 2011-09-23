@@ -3,9 +3,12 @@ require "language_pack"
 require "language_pack/base"
 require "bundler"
 
+# base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   YAML_PATH = "yaml-0.1.4"
 
+  # detects if this is a valid Ruby app
+  # @return [Boolean] true if it's a Ruby app
   def self.use?
     File.exist?("Gemfile")
   end
@@ -45,18 +48,25 @@ class LanguagePack::Ruby < LanguagePack::Base
 
 private
 
+  # the base PATH environment variable to be used
+  # @return [String] the resulting PATH
   def default_path
     "#{slug_vendor_base}/bin:/usr/local/bin:/usr/bin:/bin:bin"
   end
 
+  # path to the vendored gems
+  # @return [String] resulting path
   def language_pack_gems
     File.expand_path("../../../vendor/gems", __FILE__)
   end
 
+  # the relative path to the bundler directory of gems
+  # @return [String] resulting path
   def slug_vendor_base
     "vendor/bundle/ruby/1.9.1"
   end
 
+  # sets up the environment variables for the build process
   def setup_language_pack_environment
     default_config_vars.each do |key, value|
       ENV[key] ||= value
@@ -65,34 +75,46 @@ private
     ENV["PATH"] = default_config_vars["PATH"]
   end
 
+  # installs vendored gems into the slug
   def install_language_pack_gems
     FileUtils.mkdir_p(File.dirname(slug_vendor_base))
     FileUtils.cp_r("#{language_pack_gems}/.", slug_vendor_base, :preserve => true)
   end
 
+  # default set of binaries to install
+  # @return [Array] resulting list
   def binaries
     []
   end
 
+  # vendors binaries into the slug
   def install_binaries
     FileUtils.mkdir_p "bin"
     binaries.each {|binary| install_binary(binary) }
     Dir["bin/*"].each {|path| run("chmod +x #{path}") }
   end
 
+  # vendors individual binary into the slug
+  # @param [String] relative path from the binary_root to the binary
   def install_binary(path)
     FileUtils.cp File.join(binary_root, path), File.join('bin', File.basename(path))
   end
 
+  # removes a binary from the slug
+  # @param [String] relative path of the binary on the slug
   def uninstall_binary(path)
     FileUtils.rm File.join('bin', File.basename(path)), :force => true
   end
 
+  # base path for all the binaries to be vendored
+  # @return [String]
   def binary_root
     File.expand_path("../../../vendor", __FILE__)
   end
 
+  # runs bundler to install the dependencies
   def build_bundler
+    # need to setup compile environment for the psych gem
     yaml_include   = File.expand_path("#{binary_root}/#{YAML_PATH}/include")
     yaml_lib       = File.expand_path("#{binary_root}/#{YAML_PATH}/lib")
     env_vars       = "env CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH"
@@ -105,6 +127,7 @@ private
     if has_windows_gemfile_lock?
       File.unlink("Gemfile.lock")
     else
+      # using --deployment is preferred if we can
       bundle_command += " --deployment"
       cache_load ".bundle"
     end
@@ -129,6 +152,7 @@ private
     end
   end
 
+  # writes ERB based database.yml for Rails. The database.yml uses the DATABASE_URL from the environment during runtime.
   def create_database_yml
     return unless File.directory?("config")
     topic("Writing config/database.yml to read from DATABASE_URL")
@@ -181,6 +205,8 @@ params = CGI.parse(uri.query || "")
     end
   end
 
+  # detects whether the Gemfile.lock contains the Windows platform
+  # @return [Boolean] true if the Gemfile.lock was created on Windows
   def has_windows_gemfile_lock?
     parser = Bundler::LockfileParser.new(File.read("Gemfile.lock"))
     parser.platforms.detect do |platform|
@@ -188,15 +214,24 @@ params = CGI.parse(uri.query || "")
     end
   end
 
+  # detects if a gem is in the bundle.
+  # NOTE: it caches the output of `bundle show` on the first run, so this will break if `bundle show` changes between calls.
+  # @param [String] name of the gem in question
+  # @return [String, nil] if it finds the gem, it will return the line from bundle show or nil if nothing is found.
   def gem_is_bundled?(gem)
     @bundle_show ||= run("bundle show")
     @bundle_show.split("\n").detect { |line| line =~ / \* #{gem} / }
   end
 
+  # detects if a rake task is defined in the app
+  # @param [String] the task in question
+  # @return [Boolean] true if the rake task is defined in the app
   def rake_task_defined?(task)
     run("env PATH=$PATH bundle exec rake #{task} --dry-run") && $?.success?
   end
 
+  # executes the block without GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
+  # param [block] block to be executed in the GIT_DIR free context
   def allow_git(&blk)
     git_dir = ENV.delete("GIT_DIR") # can mess with bundler
     blk.call

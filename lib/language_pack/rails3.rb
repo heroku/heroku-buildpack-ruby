@@ -1,9 +1,12 @@
 require "language_pack"
 require "language_pack/rails2"
 
+# Rails 3 Language Pack. This is for all Rails 3.x apps.
 class LanguagePack::Rails3 < LanguagePack::Rails2
   NODE_JS_BINARY_PATH = 'node-0.4.7/node'
 
+  # detects if this is a Rails 3.x app
+  # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
     super &&
       File.exists?("config/application.rb") &&
@@ -15,6 +18,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   end
 
   def default_process_types
+    # let's special case thin here
     web_process = gem_is_bundled?("thin") ?
                     "bundle exec thin start -R config.ru -e $RAILS_ENV -p $PORT" :
                     "bundle exec rails server -p $PORT"
@@ -37,10 +41,12 @@ private
   end
 
   def binaries
+    # execjs will blow up if no JS RUNTIME is detected and is loaded.
     node = gem_is_bundled?('execjs') ? [NODE_JS_BINARY_PATH] : []
     super + node
   end
 
+  # runs the tasks for the Rails 3.1 asset pipeline
   def setup_asset_pipeline
     if rake_task_defined?("assets:precompile")
       topic("Preparing app for Rails asset pipeline")
