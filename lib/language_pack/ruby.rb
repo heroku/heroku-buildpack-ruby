@@ -40,7 +40,6 @@ class LanguagePack::Ruby < LanguagePack::Base
       build_bundler
       create_database_yml
       install_binaries
-      run_compile_hook
     end
   end
 
@@ -179,16 +178,6 @@ params = CGI.parse(uri.query || "")
   <%= key %>: <%= value.first %>
 <% end %>
       DATABASE_YML
-    end
-  end
-
-  def run_compile_hook
-    if rake_task_defined?("compile")
-      topic "Running compile hook"
-      pipe("bundle exec rake compile 2>&1")
-      unless $?.success?
-        error "Compile hook failed"
-      end
     end
   end
 
