@@ -27,9 +27,14 @@ Ruby (Gemfile and Gemfile.lock is detected)
 * runs bundler
 * installs binaries
 
-Rails 2 (config/environment.rb is detected)
+Rack (config.ru is detected)
 
 * everything from Ruby
+* sets RACK_ENV=production
+
+Rails 2 (config/environment.rb is detected)
+
+* everything from Rack
 * install rails 2 plugins
   * [rails_log_stdout](http://github.com/ddollar/rails_log_stdout)
 
