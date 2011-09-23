@@ -17,3 +17,26 @@ To enable static assets being served on the dyno, [rails3_serve_static_assets](h
 ## Auto Injecting Plugins
 
 Any vendored plugin can be stopped from being installed by creating the directory it's installed to in the slug. For instance, to prevent rails_log_stdout plugin from being injected, add `vendor/plugins/rails_log_stdout/.gitkeep` to your git repo.
+
+## Ruby Language Pack Flow
+
+Here's the basic flow of how the language pack works:
+
+Ruby (Gemfile and Gemfile.lock is detected)
+
+* runs bundler
+* installs binaries
+
+Rails 2 (config/environment.rb is detected)
+
+* everything from Ruby
+* install rails 2 plugins
+  * [rails_log_stdout](http://github.com/ddollar/rails_log_stdout)
+
+Rails 3 (config/application.rb is detected)
+
+* everything from Rails 2
+* install rails 3 plugins
+  * [rails3_server_static_assets](https://github.com/pedro/rails3_serve_static_assets)
+* installs node if the gem execjs is detected
+* runs `rake assets:precompile` if the rake task is detected
