@@ -80,7 +80,6 @@ private
           install_plugin("rails31_enable_runtime_asset_compilation")
           puts "Please see this article for troubleshooting help:"
           puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
-          # uninstall_binary(NODE_JS_BINARY_PATH)
         end
       end
     end
