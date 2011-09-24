@@ -2,9 +2,14 @@ require "fileutils"
 require "tmpdir"
 
 LIBYAML_VERSION = "0.1.4"
+S3_BUCKET_NAME  = "language-pack-ruby"
 
 def s3_tools_dir
   File.expand_path("../support/s3", __FILE__)
+end
+
+def s3_upload(tmpdir, name)
+  sh("#{s3_tools_dir}/s3 put #{S3_BUCKET_NAME} #{name}.tgz #{tmpdir}/#{name}.tgz")
 end
 
 def vendor_plugin(git_url)
@@ -16,7 +21,7 @@ def vendor_plugin(git_url)
       sh "git clone #{git_url} ."
       FileUtils.rm_rf("#{name}/.git")
       sh("tar czvf #{tmpdir}/#{name}.tgz *")
-      sh("#{s3_tools_dir}/s3 put language-pack-ruby #{name}.tgz #{tmpdir}/#{name}.tgz")
+      s3_upload(tmpdir, name)
     end
   end
 end
@@ -91,7 +96,7 @@ task "libyaml:update" do
 
       sh "curl http://pyyaml.org/download/libyaml/yaml-#{LIBYAML_VERSION}.tar.gz -s -o - | tar vzxf -"
       sh "vulcan build -v -o #{name}.tgz --source yaml-0.1.4 --command=\"env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=/app/vendor/yaml-0.1.4 && make && make install\""
-      sh("#{s3_tools_dir}/s3 put language-pack-ruby #{name}.tgz #{tmpdir}/#{name}.tgz")
+      s3_upload(tmpdir, name)
     end
   end
 end
