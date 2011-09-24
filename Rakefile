@@ -1,6 +1,8 @@
 require "fileutils"
 require "tmpdir"
 
+LIBYAML_VERSION = "0.1.4"
+
 def s3_tools_dir
   File.expand_path("../support/s3", __FILE__)
 end
@@ -82,9 +84,14 @@ end
 
 desc "update libyaml"
 task "libyaml:update" do
-  sh "curl -o yaml.tgz http://libyaml-compiler.herokuapp.com/yaml.tgz"
-  sh "git rm -rf vendor/yaml-*" if Dir['vendor/yaml-*'].any?
-  sh "cd vendor && tar -zxvf ../yaml.tgz"
-  sh "git add vendor/yaml-*"
-  sh "rm yaml.tgz" if File.exists?("yaml.tgz")
+  name = "libyaml-#{LIBYAML_VERSION}"
+  Dir.mktmpdir("libyaml-") do |tmpdir|
+    Dir.chdir(tmpdir) do |dir|
+      FileUtils.rm_rf("#{tmpdir}/*")
+
+      sh "curl http://pyyaml.org/download/libyaml/yaml-#{LIBYAML_VERSION}.tar.gz -s -o - | tar vzxf -"
+      sh "vulcan build -v -o #{name}.tgz --source yaml-0.1.4 --command=\"env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=/app/vendor/yaml-0.1.4 && make && make install\""
+      sh("#{s3_tools_dir}/s3 put language-pack-ruby #{name}.tgz #{tmpdir}/#{name}.tgz")
+    end
+  end
 end
