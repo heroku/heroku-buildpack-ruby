@@ -1,15 +1,21 @@
 require "fileutils"
+require "tmpdir"
 
-def plugin_base
-  File.expand_path("../vendor/plugins", __FILE__)
+def s3_tools_dir
+  File.expand_path("../support/s3", __FILE__)
 end
 
 def vendor_plugin(git_url)
   name = File.basename(git_url, File.extname(git_url))
-  Dir.chdir(plugin_base) do
-    FileUtils.rm_rf(name)
-    sh "git clone #{git_url} #{name}"
-    FileUtils.rm_rf("#{name}/.git")
+  Dir.mktmpdir("#{name}-") do |tmpdir|
+    FileUtils.rm_rf("#{tmpdir}/*")
+
+    Dir.chdir(tmpdir) do
+      sh "git clone #{git_url} ."
+      FileUtils.rm_rf("#{name}/.git")
+      sh("tar czvf #{tmpdir}/#{name}.tgz *")
+      sh("#{s3_tools_dir}/s3 put language-pack-ruby #{name}.tgz #{tmpdir}/#{name}.tgz")
+    end
   end
 end
 
