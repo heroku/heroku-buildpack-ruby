@@ -6,6 +6,7 @@ Encoding.default_external = Encoding::UTF_8
 
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
+  VENDOR_URL = "https://s3.amazonaws.com/language-pack-ruby"
 
   attr_reader :build_path, :cache_path
 

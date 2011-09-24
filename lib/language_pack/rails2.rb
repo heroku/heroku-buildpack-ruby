@@ -67,10 +67,13 @@ private
   # vendors an individual plugin
   # @param [String] name of the plugin
   def install_plugin(name)
-    return if File.exist?("vendor/plugins/#{name}")
+    plugin_dir = "vendor/plugins/#{name}"
+    return if File.exist?(plugin_dir)
     puts "Injecting #{name}"
-    FileUtils.mkdir_p "vendor/plugins"
-    FileUtils.cp_r File.join(plugin_root, name), "vendor/plugins"
+    FileUtils.mkdir_p plugin_dir
+    Dir.chdir(plugin_dir) do |dir|
+      run("curl #{VENDOR_URL}/#{name}.tgz -s -o - | tar xzf -")
+    end
   end
 
 end
