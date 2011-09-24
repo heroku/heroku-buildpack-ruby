@@ -89,15 +89,19 @@ private
 
   # vendors binaries into the slug
   def install_binaries
-    FileUtils.mkdir_p "bin"
     binaries.each {|binary| install_binary(binary) }
     Dir["bin/*"].each {|path| run("chmod +x #{path}") }
   end
 
   # vendors individual binary into the slug
-  # @param [String] relative path from the binary_root to the binary
-  def install_binary(path)
-    FileUtils.cp File.join(binary_root, path), File.join('bin', File.basename(path))
+  # @param [String] name of the binary package from S3.
+  #   Example: https://s3.amazonaws.com/language-pack-ruby/node-0.4.7.tgz, where name is "node-0.4.7"
+  def install_binary(name)
+    bin_dir = "bin"
+    FileUtils.mkdir_p bin_dir
+    Dir.chdir(bin_dir) do |dir|
+      run("curl #{VENDOR_URL}/#{name}.tgz -s -o - | tar xzf -")
+    end
   end
 
   # removes a binary from the slug
