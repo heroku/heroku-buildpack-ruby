@@ -5,7 +5,7 @@ require "bundler"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
-  YAML_PATH = "yaml-0.1.4"
+  YAML_PATH = "libyaml-0.1.4"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -40,6 +40,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     Dir.chdir(build_path)
     setup_language_pack_environment
     allow_git do
+      install_libyaml
       build_bundler
       create_database_yml
       install_binaries
@@ -114,6 +115,15 @@ private
   # @return [String]
   def binary_root
     File.expand_path("../../../vendor", __FILE__)
+  end
+
+  # install libyaml into the LP to be referenced for psych compilation
+  def install_libyaml
+    libyaml_dir = "#{binary_root}/#{YAML_PATH}"
+    FileUtils.mkdir_p libyaml_dir
+    Dir.chdir(libyaml_dir) do |dir|
+      run("curl #{VENDOR_URL}/#{YAML_PATH}.tgz -s -o - | tar xzf -")
+    end
   end
 
   # runs bundler to install the dependencies
