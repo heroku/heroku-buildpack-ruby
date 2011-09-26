@@ -52,3 +52,7 @@ Rails 3 (config/application.rb is detected)
 Add this language pack to your `LANGUAGE_PACK_URL`.
 
     heroku config:add LANGUAGE_PACK_URL="http://github.com/heroku/language-pack-ruby.git"
+
+## Vendored Libraries
+
+The `Rakefile` consists of tools used to help with vendoring libraries. You'll need the [vulcan](http://github.com/ddollar/vulcan) gem to build binaries on heroku. We also use [Amazon's S3](http://aws.amazon.com/s3/) to store all of our vendored libraries. The rake tasks create tarballs which are referenced by the language pack and unpacked during slug compilation.
