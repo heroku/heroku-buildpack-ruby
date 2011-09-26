@@ -1,11 +1,10 @@
-$: << File.expand_path(Dir["#{File.join(File.dirname(__FILE__), "../..", "vendor/gems/gems/")}/bundler*/lib"].first)
 require "language_pack"
 require "language_pack/base"
-require "bundler"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
-  YAML_PATH = "libyaml-0.1.4"
+  YAML_PATH        = "libyaml-0.1.4"
+  BUNDLER_GEM_PATH = "bundler-1.1.pre.9"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -41,6 +40,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     setup_language_pack_environment
     allow_git do
       install_libyaml
+      install_language_pack_gems
       build_bundler
       create_database_yml
       install_binaries
@@ -76,10 +76,21 @@ private
     ENV["PATH"] = default_config_vars["PATH"]
   end
 
+  # list of default gems to vendor into the slug
+  # @return [Array] resluting list of gems
+  def gems
+    [BUNDLER_GEM_PATH]
+  end
+
   # installs vendored gems into the slug
   def install_language_pack_gems
-    FileUtils.mkdir_p(File.dirname(slug_vendor_base))
-    FileUtils.cp_r("#{language_pack_gems}/.", slug_vendor_base, :preserve => true)
+    FileUtils.mkdir_p(slug_vendor_base)
+    Dir.chdir(slug_vendor_base) do |dir|
+      gems.each do |gem|
+        run("curl #{VENDOR_URL}/#{gem}.tgz -s -o - | tar xzf -")
+      end
+      Dir["bin/*"].each {|path| run("chmod 755 #{path}") }
+    end
   end
 
   # default set of binaries to install
@@ -147,8 +158,6 @@ private
     end
 
     cache_load "vendor/bundle"
-
-    install_language_pack_gems
 
     version = run("bundle version").strip
     topic("Installing dependencies using #{version}")
@@ -219,9 +228,19 @@ params = CGI.parse(uri.query || "")
     end
   end
 
+  # add bundler to the load path
+  # NOTE: it sets a flag, so the path can only be loaded once
+  def add_bundler_to_load_path
+    return if @bundler_loadpath
+    $: << File.expand_path(Dir["#{slug_vendor_base}/gems/bundler*/lib"].first)
+    @Bundler_loadpath = true
+  end
+
   # detects whether the Gemfile.lock contains the Windows platform
   # @return [Boolean] true if the Gemfile.lock was created on Windows
   def has_windows_gemfile_lock?
+    add_bundler_to_load_path
+    require "bundler"
     parser = Bundler::LockfileParser.new(File.read("Gemfile.lock"))
     parser.platforms.detect do |platform|
       /mingw|mswin/.match(platform.os) if platform.is_a?(Gem::Platform)
