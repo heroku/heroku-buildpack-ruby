@@ -46,3 +46,9 @@ Rails 3 (config/application.rb is detected)
   * [rails3_server_static_assets](https://github.com/pedro/rails3_serve_static_assets)
 * installs node if the gem execjs is detected
 * runs `rake assets:precompile` if the rake task is detected
+
+## Usage
+
+Add this language pack to your `LANGUAGE_PACK_URL`.
+
+    heroku config:add LANGUAGE_PACK_URL="http://github.com/heroku/language-pack-ruby.git"
