@@ -3,8 +3,10 @@ require "language_pack/base"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
-  YAML_PATH        = "libyaml-0.1.4"
-  BUNDLER_GEM_PATH = "bundler-1.1.pre.9"
+  LIBYAML_VERSION  = "0.1.4"
+  LIBYAML_PATH     = "libyaml-#{LIBYAML_VERSION}"
+  BUNDLER_VERSION  = "1.1.pre.9"
+  BUNDLER_GEM_PATH = "bundler-#{BUNDLER_VERSION}"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -130,18 +132,18 @@ private
 
   # install libyaml into the LP to be referenced for psych compilation
   def install_libyaml
-    libyaml_dir = "#{binary_root}/#{YAML_PATH}"
+    libyaml_dir = "#{binary_root}/#{LIBYAML_PATH}"
     FileUtils.mkdir_p libyaml_dir
     Dir.chdir(libyaml_dir) do |dir|
-      run("curl #{VENDOR_URL}/#{YAML_PATH}.tgz -s -o - | tar xzf -")
+      run("curl #{VENDOR_URL}/#{LIBYAML_PATH}.tgz -s -o - | tar xzf -")
     end
   end
 
   # runs bundler to install the dependencies
   def build_bundler
     # need to setup compile environment for the psych gem
-    yaml_include   = File.expand_path("#{binary_root}/#{YAML_PATH}/include")
-    yaml_lib       = File.expand_path("#{binary_root}/#{YAML_PATH}/lib")
+    yaml_include   = File.expand_path("#{binary_root}/#{LIBYAML_PATH}/include")
+    yaml_lib       = File.expand_path("#{binary_root}/#{LIBYAML_PATH}/lib")
     env_vars       = "env CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH"
     bundle_command = "bundle install --without development:test --path vendor/bundle"
 
