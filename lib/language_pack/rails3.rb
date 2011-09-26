@@ -3,7 +3,8 @@ require "language_pack/rails2"
 
 # Rails 3 Language Pack. This is for all Rails 3.x apps.
 class LanguagePack::Rails3 < LanguagePack::Rails2
-  NODE_JS_BINARY_PATH = 'node-0.4.7/node'
+  NODE_VERSION        = "0.4.7"
+  NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
 
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
