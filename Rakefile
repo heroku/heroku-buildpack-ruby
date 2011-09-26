@@ -1,7 +1,6 @@
 require "fileutils"
 require "tmpdir"
 
-NODE_VERSION    = "0.4.7"
 S3_BUCKET_NAME  = "language-pack-ruby"
 
 def s3_tools_dir
@@ -82,16 +81,17 @@ task "libyaml:install", :version do |t, args|
   end
 end
 
-desc "update node"
-task "node:update" do
-  name   = "node-#{NODE_VERSION}"
-  prefix = "/app/vendor/node-v#{NODE_VERSION}"
+desc "install node"
+task "node:install", :version do |t, args|
+  version = args[:version]
+  name    = "node-#{version}"
+  prefix  = "/app/vendor/node-v#{version}"
   Dir.mktmpdir("node-") do |tmpdir|
     Dir.chdir(tmpdir) do |dir|
       FileUtils.rm_rf("#{tmpdir}/*")
 
-      sh "curl http://nodejs.org/dist/node-v#{NODE_VERSION}.tar.gz -s -o - | tar vzxf -"
-      sh "vulcan build -v -o #{name}.tgz --source node-v#{NODE_VERSION} --command=\"./configure --prefix #{prefix} && make install && mv #{prefix}/bin/node #{prefix}/. && rm -rf #{prefix}/include && rm -rf #{prefix}/lib && rm -rf #{prefix}/share && rm -rf #{prefix}/bin\""
+      sh "curl http://nodejs.org/dist/node-v#{version}.tar.gz -s -o - | tar vzxf -"
+      sh "vulcan build -v -o #{name}.tgz --source node-v#{version} --command=\"./configure --prefix #{prefix} && make install && mv #{prefix}/bin/node #{prefix}/. && rm -rf #{prefix}/include && rm -rf #{prefix}/lib && rm -rf #{prefix}/share && rm -rf #{prefix}/bin\""
       s3_upload(tmpdir, name)
     end
   end
