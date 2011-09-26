@@ -27,14 +27,10 @@ def vendor_plugin(git_url)
   end
 end
 
-def gem_base
-  File.expand_path("../vendor/gems", __FILE__)
-end
-
-def in_gem_env(&block)
+def in_gem_env(gem_home, &block)
   old_gem_home = ENV['GEM_HOME']
   old_gem_path = ENV['GEM_PATH']
-  ENV['GEM_HOME'] = ENV['GEM_PATH'] = gem_base.to_s
+  ENV['GEM_HOME'] = ENV['GEM_PATH'] = gem_home.to_s
 
   yield
 
@@ -43,33 +39,18 @@ def in_gem_env(&block)
 end
 
 def install_gem(gem, version)
-  in_gem_env do
-    cmd = "gem install #{gem} --version #{version} --no-ri --no-rdoc"
-    puts(cmd)
-    system(cmd)
-  end
-end
+  name = "#{gem}-#{version}"
+  Dir.mktmpdir("#{gem}-#{version}") do |tmpdir|
+    Dir.chdir(tmpdir) do |dir|
+      FileUtils.rm_rf("#{tmpdir}/*")
 
-def uninstall_gem(gem)
-  in_gem_env do
-    cmd = "gem uninstall #{gem}"
-    puts(cmd)
-    system(cmd)
+      in_gem_env(tmpdir) do
+        sh("gem install #{gem} --version #{version} --no-ri --no-rdoc")
+        sh("tar czvf #{tmpdir}/#{name}.tgz *")
+        s3_upload(tmpdir, name)
+      end
+    end
   end
-end
-
-def gem_detected?(gem)
-  output = ''
-  in_gem_env do
-    output = `gem list #{gem}`
-  end
-
-  output.split("\n").each do |line|
-    md = /^([\S]+)/.match(line)
-    return true if md && md[1] == gem
-  end
-
-  false
 end
 
 desc "update plugins"
@@ -84,7 +65,6 @@ task "gem:install", :gem, :version do |t, args|
   gem     = args[:gem]
   version = args[:version]
 
-  uninstall_gem(gem) if gem_detected?(gem)
   install_gem(gem, version)
 end
 
