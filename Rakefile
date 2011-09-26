@@ -1,7 +1,6 @@
 require "fileutils"
 require "tmpdir"
 
-LIBYAML_VERSION = "0.1.4"
 NODE_VERSION    = "0.4.7"
 S3_BUCKET_NAME  = "language-pack-ruby"
 
@@ -68,15 +67,16 @@ task "gem:install", :gem, :version do |t, args|
   install_gem(gem, version)
 end
 
-desc "update libyaml"
-task "libyaml:update" do
-  name = "libyaml-#{LIBYAML_VERSION}"
+desc "install libyaml"
+task "libyaml:install", :version do |t, args|
+  version = args[:version]
+  name = "libyaml-#{version}"
   Dir.mktmpdir("libyaml-") do |tmpdir|
     Dir.chdir(tmpdir) do |dir|
       FileUtils.rm_rf("#{tmpdir}/*")
 
-      sh "curl http://pyyaml.org/download/libyaml/yaml-#{LIBYAML_VERSION}.tar.gz -s -o - | tar vzxf -"
-      sh "vulcan build -v -o #{name}.tgz --source yaml-0.1.4 --command=\"env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=/app/vendor/yaml-0.1.4 && make && make install\""
+      sh "curl http://pyyaml.org/download/libyaml/yaml-#{version}.tar.gz -s -o - | tar vzxf -"
+      sh "vulcan build -v -o #{name}.tgz --source yaml-#{version} --command=\"env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=/app/vendor/yaml-#{version} && make && make install\""
       s3_upload(tmpdir, name)
     end
   end
