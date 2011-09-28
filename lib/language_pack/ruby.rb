@@ -6,7 +6,7 @@ require "language_pack/base"
 class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_VERSION  = "0.1.4"
   LIBYAML_PATH     = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION  = "1.1.pre.9"
+  BUNDLER_VERSION  = "1.1.pre.10"
   BUNDLER_GEM_PATH = "bundler-#{BUNDLER_VERSION}"
 
   # detects if this is a valid Ruby app
