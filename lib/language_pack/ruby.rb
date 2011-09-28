@@ -1,3 +1,4 @@
+require "tmpdir"
 require "language_pack"
 require "language_pack/base"
 
@@ -41,7 +42,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     Dir.chdir(build_path)
     setup_language_pack_environment
     allow_git do
-      install_libyaml
       install_language_pack_gems
       build_bundler
       create_database_yml
@@ -124,27 +124,17 @@ private
     FileUtils.rm File.join('bin', File.basename(path)), :force => true
   end
 
-  # base path for all the binaries to be vendored
-  # @return [String]
-  def binary_root
-    File.expand_path("../../../vendor", __FILE__)
-  end
-
   # install libyaml into the LP to be referenced for psych compilation
-  def install_libyaml
-    libyaml_dir = "#{binary_root}/#{LIBYAML_PATH}"
-    FileUtils.mkdir_p libyaml_dir
-    Dir.chdir(libyaml_dir) do |dir|
+  # @param [String] tmpdir to store the libyaml files
+  def install_libyaml(dir)
+    FileUtils.mkdir_p dir
+    Dir.chdir(dir) do |dir|
       run("curl #{VENDOR_URL}/#{LIBYAML_PATH}.tgz -s -o - | tar xzf -")
     end
   end
 
   # runs bundler to install the dependencies
   def build_bundler
-    # need to setup compile environment for the psych gem
-    yaml_include   = File.expand_path("#{binary_root}/#{LIBYAML_PATH}/include")
-    yaml_lib       = File.expand_path("#{binary_root}/#{LIBYAML_PATH}/lib")
-    env_vars       = "env CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH"
     bundle_command = "bundle install --without development:test --path vendor/bundle"
 
     unless File.exist?("Gemfile.lock")
@@ -164,8 +154,17 @@ private
     version = run("bundle version").strip
     topic("Installing dependencies using #{version}")
 
-    puts "Running: #{bundle_command}"
-    pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+    Dir.mktmpdir("libyaml-") do |tmpdir|
+      libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
+      install_libyaml(libyaml_dir)
+
+      # need to setup compile environment for the psych gem
+      yaml_include   = File.expand_path("#{libyaml_dir}/include")
+      yaml_lib       = File.expand_path("#{libyaml_dir}/lib")
+      env_vars       = "env CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH"
+      puts "Running: #{bundle_command}"
+      pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+    end
 
     if $?.success?
       puts "Cleaning up the bundler cache."
