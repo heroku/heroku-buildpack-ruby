@@ -230,7 +230,7 @@ params = CGI.parse(uri.query || "")
   end
 
   # add bundler to the load path
-  # NOTE: it sets a flag, so the path can only be loaded once
+  # @note it sets a flag, so the path can only be loaded once
   def add_bundler_to_load_path
     return if @bundler_loadpath
     $: << File.expand_path(Dir["#{slug_vendor_base}/gems/bundler*/lib"].first)
@@ -249,7 +249,7 @@ params = CGI.parse(uri.query || "")
   end
 
   # detects if a gem is in the bundle.
-  # NOTE: it caches the output of `bundle show` on the first run, so this will break if `bundle show` changes between calls.
+  # @note it caches the output of `bundle show` on the first run, so this will break if `bundle show` changes between calls.
   # @param [String] name of the gem in question
   # @return [String, nil] if it finds the gem, it will return the line from bundle show or nil if nothing is found.
   def gem_is_bundled?(gem)

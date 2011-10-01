@@ -37,7 +37,7 @@ class LanguagePack::Base
 
   # config vars to be set on first push.
   # @return [Hash] the result
-  # NOTE: this is only set the first time an app is pushed to.
+  # @not: this is only set the first time an app is pushed to.
   def default_config_vars
     raise "must subclass"
   end
