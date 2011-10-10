@@ -169,13 +169,13 @@ private
       end
 
       if $?.success?
-        log "bundle", "success"
+        log "bundle", :status => "success"
         puts "Cleaning up the bundler cache."
         run "bundle clean"
         cache_store ".bundle"
         cache_store "vendor/bundle"
       else
-        log "bundle", "failure"
+        log "bundle", :status => "failure"
         error "Failed to install gems via Bundler."
       end
     end
