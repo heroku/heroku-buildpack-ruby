@@ -1,6 +1,7 @@
 require "language_pack"
 require "pathname"
 require "yaml"
+require "digest/sha1"
 
 Encoding.default_external = Encoding::UTF_8
 
@@ -16,6 +17,7 @@ class LanguagePack::Base
   def initialize(build_path, cache_path=nil)
     @build_path = build_path
     @cache_path = cache_path
+    @id = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
 
     Dir.chdir build_path
   end
@@ -63,7 +65,46 @@ class LanguagePack::Base
     }.to_yaml
   end
 
+  # log output
+  # Ex. log "some_message", "here", :someattr="value"
+  def log(*args)
+    args.concat [:id => @id]
+    args.concat [:framework => self.class.to_s.split("::").last.downcase]
+
+    start = Time.now.to_f
+    log_internal args, :start => start
+
+    if block_given?
+      begin
+        ret = yield
+        finish = Time.now.to_f
+        log_internal args, "success", :finish => finish, :elapsed => (finish - start)
+        return ret
+      rescue Exception => ex
+        finish = Time.now.to_f
+        log_internal args, "failed", :finish => finish, :elapsed => (finish - start), :message => ex.message
+        raise ex
+      end
+    end
+  end
+
 private ##################################
+
+  def log_internal(*args)
+    message = build_log_message(args)
+    %x{ logger -p user.notice -t "slugc[$$]" "buildpack-ruby #{message}" }
+  end
+
+  def build_log_message(args)
+    args.map do |arg|
+      case arg
+        when Float then "%0.2f" % arg
+        when Array then build_log_message(arg)
+        when Hash  then arg.map { |k,v| "#{k}=#{build_log_message([v])}" }.join(" ")
+        else arg
+      end
+    end.join(" ")
+  end
 
   # display error message and stop the build process
   # @param [String] error message

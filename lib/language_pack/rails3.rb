@@ -49,38 +49,43 @@ private
 
   # runs the tasks for the Rails 3.1 asset pipeline
   def setup_asset_pipeline
-    if rake_task_defined?("assets:precompile")
-      topic("Preparing app for Rails asset pipeline")
-      if File.exists?("public/assets/manifest.yml")
-        puts "Detected manifest.yml, assuming assets were compiled locally"
-      else
-        ENV["DATABASE_URL"] ||= begin
-          # need to use a dummy DATABASE_URL here, so rails can load the environment
-          scheme =
-            if gem_is_bundled?("pg")
-              "postgres"
-            elsif gem_is_bundled?("mysql")
-              "mysql"
-            elsif gem_is_bundled?("mysql2")
-              "mysql2"
-            elsif gem_is_bundled?("sqlite3") || gem_is_bundled?("sqlite3-ruby")
-              "sqlite3"
-            end
-          "#{scheme}://user:pass@127.0.0.1/dbname"
-        end
+    log("assets_precompile") do
+      if rake_task_defined?("assets:precompile")
+        topic("Preparing app for Rails asset pipeline")
+        if File.exists?("public/assets/manifest.yml")
+          puts "Detected manifest.yml, assuming assets were compiled locally"
+        else
+          ENV["DATABASE_URL"] ||= begin
+            # need to use a dummy DATABASE_URL here, so rails can load the environment
+            scheme =
+              if gem_is_bundled?("pg")
+                "postgres"
+              elsif gem_is_bundled?("mysql")
+                "mysql"
+              elsif gem_is_bundled?("mysql2")
+                "mysql2"
+              elsif gem_is_bundled?("sqlite3") || gem_is_bundled?("sqlite3-ruby")
+                "sqlite3"
+              end
+            "#{scheme}://user:pass@127.0.0.1/dbname"
+          end
 
-        ENV["RAILS_GROUPS"] ||= "assets"
-        ENV["RAILS_ENV"]    ||= "production"
+          ENV["RAILS_GROUPS"] ||= "assets"
+          ENV["RAILS_ENV"]    ||= "production"
 
-        puts "Running: rake assets:precompile"
-        rake_output = ""
-        rake_output << run("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
-        puts rake_output
-        unless $?.success?
-          puts "Precompiling assets failed, enabling runtime asset compilation"
-          install_plugin("rails31_enable_runtime_asset_compilation")
-          puts "Please see this article for troubleshooting help:"
-          puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
+          puts "Running: rake assets:precompile"
+          rake_output = ""
+          rake_output << run("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+          puts rake_output
+          log "assets_precompile", "compile_success"
+
+          unless $?.success?
+            log "assets_precompile", "compile_success"
+            puts "Precompiling assets failed, enabling runtime asset compilation"
+            install_plugin("rails31_enable_runtime_asset_compilation")
+            puts "Please see this article for troubleshooting help:"
+            puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
+          end
         end
       end
     end

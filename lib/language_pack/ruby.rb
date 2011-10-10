@@ -135,53 +135,59 @@ private
 
   # runs bundler to install the dependencies
   def build_bundler
-    bundle_command = "bundle install --without development:test --path vendor/bundle"
+    log("bundle") do
+      bundle_command = "bundle install --without development:test --path vendor/bundle"
 
-    unless File.exist?("Gemfile.lock")
-      error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
-    end
+      unless File.exist?("Gemfile.lock")
+        error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
+      end
 
-    if has_windows_gemfile_lock?
-      File.unlink("Gemfile.lock")
-    else
-      # using --deployment is preferred if we can
-      bundle_command += " --deployment"
-      cache_load ".bundle"
-    end
+      if has_windows_gemfile_lock?
+        log("bundle", "has_windows_gemfile_lock")
+        File.unlink("Gemfile.lock")
+      else
+        # using --deployment is preferred if we can
+        bundle_command += " --deployment"
+        cache_load ".bundle"
+      end
 
-    cache_load "vendor/bundle"
+      cache_load "vendor/bundle"
 
-    version = run("bundle version").strip
-    topic("Installing dependencies using #{version}")
+      version = run("bundle version").strip
+      topic("Installing dependencies using #{version}")
 
-    Dir.mktmpdir("libyaml-") do |tmpdir|
-      libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
-      install_libyaml(libyaml_dir)
+      Dir.mktmpdir("libyaml-") do |tmpdir|
+        libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
+        install_libyaml(libyaml_dir)
 
-      # need to setup compile environment for the psych gem
-      yaml_include   = File.expand_path("#{libyaml_dir}/include")
-      yaml_lib       = File.expand_path("#{libyaml_dir}/lib")
-      env_vars       = "env CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH"
-      puts "Running: #{bundle_command}"
-      pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
-    end
+        # need to setup compile environment for the psych gem
+        yaml_include   = File.expand_path("#{libyaml_dir}/include")
+        yaml_lib       = File.expand_path("#{libyaml_dir}/lib")
+        env_vars       = "env CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH"
+        puts "Running: #{bundle_command}"
+        pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+      end
 
-    if $?.success?
-      puts "Cleaning up the bundler cache."
-      run "bundle clean"
-      cache_store ".bundle"
-      cache_store "vendor/bundle"
-    else
-      error "Failed to install gems via Bundler."
+      if $?.success?
+        log "bundle", "success"
+        puts "Cleaning up the bundler cache."
+        run "bundle clean"
+        cache_store ".bundle"
+        cache_store "vendor/bundle"
+      else
+        log "bundle", "failure"
+        error "Failed to install gems via Bundler."
+      end
     end
   end
 
   # writes ERB based database.yml for Rails. The database.yml uses the DATABASE_URL from the environment during runtime.
   def create_database_yml
-    return unless File.directory?("config")
-    topic("Writing config/database.yml to read from DATABASE_URL")
-    File.open("config/database.yml", "w") do |file|
-      file.puts <<-DATABASE_YML
+    log("create_database_yml") do
+      return unless File.directory?("config")
+      topic("Writing config/database.yml to read from DATABASE_URL")
+      File.open("config/database.yml", "w") do |file|
+        file.puts <<-DATABASE_YML
 <%
 
 require 'cgi'
@@ -225,7 +231,8 @@ params = CGI.parse(uri.query || "")
 <% params.each do |key, value| %>
   <%= key %>: <%= value.first %>
 <% end %>
-      DATABASE_YML
+        DATABASE_YML
+      end
     end
   end
 
