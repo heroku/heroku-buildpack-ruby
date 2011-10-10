@@ -26,6 +26,7 @@ Ruby (Gemfile and Gemfile.lock is detected)
 
 * runs bundler
 * installs binaries
+  * installs node if the gem execjs is detected
 
 Rack (config.ru is detected)
 
@@ -44,7 +45,6 @@ Rails 3 (config/application.rb is detected)
 * everything from Rails 2
 * install rails 3 plugins
   * [rails3_server_static_assets](https://github.com/pedro/rails3_serve_static_assets)
-* installs node if the gem execjs is detected
 * runs `rake assets:precompile` if the rake task is detected
 
 ## Usage
