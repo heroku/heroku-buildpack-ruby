@@ -78,11 +78,11 @@ class LanguagePack::Base
       begin
         ret = yield
         finish = Time.now.to_f
-        log_internal args, "success", :finish => finish, :elapsed => (finish - start)
+        log_internal args, :status => "complete", :finish => finish, :elapsed => (finish - start)
         return ret
       rescue Exception => ex
         finish = Time.now.to_f
-        log_internal args, "failed", :finish => finish, :elapsed => (finish - start), :message => ex.message
+        log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => ex.message
         raise ex
       end
     end
