@@ -48,6 +48,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       build_bundler
       create_database_yml
       install_binaries
+      allow_git { run_assets_precompile_rake_task }
     end
   end
 
@@ -292,5 +293,12 @@ params = CGI.parse(uri.query || "")
   # @return [Array] the node.js binary path if we need it or an empty Array
   def add_node_js_binary
     gem_is_bundled?('execjs') ? [NODE_JS_BINARY_PATH] : []
+  end
+
+  def run_assets_precompile_rake_task
+    if rake_task_defined?("assets:precompile")
+      topic "Running: rake assets:precompile"
+      pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+    end
   end
 end
