@@ -3,9 +3,6 @@ require "language_pack/rails2"
 
 # Rails 3 Language Pack. This is for all Rails 3.x apps.
 class LanguagePack::Rails3 < LanguagePack::Rails2
-  NODE_VERSION        = "0.4.7"
-  NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
-
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
@@ -39,12 +36,6 @@ private
 
   def plugins
     super.concat(%w( rails3_serve_static_assets )).uniq
-  end
-
-  def binaries
-    # execjs will blow up if no JS RUNTIME is detected and is loaded.
-    node = gem_is_bundled?('execjs') ? [NODE_JS_BINARY_PATH] : []
-    super + node
   end
 
   # runs the tasks for the Rails 3.1 asset pipeline

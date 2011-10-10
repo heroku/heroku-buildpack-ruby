@@ -4,10 +4,12 @@ require "language_pack/base"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
-  LIBYAML_VERSION  = "0.1.4"
-  LIBYAML_PATH     = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION  = "1.1.rc"
-  BUNDLER_GEM_PATH = "bundler-#{BUNDLER_VERSION}"
+  LIBYAML_VERSION     = "0.1.4"
+  LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
+  BUNDLER_VERSION     = "1.1.rc"
+  BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
+  NODE_VERSION        = "0.4.7"
+  NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -98,7 +100,7 @@ private
   # default set of binaries to install
   # @return [Array] resulting list
   def binaries
-    []
+    add_node_js_binary
   end
 
   # vendors binaries into the slug
@@ -283,5 +285,12 @@ params = CGI.parse(uri.query || "")
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
   def add_shared_database_addon
     gem_is_bundled?("pg") ? ['shared-database:5mb'] : []
+  end
+
+  # decides if we need to install the node.js binary
+  # @note execjs will blow up if no JS RUNTIME is detected and is loaded.
+  # @return [Array] the node.js binary path if we need it or an empty Array
+  def add_node_js_binary
+    gem_is_bundled?('execjs') ? [NODE_JS_BINARY_PATH] : []
   end
 end
