@@ -34,11 +34,6 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     })
   end
 
-  def default_addons
-    # most rails apps need a database
-    %w( shared-database:5mb )
-  end
-
   def compile
     super
     install_plugins
@@ -76,5 +71,11 @@ private
     end
   end
 
+
+  # most rails apps need a database
+  # @return [Array] shared database addon
+  def add_shared_database_addon
+    ['shared-database:5mb']
+  end
 end
 
