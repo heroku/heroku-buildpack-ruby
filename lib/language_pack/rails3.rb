@@ -77,10 +77,10 @@ private
           rake_output = ""
           rake_output << run("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
           puts rake_output
-          log "assets_precompile", "compile_success"
+          log "assets_precompile", :compile => "success"
 
           unless $?.success?
-            log "assets_precompile", "compile_success"
+            log "assets_precompile", :compile => "failure"
             puts "Precompiling assets failed, enabling runtime asset compilation"
             install_plugin("rails31_enable_runtime_asset_compilation")
             puts "Please see this article for troubleshooting help:"
