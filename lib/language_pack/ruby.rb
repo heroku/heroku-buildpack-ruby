@@ -60,12 +60,6 @@ private
     "#{slug_vendor_base}/bin:/usr/local/bin:/usr/bin:/bin:bin"
   end
 
-  # path to the vendored gems
-  # @return [String] resulting path
-  def language_pack_gems
-    File.expand_path("../../../vendor/gems", __FILE__)
-  end
-
   # the relative path to the bundler directory of gems
   # @return [String] resulting path
   def slug_vendor_base
