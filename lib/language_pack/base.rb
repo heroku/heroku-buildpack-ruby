@@ -114,6 +114,7 @@ private ##################################
       Kernel.puts " !     #{line.strip}"
     end
     Kernel.puts " !"
+    log "exit", :error => message
     exit 1
   end
 
