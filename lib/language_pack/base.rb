@@ -58,6 +58,8 @@ class LanguagePack::Base
   # collection of values passed for a release
   # @return [String] in YAML format of the result
   def release
+    setup_language_pack_environment
+
     {
       "addons" => default_addons,
       "config_vars" => default_config_vars,
@@ -89,6 +91,10 @@ class LanguagePack::Base
   end
 
 private ##################################
+
+  # sets up the environment variables for the build process
+  def setup_language_pack_environment
+  end
 
   def log_internal(*args)
     message = build_log_message(args)
