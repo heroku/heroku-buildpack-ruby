@@ -80,7 +80,7 @@ class LanguagePack::Base
         finish = Time.now.to_f
         log_internal args, :status => "complete", :finish => finish, :elapsed => (finish - start)
         return ret
-      rescue Exception => ex
+      rescue StandardError => ex
         finish = Time.now.to_f
         log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => ex.message
         raise ex
