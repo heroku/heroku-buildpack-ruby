@@ -238,7 +238,7 @@ params = CGI.parse(uri.query || "")
   def add_bundler_to_load_path
     return if @bundler_loadpath
     $: << File.expand_path(Dir["#{slug_vendor_base}/gems/bundler*/lib"].first)
-    @Bundler_loadpath = true
+    @bundler_loadpath = true
   end
 
   # detects whether the Gemfile.lock contains the Windows platform
