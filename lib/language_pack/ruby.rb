@@ -133,7 +133,8 @@ private
   # runs bundler to install the dependencies
   def build_bundler
     log("bundle") do
-      bundle_command = "bundle install --without development:test --path vendor/bundle"
+      ENV["BUNDLE_WITHOUT"] ||= "development:test"
+      bundle_command = "bundle install --path vendor/bundle"
 
       unless File.exist?("Gemfile.lock")
         error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
@@ -164,7 +165,7 @@ private
         # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
         # codon since it uses bundler.
         env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH"
-        puts "Running: #{bundle_command}"
+        puts "Running: env BUNDLE_WITHOUT=#{ENV["BUNDLE_WITHOUT"]} #{bundle_command}"
         pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
       end
 
