@@ -3,8 +3,6 @@ require "pathname"
 require "yaml"
 require "digest/sha1"
 
-Encoding.default_external = Encoding::UTF_8
-
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
   VENDOR_URL = "https://s3.amazonaws.com/language-pack-ruby"
