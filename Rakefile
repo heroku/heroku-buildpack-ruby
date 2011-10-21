@@ -1,7 +1,7 @@
 require "fileutils"
 require "tmpdir"
 
-S3_BUCKET_NAME  = "language-pack-ruby"
+S3_BUCKET_NAME  = "heroku-buildpack-ruby"
 
 def s3_tools_dir
   File.expand_path("../support/s3", __FILE__)
