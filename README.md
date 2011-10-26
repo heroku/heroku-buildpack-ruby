@@ -1,7 +1,7 @@
 Heroku buildpack: Ruby
 ======================
 
-This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Ruby, Rack, and Rails apps. It uses [bundler](http://gembundler.com) for dependency management.
+This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Ruby, Rack, and Rails apps. It uses [Bundler](http://gembundler.com) for dependency management.
 
 Usage
 -----
@@ -31,11 +31,11 @@ Example Usage:
            Procfile declares types -> (none)
            Default types for Ruby  -> console, rake
 
-The buildpack will detect your app as Ruby if it has a `Gemfile` and `Gemfile.lock` files in the root directory. It will then proceed to run `bundle install` after setting up the appropriate environment for [ruby](http://ruby-lang.org) and [bundler](http://gembundler.com).
+The buildpack will detect your app as Ruby if it has a `Gemfile` and `Gemfile.lock` files in the root directory. It will then proceed to run `bundle install` after setting up the appropriate environment for [ruby](http://ruby-lang.org) and [Bundler](http://gembundler.com).
 
 #### Bundler
 
-For non-windows `Gemfile.lock` files, the `--deployment` flag will be used. In the case of windows, the Gemfile.lock will be deleted and bundler will do a full resolve so native gems are handled properly. The `vendor/bundle` directory is cached between builds to allow for faster `bundle install` times. `bundle clean` is used to ensure no stale gems are stored between builds.
+For non-windows `Gemfile.lock` files, the `--deployment` flag will be used. In the case of windows, the Gemfile.lock will be deleted and Bundler will do a full resolve so native gems are handled properly. The `vendor/bundle` directory is cached between builds to allow for faster `bundle install` times. `bundle clean` is used to ensure no stale gems are stored between builds.
 
 ### Rails 2
 
@@ -110,7 +110,7 @@ Hacking
 
 To use this buildpack, fork it on Github.  Push up changes to your fork, then create a test app with `--buildpack <your-github-url>` and push to it.
 
-To change the vendored binaries for bundler, [Node.js](http://github.com/joyent/node), and rails plugins, use the rake tasks provided by the `Rakefile`. You'll need an S3-enabled AWS account and a bucket to store your binaries in as well as the [vulcan](http://github.com/ddollar/vulcan) gem to build the binaries on heroku.
+To change the vendored binaries for Bundler, [Node.js](http://github.com/joyent/node), and rails plugins, use the rake tasks provided by the `Rakefile`. You'll need an S3-enabled AWS account and a bucket to store your binaries in as well as the [vulcan](http://github.com/ddollar/vulcan) gem to build the binaries on heroku.
 
 For example, you can change the vendored version of Bundler to 1.1.rc.
 
@@ -132,7 +132,7 @@ Commit and push the changes to your buildpack to your Github fork, then push you
 
     -----> Installing dependencies using Bundler version 1.1.rc
 
-NOTE: You'll need to vendor the plugins, node, bundler, and libyaml by running the rake tasks for the buildpack to work properly.
+NOTE: You'll need to vendor the plugins, node, Bundler, and libyaml by running the rake tasks for the buildpack to work properly.
 
 Flow
 ----
@@ -141,7 +141,7 @@ Here's the basic flow of how the buildpack works:
 
 Ruby (Gemfile and Gemfile.lock is detected)
 
-* runs bundler
+* runs Bundler
 * installs binaries
   * installs node if the gem execjs is detected
 * runs `rake assets:precompile` if the rake task is detected
