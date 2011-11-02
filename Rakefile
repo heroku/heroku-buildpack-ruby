@@ -96,3 +96,19 @@ task "node:install", :version do |t, args|
     end
   end
 end
+
+desc "install ruby"
+task "ruby:install", :version do |t, args|
+  version = args[:version]
+  name    = "ruby-#{version}"
+  prefix  = "/app/vendor/#{name}"
+  Dir.mktmpdir("ruby-") do |tmpdir|
+    Dir.chdir(tmpdir) do |dir|
+      FileUtils.rm_rf("#{tmpdir}/*")
+
+      sh "curl http://ftp.ruby-lang.org/pub/ruby/1.9/#{name}.tar.gz -s -o - | tar vzxf -"
+      sh "vulcan build -v -o #{name}.tgz --source #{name} --command=\"./configure --prefix #{prefix} && make && make install\""
+      s3_upload(tmpdir, name)
+    end
+  end
+end
