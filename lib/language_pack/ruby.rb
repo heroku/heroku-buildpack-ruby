@@ -258,21 +258,25 @@ params = CGI.parse(uri.query || "")
   # detects whether the Gemfile.lock contains the Windows platform
   # @return [Boolean] true if the Gemfile.lock was created on Windows
   def has_windows_gemfile_lock?
-    add_bundler_to_load_path
-    require "bundler"
-    parser = Bundler::LockfileParser.new(File.read("Gemfile.lock"))
-    parser.platforms.detect do |platform|
+    lockfile_parser.platforms.detect do |platform|
       /mingw|mswin/.match(platform.os) if platform.is_a?(Gem::Platform)
     end
   end
 
   # detects if a gem is in the bundle.
-  # @note it caches the output of `bundle show` on the first run, so this will break if `bundle show` changes between calls.
   # @param [String] name of the gem in question
   # @return [String, nil] if it finds the gem, it will return the line from bundle show or nil if nothing is found.
   def gem_is_bundled?(gem)
-    @bundle_show ||= run("bundle show")
-    @bundle_show.split("\n").detect { |line| line =~ / \* #{gem} / }
+    @bundler_gems ||= lockfile_parser.specs.map(&:name)
+    @bundler_gems.include?(gem)
+  end
+
+  # setup the lockfile parser
+  # @return [Bundler::LockfileParser] a Bundler::LockfileParser
+  def lockfile_parser
+    add_bundler_to_load_path
+    require "bundler"
+    @lockfile_parser ||= Bundler::LockfileParser.new(File.read("Gemfile.lock"))
   end
 
   # detects if a rake task is defined in the app
