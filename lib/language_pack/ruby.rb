@@ -271,8 +271,8 @@ params = CGI.parse(uri.query || "")
   # @param [String] name of the gem in question
   # @return [String, nil] if it finds the gem, it will return the line from bundle show or nil if nothing is found.
   def gem_is_bundled?(gem)
-    @bundler_gems ||= Bundler::Dsl.evaluate('Gemfile', 'Gemfile.lock', true).dependencies.map(&:name)
-    @bundler_gems.include?(gem)
+    @bundle_show ||= run("bundle show")
+    @bundle_show.split("\n").detect { |line| line =~ / \* #{gem} / }
   end
 
   # detects if a rake task is defined in the app
