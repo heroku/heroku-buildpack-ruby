@@ -177,7 +177,17 @@ private
         cache_store "vendor/bundle"
       else
         log "bundle", :status => "failure"
-        error "Failed to install gems via Bundler."
+        error_message = "Failed to install gems via Bundler."
+        if gem_is_bundled?("sqlite3")
+          error_message += <<ERROR
+
+
+Detected sqlite3 gem which is not supported on Heroku.
+http://devcenter.heroku.com/articles/how-do-i-use-sqlite3-for-development
+ERROR
+        end
+
+        error error_message
       end
     end
   end
