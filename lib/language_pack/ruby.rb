@@ -73,21 +73,31 @@ private
     "vendor/#{VENDOR_RUBY_PATH}"
   end
 
+  def build_ruby_path
+    "/tmp/#{VENDOR_RUBY_PATH}"
+  end
+
   # sets up the environment variables for the build process
   def setup_language_pack_environment
     default_config_vars.each do |key, value|
       ENV[key] ||= value
     end
     ENV["GEM_HOME"] = slug_vendor_base
-    ENV["PATH"] = default_config_vars["PATH"]
+    ENV["PATH"] = "#{build_ruby_path}/bin:#{default_config_vars["PATH"]}"
   end
 
   # install the vendored ruby
   def install_ruby
+    FileUtils.mkdir_p(build_ruby_path)
+    Dir.chdir(build_ruby_path) do
+      run("curl #{VENDOR_URL}/#{VENDOR_RUBY_PATH.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
+    end
+
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
       run("curl #{VENDOR_URL}/#{VENDOR_RUBY_PATH}.tgz -s -o - | tar zxf -")
     end
+
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
     run("cp #{slug_vendor_ruby}/bin/* #{bin_dir}")
