@@ -87,6 +87,15 @@ private
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
       run("curl #{VENDOR_URL}/#{VENDOR_RUBY_PATH}.tgz -s -o - | tar zxf -")
+      ruby_pc = File.read("lib/pkgconfig/ruby-1.9.pc").split("\n")
+      ruby_pc.each_with_index do |line, index|
+        if line.match(/^prefix/)
+          ruby_pc[index] = "prefix=/tmp/build/vendor/ruby-1.9.3-p0/"
+        end
+      end
+      File.open("lib/pkgconfig/ruby-1.9.pc", 'w') do |file|
+        file.puts ruby_pc.join("\n")
+      end
     end
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
