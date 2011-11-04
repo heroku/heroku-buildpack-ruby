@@ -83,24 +83,19 @@ private
       ENV[key] ||= value
     end
     ENV["GEM_HOME"] = slug_vendor_base
-    ENV["PATH"] = "bin:#{default_config_vars["PATH"]}"
+    ENV["PATH"] = "#{build_ruby_path}/bin:#{default_config_vars["PATH"]}"
   end
 
   # install the vendored ruby
   def install_ruby
+    FileUtils.mkdir_p(build_ruby_path)
+    Dir.chdir(build_ruby_path) do
+      run("curl #{VENDOR_URL}/#{VENDOR_RUBY_PATH.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
+    end
+
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
       run("curl #{VENDOR_URL}/#{VENDOR_RUBY_PATH}.tgz -s -o - | tar zxf -")
-    end
-
-    rbconfig_rb_file = "#{slug_vendor_ruby}/lib/ruby/1.9.1/#{RUBY_PLATFORM}/rbconfig.rb"
-    rbconfig_rb = File.read(rbconfig_rb_file).split("\n")
-    rbconfig_rb.each_with_index do |line, index|
-      rbconfig_rb[index] = "  CONFIG[\"prefix\"] = (TOPDIR || DESTDIR + \"#{run("pwd").chomp}/#{slug_vendor_ruby}\")" if line.include?("CONFIG[\"prefix\"]")
-      rbconfig_rb[index] = "  CONFIG[\"configure_args\"] = \" '--disable-install-doc' '--prefix' '#{run("pwd").chomp}/#{slug_vendor_ruby}'\"" if line.include?("CONFIG[\"configure_args\"]")
-    end
-    File.open(rbconfig_rb_file, 'w') do |file|
-      file.puts rbconfig_rb.join("\n")
     end
 
     bin_dir = "bin"
