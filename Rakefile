@@ -2,6 +2,7 @@ require "fileutils"
 require "tmpdir"
 
 S3_BUCKET_NAME  = "heroku-buildpack-ruby"
+VENDOR_URL      = "https://s3.amazonaws.com/#{S3_BUCKET_NAME}"
 
 def s3_tools_dir
   File.expand_path("../support/s3", __FILE__)
@@ -109,6 +110,29 @@ task "ruby:install", :version do |t, args|
       sh "curl http://ftp.ruby-lang.org/pub/ruby/1.9/#{name}.tar.gz -s -o - | tar vzxf -"
       sh "vulcan build -v -o #{name}.tgz --source #{name} --command=\"./configure --disable-install-doc --prefix #{prefix} && make && make install\""
       s3_upload(tmpdir, name)
+    end
+  end
+end
+
+desc "install ruby"
+task "ruby-build:install", :version do |t, args|
+  version = args[:version]
+  name    = "ruby-#{version}"
+  output  = "ruby-build-#{version}"
+  prefix  = "/tmp/#{name}"
+  usr_dir = "usr"
+  Dir.mktmpdir("ruby-") do |tmpdir|
+    Dir.chdir(tmpdir) do |dir|
+      FileUtils.rm_rf("#{tmpdir}/*")
+
+      sh "curl http://ftp.ruby-lang.org/pub/ruby/1.9/#{name}.tar.gz -s -o - | tar vzxf -"
+      FileUtils.mkdir_p("#{name}/#{usr_dir}")
+      Dir.chdir("#{name}/#{usr_dir}") do
+        sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar vzxf -"
+        sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar vzxf -"
+      end
+      sh "vulcan build -v -o #{output}.tgz --source #{name} --command=\"mv usr /tmp && ./configure --disable-install-doc --prefix #{prefix} && env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make && make install\ && mv #{prefix} /app/vendor/#{name}\""
+      s3_upload(tmpdir, output)
     end
   end
 end
