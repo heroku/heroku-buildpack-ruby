@@ -112,3 +112,19 @@ task "ruby:install", :version do |t, args|
     end
   end
 end
+
+desc "install libffi"
+task "libffi:install", :version do |t, args|
+  version = args[:version]
+  name    = "libffi-#{version}"
+  prefix  = "/app/vendor/#{name}"
+  Dir.mktmpdir("libffi-") do |tmpdir|
+    Dir.chdir(tmpdir) do |dir|
+      FileUtils.rm_rf("#{tmpdir}/*")
+
+      sh "curl ftp://sourceware.org/pub/libffi/libffi-#{version}.tar.gz -s -o - | tar vzxf -"
+      sh "vulcan build -v -o #{name}.tgz --source #{name} --command=\"env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=#{prefix} && make && make install && mv #{prefix}/lib/#{name}/include #{prefix} && rm -rf #{prefix}/lib/#{name}\""
+      s3_upload(tmpdir, name)
+    end
+  end
+end
