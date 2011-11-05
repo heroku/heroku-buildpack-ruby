@@ -114,7 +114,17 @@ task "ruby:install", :version do |t, args|
         sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar vzxf -"
         sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar vzxf -"
       end
-      sh "vulcan build -v -o #{name}.tgz --source #{name} --command=\"mv usr /tmp && ./configure --disable-install-doc --prefix #{prefix} && env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make && make install\""
+
+      build_command = [
+        # need to move libyaml/libffi to dirs we can see
+        "mv usr /tmp",
+        "./configure --disable-install-doc --prefix #{prefix}",
+        "env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make",
+        "make install"
+
+      ].join(" && ")
+
+      sh "vulcan build -v -o #{name}.tgz --source #{name} --command=\"#{build_command}\""
       s3_upload(tmpdir, name)
     end
   end
