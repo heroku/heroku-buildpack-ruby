@@ -76,7 +76,14 @@ task "libyaml:install", :version do |t, args|
       FileUtils.rm_rf("#{tmpdir}/*")
 
       sh "curl http://pyyaml.org/download/libyaml/yaml-#{version}.tar.gz -s -o - | tar vzxf -"
-      sh "vulcan build -v -o #{name}.tgz --source yaml-#{version} --command=\"env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=/app/vendor/yaml-#{version} && make && make install\""
+
+      build_command = [
+        "env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=/app/vendor/yaml-#{version}",
+        "make",
+        "make install"
+      ].join(" && ")
+
+      sh "vulcan build -v -o #{name}.tgz --source yaml-#{version} --command=\"#{build_command}\""
       s3_upload(tmpdir, name)
     end
   end
