@@ -99,7 +99,18 @@ task "node:install", :version do |t, args|
       FileUtils.rm_rf("#{tmpdir}/*")
 
       sh "curl http://nodejs.org/dist/node-v#{version}.tar.gz -s -o - | tar vzxf -"
-      sh "vulcan build -v -o #{name}.tgz --source node-v#{version} --command=\"./configure --prefix #{prefix} && make install && mv #{prefix}/bin/node #{prefix}/. && rm -rf #{prefix}/include && rm -rf #{prefix}/lib && rm -rf #{prefix}/share && rm -rf #{prefix}/bin\""
+
+      build_command = [
+        "./configure --prefix #{prefix}",
+        "make install",
+        "mv #{prefix}/bin/node #{prefix}/.",
+        "rm -rf #{prefix}/include",
+        "rm -rf #{prefix}/lib",
+        "rm -rf #{prefix}/share",
+        "rm -rf #{prefix}/bin"
+      ].join(" && ")
+
+      sh "vulcan build -v -o #{name}.tgz --source node-v#{version} --command=\"#{build_command}\""
       s3_upload(tmpdir, name)
     end
   end
