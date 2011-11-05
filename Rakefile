@@ -52,6 +52,21 @@ def install_gem(gem, version)
   end
 end
 
+def build_ruby_command(name, output, prefix, usr_dir, tmpdir)
+  build_command = [
+    # need to move libyaml/libffi to dirs we can see
+    "mv usr /tmp",
+    "./configure --disable-install-doc --prefix #{prefix}",
+    "env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make",
+    "make install"
+  ]
+  build_command << "mv #{prefix} /app/vendor/#{name}" if name != output
+  build_command = build_command.join(" && ")
+
+  sh "vulcan build -v -o #{output}.tgz --source #{name} --command=\"#{build_command}\""
+  s3_upload(tmpdir, output)
+end
+
 desc "update plugins"
 task "plugins:update" do
   vendor_plugin "http://github.com/ddollar/rails_log_stdout.git"
@@ -133,17 +148,7 @@ task "ruby:install", :version do |t, args|
         sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar vzxf -"
       end
 
-      build_command = [
-        # need to move libyaml/libffi to dirs we can see
-        "mv usr /tmp",
-        "./configure --disable-install-doc --prefix #{prefix}",
-        "env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make",
-        "make install"
-
-      ].join(" && ")
-
-      sh "vulcan build -v -o #{name}.tgz --source #{name} --command=\"#{build_command}\""
-      s3_upload(tmpdir, name)
+      build_ruby_command(name, name, prefix, usr_dir, tmpdir)
     end
   end
 end
@@ -165,8 +170,8 @@ task "ruby-build:install", :version do |t, args|
         sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar vzxf -"
         sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar vzxf -"
       end
-      sh "vulcan build -v -o #{output}.tgz --source #{name} --command=\"mv usr /tmp && ./configure --disable-install-doc --prefix #{prefix} && env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make && make install\ && mv #{prefix} /app/vendor/#{name}\""
-      s3_upload(tmpdir, output)
+
+      build_ruby_command(name, output, prefix, usr_dir, tmpdir)
     end
   end
 end
