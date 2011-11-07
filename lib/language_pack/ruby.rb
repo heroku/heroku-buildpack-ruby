@@ -10,8 +10,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
-  VENDOR_RUBY_VERSION = "1.9.3-p0"
-  VENDOR_RUBY_PATH    = "ruby-#{VENDOR_RUBY_VERSION}"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -70,11 +68,20 @@ private
   end
 
   def slug_vendor_ruby
-    "vendor/#{VENDOR_RUBY_PATH}"
+    "vendor/#{vendor_ruby_path}"
   end
 
   def build_ruby_path
-    "/tmp/#{VENDOR_RUBY_PATH}"
+    "/tmp/#{vendor_ruby_path}"
+  end
+
+  # fetch the ruby version from the enviroment
+  def ruby_version
+    ENV["RUBY_VERSION"]
+  end
+
+  def vendor_ruby_path
+    "ruby-#{ruby_version}"
   end
 
   # sets up the environment variables for the build process
@@ -83,25 +90,32 @@ private
       ENV[key] ||= value
     end
     ENV["GEM_HOME"] = slug_vendor_base
-    ENV["PATH"] = "#{build_ruby_path}/bin:#{default_config_vars["PATH"]}"
+    ENV["PATH"] = ruby_version ? "#{build_ruby_path}/bin:" : ""
+    ENV["PATH"] += "#{default_config_vars["PATH"]}"
   end
 
   # install the vendored ruby
+  # @note this only installs if we detect RUBY_VERSION in the environment
+  # @return [Boolean] true if it installs the vendored ruby and false otherwise
   def install_ruby
+    return false unless ruby_version
+
     FileUtils.mkdir_p(build_ruby_path)
     Dir.chdir(build_ruby_path) do
-      run("curl #{VENDOR_URL}/#{VENDOR_RUBY_PATH.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
+      run("curl #{VENDOR_URL}/#{vendor_ruby_path.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
     end
 
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
-      run("curl #{VENDOR_URL}/#{VENDOR_RUBY_PATH}.tgz -s -o - | tar zxf -")
+      run("curl #{VENDOR_URL}/#{vendor_ruby_path}.tgz -s -o - | tar zxf -")
     end
 
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
     run("cp #{slug_vendor_ruby}/bin/* #{bin_dir}")
     Dir["bin/*"].each {|path| run("chmod +x #{path}") }
+
+    true
   end
 
   # list of default gems to vendor into the slug
