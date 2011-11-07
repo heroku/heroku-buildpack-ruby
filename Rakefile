@@ -135,7 +135,6 @@ desc "install ruby"
 task "ruby:install", :version do |t, args|
   version = args[:version]
   name    = "ruby-#{version}"
-  prefix  = "/app/vendor/#{name}"
   usr_dir = "usr"
   Dir.mktmpdir("ruby-") do |tmpdir|
     Dir.chdir(tmpdir) do |dir|
@@ -148,29 +147,13 @@ task "ruby:install", :version do |t, args|
         sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar vzxf -"
       end
 
+      # runtime ruby
+      prefix  = "/app/vendor/#{name}"
       build_ruby_command(name, name, prefix, usr_dir, tmpdir)
-    end
-  end
-end
 
-desc "install ruby"
-task "ruby-build:install", :version do |t, args|
-  version = args[:version]
-  name    = "ruby-#{version}"
-  output  = "ruby-build-#{version}"
-  prefix  = "/tmp/#{name}"
-  usr_dir = "usr"
-  Dir.mktmpdir("ruby-") do |tmpdir|
-    Dir.chdir(tmpdir) do |dir|
-      FileUtils.rm_rf("#{tmpdir}/*")
-
-      sh "curl http://ftp.ruby-lang.org/pub/ruby/1.9/#{name}.tar.gz -s -o - | tar vzxf -"
-      FileUtils.mkdir_p("#{name}/#{usr_dir}")
-      Dir.chdir("#{name}/#{usr_dir}") do
-        sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar vzxf -"
-        sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar vzxf -"
-      end
-
+      # build ruby
+      output  = "ruby-build-#{version}"
+      prefix  = "/tmp/#{name}"
       build_ruby_command(name, output, prefix, usr_dir, tmpdir)
     end
   end
