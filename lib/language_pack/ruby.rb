@@ -85,6 +85,20 @@ private
     ENV["RUBY_VERSION"]
   end
 
+  # list the available valid ruby versions
+  # @note the value is memoized
+  # @return [Array] list of Strings of the ruby versions available
+  def ruby_versions
+    return @ruby_versions if @ruby_versions
+
+    Dir.mktmpdir("ruby_versions-") do |tmpdir|
+      run("curl -O #{VENDOR_URL}/ruby_versions.yml")
+      @ruby_versions = YAML::load_file("ruby_versions.yml")
+    end
+
+    @ruby_versions
+  end
+
   # the name of the vendored ruby directory
   # @return [String] resulting path
   def vendor_ruby_path
@@ -107,17 +121,22 @@ private
   def install_ruby
     return false unless ruby_version
 
+    invalid_ruby_version_message = <<ERROR
+Invalid RUBY_VERSION specified: #{ruby_version}
+Valid versions: #{ruby_versions.join(", ")}
+ERROR
+
     FileUtils.mkdir_p(build_ruby_path)
     Dir.chdir(build_ruby_path) do
       run("curl #{VENDOR_URL}/#{vendor_ruby_path.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
     end
-    error "Invalid RUBY_VERSION specified: #{ruby_version}" unless $?.success?
+    error invalid_ruby_version_message unless $?.success?
 
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
       run("curl #{VENDOR_URL}/#{vendor_ruby_path}.tgz -s -o - | tar zxf -")
     end
-    error "Invalid RUBY_VERSION specified: #{ruby_version}" unless $?.success?
+    error invalid_ruby_version_message unless $?.success?
 
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
