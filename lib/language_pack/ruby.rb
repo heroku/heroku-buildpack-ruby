@@ -70,13 +70,13 @@ private
   # the relative path to the vendored ruby directory
   # @return [String] resulting path
   def slug_vendor_ruby
-    "vendor/#{vendor_ruby_path}"
+    "vendor/#{ruby_version}"
   end
 
   # the absolute path of the build ruby to use during the buildpack
   # @return [String] resulting path
   def build_ruby_path
-    "/tmp/#{vendor_ruby_path}"
+    "/tmp/#{ruby_version}"
   end
 
   # fetch the ruby version from the enviroment
@@ -97,12 +97,6 @@ private
     end
 
     @ruby_versions
-  end
-
-  # the name of the vendored ruby directory
-  # @return [String] resulting path
-  def vendor_ruby_path
-    "ruby-#{ruby_version}"
   end
 
   # sets up the environment variables for the build process
@@ -128,13 +122,13 @@ ERROR
 
     FileUtils.mkdir_p(build_ruby_path)
     Dir.chdir(build_ruby_path) do
-      run("curl #{VENDOR_URL}/#{vendor_ruby_path.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
+      run("curl #{VENDOR_URL}/#{ruby_version.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
     end
     error invalid_ruby_version_message unless $?.success?
 
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
-      run("curl #{VENDOR_URL}/#{vendor_ruby_path}.tgz -s -o - | tar zxf -")
+      run("curl #{VENDOR_URL}/#{ruby_version}.tgz -s -o - | tar zxf -")
     end
     error invalid_ruby_version_message unless $?.success?
 
