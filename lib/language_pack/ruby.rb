@@ -67,19 +67,26 @@ private
     "vendor/bundle/ruby/1.9.1"
   end
 
+  # the relative path to the vendored ruby directory
+  # @return [String] resulting path
   def slug_vendor_ruby
     "vendor/#{vendor_ruby_path}"
   end
 
+  # the absolute path of the build ruby to use during the buildpack
+  # @return [String] resulting path
   def build_ruby_path
     "/tmp/#{vendor_ruby_path}"
   end
 
   # fetch the ruby version from the enviroment
+  # @return [String, nil] returns the ruby version if detected or nil if none is detected
   def ruby_version
     ENV["RUBY_VERSION"]
   end
 
+  # the name of the vendored ruby directory
+  # @return [String] resulting path
   def vendor_ruby_path
     "ruby-#{ruby_version}"
   end
