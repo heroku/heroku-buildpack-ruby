@@ -159,6 +159,21 @@ task "ruby:install", :version do |t, args|
   end
 end
 
+desc "generate ruby versions manifest"
+task "ruby:manifest" do
+  require 'rexml/document'
+  require 'yaml'
+
+  document = REXML::Document.new(`curl https://#{S3_BUCKET_NAME}.s3.amazonaws.com`)
+  rubies   = document.elements.to_a("//Contents/Key").map {|node| node.text }.select {|text| text.match(/^ruby-\d+\.\d+\.\d+-p\d+/) }
+
+  Dir.mktmpdir("ruby_versions-") do |tmpdir|
+    name = 'ruby_versions.yml'
+    File.open(name, 'w') {|file| file.puts(rubies.to_yaml) }
+    sh("#{s3_tools_dir}/s3 put #{S3_BUCKET_NAME} #{name} #{name}")
+  end
+end
+
 desc "install libffi"
 task "libffi:install", :version do |t, args|
   version = args[:version]
