@@ -1,3 +1,9 @@
+## v8 (11/8/2011)
+
+Features:
+
+* use vm as part of RUBY_VERSION
+
 ## v7 (11/8/2011)
 
 Features:
