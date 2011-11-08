@@ -42,9 +42,9 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     Dir.chdir(build_path)
+    install_ruby
     setup_language_pack_environment
     allow_git do
-      install_ruby
       install_language_pack_gems
       build_bundler
       create_database_yml
@@ -111,11 +111,13 @@ private
     Dir.chdir(build_ruby_path) do
       run("curl #{VENDOR_URL}/#{vendor_ruby_path.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
     end
+    error "Invalid RUBY_VERSION specified: #{ruby_version}" unless $?.success?
 
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
       run("curl #{VENDOR_URL}/#{vendor_ruby_path}.tgz -s -o - | tar zxf -")
     end
+    error "Invalid RUBY_VERSION specified: #{ruby_version}" unless $?.success?
 
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
