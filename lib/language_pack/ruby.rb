@@ -64,7 +64,11 @@ private
   # the relative path to the bundler directory of gems
   # @return [String] resulting path
   def slug_vendor_base
-    "vendor/bundle/ruby/1.9.1"
+    if ruby_version_rbx?
+      "vendor/bundle/rbx/1.8"
+    else
+      "vendor/bundle/ruby/1.9.1"
+    end
   end
 
   # the relative path to the vendored ruby directory
