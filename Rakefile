@@ -159,6 +159,29 @@ task "ruby:install", :version do |t, args|
   end
 end
 
+desc "install rbx"
+task "rbx:install", :version do |t, args|
+  version = args[:version]
+  name    = "rubinius-#{version}"
+  output  = "rbx-#{version}"
+  prefix  = "/app/vendor/#{output}"
+
+  Dir.mktmpdir("rbx-") do |tmpdir|
+    Dir.chdir(tmpdir) do |dir|
+      FileUtils.rm_rf("#{tmpdir}/*")
+
+      sh "curl http://asset.rubini.us/#{name}.tar.gz -s -o - | tar vzxf -"
+      build_command = [
+        "./configure --prefix #{prefix}",
+        "rake install"
+      ].join(" && ")
+
+      sh "vulcan build -v -o #{output}.tgz --source #{name} --prefix #{prefix} --command=\"#{build_command}\""
+      s3_upload(tmpdir, output)
+    end
+  end
+end
+
 desc "generate ruby versions manifest"
 task "ruby:manifest" do
   require 'rexml/document'
