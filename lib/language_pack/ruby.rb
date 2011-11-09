@@ -85,6 +85,12 @@ private
     ENV["RUBY_VERSION"]
   end
 
+  # determine if we're using rbx
+  # @return [Boolean] true if we are and false if we aren't
+  def ruby_version_rbx?
+    ruby_version ? ruby_version.match(/^rbx-/) : false
+  end
+
   # list the available valid ruby versions
   # @note the value is memoized
   # @return [Array] list of Strings of the ruby versions available
@@ -107,8 +113,13 @@ private
       ENV[key] ||= value
     end
     ENV["GEM_HOME"] = slug_vendor_base
-    ENV["PATH"] = ruby_version ? "#{build_ruby_path}/bin:" : ""
+    ENV["PATH"] = ruby_version && !ruby_version_rbx? ? "#{build_ruby_path}/bin:" : ""
     ENV["PATH"] += "#{default_config_vars["PATH"]}"
+
+    if ruby_version_rbx?
+      ENV['RBX_RUNTIME'] = "#{slug_vendor_ruby}/runtime"
+      ENV['RBX_LIB']     = "#{slug_vendor_ruby}/lib"
+    end
   end
 
   # install the vendored ruby
@@ -122,11 +133,13 @@ Invalid RUBY_VERSION specified: #{ruby_version}
 Valid versions: #{ruby_versions.join(", ")}
 ERROR
 
-    FileUtils.mkdir_p(build_ruby_path)
-    Dir.chdir(build_ruby_path) do
-      run("curl #{VENDOR_URL}/#{ruby_version.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
+    unless ruby_version_rbx?
+      FileUtils.mkdir_p(build_ruby_path)
+      Dir.chdir(build_ruby_path) do
+        run("curl #{VENDOR_URL}/#{ruby_version.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
+      end
+      error invalid_ruby_version_message unless $?.success?
     end
-    error invalid_ruby_version_message unless $?.success?
 
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
