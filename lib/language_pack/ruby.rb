@@ -42,8 +42,8 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     Dir.chdir(build_path)
-    install_ruby
     setup_language_pack_environment
+    install_ruby
     allow_git do
       install_language_pack_gems
       build_bundler
@@ -136,6 +136,8 @@ ERROR
     FileUtils.mkdir_p bin_dir
     run("cp #{slug_vendor_ruby}/bin/* #{bin_dir}")
     Dir["bin/*"].each {|path| run("chmod +x #{path}") }
+
+    topic "Using RUBY_VERSION: #{ruby_version}"
 
     true
   end
