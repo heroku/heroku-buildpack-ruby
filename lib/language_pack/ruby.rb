@@ -92,8 +92,10 @@ private
     return @ruby_versions if @ruby_versions
 
     Dir.mktmpdir("ruby_versions-") do |tmpdir|
-      run("curl -O #{VENDOR_URL}/ruby_versions.yml")
-      @ruby_versions = YAML::load_file("ruby_versions.yml")
+      Dir.chdir(tmpdir) do
+        run("curl -O #{VENDOR_URL}/ruby_versions.yml")
+        @ruby_versions = YAML::load_file("ruby_versions.yml")
+      end
     end
 
     @ruby_versions
