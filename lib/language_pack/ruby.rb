@@ -64,7 +64,11 @@ private
   # the relative path to the bundler directory of gems
   # @return [String] resulting path
   def slug_vendor_base
-    @slug_vendor_base ||= run(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\""))
+    if ruby_version_rbx?
+      "vendor/bundle/rbx/1.8"
+    else
+      "vendor/bundle/ruby/1.9.1"
+    end
   end
 
   # the relative path to the vendored ruby directory
