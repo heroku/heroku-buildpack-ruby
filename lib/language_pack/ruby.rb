@@ -121,8 +121,8 @@ private
     ENV["PATH"] += "#{default_config_vars["PATH"]}"
 
     if ruby_version_rbx?
-      ENV['RBX_RUNTIME'] = "#{slug_vendor_ruby}/runtime"
-      ENV['RBX_LIB']     = "#{slug_vendor_ruby}/lib"
+      ENV['RBX_RUNTIME'] = "#{build_path}/#{slug_vendor_ruby}/runtime"
+      ENV['RBX_LIB']     = "#{build_path}/#{slug_vendor_ruby}/lib"
     end
   end
 
