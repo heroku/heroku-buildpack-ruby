@@ -49,7 +49,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       build_bundler
       create_database_yml
       install_binaries
-      allow_git { run_assets_precompile_rake_task }
+      run_assets_precompile_rake_task
     end
   end
 
