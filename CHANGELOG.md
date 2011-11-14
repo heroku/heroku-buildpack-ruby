@@ -1,3 +1,14 @@
+## v9 (11/14/2011)
+
+Features:
+
+* rbx 1.2.4 support
+* print out RUBY_VERSION being used
+
+Bugfixes:
+
+* don't leave behind ruby_versions.yml
+
 ## v8 (11/8/2011)
 
 Features:
