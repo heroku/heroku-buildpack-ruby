@@ -42,8 +42,9 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     Dir.chdir(build_path)
-    setup_language_pack_environment
     install_ruby
+    setup_ruby_install_env
+    setup_language_pack_environment
     allow_git do
       install_language_pack_gems
       build_bundler
@@ -113,13 +114,7 @@ private
       ENV[key] ||= value
     end
     ENV["GEM_HOME"] = slug_vendor_base
-    ENV["PATH"] = ruby_version && !ruby_version_rbx? ? "#{build_ruby_path}/bin:" : ""
     ENV["PATH"] += "#{default_config_vars["PATH"]}"
-
-    if ruby_version_rbx?
-      ENV['RBX_RUNTIME'] = "#{build_path}/#{slug_vendor_ruby}/runtime"
-      ENV['RBX_LIB']     = "#{build_path}/#{slug_vendor_ruby}/lib"
-    end
   end
 
   # install the vendored ruby
@@ -155,6 +150,16 @@ ERROR
     topic "Using RUBY_VERSION: #{ruby_version}"
 
     true
+  end
+
+  # setup the environment so we can use the vendored ruby
+  def setup_ruby_install_env
+    ENV["PATH"] = ruby_version && !ruby_version_rbx? ? "#{build_ruby_path}/bin:" : "bin"
+
+    if ruby_version_rbx?
+      ENV['RBX_RUNTIME'] = "#{build_path}/#{slug_vendor_ruby}/runtime"
+      ENV['RBX_LIB']     = "#{build_path}/#{slug_vendor_ruby}/lib"
+    end
   end
 
   # list of default gems to vendor into the slug
