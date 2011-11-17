@@ -43,7 +43,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   def compile
     Dir.chdir(build_path)
     install_ruby
-    setup_ruby_install_env
     setup_language_pack_environment
     allow_git do
       install_language_pack_gems
@@ -110,6 +109,8 @@ private
 
   # sets up the environment variables for the build process
   def setup_language_pack_environment
+    setup_ruby_install_env
+
     default_config_vars.each do |key, value|
       ENV[key] ||= value
     end
@@ -152,9 +153,23 @@ ERROR
     true
   end
 
+  # find the ruby install path for its binstubs during build
+  # @return [String] resulting path or empty string if ruby is not vendored
+  def ruby_install_binstub_path
+    if ruby_version
+      if ruby_version_rbx?
+        "bin"
+      else
+        "#{build_ruby_path}/bin"
+      end
+    else
+      ""
+    end
+  end
+
   # setup the environment so we can use the vendored ruby
   def setup_ruby_install_env
-    ENV["PATH"] = ruby_version && !ruby_version_rbx? ? "#{build_ruby_path}/bin:" : "bin"
+    ENV["PATH"] = "#{ruby_install_binstub_path}:#{ENV["PATH"]}"
 
     if ruby_version_rbx?
       ENV['RBX_RUNTIME'] = "#{build_path}/#{slug_vendor_ruby}/runtime"
