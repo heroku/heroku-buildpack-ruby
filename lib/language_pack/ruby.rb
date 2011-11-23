@@ -256,6 +256,7 @@ ERROR
       version = run("bundle version").strip
       topic("Installing dependencies using #{version}")
 
+      bundler_output = ""
       Dir.mktmpdir("libyaml-") do |tmpdir|
         libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
         install_libyaml(libyaml_dir)
@@ -268,7 +269,8 @@ ERROR
         # codon since it uses bundler.
         env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH"
         puts "Running: #{bundle_command}"
-        pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+        bundler_output << pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+
       end
 
       if $?.success?
@@ -280,7 +282,7 @@ ERROR
       else
         log "bundle", :status => "failure"
         error_message = "Failed to install gems via Bundler."
-        if gem_is_bundled?("sqlite3")
+        if bundler_output.match(/Installing sqlite3 \([\w.]+\) with native extensions Unfortunately/)
           error_message += <<ERROR
 
 
