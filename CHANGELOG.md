@@ -1,3 +1,14 @@
+## v10 (11/23/2011)
+
+Features:
+
+* bundler binstubs
+* dynamic slug_vendor_base detection
+
+Bugfixes:
+
+* don't show sqlite3 error if it's in a bundle without group on failed bundle install
+
 ## v9 (11/14/2011)
 
 Features:
