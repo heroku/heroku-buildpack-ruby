@@ -42,8 +42,8 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     Dir.chdir(build_path)
-    setup_language_pack_environment
     install_ruby
+    setup_language_pack_environment
     allow_git do
       install_language_pack_gems
       build_bundler
@@ -65,11 +65,7 @@ private
   # the relative path to the bundler directory of gems
   # @return [String] resulting path
   def slug_vendor_base
-    if ruby_version_rbx?
-      "vendor/bundle/rbx/1.8"
-    else
-      "vendor/bundle/ruby/1.9.1"
-    end
+    @slug_vendor_base ||= run(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
   end
 
   # the relative path to the vendored ruby directory
@@ -114,17 +110,13 @@ private
 
   # sets up the environment variables for the build process
   def setup_language_pack_environment
+    setup_ruby_install_env
+
     default_config_vars.each do |key, value|
       ENV[key] ||= value
     end
     ENV["GEM_HOME"] = slug_vendor_base
-    ENV["PATH"] = ruby_version && !ruby_version_rbx? ? "#{build_ruby_path}/bin:" : ""
-    ENV["PATH"] += "#{default_config_vars["PATH"]}"
-
-    if ruby_version_rbx?
-      ENV['RBX_RUNTIME'] = "#{build_path}/#{slug_vendor_ruby}/runtime"
-      ENV['RBX_LIB']     = "#{build_path}/#{slug_vendor_ruby}/lib"
-    end
+    ENV["PATH"]     = "#{ruby_install_binstub_path}:#{default_config_vars["PATH"]}"
   end
 
   # install the vendored ruby
@@ -160,6 +152,30 @@ ERROR
     topic "Using RUBY_VERSION: #{ruby_version}"
 
     true
+  end
+
+  # find the ruby install path for its binstubs during build
+  # @return [String] resulting path or empty string if ruby is not vendored
+  def ruby_install_binstub_path
+    if ruby_version
+      if ruby_version_rbx?
+        "bin"
+      else
+        "#{build_ruby_path}/bin"
+      end
+    else
+      ""
+    end
+  end
+
+  # setup the environment so we can use the vendored ruby
+  def setup_ruby_install_env
+    ENV["PATH"] = "#{ruby_install_binstub_path}:#{ENV["PATH"]}"
+
+    if ruby_version_rbx?
+      ENV['RBX_RUNTIME'] = "#{build_path}/#{slug_vendor_ruby}/runtime"
+      ENV['RBX_LIB']     = "#{build_path}/#{slug_vendor_ruby}/lib"
+    end
   end
 
   # list of default gems to vendor into the slug
@@ -221,7 +237,7 @@ ERROR
   def build_bundler
     log("bundle") do
       bundle_without = ENV["BUNDLE_WITHOUT"] || "development:test"
-      bundle_command = "bundle install --without #{bundle_without} --path vendor/bundle"
+      bundle_command = "bundle install --without #{bundle_without} --path vendor/bundle --binstubs bin/"
 
       unless File.exist?("Gemfile.lock")
         error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
@@ -241,6 +257,7 @@ ERROR
       version = run("bundle version").strip
       topic("Installing dependencies using #{version}")
 
+      bundler_output = ""
       Dir.mktmpdir("libyaml-") do |tmpdir|
         libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
         install_libyaml(libyaml_dir)
@@ -253,7 +270,8 @@ ERROR
         # codon since it uses bundler.
         env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH"
         puts "Running: #{bundle_command}"
-        pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+        bundler_output << pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+
       end
 
       if $?.success?
@@ -265,7 +283,7 @@ ERROR
       else
         log "bundle", :status => "failure"
         error_message = "Failed to install gems via Bundler."
-        if gem_is_bundled?("sqlite3")
+        if bundler_output.match(/Installing sqlite3 \([\w.]+\) with native extensions Unfortunately/)
           error_message += <<ERROR
 
 

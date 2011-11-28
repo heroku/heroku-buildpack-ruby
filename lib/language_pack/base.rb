@@ -134,11 +134,16 @@ private ##################################
   # run a shell command and stream the ouput
   # @param [String] command to be run
   def pipe(command)
+    output = ""
     IO.popen(command) do |io|
       until io.eof?
-        puts io.gets
+        buffer = io.gets
+        output << buffer
+        puts buffer
       end
     end
+
+    output
   end
 
   # display a topic message
