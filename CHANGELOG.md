@@ -1,3 +1,9 @@
+## v12 (12/13/2011)
+
+Bugfixes:
+
+* syck workaround for yaml/psych issues
+
 ## v11 (12/12/2011)
 
 Features:
