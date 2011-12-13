@@ -1,3 +1,9 @@
+## v11 (12/12/2011)
+
+Features:
+
+* bundler 1.1.rc.3
+
 ## v10 (11/23/2011)
 
 Features:
