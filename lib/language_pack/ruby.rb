@@ -1,4 +1,5 @@
 require "tmpdir"
+require "rubygems"
 require "language_pack"
 require "language_pack/base"
 
@@ -237,7 +238,6 @@ ERROR
     log("bundle") do
       bundle_without = ENV["BUNDLE_WITHOUT"] || "development:test"
       bundle_command = "bundle install --without #{bundle_without} --path vendor/bundle --binstubs bin/"
-      syck_hack      = File.expand_path(File.join(File.dirname(__FILE__), "../../vendor/syck_hack"))
 
       unless File.exist?("Gemfile.lock")
         error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
@@ -254,7 +254,7 @@ ERROR
 
       cache_load "vendor/bundle"
 
-      version = run("env RUBYOPT=\"-r #{syck_hack}\" bundle version").strip
+      version = run("env RUBYOPT=\"#{syck_hack}\" bundle version").strip
       topic("Installing dependencies using #{version}")
 
       bundler_output = ""
@@ -268,7 +268,7 @@ ERROR
         pwd            = run("pwd").chomp
         # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
         # codon since it uses bundler.
-        env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH RUBYOPT=\"-r #{syck_hack}\""
+        env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH RUBYOPT=\"#{syck_hack}\""
         puts "Running: #{bundle_command}"
         bundler_output << pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
 
@@ -294,6 +294,19 @@ ERROR
 
         error error_message
       end
+    end
+  end
+
+  # RUBYOPT line that requires syck_hack filerequires syck_hack file
+  # @return [String] require string if needed or else an empty string
+  def syck_hack
+    syck_hack_file = File.expand_path(File.join(File.dirname(__FILE__), "../../vendor/syck_hack"))
+    ruby_version   = run('ruby -e "puts RUBY_VERSION"').chomp
+    # < 1.9.3 includes syck, so we need to use the syck hack
+    if Gem::Version.new(ruby_version) < Gem::Version.new("1.9.3")
+      "-r #{syck_hack_file}"
+    else
+      ""
     end
   end
 
