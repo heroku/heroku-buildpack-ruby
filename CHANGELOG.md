@@ -1,3 +1,9 @@
+## v14 (12/22/2011)
+
+Bugfixes:
+
+* stop freedom patching syck in ruby 1.9.3+
+
 ## v13 (12/15/2011)
 
 Features:
