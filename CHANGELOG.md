@@ -1,3 +1,9 @@
+## v15 (12/27/2011)
+
+Features:
+
+* bundler 1.1.rc.6
+
 ## v14 (12/22/2011)
 
 Bugfixes:
