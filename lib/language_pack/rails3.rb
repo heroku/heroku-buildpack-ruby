@@ -41,20 +41,7 @@ private
         if File.exists?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
         else
-          ENV["DATABASE_URL"] ||= begin
-            # need to use a dummy DATABASE_URL here, so rails can load the environment
-            scheme =
-              if gem_is_bundled?("pg")
-                "postgres"
-              elsif gem_is_bundled?("mysql")
-                "mysql"
-              elsif gem_is_bundled?("mysql2")
-                "mysql2"
-              elsif gem_is_bundled?("sqlite3") || gem_is_bundled?("sqlite3-ruby")
-                "sqlite3"
-              end
-            "#{scheme}://user:pass@127.0.0.1/dbname"
-          end
+          setup_database_url_env
 
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
@@ -78,4 +65,21 @@ private
     end
   end
 
+  # setup the database url as on environment variable
+  def setup_database_url_env
+    ENV["DATABASE_URL"] ||= begin
+      # need to use a dummy DATABASE_URL here, so rails can load the environment
+      scheme =
+        if gem_is_bundled?("pg")
+          "postgres"
+        elsif gem_is_bundled?("mysql")
+          "mysql"
+        elsif gem_is_bundled?("mysql2")
+          "mysql2"
+        elsif gem_is_bundled?("sqlite3") || gem_is_bundled?("sqlite3-ruby")
+          "sqlite3"
+        end
+      "#{scheme}://user:pass@127.0.0.1/dbname"
+    end
+  end
 end
