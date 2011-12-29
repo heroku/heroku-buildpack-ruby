@@ -1,3 +1,9 @@
+## v16 (12/29/2011)
+
+Features:
+
+* pass DATABASE_URL to rails 3.1 assets:precompile rake task detection
+
 ## v15 (12/27/2011)
 
 Features:
