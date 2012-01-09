@@ -119,10 +119,7 @@ task "node:install", :version do |t, args|
         "./configure --prefix #{prefix}",
         "make install",
         "mv #{prefix}/bin/node #{prefix}/.",
-        "rm -rf #{prefix}/include",
-        "rm -rf #{prefix}/lib",
-        "rm -rf #{prefix}/share",
-        "rm -rf #{prefix}/bin"
+        "rm -rf #{prefix}/{include,lib,share,bin}"
       ].join(" && ")
 
       sh "vulcan build -v -o #{name}.tgz --source node-v#{version} --command=\"#{build_command}\""
