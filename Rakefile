@@ -222,7 +222,8 @@ task "jruby:install", :version do |t, args|
   output  = "jruby-#{version}"
 
   Dir.mktmpdir("jruby-") do |tmpdir|
-    Dir.chdir(tmpdir) do |dir|
+  tmpdir = Dir.mktmpdir("jruby-")
+    Dir.chdir(tmpdir) do
       sh "curl http://jruby.org.s3.amazonaws.com/downloads/#{version}/#{name}.tar.gz -s -o - | tar vzxf -"
       sh "rm #{output}/bin/*.bat"
       sh "rm #{output}/bin/*.dll"
@@ -232,8 +233,10 @@ task "jruby:install", :version do |t, args|
       sh "rm -rf #{output}/share"
       sh "rm -rf #{output}/tool"
       sh "ln -s jruby #{output}/bin/ruby"
-      sh("tar czvf #{tmpdir}/#{output}.tgz *")
-      s3_upload(tmpdir, output)
+      Dir.chdir(output) do
+        sh("tar czvf #{tmpdir}/#{output}.tgz *")
+        s3_upload(tmpdir, output)
+      end
     end
   end
 end
