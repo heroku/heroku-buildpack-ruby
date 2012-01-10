@@ -92,6 +92,12 @@ private
     ruby_version ? ruby_version.match(/^rbx-/) : false
   end
 
+  # determine if we're using jruby
+  # @return [Boolean] true if we are and false if we aren't
+  def ruby_version_jruby?
+    ruby_version ? ruby_version.match(/^jruby-/) : false
+  end
+
   # list the available valid ruby versions
   # @note the value is memoized
   # @return [Array] list of Strings of the ruby versions available
@@ -130,7 +136,7 @@ Invalid RUBY_VERSION specified: #{ruby_version}
 Valid versions: #{ruby_versions.join(", ")}
 ERROR
 
-    unless ruby_version_rbx?
+    if !ruby_version_rbx? && !ruby_version_jruby?
       FileUtils.mkdir_p(build_ruby_path)
       Dir.chdir(build_ruby_path) do
         run("curl #{VENDOR_URL}/#{ruby_version.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
