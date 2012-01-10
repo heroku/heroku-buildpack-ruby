@@ -33,7 +33,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       "GEM_PATH" => slug_vendor_base,
     }
 
-    ruby_version_jruby? ? vars.merge("JRUBY_HOME" => slug_vendor_ruby) : vars
+    ruby_version_jruby? ? vars.merge("JRUBY_HOME" => slug_vendor_ruby, "JAVA_OPTS" => '-Xmx384m -Xss512k') : vars
   end
 
   def default_process_types
