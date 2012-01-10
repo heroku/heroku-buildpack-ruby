@@ -215,6 +215,29 @@ task "rbx2dev:install", :version, :ruby_version do |t, args|
   end
 end
 
+desc "install jruby"
+task "jruby:install", :version do |t, args|
+  version = args[:version]
+  name    = "jruby-bin-#{version}"
+  output  = "jruby-#{version}"
+
+  Dir.mktmpdir("jruby-") do |tmpdir|
+    Dir.chdir(tmpdir) do |dir|
+      sh "curl http://jruby.org.s3.amazonaws.com/downloads/#{version}/#{name}.tar.gz -s -o - | tar vzxf -"
+      sh "rm #{output}/bin/*.bat"
+      sh "rm #{output}/bin/*.dll"
+      sh "rm #{output}/bin/*.exe"
+      sh "rm -rf #{output}/docs"
+      sh "rm -rf #{output}/samples"
+      sh "rm -rf #{output}/share"
+      sh "rm -rf #{output}/tool"
+      sh "ln -s jruby #{output}/bin/ruby"
+      sh("tar czvf #{tmpdir}/#{output}.tgz *")
+      s3_upload(tmpdir, output)
+    end
+  end
+end
+
 desc "generate ruby versions manifest"
 task "ruby:manifest" do
   require 'rexml/document'
