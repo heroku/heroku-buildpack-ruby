@@ -152,8 +152,6 @@ ERROR
     end
     error invalid_ruby_version_message unless $?.success?
 
-    ENV['JRUBY_HOME'] = slug_vendor_ruby if ruby_version_jruby?
-
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
     run("cp #{slug_vendor_ruby}/bin/* #{bin_dir}")
@@ -185,6 +183,9 @@ ERROR
     if ruby_version_rbx?
       ENV['RBX_RUNTIME'] = "#{build_path}/#{slug_vendor_ruby}/runtime"
       ENV['RBX_LIB']     = "#{build_path}/#{slug_vendor_ruby}/lib"
+    end
+    if ruby_version_jruby?
+      ENV['JRUBY_HOME'] = slug_vendor_ruby
     end
   end
 
