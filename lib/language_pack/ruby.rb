@@ -33,7 +33,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       "GEM_PATH" => slug_vendor_base,
     }
 
-    ruby_version_jruby? ? vars.merge("JRUBY_HOME" => slug_vendor_ruby) : vars
+    ruby_version_jruby? ? vars.merge("JRUBY_HOME" => slug_vendor_ruby, "JRUBY_OPTS" => "--1.9") : vars
   end
 
   def default_process_types
@@ -186,6 +186,7 @@ ERROR
     end
     if ruby_version_jruby?
       ENV['JRUBY_HOME'] = slug_vendor_ruby
+      ENV['JRUBY_OPTS'] = "--1.9"
     end
   end
 
