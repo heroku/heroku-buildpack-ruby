@@ -27,11 +27,13 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def default_config_vars
-    {
+    vars = {
       "LANG"     => "en_US.UTF-8",
       "PATH"     => default_path,
       "GEM_PATH" => slug_vendor_base,
     }
+
+    ruby_version_jruby? ? vars.merge("JRUBY_HOME" => slug_vendor_ruby) : vars
   end
 
   def default_process_types
