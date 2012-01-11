@@ -33,7 +33,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       "GEM_PATH" => slug_vendor_base,
     }
 
-    ruby_version_jruby? ? vars.merge("JRUBY_HOME" => slug_vendor_jruby, "JAVA_OPTS" => '-Xmx384m -Xss512k -XX:+UseCompressedOops') : vars
+    ruby_version_jruby? ? vars.merge("JRUBY_HOME" => slug_vendor_jruby, "JAVA_OPTS" => default_java_opts) : vars
   end
 
   def default_process_types
@@ -104,6 +104,12 @@ private
   # @return [Boolean] true if we are and false if we aren't
   def ruby_version_jruby?
     ruby_version ? ruby_version.match(/^jruby-/) : false
+  end
+
+  # default JAVA_OPTS
+  # return [String] string of JAVA_OPTS
+  def default_java_opts
+    '-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8'
   end
 
   # list the available valid ruby versions
@@ -198,6 +204,7 @@ ERROR
     end
     if ruby_version_jruby?
       ENV['JRUBY_HOME'] = slug_vendor_jruby
+      ENV['JAVA_OPTS']  = default_java_opts
     end
   end
 
