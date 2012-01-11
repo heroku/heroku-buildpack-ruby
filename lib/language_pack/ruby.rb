@@ -33,7 +33,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       "GEM_PATH" => slug_vendor_base,
     }
 
-    ruby_version_jruby? ? vars.merge("JRUBY_HOME" => slug_vendor_ruby, "JAVA_OPTS" => '-Xmx384m -Xss512k') : vars
+    ruby_version_jruby? ? vars.merge("JRUBY_HOME" => slug_vendor_jruby, "JAVA_OPTS" => '-Xmx384m -Xss512k') : vars
   end
 
   def default_process_types
@@ -74,6 +74,12 @@ private
   # @return [String] resulting path
   def slug_vendor_ruby
     "vendor/#{ruby_version}"
+  end
+
+  # the relative path to the vendored jruby directory without the version number
+  # @return [String] resulting path
+  def slug_vendor_jruby
+    "vendor/jruby"
   end
 
   # the absolute path of the build ruby to use during the buildpack
@@ -152,6 +158,12 @@ ERROR
     end
     error invalid_ruby_version_message unless $?.success?
 
+    if ruby_version_jruby?
+      Dir.chdir("vendor") do
+        run("ln -s #{ruby_version} jruby")
+      end
+    end
+
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
     run("cp #{slug_vendor_ruby}/bin/* #{bin_dir}")
@@ -185,7 +197,7 @@ ERROR
       ENV['RBX_LIB']     = "#{build_path}/#{slug_vendor_ruby}/lib"
     end
     if ruby_version_jruby?
-      ENV['JRUBY_HOME'] = slug_vendor_ruby
+      ENV['JRUBY_HOME'] = slug_vendor_jruby
     end
   end
 
