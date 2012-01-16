@@ -182,6 +182,39 @@ task "rbx:install", :version do |t, args|
   end
 end
 
+desc "install rbx 2.0.0dev"
+task "rbx2dev:install", :version, :ruby_version do |t, args|
+  version      = args[:version]
+  ruby_version = args[:ruby_version]
+  source       = "rubinius-#{version}"
+  name         = "rubinius-2.0.0dev"
+  output       = "rbx-#{version}-#{ruby_version}"
+  prefix       = "/app/vendor/#{output}"
+  usr_dir      = "usr"
+
+  Dir.mktmpdir("rbx-") do |tmpdir|
+    Dir.chdir(tmpdir) do |dir|
+      FileUtils.rm_rf("#{tmpdir}/*")
+
+      sh "curl http://asset.rubini.us/#{source}.tar.gz -s -o - | tar vzxf -"
+      FileUtils.mkdir_p("#{name}/#{usr_dir}")
+      Dir.chdir("#{name}/#{usr_dir}") do
+        sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar vzxf -"
+        sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar vzxf -"
+      end
+      build_command = [
+        # need to move libyaml/libffi to dirs we can see
+        "mv usr /tmp",
+        "./configure --prefix #{prefix} --enable-version=#{ruby_version} --default-version=#{ruby_version} --with-include-dir=/tmp/usr/include --with-lib-dir=/tmp/usr/lib",
+        "rake install"
+      ].join(" && ")
+
+      sh "vulcan build -v -o #{output}.tgz --source #{name} --prefix #{prefix} --command=\"#{build_command}\""
+      s3_upload(tmpdir, output)
+    end
+  end
+end
+
 desc "generate ruby versions manifest"
 task "ruby:manifest" do
   require 'rexml/document'
