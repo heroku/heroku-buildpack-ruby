@@ -217,14 +217,17 @@ end
 
 desc "install jruby"
 task "jruby:install", :version do |t, args|
-  version = args[:version]
-  name    = "jruby-bin-#{version}"
-  output  = "jruby-#{version}"
+  version  = args[:version]
+  name     = "jruby-bin-#{version}"
+  output   = "jruby-#{version}"
+  launcher = "launcher"
 
   Dir.mktmpdir("jruby-") do |tmpdir|
-  tmpdir = Dir.mktmpdir("jruby-")
     Dir.chdir(tmpdir) do
       sh "curl http://jruby.org.s3.amazonaws.com/downloads/#{version}/#{name}.tar.gz -s -o - | tar vzxf -"
+      Dir.chdir("#{output}/bin") do
+        sh "curl #{VENDOR_URL}/jruby-launcher-1.0.12-java.tgz -s -o - | tar vzxf -"
+      end
       sh "rm #{output}/bin/*.bat"
       sh "rm #{output}/bin/*.dll"
       sh "rm #{output}/bin/*.exe"
@@ -239,6 +242,30 @@ task "jruby:install", :version do |t, args|
       end
     end
   end
+end
+
+desc "build the jruby-launcher"
+task "jruby:launcher", :version do |t, args|
+  version = args[:version]
+  name    = "jruby-launcher-#{version}-java"
+  prefix  = "/tmp/jruby-launcher"
+
+  Dir.mktmpdir("jruby-launcher-") do |tmpdir|
+    Dir.chdir(tmpdir) do
+      sh "gem fetch jruby-launcher --platform java --version #{version}"
+      sh "gem unpack jruby-launcher-#{version}-java.gem"
+
+      build_command = [
+        "make",
+        "mkdir -p #{prefix}",
+        "cp jruby #{prefix}"
+      ].join(" && ")
+
+      sh "vulcan build -v -o #{name}.tgz --source #{name} --prefix #{prefix} --command=\"#{build_command}\""
+      s3_upload(tmpdir, name)
+    end
+  end
+
 end
 
 desc "generate ruby versions manifest"
