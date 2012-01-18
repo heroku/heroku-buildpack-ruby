@@ -109,7 +109,7 @@ private
   # default JAVA_OPTS
   # return [String] string of JAVA_OPTS
   def default_java_opts
-    '-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8'
+    "-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
   end
 
   # list the available valid ruby versions
@@ -172,8 +172,9 @@ ERROR
 
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
-    run("cp #{slug_vendor_ruby}/bin/* #{bin_dir}")
-    Dir["bin/*"].each {|path| run("chmod +x #{path}") }
+    Dir["#{slug_vendor_ruby}/bin/*"].each do |bin|
+      run("ln -s ../#{bin} #{bin_dir}")
+    end
 
     topic "Using RUBY_VERSION: #{ruby_version}"
 
