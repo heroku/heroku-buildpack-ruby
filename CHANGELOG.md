@@ -1,3 +1,33 @@
+## v17 (12/29/2011)
+
+Features:
+
+* bundler 1.1.rc.7
+
+## v16 (12/29/2011)
+
+Features:
+
+* pass DATABASE_URL to rails 3.1 assets:precompile rake task detection
+
+## v15 (12/27/2011)
+
+Features:
+
+* bundler 1.1.rc.6
+
+## v14 (12/22/2011)
+
+Bugfixes:
+
+* stop freedom patching syck in ruby 1.9.3+
+
+## v13 (12/15/2011)
+
+Features:
+
+* bundler 1.1.rc.5
+
 ## v12 (12/13/2011)
 
 Bugfixes:
