@@ -330,8 +330,18 @@ end
 
 raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
 
-def attribute(name, value)
-  value ? "\#{name}: \#{value}" : ""
+def attribute(name, value, force_string = false)
+  if value
+    value_string =
+      if force_string
+        '"' + value + '"'
+      else
+        value
+      end
+    "\#{name}: \#{value_string}"
+  else
+    ""
+  end
 end
 
 adapter = uri.scheme
@@ -353,7 +363,7 @@ params = CGI.parse(uri.query || "")
   <%= attribute "adapter",  adapter %>
   <%= attribute "database", database %>
   <%= attribute "username", username %>
-  <%= attribute "password", password %>
+  <%= attribute "password", password, true %>
   <%= attribute "host",     host %>
   <%= attribute "port",     port %>
 
