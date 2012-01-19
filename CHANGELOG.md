@@ -1,3 +1,14 @@
+## v18 (1/18/2012)
+
+Features:
+
+* JRuby support
+* rbx 2.0.0dev support
+
+Bugfixes:
+
+* force db password to be a string in the yaml file
+
 ## v17 (12/29/2011)
 
 Features:
