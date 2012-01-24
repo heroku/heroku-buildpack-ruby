@@ -173,11 +173,7 @@ ERROR
   # @return [String] resulting path or empty string if ruby is not vendored
   def ruby_install_binstub_path
     if ruby_version
-      if ruby_version_rbx?
-        "bin"
-      else
-        "#{build_ruby_path}/bin"
-      end
+      "#{build_ruby_path}/bin"
     else
       ""
     end
