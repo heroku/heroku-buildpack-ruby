@@ -187,10 +187,6 @@ ERROR
   def setup_ruby_install_env
     ENV["PATH"] = "#{ruby_install_binstub_path}:#{ENV["PATH"]}"
 
-    if ruby_version_rbx?
-      ENV['RBX_RUNTIME'] = "#{build_path}/#{slug_vendor_ruby}/runtime"
-      ENV['RBX_LIB']     = "#{build_path}/#{slug_vendor_ruby}/lib"
-    end
     if ruby_version_jruby?
       ENV['JAVA_OPTS']  = default_java_opts
     end
