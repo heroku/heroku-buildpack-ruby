@@ -1,3 +1,9 @@
+## v19 (1/25/2012)
+
+Bugfixes:
+
+* fix native extension building for rbx 2.0.0dev
+
 ## v18 (1/18/2012)
 
 Features:
