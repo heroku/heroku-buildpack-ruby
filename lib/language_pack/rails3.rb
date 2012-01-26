@@ -65,7 +65,7 @@ private
     end
   end
 
-  # setup the database url as on environment variable
+  # setup the database url as an environment variable
   def setup_database_url_env
     ENV["DATABASE_URL"] ||= begin
       # need to use a dummy DATABASE_URL here, so rails can load the environment
