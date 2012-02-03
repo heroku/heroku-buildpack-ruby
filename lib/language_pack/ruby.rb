@@ -308,7 +308,7 @@ ERROR
     end
   end
 
-  # RUBYOPT line that requires syck_hack filerequires syck_hack file
+  # RUBYOPT line that requires syck_hack file
   # @return [String] require string if needed or else an empty string
   def syck_hack
     syck_hack_file = File.expand_path(File.join(File.dirname(__FILE__), "../../vendor/syck_hack"))
@@ -425,7 +425,7 @@ params = CGI.parse(uri.query || "")
     run("env PATH=$PATH bundle exec rake #{task} --dry-run") && $?.success?
   end
 
-  # executes the block without GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
+  # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
   # param [block] block to be executed in the GIT_DIR free context
   def allow_git(&blk)
     git_dir = ENV.delete("GIT_DIR") # can mess with bundler
