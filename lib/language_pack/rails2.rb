@@ -63,7 +63,7 @@ private
   # @param [String] name of the plugin
   def install_plugin(name)
     plugin_dir = "vendor/plugins/#{name}"
-    return if File.exist?(plugin_dir)
+    return if File.exist?(plugin_dir) || gem_is_bundled?(name)
     puts "Injecting #{name}"
     FileUtils.mkdir_p plugin_dir
     Dir.chdir(plugin_dir) do |dir|
@@ -78,4 +78,3 @@ private
     ['shared-database:5mb']
   end
 end
-
