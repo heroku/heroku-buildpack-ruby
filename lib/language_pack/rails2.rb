@@ -56,21 +56,29 @@ private
   # vendors all the plugins into the slug
   def install_plugins
     topic "Rails plugin injection"
-    plugins.each { |plugin| install_plugin(plugin) }
+    plugins = self.plugins.select { |plugin| install_plugin?(plugin) }
+    unless plugins.empty?
+      topic "Rails plugin injection"
+      plugins.each { |plugin| install_plugin(plugin) }
+    end
   end
 
   # vendors an individual plugin
   # @param [String] name of the plugin
   def install_plugin(name)
-    plugin_dir = "vendor/plugins/#{name}"
-    return if File.exist?(plugin_dir) || gem_is_bundled?(name)
-    puts "Injecting #{name}"
+    puts "Injecting #{name}; add #{name} to your Gemfile to avoid plugin injection"
     FileUtils.mkdir_p plugin_dir
     Dir.chdir(plugin_dir) do |dir|
       run("curl #{VENDOR_URL}/#{name}.tgz -s -o - | tar xzf -")
     end
   end
 
+  # determines if a particular plugin should be installed
+  # @param [String] name of the plugin
+  def install_plugin?(name)
+    plugin_dir = "vendor/plugins/#{name}"
+    !File.exist?(plugin_dir) && !gem_is_bundled?(name)
+  end
 
   # most rails apps need a database
   # @return [Array] shared database addon
