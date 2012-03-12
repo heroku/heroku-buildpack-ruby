@@ -1,3 +1,9 @@
+## v20 (3/12/2012)
+
+Features:
+
+* bundler 1.1.0 \o/
+
 ## v19 (1/25/2012)
 
 Bugfixes:
