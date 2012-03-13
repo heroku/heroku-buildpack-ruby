@@ -1,3 +1,26 @@
+## v20 (3/12/2012)
+
+Features:
+
+* bundler 1.1.0 \o/
+
+## v19 (1/25/2012)
+
+Bugfixes:
+
+* fix native extension building for rbx 2.0.0dev
+
+## v18 (1/18/2012)
+
+Features:
+
+* JRuby support
+* rbx 2.0.0dev support
+
+Bugfixes:
+
+* force db password to be a string in the yaml file
+
 ## v17 (12/29/2011)
 
 Features:

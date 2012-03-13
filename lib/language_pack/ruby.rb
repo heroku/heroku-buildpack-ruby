@@ -7,7 +7,7 @@ require "language_pack/base"
 class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION     = "1.1.rc.7"
+  BUNDLER_VERSION     = "1.1.0"
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
@@ -27,11 +27,13 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def default_config_vars
-    {
+    vars = {
       "LANG"     => "en_US.UTF-8",
       "PATH"     => default_path,
       "GEM_PATH" => slug_vendor_base,
     }
+
+    ruby_version_jruby? ? vars.merge("JAVA_OPTS" => default_java_opts) : vars
   end
 
   def default_process_types
@@ -93,6 +95,18 @@ private
     ruby_version ? ruby_version.match(/^rbx-/) : false
   end
 
+  # determine if we're using jruby
+  # @return [Boolean] true if we are and false if we aren't
+  def ruby_version_jruby?
+    ruby_version ? ruby_version.match(/^jruby-/) : false
+  end
+
+  # default JAVA_OPTS
+  # return [String] string of JAVA_OPTS
+  def default_java_opts
+    "-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
+  end
+
   # list the available valid ruby versions
   # @note the value is memoized
   # @return [Array] list of Strings of the ruby versions available
@@ -131,10 +145,11 @@ Invalid RUBY_VERSION specified: #{ruby_version}
 Valid versions: #{ruby_versions.join(", ")}
 ERROR
 
-    unless ruby_version_rbx?
+    if !ruby_version_jruby?
       FileUtils.mkdir_p(build_ruby_path)
       Dir.chdir(build_ruby_path) do
-        run("curl #{VENDOR_URL}/#{ruby_version.sub("ruby", "ruby-build")}.tgz -s -o - | tar zxf -")
+        ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
+        run("curl #{VENDOR_URL}/#{ruby_version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz -s -o - | tar zxf -")
       end
       error invalid_ruby_version_message unless $?.success?
     end
@@ -147,8 +162,9 @@ ERROR
 
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
-    run("cp #{slug_vendor_ruby}/bin/* #{bin_dir}")
-    Dir["bin/*"].each {|path| run("chmod +x #{path}") }
+    Dir["#{slug_vendor_ruby}/bin/*"].each do |bin|
+      run("ln -s ../#{bin} #{bin_dir}")
+    end
 
     topic "Using RUBY_VERSION: #{ruby_version}"
 
@@ -159,11 +175,7 @@ ERROR
   # @return [String] resulting path or empty string if ruby is not vendored
   def ruby_install_binstub_path
     if ruby_version
-      if ruby_version_rbx?
-        "bin"
-      else
-        "#{build_ruby_path}/bin"
-      end
+      "#{build_ruby_path}/bin"
     else
       ""
     end
@@ -173,9 +185,8 @@ ERROR
   def setup_ruby_install_env
     ENV["PATH"] = "#{ruby_install_binstub_path}:#{ENV["PATH"]}"
 
-    if ruby_version_rbx?
-      ENV['RBX_RUNTIME'] = "#{build_path}/#{slug_vendor_ruby}/runtime"
-      ENV['RBX_LIB']     = "#{build_path}/#{slug_vendor_ruby}/lib"
+    if ruby_version_jruby?
+      ENV['JAVA_OPTS']  = default_java_opts
     end
   end
 
@@ -298,7 +309,7 @@ ERROR
     end
   end
 
-  # RUBYOPT line that requires syck_hack filerequires syck_hack file
+  # RUBYOPT line that requires syck_hack file
   # @return [String] require string if needed or else an empty string
   def syck_hack
     syck_hack_file = File.expand_path(File.join(File.dirname(__FILE__), "../../vendor/syck_hack"))
@@ -331,8 +342,18 @@ end
 
 raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
 
-def attribute(name, value)
-  value ? "\#{name}: \#{value}" : ""
+def attribute(name, value, force_string = false)
+  if value
+    value_string =
+      if force_string
+        '"' + value + '"'
+      else
+        value
+      end
+    "\#{name}: \#{value_string}"
+  else
+    ""
+  end
 end
 
 adapter = uri.scheme
@@ -341,7 +362,7 @@ adapter = "postgresql" if adapter == "postgres"
 database = (uri.path || "").split("/")[1]
 
 username = uri.user
-password = uri.password.to_s
+password = uri.password
 
 host = uri.host
 port = uri.port
@@ -354,7 +375,7 @@ params = CGI.parse(uri.query || "")
   <%= attribute "adapter",  adapter %>
   <%= attribute "database", database %>
   <%= attribute "username", username %>
-  <%= attribute "password", password %>
+  <%= attribute "password", password, true %>
   <%= attribute "host",     host %>
   <%= attribute "port",     port %>
 
@@ -405,7 +426,7 @@ params = CGI.parse(uri.query || "")
     run("env PATH=$PATH bundle exec rake #{task} --dry-run") && $?.success?
   end
 
-  # executes the block without GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
+  # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
   # param [block] block to be executed in the GIT_DIR free context
   def allow_git(&blk)
     git_dir = ENV.delete("GIT_DIR") # can mess with bundler

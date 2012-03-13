@@ -67,6 +67,21 @@ def build_ruby_command(name, output, prefix, usr_dir, tmpdir)
   s3_upload(tmpdir, output)
 end
 
+def build_rbx_command(name, output, prefix, usr_dir, tmpdir, ruby_version)
+  build_command = [
+    # need to move libyaml/libffi to dirs we can see
+    "mv usr /tmp",
+    "ls /tmp/#{usr_dir}",
+    "./configure --prefix #{prefix} --enable-version=#{ruby_version} --default-version=#{ruby_version} --with-include-dir=/tmp/#{usr_dir}/include --with-lib-dir=/tmp/#{usr_dir}/lib",
+    "rake install"
+  ]
+  # build_command << "mv #{prefix} /app/vendor/#{name}" if name != output
+  build_command = build_command.join(" && ")
+
+  sh "vulcan build -v -o #{output}.tgz --source #{name} --prefix #{prefix} --command=\"#{build_command}\""
+  s3_upload(tmpdir, output)
+end
+
 desc "update plugins"
 task "plugins:update" do
   vendor_plugin "http://github.com/ddollar/rails_log_stdout.git"
@@ -182,13 +197,97 @@ task "rbx:install", :version do |t, args|
   end
 end
 
+desc "install rbx 2.0.0dev"
+task "rbx2dev:install", :version, :ruby_version do |t, args|
+  version      = args[:version]
+  ruby_version = args[:ruby_version]
+  source       = "rubinius-#{version}"
+  name         = "rubinius-2.0.0dev"
+  output       = "rbx-#{version}-#{ruby_version}"
+  usr_dir      = "usr"
+
+  Dir.mktmpdir("rbx-") do |tmpdir|
+    Dir.chdir(tmpdir) do |dir|
+      FileUtils.rm_rf("#{tmpdir}/*")
+
+      sh "curl http://asset.rubini.us/#{source}.tar.gz -s -o - | tar vzxf -"
+      FileUtils.mkdir_p("#{name}/#{usr_dir}")
+      Dir.chdir("#{name}/#{usr_dir}") do
+        sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar vzxf -"
+        sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar vzxf -"
+      end
+
+      prefix = "/app/vendor/#{output}"
+      build_rbx_command(name, output, prefix, usr_dir, tmpdir, ruby_version)
+
+      # rbx build
+      prefix  = "/tmp/#{output}"
+      output  = "rbx-build-#{version}-#{ruby_version}"
+      build_rbx_command(name, output, prefix, usr_dir, tmpdir, ruby_version)
+    end
+  end
+end
+
+desc "install jruby"
+task "jruby:install", :version do |t, args|
+  version  = args[:version]
+  name     = "jruby-bin-#{version}"
+  output   = "jruby-#{version}"
+  launcher = "launcher"
+
+  Dir.mktmpdir("jruby-") do |tmpdir|
+    Dir.chdir(tmpdir) do
+      sh "curl http://jruby.org.s3.amazonaws.com/downloads/#{version}/#{name}.tar.gz -s -o - | tar vzxf -"
+      Dir.chdir("#{output}/bin") do
+        sh "curl #{VENDOR_URL}/jruby-launcher-1.0.12-java.tgz -s -o - | tar vzxf -"
+      end
+      sh "rm #{output}/bin/*.bat"
+      sh "rm #{output}/bin/*.dll"
+      sh "rm #{output}/bin/*.exe"
+      sh "rm -rf #{output}/docs"
+      sh "rm -rf #{output}/samples"
+      sh "rm -rf #{output}/share"
+      sh "rm -rf #{output}/tool"
+      sh "ln -s jruby #{output}/bin/ruby"
+      Dir.chdir(output) do
+        sh("tar czvf #{tmpdir}/#{output}.tgz *")
+        s3_upload(tmpdir, output)
+      end
+    end
+  end
+end
+
+desc "build the jruby-launcher"
+task "jruby:launcher", :version do |t, args|
+  version = args[:version]
+  name    = "jruby-launcher-#{version}-java"
+  prefix  = "/tmp/jruby-launcher"
+
+  Dir.mktmpdir("jruby-launcher-") do |tmpdir|
+    Dir.chdir(tmpdir) do
+      sh "gem fetch jruby-launcher --platform java --version #{version}"
+      sh "gem unpack jruby-launcher-#{version}-java.gem"
+
+      build_command = [
+        "make",
+        "mkdir -p #{prefix}",
+        "cp jruby #{prefix}"
+      ].join(" && ")
+
+      sh "vulcan build -v -o #{name}.tgz --source #{name} --prefix #{prefix} --command=\"#{build_command}\""
+      s3_upload(tmpdir, name)
+    end
+  end
+
+end
+
 desc "generate ruby versions manifest"
 task "ruby:manifest" do
   require 'rexml/document'
   require 'yaml'
 
   document = REXML::Document.new(`curl https://#{S3_BUCKET_NAME}.s3.amazonaws.com`)
-  rubies   = document.elements.to_a("//Contents/Key").map {|node| node.text }.select {|text| text.match(/^(ruby|rbx)-\d+\.\d+\.\d+(-p\d+)?/) }
+  rubies   = document.elements.to_a("//Contents/Key").map {|node| node.text }.select {|text| text.match(/^(ruby|rbx|jruby)-\\\\d+\\\\.\\\\d+\\\\.\\\\d+(-p\\\\d+)?/) }
 
   Dir.mktmpdir("ruby_versions-") do |tmpdir|
     name = 'ruby_versions.yml'
