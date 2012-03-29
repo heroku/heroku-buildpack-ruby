@@ -12,13 +12,14 @@ def s3_upload(tmpdir, name)
   sh("#{s3_tools_dir}/s3 put #{S3_BUCKET_NAME} #{name}.tgz #{tmpdir}/#{name}.tgz")
 end
 
-def vendor_plugin(git_url)
+def vendor_plugin(git_url, branch = nil)
   name = File.basename(git_url, File.extname(git_url))
   Dir.mktmpdir("#{name}-") do |tmpdir|
     FileUtils.rm_rf("#{tmpdir}/*")
 
     Dir.chdir(tmpdir) do
       sh "git clone #{git_url} ."
+      sh "git checkout origin/#{branch}" if branch
       FileUtils.rm_rf("#{name}/.git")
       sh("tar czvf #{tmpdir}/#{name}.tgz *")
       s3_upload(tmpdir, name)
