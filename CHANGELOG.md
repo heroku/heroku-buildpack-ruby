@@ -1,3 +1,9 @@
+## v21 (3/21/2012)
+
+Features:
+
+* bundler 1.1.2
+
 ## v20 (3/12/2012)
 
 Features:
