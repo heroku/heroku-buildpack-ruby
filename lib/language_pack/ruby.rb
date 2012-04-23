@@ -88,7 +88,8 @@ private
     return @ruby_version if @ruby_version
 
     bootstrap_bundler do |bundler_path|
-      @ruby_version = run("env PATH=$PATH:#{bundler_path}/bin GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
+      old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+      @ruby_version = run("env PATH=#{old_system_path}:#{bundler_path}/bin GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
     end
 
     if @ruby_version == "No ruby version specified" && ENV['RUBY_VERSION']
