@@ -91,12 +91,14 @@ private
       @ruby_version = run("env PATH=$PATH:#{bundler_path}/bin GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
     end
 
-    if @ruby_version == "No ruby version specified"
+    if @ruby_version == "No ruby version specified" && ENV['RUBY_VERSION']
       # for backwards compatibility.
       # this will go away in the future
       @ruby_version = ENV['RUBY_VERSION']
+      @ruby_version_env_var = true
     else
       @ruby_version = @ruby_version.sub('(', '').sub(')', '').split.join('-')
+      @ruby_version_env_var = false
     end
 
     @ruby_version
@@ -191,6 +193,10 @@ ERROR
     end
 
     topic "Using RUBY_VERSION: #{ruby_version}"
+    if @ruby_version_env_var
+      puts "WARNING: ENV['RUBY_VERSION'] will be deprecated soon."
+      puts "Please use Bundler 1.2's ruby_version dsl."
+    end
 
     true
   end
