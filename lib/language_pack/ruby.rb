@@ -82,10 +82,35 @@ private
     "/tmp/#{ruby_version}"
   end
 
-  # fetch the ruby version from the enviroment
+  # fetch the ruby version from bundler
   # @return [String, nil] returns the ruby version if detected or nil if none is detected
   def ruby_version
-    ENV["RUBY_VERSION"]
+    return @ruby_version if @ruby_version
+
+    bootstrap_bundler do |bundler_path|
+      @ruby_version = run("env PATH=$PATH:#{bundler_path}/bin GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
+    end
+
+    if @ruby_version.empty?
+      # for backwards compatibility.
+      # this will go away in the future
+      @ruby_version = ENV['RUBY_VERSION']
+    else
+      @ruby_version = @ruby_version.sub('(', '').sub(')', '').split.join('-')
+    end
+
+    @ruby_version
+  end
+
+  # bootstraps bundler so we can pull the ruby version
+  def bootstrap_bundler(&block)
+    Dir.mktmpdir("bundler-") do |tmpdir|
+      Dir.chdir(tmpdir) do
+        run("curl #{VENDOR_URL}/#{BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
+      end
+
+      yield tmpdir
+    end
   end
 
   # determine if we're using rbx
