@@ -96,6 +96,8 @@ private
       # this will go away in the future
       @ruby_version = ENV['RUBY_VERSION']
       @ruby_version_env_var = true
+    elsif @ruby_version == "No ruby version specified"
+      @ruby_version = nil
     else
       @ruby_version = @ruby_version.sub('(', '').sub(')', '').split.join('-')
       @ruby_version_env_var = false
