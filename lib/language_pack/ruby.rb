@@ -91,7 +91,7 @@ private
       @ruby_version = run("env PATH=$PATH:#{bundler_path}/bin GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
     end
 
-    if @ruby_version.empty?
+    if @ruby_version == "No ruby version specified"
       # for backwards compatibility.
       # this will go away in the future
       @ruby_version = ENV['RUBY_VERSION']
