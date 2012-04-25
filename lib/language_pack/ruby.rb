@@ -365,6 +365,7 @@ password = uri.password
 
 host = uri.host
 port = uri.port
+pool = ENV["DB_POOL"] || 5
 
 params = CGI.parse(uri.query || "")
 
@@ -377,6 +378,7 @@ params = CGI.parse(uri.query || "")
   <%= attribute "password", password, true %>
   <%= attribute "host",     host %>
   <%= attribute "port",     port %>
+  <%= attribute "pool",     pool %>
 
 <% params.each do |key, value| %>
   <%= key %>: <%= value.first %>
