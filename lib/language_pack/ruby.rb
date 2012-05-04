@@ -174,7 +174,7 @@ Invalid RUBY_VERSION specified: #{ruby_version}
 Valid versions: #{ruby_versions.join(", ")}
 ERROR
 
-    if !ruby_version_jruby?
+    if !ruby_version_jruby? && ruby_version != "ruby-1.9.3"
       FileUtils.mkdir_p(build_ruby_path)
       Dir.chdir(build_ruby_path) do
         ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
@@ -208,7 +208,11 @@ ERROR
   # @return [String] resulting path or empty string if ruby is not vendored
   def ruby_install_binstub_path
     if ruby_version
-      "#{build_ruby_path}/bin"
+      if ruby_version == "ruby-1.9.3"
+        "#{slug_vendor_ruby}/bin"
+      else
+        "#{build_ruby_path}/bin"
+      end
     else
       ""
     end
