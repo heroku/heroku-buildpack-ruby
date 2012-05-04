@@ -163,6 +163,12 @@ private
     ENV["PATH"]     = "#{ruby_install_binstub_path}:#{default_config_vars["PATH"]}"
   end
 
+  # determines if a build ruby is required
+  # @return [Boolean] true if a build ruby is required
+  def build_ruby?
+    !ruby_version_jruby? && ruby_version != "ruby-1.9.3"
+  end
+
   # install the vendored ruby
   # @note this only installs if we detect RUBY_VERSION in the environment
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
@@ -174,7 +180,7 @@ Invalid RUBY_VERSION specified: #{ruby_version}
 Valid versions: #{ruby_versions.join(", ")}
 ERROR
 
-    if !ruby_version_jruby? && ruby_version != "ruby-1.9.3"
+    if build_ruby?
       FileUtils.mkdir_p(build_ruby_path)
       Dir.chdir(build_ruby_path) do
         ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
@@ -207,12 +213,10 @@ ERROR
   # find the ruby install path for its binstubs during build
   # @return [String] resulting path or empty string if ruby is not vendored
   def ruby_install_binstub_path
-    if ruby_version
-      if ruby_version == "ruby-1.9.3"
-        "#{slug_vendor_ruby}/bin"
-      else
-        "#{build_ruby_path}/bin"
-      end
+    if build_ruby?
+      "#{build_ruby_path}/bin"
+    elsif ruby_version
+      "#{slug_vendor_ruby}/bin"
     else
       ""
     end
