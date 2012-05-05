@@ -166,7 +166,7 @@ private
   # determines if a build ruby is required
   # @return [Boolean] true if a build ruby is required
   def build_ruby?
-    !ruby_version_jruby? && ruby_version != "ruby-1.9.3"
+    ruby_version_rbx?
   end
 
   # install the vendored ruby
@@ -183,8 +183,7 @@ ERROR
     if build_ruby?
       FileUtils.mkdir_p(build_ruby_path)
       Dir.chdir(build_ruby_path) do
-        ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
-        run("curl #{VENDOR_URL}/#{ruby_version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz -s -o - | tar zxf -")
+        run("curl #{VENDOR_URL}/#{ruby_version.sub('rbx', "rbx-build")}.tgz -s -o - | tar zxf -")
       end
       error invalid_ruby_version_message unless $?.success?
     end
