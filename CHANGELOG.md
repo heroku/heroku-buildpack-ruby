@@ -1,3 +1,9 @@
+## v23 (5/8/2012)
+
+Bugfixes:
+
+* fix ruby version bug with "fatal:-Not-a-git-repository"
+
 ## v22 (5/7/2012)
 
 Features:
