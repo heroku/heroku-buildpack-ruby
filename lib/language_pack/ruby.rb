@@ -201,10 +201,12 @@ ERROR
       run("ln -s ../#{bin} #{bin_dir}")
     end
 
-    topic "Using Ruby version: #{ruby_version}"
-    if @ruby_version_env_var
-      puts "WARNING: ENV['RUBY_VERSION'] will be deprecated soon."
-      puts "Please use Bundler 1.2's ruby dsl."
+    if !@ruby_version_env_var
+      topic "Using Ruby version: #{ruby_version}"
+    else
+      topic "Using RUBY_VERSION: #{ruby_version}"
+      puts "WARNING: ENV['RUBY_VERSION'] has been deprecated. Please use Gemfile specification instead."
+      puts "See https://devcenter.heroku.com/articles/ruby-versions"
     end
 
     true
