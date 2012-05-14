@@ -7,7 +7,7 @@ require "language_pack/base"
 class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION     = "1.1.2"
+  BUNDLER_VERSION     = "1.2.0.pre"
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
@@ -83,10 +83,40 @@ private
     "/tmp/#{ruby_version}"
   end
 
-  # fetch the ruby version from the enviroment
+  # fetch the ruby version from bundler
   # @return [String, nil] returns the ruby version if detected or nil if none is detected
   def ruby_version
-    ENV["RUBY_VERSION"]
+    return @ruby_version if @ruby_version
+
+    bootstrap_bundler do |bundler_path|
+      old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+      @ruby_version = run_stdout("env PATH=#{old_system_path}:#{bundler_path}/bin GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
+    end
+
+    if @ruby_version == "No ruby version specified" && ENV['RUBY_VERSION']
+      # for backwards compatibility.
+      # this will go away in the future
+      @ruby_version = ENV['RUBY_VERSION']
+      @ruby_version_env_var = true
+    elsif @ruby_version == "No ruby version specified"
+      @ruby_version = nil
+    else
+      @ruby_version = @ruby_version.sub('(', '').sub(')', '').split.join('-')
+      @ruby_version_env_var = false
+    end
+
+    @ruby_version
+  end
+
+  # bootstraps bundler so we can pull the ruby version
+  def bootstrap_bundler(&block)
+    Dir.mktmpdir("bundler-") do |tmpdir|
+      Dir.chdir(tmpdir) do
+        run("curl #{VENDOR_URL}/#{BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
+      end
+
+      yield tmpdir
+    end
   end
 
   # determine if we're using rbx
@@ -134,6 +164,12 @@ private
     ENV["PATH"]     = "#{ruby_install_binstub_path}:#{default_config_vars["PATH"]}"
   end
 
+  # determines if a build ruby is required
+  # @return [Boolean] true if a build ruby is required
+  def build_ruby?
+    !ruby_version_jruby? && ruby_version != "ruby-1.9.3"
+  end
+
   # install the vendored ruby
   # @note this only installs if we detect RUBY_VERSION in the environment
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
@@ -145,7 +181,7 @@ Invalid RUBY_VERSION specified: #{ruby_version}
 Valid versions: #{ruby_versions.join(", ")}
 ERROR
 
-    if !ruby_version_jruby?
+    if build_ruby?
       FileUtils.mkdir_p(build_ruby_path)
       Dir.chdir(build_ruby_path) do
         ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
@@ -166,7 +202,13 @@ ERROR
       run("ln -s ../#{bin} #{bin_dir}")
     end
 
-    topic "Using RUBY_VERSION: #{ruby_version}"
+    if !@ruby_version_env_var
+      topic "Using Ruby version: #{ruby_version}"
+    else
+      topic "Using RUBY_VERSION: #{ruby_version}"
+      puts "WARNING: ENV['RUBY_VERSION'] has been deprecated. Please use Gemfile specification instead."
+      puts "See https://devcenter.heroku.com/articles/ruby-versions"
+    end
 
     true
   end
@@ -174,8 +216,10 @@ ERROR
   # find the ruby install path for its binstubs during build
   # @return [String] resulting path or empty string if ruby is not vendored
   def ruby_install_binstub_path
-    if ruby_version
+    if build_ruby?
       "#{build_ruby_path}/bin"
+    elsif ruby_version
+      "#{slug_vendor_ruby}/bin"
     else
       ""
     end

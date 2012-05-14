@@ -131,6 +131,13 @@ private ##################################
     %x{ #{command} 2>&1 }
   end
 
+  # run a shell command and pipe stderr to /dev/null
+  # @param [String] command to be run
+  # @return [String] output of stdout
+  def run_stdout(command)
+    %x{ #{command} 2>/dev/null }
+  end
+
   # run a shell command and stream the ouput
   # @param [String] command to be run
   def pipe(command)
