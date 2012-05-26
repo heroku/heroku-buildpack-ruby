@@ -156,11 +156,11 @@ private
   def setup_language_pack_environment
     setup_ruby_install_env
 
-    default_config_vars.each do |key, value|
+    config_vars = default_config_vars.each do |key, value|
       ENV[key] ||= value
     end
     ENV["GEM_HOME"] = slug_vendor_base
-    ENV["PATH"]     = "#{ruby_install_binstub_path}:#{default_config_vars["PATH"]}"
+    ENV["PATH"]     = "#{ruby_install_binstub_path}:#{config_vars["PATH"]}"
   end
 
   # determines if a build ruby is required
