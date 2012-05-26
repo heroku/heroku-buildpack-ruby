@@ -1,3 +1,9 @@
+## v24
+
+Features:
+
+* removes bundler cache in the slug, to minimize slug size (@stevenh512, #16)
+
 ## v23 (5/8/2012)
 
 Bugfixes:
