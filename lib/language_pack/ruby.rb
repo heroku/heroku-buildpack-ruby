@@ -215,13 +215,14 @@ ERROR
   # find the ruby install path for its binstubs during build
   # @return [String] resulting path or empty string if ruby is not vendored
   def ruby_install_binstub_path
-    if build_ruby?
-      "#{build_ruby_path}/bin"
-    elsif ruby_version
-      "#{slug_vendor_ruby}/bin"
-    else
-      ""
-    end
+    @ruby_install_binstub_path ||=
+      if build_ruby?
+        "#{build_ruby_path}/bin"
+      elsif ruby_version
+        "#{slug_vendor_ruby}/bin"
+      else
+        ""
+      end
   end
 
   # setup the environment so we can use the vendored ruby
