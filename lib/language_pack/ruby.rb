@@ -337,7 +337,7 @@ ERROR
         cache_store "vendor/bundle"
 
         # Keep gem cache out of the slug
-        FileUtils.rm_rf("vendor/bundle/ruby/1.9.1/cache")
+        FileUtils.rm_rf("#{slug_vendor_base}/cache")
       else
         log "bundle", :status => "failure"
         error_message = "Failed to install gems via Bundler."
