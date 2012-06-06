@@ -1,8 +1,9 @@
-## v24
+## v24 (6/7/2012)
 
 Features:
 
 * removes bundler cache in the slug, to minimize slug size (@stevenh512, #16)
+* optimize push time with caching
 
 ## v23 (5/8/2012)
 
