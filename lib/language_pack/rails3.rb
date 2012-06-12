@@ -47,9 +47,7 @@ private
           ENV["RAILS_ENV"]    ||= "production"
 
           puts "Running: rake assets:precompile"
-          rake_output = ""
-          rake_output << run("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
-          puts rake_output
+          pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
 
           if $?.success?
             log "assets_precompile", :status => "success"
