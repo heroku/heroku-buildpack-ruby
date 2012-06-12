@@ -324,16 +324,7 @@ ERROR
       version = run("env RUBYOPT=\"#{syck_hack}\" bundle version").strip
       topic("Installing dependencies using #{version}")
 
-      # remove `vendor/bundle` in case there are native ext
-      # users should be using `bundle pack` instead
-      # https://github.com/heroku/heroku-buildpack-ruby/issues/21
-      if File.exists?("vendor/bundle")
-        puts "WARNING: Don't check in `vendor/bundle`. Use `bundle pack` instead."
-        puts "Removing `vendor/bundle`."
-        FileUtils.rm_rf("vendor/bundle")
-      else
-        cache_load "vendor/bundle"
-      end
+      cache_load "vendor/bundle"
 
       bundler_output = ""
       Dir.mktmpdir("libyaml-") do |tmpdir|
