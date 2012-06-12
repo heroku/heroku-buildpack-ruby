@@ -296,7 +296,7 @@ ERROR
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
   def remove_vendor_bundle
     if File.exists?("vendor/bundle")
-      puts "WARNING: Don't check in `vendor/bundle`. Use `bundle pack` instead."
+      topic "WARNING: Don't check in `vendor/bundle`. Use `bundle pack` instead."
       puts "Removing `vendor/bundle`."
       FileUtils.rm_rf("vendor/bundle")
     end
