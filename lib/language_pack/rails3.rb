@@ -52,7 +52,7 @@ private
 
           if $?.success?
             log "assets_precompile", :status => "success"
-            puts "Asset precompilation completed (#{time}s)"
+            puts "Asset precompilation completed (#{"%.2f" % time}s)"
           else
             log "assets_precompile", :status => "failure"
             puts "Precompiling assets failed, enabling runtime asset compilation"
