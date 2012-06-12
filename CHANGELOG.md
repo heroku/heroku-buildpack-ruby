@@ -1,3 +1,9 @@
+## v25 (6/12/2012)
+
+Features:
+
+* support "ruby-xxx-jruby-yyy" for jruby detection packages
+
 ## v24 (6/7/2012)
 
 Features:
