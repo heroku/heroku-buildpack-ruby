@@ -47,10 +47,12 @@ private
           ENV["RAILS_ENV"]    ||= "production"
 
           puts "Running: rake assets:precompile"
-          pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+          require 'benchmark'
+          time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
 
           if $?.success?
             log "assets_precompile", :status => "success"
+            puts "Asset precompilation completed (#{time}s)"
           else
             log "assets_precompile", :status => "failure"
             puts "Precompiling assets failed, enabling runtime asset compilation"
