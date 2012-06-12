@@ -308,6 +308,9 @@ ERROR
         cache_load ".bundle"
       end
 
+      version = run("env RUBYOPT=\"#{syck_hack}\" bundle version").strip
+      topic("Installing dependencies using #{version}")
+
       # remove `vendor/bundle` in case there are native ext
       # users should be using `bundle pack` instead
       # https://github.com/heroku/heroku-buildpack-ruby/issues/21
@@ -317,9 +320,6 @@ ERROR
         FileUtils.rm_rf("vendor/bundle")
       end
       cache_load "vendor/bundle"
-
-      version = run("env RUBYOPT=\"#{syck_hack}\" bundle version").strip
-      topic("Installing dependencies using #{version}")
 
       bundler_output = ""
       Dir.mktmpdir("libyaml-") do |tmpdir|
