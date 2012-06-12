@@ -496,8 +496,13 @@ params = CGI.parse(uri.query || "")
 
   def run_assets_precompile_rake_task
     if rake_task_defined?("assets:precompile")
+      require 'benchmark'
+
       topic "Running: rake assets:precompile"
-      pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+      time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
+      if $?.success?
+        puts "Asset precompilation completed (#{time}s)"
+      end
     end
   end
 end
