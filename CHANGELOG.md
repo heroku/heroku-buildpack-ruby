@@ -1,3 +1,9 @@
+## v26
+
+Features:
+
+* print message when assets:precompile finishes successfully
+
 ## v25 (6/12/2012)
 
 Features:
