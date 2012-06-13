@@ -48,6 +48,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     install_ruby
     setup_language_pack_environment
     allow_git do
+      remove_vendor_bundle
       install_language_pack_gems
       build_bundler
       create_database_yml
@@ -289,6 +290,20 @@ ERROR
     end
   end
 
+  # remove `vendor/bundle` that comes from the git repo
+  # in case there are native ext.
+  # users should be using `bundle pack` instead.
+  # https://github.com/heroku/heroku-buildpack-ruby/issues/21
+  def remove_vendor_bundle
+    if File.exists?("vendor/bundle")
+      topic "WARNING:  Removing `vendor/bundle`."
+      puts  "Checking in `vendor/bundle` is not supported. Please remove this directory"
+      puts  "and add it to your .gitignore. To vendor your gems with Bundler, use"
+      puts  "`bundle pack` instead."
+      FileUtils.rm_rf("vendor/bundle")
+    end
+  end
+
   # runs bundler to install the dependencies
   def build_bundler
     log("bundle") do
@@ -308,10 +323,10 @@ ERROR
         cache_load ".bundle"
       end
 
-      cache_load "vendor/bundle"
-
       version = run("env RUBYOPT=\"#{syck_hack}\" bundle version").strip
       topic("Installing dependencies using #{version}")
+
+      cache_load "vendor/bundle"
 
       bundler_output = ""
       Dir.mktmpdir("libyaml-") do |tmpdir|
