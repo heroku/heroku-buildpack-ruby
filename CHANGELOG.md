@@ -3,6 +3,7 @@
 Features:
 
 * print message when assets:precompile finishes successfully
+* Remove `vendor/bundle` if user commits it to their git repo.
 
 ## v25 (6/12/2012)
 
