@@ -296,8 +296,10 @@ ERROR
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
   def remove_vendor_bundle
     if File.exists?("vendor/bundle")
-      topic "WARNING: Don't check in `vendor/bundle`. Use `bundle pack` instead."
-      puts "Removing `vendor/bundle`."
+      topic "WARNING:  Removing `vendor/bundle`."
+      puts  "Checking in `vendor/bundle` is not supported. Please remove this directory"
+      puts  "and add it to your .gitignore. To vendor your gems with Bundler, use"
+      puts  "`bundle pack` instead."
       FileUtils.rm_rf("vendor/bundle")
     end
   end
