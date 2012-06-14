@@ -45,10 +45,10 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     Dir.chdir(build_path)
+    remove_vendor_bundle
     install_ruby
     setup_language_pack_environment
     allow_git do
-      remove_vendor_bundle
       install_language_pack_gems
       build_bundler
       create_database_yml
