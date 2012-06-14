@@ -206,8 +206,8 @@ ERROR
       topic "Using Ruby version: #{ruby_version}"
     else
       topic "Using RUBY_VERSION: #{ruby_version}"
-      puts "WARNING: ENV['RUBY_VERSION'] has been deprecated. Please use Gemfile specification instead."
-      puts "See https://devcenter.heroku.com/articles/ruby-versions"
+      puts  "WARNING: RUBY_VERSION support has been deprecated and will be removed entirely on August 1, 2012."
+      puts  "See https://devcenter.heroku.com/articles/ruby-versions#selecting_a_version_of_ruby for more information."
     end
 
     true
