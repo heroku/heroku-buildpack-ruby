@@ -1,3 +1,9 @@
+## v27 (6/14/2012)
+
+Bugfixes:
+
+* Remove `vendor/bundle` message only appears when dir actually exists
+
 ## v26 (6/14/2012)
 
 Features:
