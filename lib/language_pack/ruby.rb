@@ -86,7 +86,9 @@ private
   # fetch the ruby version from bundler
   # @return [String, nil] returns the ruby version if detected or nil if none is detected
   def ruby_version
-    return @ruby_version if @ruby_version
+    return @ruby_version if @ruby_version_run
+
+    @ruby_version_run = true
 
     bootstrap_bundler do |bundler_path|
       old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
