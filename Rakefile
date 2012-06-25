@@ -230,30 +230,43 @@ task "rbx2dev:install", :version, :ruby_version do |t, args|
 end
 
 desc "install jruby"
-task "jruby:install", :version do |t, args|
-  version  = args[:version]
-  name     = "jruby-bin-#{version}"
-  output   = "jruby-#{version}"
-  launcher = "launcher"
+task "jruby:install", :version, :ruby_version do |t, args|
+  version      = args[:version]
+  ruby_version = args[:ruby_version]
+  name         = "jruby-src-#{version}"
+  src_folder   = "jruby-#{version}"
+  output       = "ruby-#{ruby_version}-jruby-#{version}"
+  launcher     = "launcher"
 
   Dir.mktmpdir("jruby-") do |tmpdir|
+  tmpdir = Dir.mktmpdir("jruby-")
     Dir.chdir(tmpdir) do
       sh "curl http://jruby.org.s3.amazonaws.com/downloads/#{version}/#{name}.tar.gz -s -o - | tar vzxf -"
-      Dir.chdir("#{output}/bin") do
+      sh "rm -rf test"
+      Dir.chdir(src_folder) do
+        sh "curl http://www.nic.funet.fi/pub/mirrors/apache.org/ant/binaries/apache-ant-1.8.4-bin.tar.gz -s -o - | tar vxzf -"
+        sh "rm -rf manual"
+      end
+      Dir.chdir("#{src_folder}/bin") do
         sh "curl #{VENDOR_URL}/jruby-launcher-1.0.12-java.tgz -s -o - | tar vzxf -"
       end
-      sh "rm #{output}/bin/*.bat"
-      sh "rm #{output}/bin/*.dll"
-      sh "rm #{output}/bin/*.exe"
-      sh "rm -rf #{output}/docs"
-      sh "rm -rf #{output}/samples"
-      sh "rm -rf #{output}/share"
-      sh "rm -rf #{output}/tool"
-      sh "ln -s jruby #{output}/bin/ruby"
-      Dir.chdir(output) do
-        sh("tar czvf #{tmpdir}/#{output}.tgz *")
-        s3_upload(tmpdir, output)
-      end
+
+      major, minor, patch = ruby_version.split('.')
+
+      build_command = [
+        "apache-ant-1.8.4/bin/ant -Djruby.default.ruby.version=#{major}.#{minor}",
+        "rm bin/*.bat",
+        "rm bin/*.dll",
+        "rm bin/*.exe",
+        "ln -s jruby bin/ruby",
+        "mkdir -p /app/vendor/#{output}",
+        "mv bin /app/vendor/#{output}",
+        "mv lib /app/vendor/#{output}"
+      ]
+      build_command = build_command.join(" && ")
+      sh "vulcan build -v -o #{output}.tgz --prefix /app/vendor/#{output} --source #{src_folder} --command=\"#{build_command}\""
+
+      s3_upload(tmpdir, output)
     end
   end
 end
