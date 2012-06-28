@@ -238,7 +238,7 @@ ERROR
   end
 
   # list of default gems to vendor into the slug
-  # @return [Array] resluting list of gems
+  # @return [Array] resulting list of gems
   def gems
     [BUNDLER_GEM_PATH]
   end
