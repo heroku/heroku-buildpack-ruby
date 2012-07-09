@@ -11,6 +11,8 @@ class LanguagePack::Ruby < LanguagePack::Base
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
+  JVM_BASE_URL        = "http://heroku-jvm-langpack-java.s3.amazonaws.com"
+  JVM_VERSION         = "openjdk6-latest"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -47,6 +49,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     Dir.chdir(build_path)
     remove_vendor_bundle
     install_ruby
+    install_jvm
     setup_language_pack_environment
     allow_git do
       install_language_pack_gems
@@ -75,6 +78,12 @@ private
   # @return [String] resulting path
   def slug_vendor_ruby
     "vendor/#{ruby_version}"
+  end
+
+  # the relative path to the vendored jvm
+  # @return [String] resulting path
+  def slug_vendor_jvm
+    "vendor/jvm"
   end
 
   # the absolute path of the build ruby to use during the buildpack
@@ -212,6 +221,18 @@ ERROR
     end
 
     true
+  end
+
+  # vendors JVM into the slug for JRuby
+  def install_jvm
+    if ruby_version_jruby?
+      topic "Installing JVM: #{JVM_VERSION}"
+
+      FileUtils.mkdir_p(slug_vendor_jvm)
+      Dir.chdir(slug_vendor_jvm) do
+        run("curl #{JVM_BASE_URL}/#{JVM_VERSION}.tar.gz -s -o - | tar xzf -")
+      end
+    end
   end
 
   # find the ruby install path for its binstubs during build
