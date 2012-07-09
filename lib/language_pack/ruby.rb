@@ -173,7 +173,6 @@ private
   end
 
   # install the vendored ruby
-  # @note this only installs if we detect RUBY_VERSION in the environment
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
   def install_ruby
     return false unless ruby_version
