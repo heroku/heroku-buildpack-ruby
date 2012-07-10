@@ -1,3 +1,9 @@
+## v28
+
+Features:
+
+* Vendor OpenJDK6 into slug when using JRuby
+
 ## v27 (6/14/2012)
 
 Bugfixes:
