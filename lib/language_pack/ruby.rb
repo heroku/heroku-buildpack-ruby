@@ -232,6 +232,12 @@ ERROR
       Dir.chdir(slug_vendor_jvm) do
         run("curl #{JVM_BASE_URL}/#{JVM_VERSION}.tar.gz -s -o - | tar xzf -")
       end
+
+      bin_dir = "bin"
+      FileUtils.mkdir_p bin_dir
+      Dir["#{slug_vendor_jvm}/bin/*"].each do |bin|
+        run("ln -s ../#{bin} #{bin_dir}")
+      end
     end
   end
 
