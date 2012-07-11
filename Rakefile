@@ -56,7 +56,7 @@ end
 def build_ruby_command(name, output, prefix, usr_dir, tmpdir)
   build_command = [
     # need to move libyaml/libffi to dirs we can see
-    "mv usr /tmp",
+    "mv #{usr_dir} /tmp",
     "./configure --disable-install-doc --prefix #{prefix}",
     "env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make",
     "make install"
