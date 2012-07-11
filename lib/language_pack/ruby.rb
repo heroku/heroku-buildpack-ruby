@@ -278,10 +278,12 @@ ERROR
 
   # need to install rubygems separately for 1.8.x
   def install_rubygems
-    Dir.mktmpdir("rubygems-") do |tmpdir|
-      Dir.chdir(tmpdir) do
-        run("curl http://production.cf.rubygems.org/rubygems/rubygems-1.8.24.tgz -s -o - | tar xzf -")
-        puts run("ruby rubygems-1.8.24/setup.rb")
+    if ruby_version == "ruby-1.8.7"
+      Dir.mktmpdir("rubygems-") do |tmpdir|
+        Dir.chdir(tmpdir) do
+          run("curl http://production.cf.rubygems.org/rubygems/rubygems-1.8.24.tgz -s -o - | tar xzf -")
+          puts run("ruby rubygems-1.8.24/setup.rb")
+        end
       end
     end
   end
