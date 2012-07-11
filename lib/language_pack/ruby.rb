@@ -52,6 +52,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     install_jvm
     setup_language_pack_environment
     allow_git do
+      install_rubygems
       install_language_pack_gems
       build_bundler
       create_database_yml
@@ -71,7 +72,13 @@ private
   # the relative path to the bundler directory of gems
   # @return [String] resulting path
   def slug_vendor_base
-    @slug_vendor_base ||= run(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
+    if @slug_vendor_base
+      @slug_vendor_base
+    elsif @ruby_version == "ruby-1.8.7"
+      @slug_vendor_base = "vendor/bundle/1.8"
+    else
+      @slug_vendor_base = run(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
+    end
   end
 
   # the relative path to the vendored ruby directory
@@ -264,9 +271,19 @@ ERROR
   end
 
   # list of default gems to vendor into the slug
-  # @return [Array] resulting list of gems
+  # @return [Array] resluting list of gems
   def gems
     [BUNDLER_GEM_PATH]
+  end
+
+  # need to install rubygems separately for 1.8.x
+  def install_rubygems
+    Dir.mktmpdir("rubygems-") do |tmpdir|
+      Dir.chdir(tmpdir) do
+        run("curl http://production.cf.rubygems.org/rubygems/rubygems-1.8.24.tgz -s -o - | tar xzf -")
+        puts run("ruby rubygems-1.8.24/setup.rb")
+      end
+    end
   end
 
   # installs vendored gems into the slug
@@ -406,7 +423,7 @@ ERROR
     ruby_version   = run('ruby -e "puts RUBY_VERSION"').chomp
     # < 1.9.3 includes syck, so we need to use the syck hack
     if Gem::Version.new(ruby_version) < Gem::Version.new("1.9.3")
-      "-r #{syck_hack_file}"
+      "-r#{syck_hack_file}"
     else
       ""
     end
