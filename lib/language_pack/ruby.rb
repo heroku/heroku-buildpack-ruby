@@ -52,7 +52,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     install_jvm
     setup_language_pack_environment
     allow_git do
-      install_rubygems
       install_language_pack_gems
       build_bundler
       create_database_yml
@@ -274,18 +273,6 @@ ERROR
   # @return [Array] resluting list of gems
   def gems
     [BUNDLER_GEM_PATH]
-  end
-
-  # need to install rubygems separately for 1.8.x
-  def install_rubygems
-    if ruby_version == "ruby-1.8.7"
-      Dir.mktmpdir("rubygems-") do |tmpdir|
-        Dir.chdir(tmpdir) do
-          run("curl http://production.cf.rubygems.org/rubygems/rubygems-1.8.24.tgz -s -o - | tar xzf -")
-          puts run("ruby rubygems-1.8.24/setup.rb")
-        end
-      end
-    end
   end
 
   # installs vendored gems into the slug
