@@ -53,7 +53,7 @@ def install_gem(gem, version)
   end
 end
 
-def build_ruby_command(name, output, prefix, usr_dir, tmpdir)
+def build_ruby_command(name, output, prefix, usr_dir, tmpdir, rubygems = nil)
   build_command = [
     # need to move libyaml/libffi to dirs we can see
     "mv #{usr_dir} /tmp",
@@ -61,6 +61,7 @@ def build_ruby_command(name, output, prefix, usr_dir, tmpdir)
     "env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make",
     "make install"
   ]
+  build_command << "#{prefix}/bin/ruby /tmp/#{usr_dir}/rubygems-#{rubygems}/setup.rb"
   build_command << "mv #{prefix} /app/vendor/#{name}" if name != output
   build_command = build_command.join(" && ")
 
@@ -149,28 +150,34 @@ end
 
 desc "install ruby"
 task "ruby:install", :version do |t, args|
-  version = args[:version]
-  name    = "ruby-#{version}"
-  usr_dir = "usr"
+  full_version   = args[:version]
+  full_name      = "ruby-#{full_version}"
+  version        = full_version.split('-').first
+  name           = "ruby-#{version}"
+  usr_dir        = "usr"
+  rubygems       = nil
   Dir.mktmpdir("ruby-") do |tmpdir|
     Dir.chdir(tmpdir) do |dir|
       FileUtils.rm_rf("#{tmpdir}/*")
 
-      sh "curl http://ftp.ruby-lang.org/pub/ruby/1.9/#{name}.tar.gz -s -o - | tar vzxf -"
-      FileUtils.mkdir_p("#{name}/#{usr_dir}")
-      Dir.chdir("#{name}/#{usr_dir}") do
-        sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar vzxf -"
-        sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar vzxf -"
+      major_ruby = version.match(/\d\.\d/)[0]
+      rubygems   = "1.8.24" if major_ruby == "1.8"
+      sh "curl http://ftp.ruby-lang.org/pub/ruby/#{major_ruby}/#{full_name}.tar.gz -s -o - | tar zxf -"
+      FileUtils.mkdir_p("#{full_name}/#{usr_dir}")
+      Dir.chdir("#{full_name}/#{usr_dir}") do
+        sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar zxf -"
+        sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar zxf -"
+        sh "curl http://production.cf.rubygems.org/rubygems/rubygems-#{rubygems}.tgz -s -o - | tar xzf -" if major_ruby == "1.8"
       end
 
       # runtime ruby
       prefix  = "/app/vendor/#{name}"
-      build_ruby_command(name, name, prefix, usr_dir, tmpdir)
+      build_ruby_command(full_name, name, prefix, usr_dir, tmpdir, rubygems)
 
       # build ruby
       output  = "ruby-build-#{version}"
       prefix  = "/tmp/#{name}"
-      build_ruby_command(name, output, prefix, usr_dir, tmpdir)
+      build_ruby_command(full_name, output, prefix, usr_dir, tmpdir, rubygems)
     end
   end
 end
