@@ -1,3 +1,14 @@
+## v28 (7/16/2012)
+
+Features:
+
+* Vendor OpenJDK6 into slug when using JRuby
+* ruby version support for ruby 1.8.7 via bundler's ruby DSL
+
+Bugfixes:
+
+* sqlite3 error gets displayed again
+
 ## v27 (6/14/2012)
 
 Bugfixes:

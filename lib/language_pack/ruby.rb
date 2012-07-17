@@ -11,6 +11,8 @@ class LanguagePack::Ruby < LanguagePack::Base
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
+  JVM_BASE_URL        = "http://heroku-jvm-langpack-java.s3.amazonaws.com"
+  JVM_VERSION         = "openjdk6-latest"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -47,6 +49,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     Dir.chdir(build_path)
     remove_vendor_bundle
     install_ruby
+    install_jvm
     setup_language_pack_environment
     allow_git do
       install_language_pack_gems
@@ -69,13 +72,25 @@ private
   # the relative path to the bundler directory of gems
   # @return [String] resulting path
   def slug_vendor_base
-    @slug_vendor_base ||= run(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
+    if @slug_vendor_base
+      @slug_vendor_base
+    elsif @ruby_version == "ruby-1.8.7"
+      @slug_vendor_base = "vendor/bundle/1.8"
+    else
+      @slug_vendor_base = run(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
+    end
   end
 
   # the relative path to the vendored ruby directory
   # @return [String] resulting path
   def slug_vendor_ruby
     "vendor/#{ruby_version}"
+  end
+
+  # the relative path to the vendored jvm
+  # @return [String] resulting path
+  def slug_vendor_jvm
+    "vendor/jvm"
   end
 
   # the absolute path of the build ruby to use during the buildpack
@@ -174,7 +189,6 @@ private
   end
 
   # install the vendored ruby
-  # @note this only installs if we detect RUBY_VERSION in the environment
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
   def install_ruby
     return false unless ruby_version
@@ -214,6 +228,24 @@ ERROR
     end
 
     true
+  end
+
+  # vendors JVM into the slug for JRuby
+  def install_jvm
+    if ruby_version_jruby?
+      topic "Installing JVM: #{JVM_VERSION}"
+
+      FileUtils.mkdir_p(slug_vendor_jvm)
+      Dir.chdir(slug_vendor_jvm) do
+        run("curl #{JVM_BASE_URL}/#{JVM_VERSION}.tar.gz -s -o - | tar xzf -")
+      end
+
+      bin_dir = "bin"
+      FileUtils.mkdir_p bin_dir
+      Dir["#{slug_vendor_jvm}/bin/*"].each do |bin|
+        run("ln -s ../#{bin} #{bin_dir}")
+      end
+    end
   end
 
   # find the ruby install path for its binstubs during build
@@ -360,7 +392,7 @@ ERROR
       else
         log "bundle", :status => "failure"
         error_message = "Failed to install gems via Bundler."
-        if bundler_output.match(/Installing sqlite3 \([\w.]+\) with native extensions Unfortunately/)
+        if bundler_output.match(/Installing sqlite3 \([\w.]+\) with native extensions\s+Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native extension./)
           error_message += <<ERROR
 
 
@@ -381,7 +413,7 @@ ERROR
     ruby_version   = run('ruby -e "puts RUBY_VERSION"').chomp
     # < 1.9.3 includes syck, so we need to use the syck hack
     if Gem::Version.new(ruby_version) < Gem::Version.new("1.9.3")
-      "-r #{syck_hack_file}"
+      "-r#{syck_hack_file}"
     else
       ""
     end
