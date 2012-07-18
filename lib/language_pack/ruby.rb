@@ -48,6 +48,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     remove_vendor_bundle
     install_ruby
     setup_language_pack_environment
+    setup_profiled
     allow_git do
       install_language_pack_gems
       build_bundler
@@ -166,6 +167,17 @@ private
     ENV["PATH"]     = "#{ruby_install_binstub_path}:#{config_vars["PATH"]}"
   end
 
+  # sets up the profile.d script for this buildpack
+  def setup_profiled
+    set_env_default  "GEM_PATH", "$HOME/#{slug_vendor_base}"
+    set_env_default  "LANG",     "en_US.UTF-8"
+    set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:$PATH"
+
+    if ruby_version_jruby?
+      set_env_default "JAVA_OPTS", default_java_opts
+    end
+  end
+
   # determines if a build ruby is required
   # @return [Boolean] true if a build ruby is required
   def build_ruby?
@@ -238,7 +250,7 @@ ERROR
   end
 
   # list of default gems to vendor into the slug
-  # @return [Array] resluting list of gems
+  # @return [Array] resulting list of gems
   def gems
     [BUNDLER_GEM_PATH]
   end
