@@ -1,3 +1,9 @@
+## v29 (7/18/2012)
+
+Features:
+
+* Upgrade to Bundler 1.2.0.rc
+
 ## v28 (7/16/2012)
 
 Features:
