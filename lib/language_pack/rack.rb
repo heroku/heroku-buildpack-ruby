@@ -31,5 +31,13 @@ class LanguagePack::Rack < LanguagePack::Ruby
     })
   end
 
+private
+
+  # sets up the profile.d script for this buildpack
+  def setup_profiled
+    super
+    set_env_default "RACK_ENV", "production"
+  end
+
 end
 
