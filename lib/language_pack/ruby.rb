@@ -535,7 +535,7 @@ params = CGI.parse(uri.query || "")
   end
 
   # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
-  # param [block] block to be executed in the GIT_DIR free context
+  # @param [block] block to be executed in the GIT_DIR free context
   def allow_git(&blk)
     git_dir = ENV.delete("GIT_DIR") # can mess with bundler
     blk.call
