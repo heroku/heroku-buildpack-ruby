@@ -1,7 +1,9 @@
-## v29 (7/18/2012)
+## v29 (7/19/2012)
 
 Features:
 
+* support .profile.d/ruby.sh
+* sync stdout so that the buildpack streams even in non-interactive shells
 * Upgrade to Bundler 1.2.0.rc
 
 ## v28 (7/16/2012)
