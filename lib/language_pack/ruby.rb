@@ -12,7 +12,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
   JVM_BASE_URL        = "http://heroku-jvm-langpack-java.s3.amazonaws.com"
-  JVM_VERSION         = "openjdk6-latest"
+  JVM_VERSION         = "openjdk7-latest"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -35,7 +35,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       "GEM_PATH" => slug_vendor_base,
     }
 
-    ruby_version_jruby? ? vars.merge("JAVA_OPTS" => default_java_opts) : vars
+    ruby_version_jruby? ? vars.merge("JAVA_OPTS" => default_java_opts, "JRUBY_OPTS" => default_jruby_opts) : vars
   end
 
   def default_process_types
@@ -155,6 +155,12 @@ private
     "-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
   end
 
+  # default JRUBY_OPTS
+  # return [String] string of JRUBY_OPTS
+  def default_jruby_opts
+    "-Xcompile.invokedynamic=false"
+  end
+
   # list the available valid ruby versions
   # @note the value is memoized
   # @return [Array] list of Strings of the ruby versions available
@@ -190,6 +196,7 @@ private
 
     if ruby_version_jruby?
       set_env_default "JAVA_OPTS", default_java_opts
+      set_env_default "JRUBY_OPTS", default_jruby_opts
     end
   end
 
