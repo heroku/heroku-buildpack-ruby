@@ -1,3 +1,10 @@
+## v30 (8/9/2012)
+
+Features:
+
+* Upgrade to Bundler 1.2.0.rc.2
+* vendor JDK7 for JRuby, but disable invoke dynamic
+
 ## v29 (7/19/2012)
 
 Features:
