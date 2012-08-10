@@ -71,11 +71,18 @@ private
     end
   end
 
-
   # most rails apps need a database
   # @return [Array] shared database addon
   def add_shared_database_addon
     ['shared-database:5mb']
   end
+
+  # sets up the profile.d script for this buildpack
+  def setup_profiled
+    super
+    set_env_default "RACK_ENV",  "production"
+    set_env_default "RAILS_ENV", "production"
+  end
+
 end
 
