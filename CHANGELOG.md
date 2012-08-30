@@ -1,3 +1,9 @@
+## v34 (8/30/2012)
+
+Features:
+
+* Upgrade to Bundler 1.2.0
+
 ## v33 (8/9/2012)
 
 Features:
