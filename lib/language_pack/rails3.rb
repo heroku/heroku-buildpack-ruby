@@ -61,6 +61,8 @@ private
             puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
           end
         end
+      else
+        puts "No assets:precompile task, assuming that the asset pipeline is not in use"
       end
     end
   end
