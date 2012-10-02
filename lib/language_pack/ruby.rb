@@ -445,17 +445,8 @@ ERROR
       File.open("config/database.yml", "w") do |file|
         file.puts <<-DATABASE_YML
 <%
-
 require 'cgi'
 require 'uri'
-
-begin
-  uri = URI.parse(ENV["DATABASE_URL"])
-rescue URI::InvalidURIError
-  raise "Invalid DATABASE_URL"
-end
-
-raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
 
 def attribute(name, value, force_string = false)
   if value
@@ -471,31 +462,48 @@ def attribute(name, value, force_string = false)
   end
 end
 
-adapter = uri.scheme
-adapter = "postgresql" if adapter == "postgres"
+def parse_connection(name, uri)
+  begin
+    uri = URI.parse(uri)
+  rescue
+    raise "\#{name} has an invalid database uri"
+  end
+  connection = {
+    name: name,
+    adapter: (uri.scheme == "postgres" ? "postgresql" : uri.scheme),
+    database: (uri.path || "").split("/")[1],
+    username: uri.user,
+    password: uri.password,
+    host: uri.host,
+    port: uri.port,
+    params: CGI.parse(uri.query || "")
+  }
+end
 
-database = (uri.path || "").split("/")[1]
+raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
 
-username = uri.user
-password = uri.password
+databases = []
 
-host = uri.host
-port = uri.port
+databases << parse_connection(ENV["RAILS_ENV"] || ENV["RACK_ENV"], ENV["DATABASE_URL"])
 
-params = CGI.parse(uri.query || "")
+ENV["DATABASES"].split(',').each do |database_name|
+  databases << parse_connection(database_name, ENV["DATABASE_\#{database_name.upcase}_URL"])
+end if ENV["DATABASES"]
 
 %>
 
-<%= ENV["RAILS_ENV"] || ENV["RACK_ENV"] %>:
-  <%= attribute "adapter",  adapter %>
-  <%= attribute "database", database %>
-  <%= attribute "username", username %>
-  <%= attribute "password", password, true %>
-  <%= attribute "host",     host %>
-  <%= attribute "port",     port %>
+<% databases.each do |database| %>
+  <%= database[:name] %>:
+    <%= attribute "adapter",  database[:adapter] %>
+    <%= attribute "database", database[:database] %>
+    <%= attribute "username", database[:username] %>
+    <%= attribute "password", database[:password], true %>
+    <%= attribute "host",     database[:host] %>
+    <%= attribute "port",     database[:port] %>
 
-<% params.each do |key, value| %>
-  <%= key %>: <%= value.first %>
+  <% database[:params].each do |key, value| %>
+    <%= key %>: <%= value.first %>
+  <% end %>
 <% end %>
         DATABASE_YML
       end
