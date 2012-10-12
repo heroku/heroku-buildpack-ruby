@@ -379,7 +379,7 @@ ERROR
       version = run("env RUBYOPT=\"#{syck_hack}\" bundle version").strip
       topic("Installing dependencies using #{version}")
 
-      load_bundle_cache
+      load_bundler_cache
 
       bundler_output = ""
       Dir.mktmpdir("libyaml-") do |tmpdir|
@@ -574,7 +574,7 @@ params = CGI.parse(uri.query || "")
     end
   end
 
-  def load_bundle_cache
+  def load_bundler_cache
     full_ruby_version  = run(%q(ruby -v)).chomp
     ruby_version_cache = "vendor/ruby_version"
     cache_load ruby_version_cache
