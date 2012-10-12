@@ -246,7 +246,6 @@ task "jruby:install", :version, :ruby_version do |t, args|
   launcher     = "launcher"
 
   Dir.mktmpdir("jruby-") do |tmpdir|
-  tmpdir = Dir.mktmpdir("jruby-")
     Dir.chdir(tmpdir) do
       sh "curl http://jruby.org.s3.amazonaws.com/downloads/#{version}/#{name}.tar.gz -s -o - | tar vzxf -"
       sh "rm -rf test"

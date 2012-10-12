@@ -379,7 +379,12 @@ ERROR
       version = run("env RUBYOPT=\"#{syck_hack}\" bundle version").strip
       topic("Installing dependencies using #{version}")
 
-      cache_load "vendor/bundle"
+      if ruby_version == "ruby-1.9.3"
+        topic "Clearing cache for ruby-1.9.3 security update"
+        cache_clear "vendor/bundle"
+      else
+        cache_load "vendor/bundle"
+      end
 
       bundler_output = ""
       Dir.mktmpdir("libyaml-") do |tmpdir|
