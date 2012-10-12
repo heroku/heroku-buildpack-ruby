@@ -1,3 +1,10 @@
+## v37 (10/12/2012)
+
+Bugfixes:
+
+* Remove temporary workaround from v36.
+* Clear bundler cache upon Ruby version change
+
 ## v36 (10/12/2012)
 
 Bugfixes:
