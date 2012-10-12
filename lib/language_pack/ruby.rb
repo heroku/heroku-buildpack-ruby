@@ -379,12 +379,7 @@ ERROR
       version = run("env RUBYOPT=\"#{syck_hack}\" bundle version").strip
       topic("Installing dependencies using #{version}")
 
-      if ruby_version == "ruby-1.9.3"
-        topic "Clearing cache for ruby-1.9.3 security update"
-        cache_clear "vendor/bundle"
-      else
-        cache_load "vendor/bundle"
-      end
+      load_bundle_cache
 
       bundler_output = ""
       Dir.mktmpdir("libyaml-") do |tmpdir|
@@ -577,5 +572,24 @@ params = CGI.parse(uri.query || "")
         puts "Asset precompilation completed (#{"%.2f" % time}s)"
       end
     end
+  end
+
+  def load_bundle_cache
+    full_ruby_version  = run(%q(ruby -v))
+    ruby_version_cache = "vendor/ruby_version"
+    cache_load ruby_version_cache
+
+    if File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp
+      cache_load "vendor/bundle"
+    else
+      puts "Ruby version change detected. Clearing bundler cache"
+      cache_clear "vendor/bundle"
+    end
+
+    FileUtils.mkdir_p("vendor")
+    File.open("vendor/ruby_version", 'w') do |file|
+      file.puts full_ruby_version
+    end
+    cache_store "vendor/ruby_version"
   end
 end
