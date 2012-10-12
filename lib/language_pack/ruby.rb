@@ -582,7 +582,7 @@ params = CGI.parse(uri.query || "")
     if File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp
       cache_load "vendor/bundle"
     else
-      puts "Ruby version change detected. Clearing bundler cache"
+      puts "Ruby version change detected. Clearing bundler cache."
       cache_clear "vendor/bundle"
     end
 
