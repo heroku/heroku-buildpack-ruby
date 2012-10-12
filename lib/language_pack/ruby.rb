@@ -575,7 +575,7 @@ params = CGI.parse(uri.query || "")
   end
 
   def load_bundle_cache
-    full_ruby_version  = run(%q(ruby -v))
+    full_ruby_version  = run(%q(ruby -v)).chomp
     ruby_version_cache = "vendor/ruby_version"
     cache_load ruby_version_cache
 
