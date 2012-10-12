@@ -1,3 +1,9 @@
+## v36 (10/12/2012)
+
+Bugfixes:
+
+* Always clear the cache for ruby 1.9.3 as a temporary workaround due to the security upgrade
+
 ## v35 (9/19/2012)
 
 Features:
