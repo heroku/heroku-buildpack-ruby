@@ -468,10 +468,10 @@ environment = ENV["RAILS_ENV"] || ENV["RACK_ENV"]
 adapter = uri.scheme
 adapter = "postgresql" if adapter == "postgres"
 
-database = (uri.path || "").split("/")[1]
+database = URI.unescape((uri.path || "").split("/")[1])
 
-username = uri.user
-password = uri.password
+username = URI.unescape(uri.user)
+password = URI.unescape(uri.password)
 
 host = uri.host
 port = uri.port
