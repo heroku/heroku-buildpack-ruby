@@ -575,22 +575,22 @@ params = CGI.parse(uri.query || "")
   end
 
   def load_bundler_cache
+    full_ruby_version  = run(%q(ruby -v)).chomp
+    heroku_metadata    = "vendor/heroku"
+    ruby_version_cache = "#{heroku_metadata}/ruby_version"
+
     # fix bug from v37 deploy
     if cache_load("vendor/ruby_version")
       puts "Broken cache detected. Purging build cache."
       cache_clear("vendor")
-      return
-    end
+    else
+      bundle_cache_loaded = cache_load "vendor/bundle"
+      cache_load heroku_metadata
 
-    full_ruby_version   = run(%q(ruby -v)).chomp
-    heroku_metadata     = "vendor/heroku"
-    ruby_version_cache  = "#{heroku_metadata}/ruby_version"
-    bundle_cache_loaded = cache_load "vendor/bundle"
-    cache_load heroku_metadata
-
-    if bundle_cache_loaded && !(File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp)
-      puts "Ruby version change detected. Clearing bundler cache."
-      cache_clear "vendor/bundle"
+      if bundle_cache_loaded && !(File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp)
+        puts "Ruby version change detected. Clearing bundler cache."
+        cache_clear "vendor/bundle"
+      end
     end
 
     FileUtils.mkdir_p(heroku_metadata)
