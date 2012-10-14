@@ -590,6 +590,10 @@ params = CGI.parse(uri.query || "")
       cache_clear("vendor")
       FileUtils.rm_rf("vendor/ruby_version")
       purge_bundler_cache
+    # fix bug introduced in v38
+    elsif !File.exists?(buildpack_version_cache) && File.exists?(ruby_version_cache)
+      puts "Broken cache detected. Purging build cache."
+      purge_bundler_cache
     elsif cache_exists?(bundler_cache) && !(File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp)
       puts "Ruby version change detected. Clearing bundler cache."
       purge_bundler_cache
