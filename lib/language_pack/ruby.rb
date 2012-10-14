@@ -595,6 +595,8 @@ params = CGI.parse(uri.query || "")
         puts "Ruby version change detected. Clearing bundler cache."
         FileUtils.rm_rf(bundler_cache)
         cache_clear bundler_cache
+        # need to reinstall language pack gems
+        install_language_pack_gems
       end
     end
 
