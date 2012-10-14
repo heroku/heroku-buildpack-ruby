@@ -1,3 +1,9 @@
+## v38 (10/14/2012)
+
+Bugfixes:
+
+* Stop bundle cache from continually growing
+
 ## v37 (10/12/2012)
 
 Bugfixes:
