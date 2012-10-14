@@ -588,18 +588,11 @@ params = CGI.parse(uri.query || "")
     if File.exists?("vendor/ruby_version")
       puts "Broken cache detected. Purging build cache."
       cache_clear("vendor")
-      FileUtils.rm_rf(bundler_cache)
       FileUtils.rm_rf("vendor/ruby_version")
-      # need to reinstall language pack gems
-      install_language_pack_gems
-    else
-      if cache_exists?(bundler_cache) && !(File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp)
-        puts "Ruby version change detected. Clearing bundler cache."
-        FileUtils.rm_rf(bundler_cache)
-        cache_clear bundler_cache
-        # need to reinstall language pack gems
-        install_language_pack_gems
-      end
+      purge_bundler_cache
+    elsif cache_exists?(bundler_cache) && !(File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp)
+      puts "Ruby version change detected. Clearing bundler cache."
+      purge_bundler_cache
     end
 
     FileUtils.mkdir_p(heroku_metadata)
@@ -610,5 +603,12 @@ params = CGI.parse(uri.query || "")
       file.puts BUILDPACK_VERSION
     end
     cache_store heroku_metadata
+  end
+
+  def purge_bundler_cache
+    FileUtils.rm_rf(bundler_cache)
+    cache_clear bundler_cache
+    # need to reinstall language pack gems
+    install_language_pack_gems
   end
 end
