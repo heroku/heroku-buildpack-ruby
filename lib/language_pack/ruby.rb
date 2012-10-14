@@ -575,6 +575,10 @@ params = CGI.parse(uri.query || "")
     end
   end
 
+  def bundler_cache
+    "vendor/bundle"
+  end
+
   def load_bundler_cache
     cache_load "vendor"
 
@@ -582,7 +586,6 @@ params = CGI.parse(uri.query || "")
     heroku_metadata         = "vendor/heroku"
     ruby_version_cache      = "#{heroku_metadata}/ruby_version"
     buildpack_version_cache = "vendor/heroku/buildpack_version"
-    bundler_cache           = "vendor/bundle"
 
     # fix bug from v37 deploy
     if File.exists?("vendor/ruby_version")
