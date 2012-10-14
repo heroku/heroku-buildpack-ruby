@@ -575,20 +575,21 @@ params = CGI.parse(uri.query || "")
   end
 
   def load_bundler_cache
-    full_ruby_version  = run(%q(ruby -v)).chomp
-    ruby_version_cache = "vendor/ruby_version"
-    cache_load ruby_version_cache
+    full_ruby_version   = run(%q(ruby -v)).chomp
+    heroku_metadata     = "vendor/heroku"
+    ruby_version_cache  = "#{heroku_metadata}/ruby_version"
     bundle_cache_loaded = cache_load "vendor/bundle"
+    cache_load heroku_metadata
 
     if bundle_cache_loaded && !(File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp)
       puts "Ruby version change detected. Clearing bundler cache."
       cache_clear "vendor/bundle"
     end
 
-    FileUtils.mkdir_p("vendor")
-    File.open("vendor/ruby_version", 'w') do |file|
+    FileUtils.mkdir_p(heroku_metadata)
+    File.open(ruby_version_cache, 'w') do |file|
       file.puts full_ruby_version
     end
-    cache_store "vendor/ruby_version"
+    cache_store heroku_metadata
   end
 end
