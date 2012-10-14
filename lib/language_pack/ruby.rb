@@ -5,6 +5,7 @@ require "language_pack/base"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
+  BUILDPACK_VERSION   = "v40"
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION     = "1.2.1"
@@ -577,10 +578,11 @@ params = CGI.parse(uri.query || "")
   def load_bundler_cache
     cache_load "vendor"
 
-    full_ruby_version  = run(%q(ruby -v)).chomp
-    heroku_metadata    = "vendor/heroku"
-    ruby_version_cache = "#{heroku_metadata}/ruby_version"
-    bundler_cache      = "vendor/bundle"
+    full_ruby_version       = run(%q(ruby -v)).chomp
+    heroku_metadata         = "vendor/heroku"
+    ruby_version_cache      = "#{heroku_metadata}/ruby_version"
+    buildpack_version_cache = "vendor/heroku/buildpack_version"
+    bundler_cache           = "vendor/bundle"
 
     # fix bug from v37 deploy
     if File.exists?("vendor/ruby_version")
@@ -603,6 +605,9 @@ params = CGI.parse(uri.query || "")
     FileUtils.mkdir_p(heroku_metadata)
     File.open(ruby_version_cache, 'w') do |file|
       file.puts full_ruby_version
+    end
+    File.open(buildpack_version_cache, 'w') do |file|
+      file.puts BUILDPACK_VERSION
     end
     cache_store heroku_metadata
   end
