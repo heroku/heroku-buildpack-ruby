@@ -1,3 +1,10 @@
+## v39 (10/14/2012)
+
+Bugfixes:
+
+* Don't display cache clearing message for new apps
+* Actually clear bundler cache on ruby version change
+
 ## v38 (10/14/2012)
 
 Bugfixes:
