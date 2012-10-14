@@ -588,6 +588,8 @@ params = CGI.parse(uri.query || "")
       cache_clear("vendor")
       FileUtils.rm_rf(bundler_cache)
       FileUtils.rm_rf("vendor/ruby_version")
+      # need to reinstall language pack gems
+      install_language_pack_gems
     else
       if File.exists?(bundler_cache) && !(File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp)
         puts "Ruby version change detected. Clearing bundler cache."
