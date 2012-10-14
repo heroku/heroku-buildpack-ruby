@@ -1,3 +1,10 @@
+## v40 (10/14/2012)
+
+Features:
+
+* Cache version of the buildpack we used to deploy
+* Purge cache when v38 is detected
+
 ## v39 (10/14/2012)
 
 Bugfixes:
