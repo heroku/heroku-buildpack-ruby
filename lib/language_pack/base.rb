@@ -222,5 +222,11 @@ private ##################################
     system("cp -a #{from}/. #{to}")
   end
 
+  # check if the cache content exists
+  # @param [String] relative path of the cache contents
+  # @param [Boolean] true if the path exists in the cache and false if otherwise
+  def cache_exists?(path)
+    File.exists?(cache_base + path)
+  end
 end
 
