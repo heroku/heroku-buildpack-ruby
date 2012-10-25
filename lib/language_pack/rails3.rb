@@ -43,6 +43,9 @@ private
         if File.exists?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
         else
+          FileUtils.mkdir_p('public')
+          cache_load "public/assets"
+
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
 
@@ -53,6 +56,13 @@ private
           if $?.success?
             log "assets_precompile", :status => "success"
             puts "Asset precompilation completed (#{"%.2f" % time}s)"
+
+            if clean_unreferenced_assets
+              cache_store "public/assets"
+            else
+              # If something goes wrong, clear the assets cache before the next run.
+              cache_clear "public/assets"
+            end
           else
             log "assets_precompile", :status => "failure"
             puts "Precompiling assets failed, enabling runtime asset compilation"
@@ -63,6 +73,26 @@ private
         end
       end
     end
+  end
+
+  # Removes assets that aren't referenced by manifest.yml
+  def clean_unreferenced_assets
+    return false unless File.exists?("public/assets/manifest.yml")
+    digests = YAML.load_file("public/assets/manifest.yml")
+    known_assets = digests.flatten.flat_map {|a| [a, "#{a}.gz"] }.map {|a| File.join('public/assets', a) }
+
+    puts "Cleaning up the assets cache."
+    Dir.glob('public/assets/**/*').each do |asset|
+      next if File.directory?(asset) || asset.include?('manifest.yml')
+      # Remove asset if not referenced by manifest.yml
+      unless known_assets.include?(asset)
+        puts "Removing unreferenced asset: #{asset.sub(%r{.*/public/assets/}, '')}"
+        FileUtils.rm_f asset
+      end
+    end
+  rescue Exception => ex
+    puts "Something failed while cleaning up old assets! => #{ex.message.inspect}"
+    false
   end
 
   # setup the database url as an environment variable
