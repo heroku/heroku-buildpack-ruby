@@ -153,7 +153,7 @@ private ##################################
     %x{ #{command} 2>/dev/null }
   end
 
-  # run a shell command and stream the ouput
+  # run a shell command and stream the output
   # @param [String] command to be run
   def pipe(command)
     output = ""
