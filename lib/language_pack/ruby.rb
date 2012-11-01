@@ -5,9 +5,10 @@ require "language_pack/base"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
+  BUILDPACK_VERSION   = "v40"
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION     = "1.2.0.rc.2"
+  BUNDLER_VERSION     = "1.2.1"
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
@@ -380,7 +381,7 @@ ERROR
       version = run("env RUBYOPT=\"#{syck_hack}\" bundle version").strip
       topic("Installing dependencies using #{version}")
 
-      cache_load "vendor/bundle"
+      load_bundler_cache
 
       bundler_output = ""
       Dir.mktmpdir("libyaml-") do |tmpdir|
@@ -402,7 +403,7 @@ ERROR
       if $?.success?
         log "bundle", :status => "success"
         puts "Cleaning up the bundler cache."
-        run "bundle clean"
+        pipe "bundle clean"
         cache_store ".bundle"
         cache_store "vendor/bundle"
 
@@ -581,5 +582,49 @@ params = CGI.parse(uri.query || "")
     unless $? == 0
       error "Failed to generate site with jekyll."
     end
+  end
+
+  def bundler_cache
+    "vendor/bundle"
+  end
+
+  def load_bundler_cache
+    cache_load "vendor"
+
+    full_ruby_version       = run(%q(ruby -v)).chomp
+    heroku_metadata         = "vendor/heroku"
+    ruby_version_cache      = "#{heroku_metadata}/ruby_version"
+    buildpack_version_cache = "vendor/heroku/buildpack_version"
+
+    # fix bug from v37 deploy
+    if File.exists?("vendor/ruby_version")
+      puts "Broken cache detected. Purging build cache."
+      cache_clear("vendor")
+      FileUtils.rm_rf("vendor/ruby_version")
+      purge_bundler_cache
+    # fix bug introduced in v38
+    elsif !File.exists?(buildpack_version_cache) && File.exists?(ruby_version_cache)
+      puts "Broken cache detected. Purging build cache."
+      purge_bundler_cache
+    elsif cache_exists?(bundler_cache) && !(File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp)
+      puts "Ruby version change detected. Clearing bundler cache."
+      purge_bundler_cache
+    end
+
+    FileUtils.mkdir_p(heroku_metadata)
+    File.open(ruby_version_cache, 'w') do |file|
+      file.puts full_ruby_version
+    end
+    File.open(buildpack_version_cache, 'w') do |file|
+      file.puts BUILDPACK_VERSION
+    end
+    cache_store heroku_metadata
+  end
+
+  def purge_bundler_cache
+    FileUtils.rm_rf(bundler_cache)
+    cache_clear bundler_cache
+    # need to reinstall language pack gems
+    install_language_pack_gems
   end
 end

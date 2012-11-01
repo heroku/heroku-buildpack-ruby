@@ -57,15 +57,15 @@ def build_ruby_command(name, output, prefix, usr_dir, tmpdir, rubygems = nil)
   build_command = [
     # need to move libyaml/libffi to dirs we can see
     "mv #{usr_dir} /tmp",
-    "./configure --disable-install-doc --prefix #{prefix}",
+    "./configure --enable-load-relative --disable-install-doc --prefix #{prefix}",
     "env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make",
     "make install"
   ]
-  build_command << "#{prefix}/bin/ruby /tmp/#{usr_dir}/rubygems-#{rubygems}/setup.rb"
-  build_command << "mv #{prefix} /app/vendor/#{name}" if name != output
+  build_command << "#{prefix}/bin/ruby /tmp/#{usr_dir}/rubygems-#{rubygems}/setup.rb" if rubygems
+  build_command << "mv #{prefix} /app/vendor/#{output}" if prefix != "/app/vendor/#{output}"
   build_command = build_command.join(" && ")
 
-  sh "vulcan build -v -o #{output}.tgz --source #{name} --command=\"#{build_command}\""
+  sh "vulcan build -v -o #{output}.tgz --prefix #{prefix} --source #{name} --command=\"#{build_command}\""
   s3_upload(tmpdir, output)
 end
 
@@ -106,16 +106,17 @@ task "libyaml:install", :version do |t, args|
   Dir.mktmpdir("libyaml-") do |tmpdir|
     Dir.chdir(tmpdir) do |dir|
       FileUtils.rm_rf("#{tmpdir}/*")
+      prefix = "/app/vendor/yaml-#{version}"
 
       sh "curl http://pyyaml.org/download/libyaml/yaml-#{version}.tar.gz -s -o - | tar vzxf -"
 
       build_command = [
-        "env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=/app/vendor/yaml-#{version}",
+        "env CFLAGS=-fPIC ./configure --enable-static --disable-shared --prefix=#{prefix}",
         "make",
         "make install"
       ].join(" && ")
 
-      sh "vulcan build -v -o #{name}.tgz --source yaml-#{version} --command=\"#{build_command}\""
+      sh "vulcan build -v -o #{name}.tgz --source yaml-#{version} --prefix=#{prefix} --command=\"#{build_command}\""
       s3_upload(tmpdir, name)
     end
   end
@@ -175,9 +176,11 @@ task "ruby:install", :version do |t, args|
       build_ruby_command(full_name, name, prefix, usr_dir, tmpdir, rubygems)
 
       # build ruby
-      output  = "ruby-build-#{version}"
-      prefix  = "/tmp/#{name}"
-      build_ruby_command(full_name, output, prefix, usr_dir, tmpdir, rubygems)
+      if major_ruby == "1.8"
+        output  = "ruby-build-#{version}"
+        prefix  = "/app/vendor/ruby-build-#{version}"
+        build_ruby_command(full_name, output, prefix, usr_dir, tmpdir, rubygems)
+      end
     end
   end
 end
@@ -246,7 +249,6 @@ task "jruby:install", :version, :ruby_version do |t, args|
   launcher     = "launcher"
 
   Dir.mktmpdir("jruby-") do |tmpdir|
-  tmpdir = Dir.mktmpdir("jruby-")
     Dir.chdir(tmpdir) do
       sh "curl http://jruby.org.s3.amazonaws.com/downloads/#{version}/#{name}.tar.gz -s -o - | tar vzxf -"
       sh "rm -rf test"
@@ -336,7 +338,7 @@ task "libffi:install", :version do |t, args|
         "rm -rf #{prefix}/lib/#{name}"
       ].join(" && ")
 
-      sh "vulcan build -v -o #{name}.tgz --source #{name} --command=\"#{build_command}\""
+      sh "vulcan build -v -o #{name}.tgz --source #{name} --prefix=#{prefix} --command=\"#{build_command}\""
       s3_upload(tmpdir, name)
     end
   end

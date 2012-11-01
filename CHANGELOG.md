@@ -1,3 +1,54 @@
+## v40 (10/14/2012)
+
+Features:
+
+* Cache version of the buildpack we used to deploy
+* Purge cache when v38 is detected
+
+## v39 (10/14/2012)
+
+Bugfixes:
+
+* Don't display cache clearing message for new apps
+* Actually clear bundler cache on ruby version change
+
+## v38 (10/14/2012)
+
+Bugfixes:
+
+* Stop bundle cache from continually growing
+
+## v37 (10/12/2012)
+
+Bugfixes:
+
+* Remove temporary workaround from v36.
+* Clear bundler cache upon Ruby version change
+
+## v36 (10/12/2012)
+
+Bugfixes:
+
+* Always clear the cache for ruby 1.9.3 as a temporary workaround due to the security upgrade
+
+## v35 (9/19/2012)
+
+Features:
+
+* Upgrade to Bundler 1.2.1
+* Display bundle clean output
+* More resilent to rubygems.org API outages
+
+Bugfixes:
+
+* `bundle clean` works again
+
+## v34 (8/30/2012)
+
+Features:
+
+* Upgrade to Bundler 1.2.0
+
 ## v33 (8/9/2012)
 
 Features:
