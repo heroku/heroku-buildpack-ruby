@@ -1,3 +1,9 @@
+## v41 (11/1/2012)
+
+Features:
+
+* Enable ruby 2.0.0 support for testing
+
 ## v40 (10/14/2012)
 
 Features:
