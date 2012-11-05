@@ -43,6 +43,9 @@ private
         if File.exists?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
         else
+          FileUtils.mkdir_p('public')
+          cache_load "public/assets"
+
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
 
@@ -53,16 +56,42 @@ private
           if $?.success?
             log "assets_precompile", :status => "success"
             puts "Asset precompilation completed (#{"%.2f" % time}s)"
+
+            # If 'assets:clean_expired' task is available (provided by the turbo-sprockets-rails3 gem),
+            # then remove old assets and cache them for next time.
+            if rake_task_defined?('assets:clean_expired')
+              puts "Running: rake assets:clean_expired"
+              run("env PATH=$PATH:bin bundle exec rake assets:clean_expired 2>&1")
+
+              if $?.success?
+                cache_store "public/assets"
+              else
+                cache_clear "public/assets"
+              end
+            end
           else
             log "assets_precompile", :status => "failure"
-            puts "Precompiling assets failed, enabling runtime asset compilation"
-            install_plugin("rails31_enable_runtime_asset_compilation")
-            puts "Please see this article for troubleshooting help:"
-            puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
+
+            if enable_runtime_asset_compilation?
+              puts "Precompiling assets failed, enabling runtime asset compilation"
+              install_plugin("rails31_enable_runtime_asset_compilation")
+              puts "Please see this article for troubleshooting help:"
+              puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
+            else
+              error <<ERROR
+Precompiling assets failed, to enable runtime asset compilation set
+config.assets.compile = true in config/environments/#{ENV["RAILS_ENV"]}.rb.
+ERROR
+            end
           end
         end
       end
     end
+  end
+
+  def enable_runtime_asset_compilation?
+    File.read("config/environments/#{ENV["RAILS_ENV"]}.rb") =~ /config\.assets\.compile\s*=\s*(true|false)/
+    $1 != "false"
   end
 
   # setup the database url as an environment variable
