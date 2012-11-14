@@ -43,6 +43,10 @@ private
         if File.exists?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
         else
+          FileUtils.mkdir_p('public')
+          cache_load "public/assets"
+          update_mtimes_for_current_assets
+
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
 
@@ -53,6 +57,9 @@ private
           if $?.success?
             log "assets_precompile", :status => "success"
             puts "Asset precompilation completed (#{"%.2f" % time}s)"
+
+            remove_expired_assets
+            cache_store "public/assets"
           else
             log "assets_precompile", :status => "failure"
             puts "Precompiling assets failed, enabling runtime asset compilation"
@@ -61,6 +68,35 @@ private
             puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
           end
         end
+      end
+    end
+  end
+
+  # Updates the mtimes for current assets, which marks the time when they were last deployed.
+  # This is done so that old assets are expired correctly, based on their mtime.
+  def update_mtimes_for_current_assets
+    return false unless File.exists?("public/assets/manifest.yml")
+
+    digests = YAML.load_file("public/assets/manifest.yml")
+    # Iterate over all assets, including gzipped versions
+    digests.flatten.flat_map {|a| [a, "#{a}.gz"] }.each do |asset|
+      rel_path = File.join('public/assets', asset)
+      File.utime(Time.now, Time.now, rel_path) if File.exist?(rel_path)
+    end
+  end
+
+  # Removes assets that haven't been in use for a given period of time (defaults to 1 week.)
+  # The expiry time can be configured by setting the env variable EXPIRE_ASSETS_AFTER,
+  # which is the number of seconds to keep unused assets.
+  def remove_expired_assets
+    expire_after = (ENV["EXPIRE_ASSETS_AFTER"] || (3600 * 24 * 7)).to_i
+
+    Dir.glob('public/assets/**/*').each do |asset|
+      next if File.directory?(asset)
+      # Remove asset if older than expire_after time
+      if File.mtime(asset) < (Time.now - expire_after)
+        puts "Removing expired asset: #{asset.sub(%r{.*/public/assets/}, '')}"
+        FileUtils.rm_f asset
       end
     end
   end
