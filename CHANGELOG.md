@@ -1,3 +1,9 @@
+## v42 (11/26/2012)
+
+Features:
+
+* Upgrade Bundler to 1.2.2 to fix Ruby 2.0.0/YAML issues
+
 ## v41 (11/1/2012)
 
 Features:
