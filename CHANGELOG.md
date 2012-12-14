@@ -1,3 +1,9 @@
+## v44 (12/14/2012)
+
+Features:
+
+* Stop setting env vars in bin/release now that login-shell is released
+
 ## v43 (12/13/2012)
 
 Features:
