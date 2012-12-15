@@ -191,7 +191,7 @@ private
 
   # sets up the profile.d script for this buildpack
   def setup_profiled
-    set_env_default  "GEM_PATH", "$HOME/#{slug_vendor_base}"
+    set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
     set_env_default  "LANG",     "en_US.UTF-8"
     set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:$PATH"
 
