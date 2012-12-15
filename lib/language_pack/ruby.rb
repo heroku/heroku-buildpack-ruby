@@ -159,7 +159,7 @@ private
   # default JRUBY_OPTS
   # return [String] string of JRUBY_OPTS
   def default_jruby_opts
-    "-Xcompile.invokedynamic=false"
+    "-Xcompile.invokedynamic=true"
   end
 
   # list the available valid ruby versions
