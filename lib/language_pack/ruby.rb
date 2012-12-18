@@ -141,7 +141,7 @@ private
   # determine if we're using rbx
   # @return [Boolean] true if we are and false if we aren't
   def ruby_version_rbx?
-    ruby_version ? ruby_version.match(/^rbx-/) : false
+    ruby_version ? ruby_version.match(/rbx-/) : false
   end
 
   # determine if we're using jruby
