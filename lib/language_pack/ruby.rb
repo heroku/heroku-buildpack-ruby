@@ -408,6 +408,13 @@ ERROR
 
         # Keep gem cache out of the slug
         FileUtils.rm_rf("#{slug_vendor_base}/cache")
+
+        # symlink binstubs
+        bin_dir = "bin"
+        FileUtils.mkdir_p bin_dir
+        Dir["#{slug_vendor_base}/bin/*"].each do |bin|
+          run("ln -s ../#{bin} #{bin_dir}") unless File.exist?("#{bin_dir}/#{bin}")
+        end
       else
         log "bundle", :status => "failure"
         error_message = "Failed to install gems via Bundler."
