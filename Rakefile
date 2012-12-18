@@ -54,6 +54,7 @@ def install_gem(gem, version)
 end
 
 def build_ruby_command(name, output, prefix, usr_dir, tmpdir, rubygems = nil)
+  vulcan_prefix = "/app/vendor/#{output}"
   build_command = [
     # need to move libyaml/libffi to dirs we can see
     "mv #{usr_dir} /tmp",
@@ -65,7 +66,7 @@ def build_ruby_command(name, output, prefix, usr_dir, tmpdir, rubygems = nil)
   build_command << "mv #{prefix} /app/vendor/#{output}" if prefix != "/app/vendor/#{output}"
   build_command = build_command.join(" && ")
 
-  sh "vulcan build -v -o #{output}.tgz --prefix #{prefix} --source #{name} --command=\"#{build_command}\""
+  sh "vulcan build -v -o #{output}.tgz --prefix #{vulcan_prefix} --source #{name} --command=\"#{build_command}\""
   s3_upload(tmpdir, output)
 end
 
@@ -178,7 +179,7 @@ task "ruby:install", :version do |t, args|
       # build ruby
       if major_ruby == "1.8"
         output  = "ruby-build-#{version}"
-        prefix  = "/app/vendor/ruby-build-#{version}"
+        prefix  = "/tmp/ruby-#{version}"
         build_ruby_command(full_name, output, prefix, usr_dir, tmpdir, rubygems)
       end
     end
