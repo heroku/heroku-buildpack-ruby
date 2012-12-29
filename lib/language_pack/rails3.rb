@@ -62,8 +62,6 @@ private
           end
         end
       end
-      # With asset_sync and S3 in place, lets drop those assets from the slug compilation
-      run_super_slug_asset_clean
     end
   end
 
@@ -83,29 +81,5 @@ private
         end
       "#{scheme}://user:pass@127.0.0.1/dbname"
     end
-  end
-
-  def run_super_slug_asset_clean
-    # Meh, I should log something here.
-    topic("Beep Bloop.  Dropping assets.")
-    puts "Running rake assets:clean"
-    
-    require 'benchmark'
-    time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:clean 2>&1") }
-    
-    if $?.success?
-      # Really, for the love of god, why does the string formatting look so crazy???
-      puts "Assets cleaned from compilation location in (#{"%.2f" % time}s)."
-    else 
-      puts "Asset cleansing failed.  Yikes."
-    end
-
-    puts "Dropping assets from app/assets, lib/assets, and vendor/assets."
-
-    FileUtils.rm_rf("app/assets")
-    FileUtils.rm_rf("lib/assets")
-    FileUtils.rm_rf("vendor/assets")
-   
-    puts "All assets removed from the slug."
   end
 end

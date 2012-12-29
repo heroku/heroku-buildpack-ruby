@@ -59,6 +59,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       create_database_yml
       install_binaries
       run_assets_precompile_rake_task
+      late_slug_ignore # Pavan added this to start processing a .lateslugignore file to do late-stage compilation deletions
     end
   end
 
@@ -617,5 +618,54 @@ params = CGI.parse(uri.query || "")
     cache_clear bundler_cache
     # need to reinstall language pack gems
     install_language_pack_gems
+  end
+
+  # I needed this to clean assets before my slug compilation on heroku.  This basically reimplements
+  # the heroku change #179 (http://goo.gl/m5QIL) that was rolled back by heroku change #185 (http://goo.gl/miPpK)
+  # It should be pretty generic -- it looks for extensions to purge from a .lateslugignore file in the RoR root.
+  #
+  # If you have any questions, feel free to hunt me down: pg8p@virginia.edu
+  
+  def late_slug_ignore
+    # Meh, I should log something here.
+    topic("Beep Bloop. Processing your .lateslugignore file!.")
+    ignored_extensions = Array.new
+
+    late_slug_ignore_file = File.new(".lateslugignore", "r")
+    late_slug_ignore_file.each do |line|
+      unless line.chomp!.empty?
+        ignored_extensions.push line
+      end
+    end
+    late_slug_ignore_file.close
+
+    matched_files = Array.new
+    ignored_extensions.each {|ext| matched_files.push Dir.glob(File.join("**",ext))}
+    matched_files.flatten!
+    puts "Deleting #{matched_files.count} files matching .lateslugignore patterns."
+    matched_files.each { |f| File.delete(f)}
+
+    # For what it's worth, I wrote an asset cleaning tool, but it's not generic enough for general use, but I bet
+    # it probably does a better job achieving a completely clean asset configuration when used in tandem with
+    # asset_sync -- then again, I've only lightly considered this.  Anyway, if someone cares to improve this, the
+    # code is sitting right below
+    #
+    #puts "Running rake assets:clean"
+    #require 'benchmark'
+    #time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:clean 2>&1") }
+    #if $?.success?
+    #  # Really, for the love of god, why does the string formatting look so crazy???
+    #  puts "Assets cleaned from compilation location in (#{"%.2f" % time}s)."
+    #else
+    #  puts "Asset cleansing failed.  Yikes."
+    #end
+    #puts "Dropping assets from app/assets, lib/assets, and vendor/assets."
+    #FileUtils.rm_rf("app/assets")
+    #FileUtils.rm_rf("lib/assets")
+    #FileUtils.rm_rf("vendor/assets")
+    #puts "All assets removed from the slug."
+
+
+
   end
 end
