@@ -12,7 +12,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   end
 
   def name
-    "Ruby/Rails - PG ASSET_SYNC DELETION VERSION"
+    "Ruby/Rails"
   end
 
   def default_process_types
