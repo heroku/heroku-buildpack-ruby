@@ -1,3 +1,10 @@
+## v46 (1/10/2012)
+
+Features:
+
+* Upgrade Bundler to 1.3.0.pre.5
+* bundler binstubs now go in vendor/bundle/bin
+
 ## v45 (12/14/2012)
 
 Features:
