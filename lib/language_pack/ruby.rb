@@ -447,8 +447,10 @@ ERROR
 
   # writes ERB based database.yml for Rails. The database.yml uses the DATABASE_URL from the environment during runtime.
   def create_database_yml
+    return unless ENV['DATABASE_URL']
+    return unless File.directory?("config")
+
     log("create_database_yml") do
-      return unless File.directory?("config")
       topic("Writing config/database.yml to read from DATABASE_URL")
       File.open("config/database.yml", "w") do |file|
         file.puts <<-DATABASE_YML
