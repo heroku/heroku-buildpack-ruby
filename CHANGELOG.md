@@ -1,3 +1,9 @@
+## v47
+
+Features:
+
+* Display ruby version change when busting the cache
+
 ## v46 (1/10/2012)
 
 Features:
