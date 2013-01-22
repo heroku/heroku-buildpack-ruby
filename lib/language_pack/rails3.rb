@@ -6,9 +6,10 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
-    super &&
-      File.exists?("config/application.rb") &&
-      File.read("config/application.rb") =~ /Rails::Application/
+    File.exists?("Gemfile") &&
+    File.exists?("config.ru") &&
+    File.exists?("config/application.rb") &&
+    File.read("config/application.rb") =~ /Rails::Application/
   end
 
   def name
