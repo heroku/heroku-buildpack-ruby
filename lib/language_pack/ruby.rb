@@ -369,6 +369,10 @@ ERROR
       end
 
       if has_windows_gemfile_lock?
+        topic "WARNING: Removing `Gemfile.lock` because it was generated on Windows."
+        puts "Bundler will do a full resolve so native gems are handled properly."
+        puts "This may result in unexpected gem versions being used in your app."
+
         log("bundle", "has_windows_gemfile_lock")
         File.unlink("Gemfile.lock")
       else
