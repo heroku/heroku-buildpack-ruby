@@ -63,7 +63,7 @@ def build_ruby_command(name, output, prefix, usr_dir, tmpdir, rubygems = nil, en
     "cd #{name}",
     # need to move libyaml/libffi to dirs we can see
     "if [ -d #{usr_dir} ]; then mv #{usr_dir} /tmp; fi",
-    "./configure --enable-load-relative --disable-install-doc --prefix #{prefix}",
+    "./configure #{configure_flags.join(" ")}",
     "env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make",
     "make install"
   ]
@@ -187,7 +187,6 @@ task "ruby:install", :version do |t, args|
       if major_ruby == "1.8" || version == "1.9.2"
         output  = "ruby-build-#{version}"
         prefix  = "/tmp/ruby-#{version}"
-        l
         build_ruby_command(full_name, output, prefix, usr_dir, tmpdir, rubygems, false)
         # load_relative only seems to work with 1.9.3 and higher
         load_relative = false

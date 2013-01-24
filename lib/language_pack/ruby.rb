@@ -230,6 +230,7 @@ ERROR
         ruby_name = ruby_version.sub(ruby_vm, "#{ruby_vm}-build")
         ruby_filename = "#{ruby_name}.tgz"
         download_blob(BLOB_IDS[ruby_name][:oid], BLOB_IDS[ruby_name][:sig], BLOB_IDS[ruby_name][:sha], ruby_filename )
+        run("tar zxf #{ruby_filename}")
       end
       error invalid_ruby_version_message unless $?.success?
     end
