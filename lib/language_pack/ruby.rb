@@ -237,7 +237,7 @@ ERROR
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
       ruby_filename = "#{ruby_version}.tgz"
-      download_blob(BLOB_IDS[ruby_version][:oid], BLOB_IDS[ruby_version][:sig], BLOB_IDS[ruby_name][:sha], ruby_filename )
+      download_blob(BLOB_IDS[ruby_version][:oid], BLOB_IDS[ruby_version][:sig], BLOB_IDS[ruby_version][:sha], ruby_filename )
       run("tar zxf #{ruby_filename}")
     end
     error invalid_ruby_version_message unless $?.success?
