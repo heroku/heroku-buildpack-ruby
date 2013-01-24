@@ -2,9 +2,12 @@ require "tmpdir"
 require "rubygems"
 require "language_pack"
 require "language_pack/base"
+require "language_pack/blobstore_client"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
+  include LanguagePack::BlobstoreClient
+
   BUILDPACK_VERSION   = "v47"
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
@@ -15,6 +18,16 @@ class LanguagePack::Ruby < LanguagePack::Base
   JVM_BASE_URL        = "http://heroku-jvm-langpack-java.s3.amazonaws.com"
   JVM_VERSION         = "openjdk7-latest"
   DEFAULT_RUBY_VERSION = "ruby-1.9.2"
+  BLOB_IDS = {"ruby-1.9.2" => {:oid => "4e4e78bca31e122204e4e9863b1b740510096a2b8696", :sig => "/45mjMKhckPxTUhNBeexTFAALA4=",
+                               :sha => "84134cbc0e3345244a039c8cb43fdbb056bc2d34"},
+              "ruby-1.9.3" => {:oid => "4e4e78bca61e121004e4e7d51d950e0510096a910e5a", :sig => "+1Tod4mmEt4BG9j/1C6rYy6x4kw=",
+                               :sha => "9160b6a5b1e66ad9bcd0f200b8be15e91d16c7c7"},
+              "ruby-1.8.7" => {:oid => "4e4e78bca21e122004e4e8ec647a54051009649e5732", :sig => "Pz/1y7YFwlsPcIaRte7RO79RSNo=",
+                               :sha => "d59f166a28a130c6b89665efed10a7273716e981"},
+              "ruby-build-1.8.7" => {:oid => "4e4e78bca41e121204e4e86ee539210510096aee7893", :sig => "LVHbg6vNJh9cXzHb8bUBRDiJ09w=",
+                                     :sha => "70b291a400233d5076dd9fd7969570e164c6c484"},
+              "ruby-build-1.9.2" => {:oid => "4e4e78bca21e122204e4e9863926b10510096b389b02", :sig => "HZ+96UdoJr324YZHcAcSjwkMq2I=",
+                                     :sha => "6f17cd95878781334be656460ef4873f57c88643"}}
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -167,16 +180,7 @@ private
   # @note the value is memoized
   # @return [Array] list of Strings of the ruby versions available
   def ruby_versions
-    return @ruby_versions if @ruby_versions
-
-    Dir.mktmpdir("ruby_versions-") do |tmpdir|
-      Dir.chdir(tmpdir) do
-        run("curl -O #{VENDOR_URL}/ruby_versions.yml")
-        @ruby_versions = YAML::load_file("ruby_versions.yml")
-      end
-    end
-
-    @ruby_versions
+    BLOB_IDS.keys
   end
 
   # sets up the environment variables for the build process
@@ -223,14 +227,18 @@ ERROR
       FileUtils.mkdir_p(build_ruby_path)
       Dir.chdir(build_ruby_path) do
         ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
-        run("curl #{VENDOR_URL}/#{ruby_version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz -s -o - | tar zxf -")
+        ruby_name = ruby_version.sub(ruby_vm, "#{ruby_vm}-build")
+        ruby_filename = "#{ruby_name}.tgz"
+        download_blob(BLOB_IDS[ruby_name][:oid], BLOB_IDS[ruby_name][:sig], BLOB_IDS[ruby_name][:sha], ruby_filename )
       end
       error invalid_ruby_version_message unless $?.success?
     end
 
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
-      run("curl #{VENDOR_URL}/#{ruby_version}.tgz -s -o - | tar zxf -")
+      ruby_filename = "#{ruby_version}.tgz"
+      download_blob(BLOB_IDS[ruby_version][:oid], BLOB_IDS[ruby_version][:sig], BLOB_IDS[ruby_name][:sha], ruby_filename )
+      run("tar zxf #{ruby_filename}")
     end
     error invalid_ruby_version_message unless $?.success?
 
