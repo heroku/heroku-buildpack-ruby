@@ -8,7 +8,8 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   # detects if this is a valid Rails 2 app
   # @return [Boolean] true if it's a Rails 2 app
   def self.use?
-    super && File.exist?("config/environment.rb")
+    rails_version = LanguagePack::Ruby.gem_version('rails')
+    rails_version >= Gem::Version.new('2.0.0') && rails_version < Gem::Version.new('3.0.0') if rails_version
   end
 
   def name
