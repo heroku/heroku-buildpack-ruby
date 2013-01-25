@@ -2,9 +2,13 @@ require "tmpdir"
 require "rubygems"
 require "language_pack"
 require "language_pack/base"
+require "language_pack/bundler_lockfile"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
+  include LanguagePack::BundlerLockfile
+  extend LanguagePack::BundlerLockfile
+
   BUILDPACK_VERSION   = "v50"
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
@@ -19,6 +23,11 @@ class LanguagePack::Ruby < LanguagePack::Base
   # @return [Boolean] true if it's a Ruby app
   def self.use?
     File.exist?("Gemfile")
+  end
+
+  def self.lockfile_parser
+    require "bundler"
+    Bundler::LockfileParser.new(File.read("Gemfile.lock"))
   end
 
   def name
@@ -125,17 +134,6 @@ private
     end
 
     @ruby_version
-  end
-
-  # bootstraps bundler so we can pull the ruby version
-  def bootstrap_bundler(&block)
-    Dir.mktmpdir("bundler-") do |tmpdir|
-      Dir.chdir(tmpdir) do
-        run("curl #{VENDOR_URL}/#{BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
-      end
-
-      yield tmpdir
-    end
   end
 
   # determine if we're using rbx
@@ -542,8 +540,7 @@ params = CGI.parse(uri.query || "")
   # @return [Bundler::LockfileParser] a Bundler::LockfileParser
   def lockfile_parser
     add_bundler_to_load_path
-    require "bundler"
-    @lockfile_parser ||= Bundler::LockfileParser.new(File.read("Gemfile.lock"))
+    @lockfile_parser ||= LanguagePack::Ruby.lockfile_parser
   end
 
   # detects if a rake task is defined in the app
