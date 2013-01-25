@@ -6,9 +6,11 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
-    super &&
-      File.exists?("config/application.rb") &&
-      File.read("config/application.rb").include?("Rails::Application")
+    bootstrap_bundler do |bundler_path|
+      $: << "#{bundler_path}/gems/bundler-#{LanguagePack::Ruby::BUNDLER_VERSION}/lib"
+      rails_version = lockfile_parser.specs.detect {|gem| gem.name == "rails" }.version
+      rails_version >= Gem::Version.new('3.0.0') && rails_version < Gem::Version.new('4.0.0')
+    end
   end
 
   def name
