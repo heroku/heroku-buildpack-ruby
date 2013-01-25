@@ -30,6 +30,17 @@ class LanguagePack::Ruby < LanguagePack::Base
     Bundler::LockfileParser.new(File.read("Gemfile.lock"))
   end
 
+  def self.gem_version(name)
+    gem_version = nil
+    bootstrap_bundler do |bundler_path|
+      $: << "#{bundler_path}/gems/bundler-#{LanguagePack::Ruby::BUNDLER_VERSION}/lib"
+      gem         = lockfile_parser.specs.detect {|gem| gem.name == name }
+      gem_version = gem.version if gem
+    end
+
+    gem_version
+  end
+
   def name
     "Ruby"
   end
