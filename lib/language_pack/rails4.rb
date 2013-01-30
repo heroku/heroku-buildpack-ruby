@@ -31,6 +31,8 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
   def run_assets_precompile_rake_task
     log("assets_precompile") do
+      setup_database_url_env
+
       if rake_task_defined?("assets:precompile")
         topic("Preparing app for Rails asset pipeline")
         if File.exists?("public/assets/manifest.yml")
