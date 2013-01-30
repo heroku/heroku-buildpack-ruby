@@ -1,8 +1,14 @@
-## v48
+## v49
 
 Features:
 
 * Display ruby version change when busting the cache
+
+## v48 (1/30/2013)
+
+Features:
+
+* Update deploy error message copy to link to status incident.
 
 ## v47 (1/30/2013)
 
