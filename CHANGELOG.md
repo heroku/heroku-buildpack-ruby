@@ -1,8 +1,14 @@
-## v49
+## v50
 
 Features:
 
 * Display ruby version change when busting the cache
+
+## v49 (1/30/2013)
+
+Features:
+
+* Re-enable ruby deploys for apps just using the heroku cache
 
 ## v48 (1/30/2013)
 
