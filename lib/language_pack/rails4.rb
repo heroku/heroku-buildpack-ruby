@@ -14,6 +14,16 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
     "Ruby/Rails"
   end
 
+  def default_process_types
+    web_process = gem_is_bundled?("thin") ?
+      "bin/rails server thin -p $PORT -e $RAILS_ENV" :
+      "bin/rails server -p $PORT -e $RAILS_ENV"
+    super.merge({
+      "web"     => web_process,
+      "console" => "bin/rails console"
+    })
+  end
+
   private
   def plugins
     []
