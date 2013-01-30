@@ -58,4 +58,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
       end
     end
   end
+
+  def create_database_yml
+  end
 end
