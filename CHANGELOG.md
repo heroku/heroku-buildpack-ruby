@@ -1,10 +1,16 @@
-## v47
+## v48
 
 Features:
 
 * Display ruby version change when busting the cache
 
-## v46 (1/10/2012)
+## v47 (1/30/2013)
+
+Features:
+
+* Disable ruby deploys due to rubygems.org compromise
+
+## v46 (1/10/2013)
 
 Features:
 
