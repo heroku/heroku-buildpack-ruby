@@ -50,9 +50,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
             puts "Asset precompilation completed (#{"%.2f" % time}s)"
           else
             log "assets_precompile", :status => "failure"
-            puts "Precompiling assets failed."
-            puts "Please see this article for troubleshooting help:"
-            puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
+            error "Precompiling assets failed."
           end
         end
       else
