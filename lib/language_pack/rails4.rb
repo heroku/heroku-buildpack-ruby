@@ -18,4 +18,34 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   def plugins
     []
   end
+
+  def run_assets_precompile_rake_task
+    log("assets_precompile") do
+      if rake_task_defined?("assets:precompile")
+        topic("Preparing app for Rails asset pipeline")
+        if File.exists?("public/assets/manifest.yml")
+          puts "Detected manifest.yml, assuming assets were compiled locally"
+        else
+          ENV["RAILS_GROUPS"] ||= "assets"
+          ENV["RAILS_ENV"]    ||= "production"
+
+          puts "Running: rake assets:precompile"
+          require 'benchmark'
+          time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
+
+          if $?.success?
+            log "assets_precompile", :status => "success"
+            puts "Asset precompilation completed (#{"%.2f" % time}s)"
+          else
+            log "assets_precompile", :status => "failure"
+            puts "Precompiling assets failed."
+            puts "Please see this article for troubleshooting help:"
+            puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
+          end
+        end
+      else
+        puts "Error detecting the assets:precompile task"
+      end
+    end
+  end
 end
