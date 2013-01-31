@@ -61,6 +61,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def compile
+    staging_environment_path # Save current environment path first
     Dir.chdir(build_path)
     remove_vendor_bundle
     install_ruby
@@ -82,6 +83,10 @@ private
   # @return [String] the resulting PATH
   def default_path
     "bin:#{slug_vendor_base}/bin:/usr/local/bin:/usr/bin:/bin"
+  end
+
+  def staging_environment_path
+    @staging_environment_path ||= ENV["PATH"]
   end
 
   # the relative path to the bundler directory of gems
@@ -192,14 +197,14 @@ private
     end
     ENV["GEM_HOME"] = slug_vendor_base
     ENV["GEM_PATH"] = slug_vendor_base
-    ENV["PATH"]     = "#{ruby_install_binstub_path}:#{config_vars["PATH"]}"
+    ENV["PATH"]     = "#{ruby_install_binstub_path}:#{staging_environment_path}:#{config_vars["PATH"]}"
   end
 
   # sets up the profile.d script for this buildpack
   def setup_profiled
     set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
     set_env_default  "LANG",     "en_US.UTF-8"
-    set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:$PATH"
+    set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:#{staging_environment_path}:$PATH"
 
     if ruby_version_jruby?
       set_env_default "JAVA_OPTS", default_java_opts
