@@ -431,7 +431,6 @@ http://devcenter.heroku.com/articles/how-do-i-use-sqlite3-for-development
 ERROR
         end
 
-        error_message = "Ruby deploys have been temporarily disabled due to a Rubygems.org security breach.\nPlease see https://status.heroku.com/incidents/489 for more info and a workaround if you need to deploy."
         error error_message
       end
     end
