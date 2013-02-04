@@ -284,7 +284,15 @@ ERROR
       Dir["#{slug_vendor_jvm}/bin/*"].each do |bin|
         run("ln -s ../#{bin} #{bin_dir}")
       end
+
+      install_jce
     end
+  end
+
+  def install_jce
+    topic "Installing JCE"
+    jce_path = File.expand_path('../../../vendor/jce', __FILE__)
+    run("cp #{jce_path}/*.jar #{slug_vendor_jvm}/jre/lib/security/")
   end
 
   # find the ruby install path for its binstubs during build
