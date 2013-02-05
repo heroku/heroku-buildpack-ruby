@@ -13,7 +13,7 @@ Example Usage:
     $ ls
     Gemfile Gemfile.lock
 
-    $ heroku create --stack cedar --buildpack http://github.com/heroku/heroku-buildpack-ruby.git
+    $ heroku create --stack cedar --buildpack https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ git push heroku master
     ...
@@ -47,7 +47,7 @@ Example Usage:
     $ ls config/environment.rb
     config/environment.rb
 
-    $ heroku create --stack cedar --buildpack http://github.com/heroku/heroku-buildpack-ruby.git
+    $ heroku create --stack cedar --buildpack https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ git push heroku master
     ...
@@ -81,7 +81,7 @@ Example Usage:
     $ ls config/application.rb
     config/application.rb
 
-    $ heroku create --stack cedar --buildpack http://github.com/heroku/heroku-buildpack-ruby.git
+    $ heroku create --stack cedar --buildpack https://github.com/heroku/heroku-buildpack-ruby.git
 
     $ git push heroku master
     -----> Heroku receiving push

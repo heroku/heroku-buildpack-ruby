@@ -5,10 +5,10 @@ require "language_pack/base"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
-  BUILDPACK_VERSION   = "v40"
+  BUILDPACK_VERSION   = "v50"
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION     = "1.2.1"
+  BUNDLER_VERSION     = "1.3.0.pre.5"
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
@@ -141,7 +141,7 @@ private
   # determine if we're using rbx
   # @return [Boolean] true if we are and false if we aren't
   def ruby_version_rbx?
-    ruby_version ? ruby_version.match(/^rbx-/) : false
+    ruby_version ? ruby_version.match(/rbx-/) : false
   end
 
   # determine if we're using jruby
@@ -159,7 +159,7 @@ private
   # default JRUBY_OPTS
   # return [String] string of JRUBY_OPTS
   def default_jruby_opts
-    "-Xcompile.invokedynamic=false"
+    "-Xcompile.invokedynamic=true"
   end
 
   # list the available valid ruby versions
@@ -191,7 +191,7 @@ private
 
   # sets up the profile.d script for this buildpack
   def setup_profiled
-    set_env_default  "GEM_PATH", "$HOME/#{slug_vendor_base}"
+    set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
     set_env_default  "LANG",     "en_US.UTF-8"
     set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:$PATH"
 
@@ -204,7 +204,7 @@ private
   # determines if a build ruby is required
   # @return [Boolean] true if a build ruby is required
   def build_ruby?
-    @build_ruby ||= !ruby_version_jruby? && ruby_version != "ruby-1.9.3"
+    @build_ruby ||= !ruby_version_rbx? && !ruby_version_jruby? && !%w{ruby-1.9.3 ruby-2.0.0}.include?(ruby_version)
   end
 
   # install the vendored ruby
@@ -362,13 +362,17 @@ ERROR
   def build_bundler
     log("bundle") do
       bundle_without = ENV["BUNDLE_WITHOUT"] || "development:test"
-      bundle_command = "bundle install --without #{bundle_without} --path vendor/bundle --binstubs bin/"
+      bundle_command = "bundle install --without #{bundle_without} --path vendor/bundle --binstubs vendor/bundle/bin"
 
       unless File.exist?("Gemfile.lock")
         error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
       end
 
       if has_windows_gemfile_lock?
+        topic "WARNING: Removing `Gemfile.lock` because it was generated on Windows."
+        puts "Bundler will do a full resolve so native gems are handled properly."
+        puts "This may result in unexpected gem versions being used in your app."
+
         log("bundle", "has_windows_gemfile_lock")
         File.unlink("Gemfile.lock")
       else
@@ -408,6 +412,13 @@ ERROR
 
         # Keep gem cache out of the slug
         FileUtils.rm_rf("#{slug_vendor_base}/cache")
+
+        # symlink binstubs
+        bin_dir = "bin"
+        FileUtils.mkdir_p bin_dir
+        Dir["#{slug_vendor_base}/bin/*"].each do |bin|
+          run("ln -s ../#{bin} #{bin_dir}") unless File.exist?("#{bin_dir}/#{bin}")
+        end
       else
         log "bundle", :status => "failure"
         error_message = "Failed to install gems via Bundler."
@@ -597,8 +608,10 @@ params = CGI.parse(uri.query || "")
     elsif !File.exists?(buildpack_version_cache) && File.exists?(ruby_version_cache)
       puts "Broken cache detected. Purging build cache."
       purge_bundler_cache
-    elsif cache_exists?(bundler_cache) && !(File.exists?(ruby_version_cache) && full_ruby_version == File.read(ruby_version_cache).chomp)
+    elsif cache_exists?(bundler_cache) && File.exists?(ruby_version_cache) && full_ruby_version != File.read(ruby_version_cache).chomp
       puts "Ruby version change detected. Clearing bundler cache."
+      puts "Old: #{File.read(ruby_version_cache).chomp}"
+      puts "New: #{full_ruby_version}"
       purge_bundler_cache
     end
 

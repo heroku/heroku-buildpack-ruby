@@ -8,7 +8,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   def self.use?
     super &&
       File.exists?("config/application.rb") &&
-      File.read("config/application.rb") =~ /Rails::Application/
+      File.read("config/application.rb").include?("Rails::Application")
   end
 
   def name
