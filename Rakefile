@@ -144,7 +144,7 @@ task "node:install", :version do |t, args|
         "rm -rf #{prefix}/bin"
       ].join(" && ")
 
-      sh "vulcan build -v -o #{name}.tgz --source node-v#{version} --command=\"#{build_command}\""
+      sh "vulcan build -v -o #{name}.tgz --source node-v#{version} --command=\"#{build_command}\" --prefix=\"#{prefix}\""
       s3_upload(tmpdir, name)
     end
   end
