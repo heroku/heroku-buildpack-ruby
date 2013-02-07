@@ -26,7 +26,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def default_addons
-    add_shared_database_addon
+    add_dev_database_addon
   end
 
   def default_config_vars
@@ -561,10 +561,10 @@ params = CGI.parse(uri.query || "")
     ENV["GIT_DIR"] = git_dir
   end
 
-  # decides if we need to enable the shared database addon
+  # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
-  def add_shared_database_addon
-    gem_is_bundled?("pg") ? ['shared-database:5mb'] : []
+  def add_dev_database_addon
+    gem_is_bundled?("pg") ? ['heroku-postgresql:dev'] : []
   end
 
   # decides if we need to install the node.js binary
