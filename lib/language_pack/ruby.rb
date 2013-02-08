@@ -197,7 +197,7 @@ private
     end
     ENV["GEM_HOME"] = slug_vendor_base
     ENV["GEM_PATH"] = slug_vendor_base
-    ENV["PATH"]     = "#{ruby_install_binstub_path}:#{staging_environment_path}:#{config_vars["PATH"]}"
+    ENV["PATH"]     = "#{ruby_install_binstub_path}:#{config_vars["PATH"]}:#{staging_environment_path}"
   end
 
   # sets up the profile.d script for this buildpack
