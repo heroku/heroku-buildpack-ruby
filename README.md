@@ -8,8 +8,6 @@ With this [buildpack](http://devcenter.heroku.com/articles/buildpacks) you no lo
 Usage
 -----
 
-Create a new Cedar-stack app with this buildpack
-
     heroku create -s cedar --buildpack http://github.com/mattmanning/heroku-buildpack-ruby-jekyll.git
 
 or add this buildpack to your current app
@@ -18,18 +16,10 @@ or add this buildpack to your current app
 
 Create a Ruby web app with dependencies managed by [Bundler](http://gembundler.com/) and a Jekyll site. [Heroku-Jekyll-Hello-World](https://github.com/burkemw3/Heroku-Jekyll-Hello-World) can be used as a sample starter.
 
-Push to heroku
-
     git push heroku master
 
 Watch it "Building jekyll site"
 
-    Counting objects: 12, done.
-    Delta compression using up to 2 threads.
-    Compressing objects: 100% (8/8), done.
-    Writing objects: 100% (8/8), 1.10 KiB, done.
-    Total 8 (delta 4), reused 0 (delta 0)
-    
     -----> Heroku receiving push
     -----> Fetching custom build pack... done
     -----> Ruby/Rack app detected
@@ -70,4 +60,3 @@ See Also
 --------
 
 The blog post introducing this buildpack: [http://mwmanning.com/2011/11/29/Run-Your-Jekyll-Site-On-Heroku.html](http://mwmanning.com/2011/11/29/Run-Your-Jekyll-Site-On-Heroku.html).
-

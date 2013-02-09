@@ -22,4 +22,4 @@ require "language_pack/ruby"
 require "language_pack/rack"
 require "language_pack/rails2"
 require "language_pack/rails3"
-
+require "language_pack/disable_deploys"
