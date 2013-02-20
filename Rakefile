@@ -1,5 +1,6 @@
 require "fileutils"
 require "tmpdir"
+require 'rspec/core/rake_task'
 
 S3_BUCKET_NAME  = "heroku-buildpack-ruby"
 VENDOR_URL      = "https://s3.amazonaws.com/#{S3_BUCKET_NAME}"
@@ -357,3 +358,7 @@ task "libffi:install", :version do |t, args|
     end
   end
 end
+
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec
