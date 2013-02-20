@@ -33,6 +33,25 @@ describe LanguagePack::Ruby do
 
   end
 
+  describe '#default_addons' do
+
+    let(:pg_bundled) { true }
+
+    before :each do
+      subject.stub(:gem_is_bundled?).with('pg') { pg_bundled }
+    end
+
+    context 'when pg gem is bundled' do
+      its(:default_addons) { should == ['shared-database:5mb'] }
+    end
+
+    context 'when pg gem is not bundled' do
+      let(:pg_bundled) { false }
+
+      its(:default_addons) { should be_empty }
+    end
+  end
+
   describe '#default_config_vars' do
 
     let(:jruby) { false }
