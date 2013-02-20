@@ -2,22 +2,72 @@ require 'spec_helper'
 
 describe LanguagePack::Ruby do
 
+  before :each do
+    @cwd = Dir.pwd
+  end
+
+  after :each do
+    Dir.chdir @cwd
+  end
+
+  let(:build_path) { 'spec/support/ruby_app' }
+
+  subject { LanguagePack::Ruby.new(build_path) }
+
   describe '.use?' do
 
     context 'a ruby app' do
-      let(:app_dir) { 'spec/support/ruby_app' }
-
-      it "determines that it's a ruby app" do
-        in_app_dir { expect(LanguagePack::Ruby.use?).to be_true }
-      end
+      its(:'class.use?') { should be_true }
     end
 
     context 'a non-ruby app' do
+      let(:build_path) { 'spec/support/non_ruby_app' }
 
-      let(:app_dir) { 'spec/support/non_ruby_app' }
+      its(:'class.use?') { should be_false }
+    end
+  end
 
-      it "determines that it's not a ruby app" do
-        in_app_dir { expect(LanguagePack::Ruby.use?).to be_false }
+  describe '#name' do
+
+    its(:name) { should == 'Ruby' }
+
+  end
+
+  describe '#default_config_vars' do
+
+    let(:jruby) { false }
+
+    before :each do
+      subject.stub(
+        :ruby_version_jruby? => jruby,
+        :default_path => 'default path',
+        :slug_vendor_base => 'slug vendor base',
+        :default_java_opts => 'default java opts',
+        :default_jruby_opts => 'default jruby opts'
+      )
+    end
+
+    context 'ruby is jruby' do
+      let(:jruby) { true }
+
+      it 'sets the correct config vars' do
+        expect(subject.default_config_vars).to eq({
+          'LANG' => 'en_US.UTF-8',
+          'PATH' => 'default path',
+          'GEM_PATH' => 'slug vendor base',
+          'JAVA_OPTS' => 'default java opts',
+          'JRUBY_OPTS' => 'default jruby opts'
+        })
+      end
+    end
+
+    context ' version is not jruby ' do
+      it ' sets the correct config vars ' do
+        expect(subject.default_config_vars).to eq({
+          'LANG' => 'en_US.UTF-8',
+          'PATH' => 'default path',
+          'GEM_PATH' => 'slug vendor base',
+        })
       end
     end
 
