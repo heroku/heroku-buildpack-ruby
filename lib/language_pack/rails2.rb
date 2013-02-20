@@ -73,8 +73,8 @@ private
 
   # most rails apps need a database
   # @return [Array] shared database addon
-  def add_shared_database_addon
-    ['shared-database:5mb']
+  def add_dev_database_addon
+    ['heroku-postgresql:dev']
   end
 
   # sets up the profile.d script for this buildpack
