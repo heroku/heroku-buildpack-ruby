@@ -165,10 +165,10 @@ describe LanguagePack::Ruby do
         let(:build_ruby) { false }
 
         it 'downloads and untars the ruby blob' do
-          subject.stub(:download_blob).with(*ruby_blob)
-          subject.stub(:run).with('tar zxf ruby-1.9.2.tgz') { %x{true} }
-          subject.stub(:run).with("ln -s ../vendor/ruby-1.9.2/bin/a bin")
-          subject.stub(:run).with("ln -s ../vendor/ruby-1.9.2/bin/b bin")
+          subject.should_receive(:download_blob).with(*ruby_blob)
+          subject.should_receive(:run).with('tar zxf ruby-1.9.2.tgz') { %x{true} }
+          subject.should_receive(:run).with("ln -s ../vendor/ruby-1.9.2/bin/a bin")
+          subject.should_receive(:run).with("ln -s ../vendor/ruby-1.9.2/bin/b bin")
 
           subject.compile
         end
@@ -248,12 +248,11 @@ describe LanguagePack::Ruby do
           subject.stub(:slug_vendor_base) { slug_vendor_base }
           subject.stub(:install_binaries)
           subject.stub(:run_assets_precompile_rake_task)
-
           subject.stub(:gems) { %w{a b c} }
 
-          subject.stub(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/a.tgz -s -o - | tar xzf -")
-          subject.stub(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/b.tgz -s -o - | tar xzf -")
-          subject.stub(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/c.tgz -s -o - | tar xzf -")
+          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/a.tgz -s -o - | tar xzf -")
+          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/b.tgz -s -o - | tar xzf -")
+          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/c.tgz -s -o - | tar xzf -")
 
           subject.compile
         end
@@ -267,8 +266,8 @@ describe LanguagePack::Ruby do
           subject.stub(:run_assets_precompile_rake_task)
           subject.stub(:gems) { [] }
 
-          subject.stub(:run).with('chmod 755 bin/a')
-          subject.stub(:run).with('chmod 755 bin/b')
+          subject.should_receive(:run).with('chmod 755 bin/a')
+          subject.should_receive(:run).with('chmod 755 bin/b')
 
           subject.compile
         end
@@ -290,17 +289,19 @@ describe LanguagePack::Ruby do
           subject.stub(:syck_hack) { 'syck hack' }
           subject.stub(:run).with('env RUBYOPT="syck hack" bundle version') { '' }
           subject.stub(:load_bundler_cache)
-          subject.stub(:install_libyaml)
           subject.stub(:run).with('pwd') { '' }
           subject.stub(:pipe) { %x{true} }
         end
 
         it 'installs libyaml' do
-          subject.stub(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.4.tgz -s -o - | tar xzf -")
+          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.4.tgz -s -o - | tar xzf -")
+
           subject.compile
         end
 
         it 'removes vendor cache from the slug' do
+          subject.stub(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.4.tgz -s -o - | tar xzf -")
+
           FileUtils.mkdir_p "#{slug_vendor_base}/cache"
 
           subject.compile
@@ -389,14 +390,14 @@ params = CGI.parse(uri.query || "")
           subject.stub(:install_language_pack_gems)
           subject.stub(:build_bundler)
           subject.stub(:run_assets_precompile_rake_task)
-
           subject.stub(:binaries) { %w{a b c} }
-          subject.stub(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/a.tgz -s -o - | tar xzf -")
-          subject.stub(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/b.tgz -s -o - | tar xzf -")
-          subject.stub(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/c.tgz -s -o - | tar xzf -")
 
-          subject.stub(:run).with('chmod +x bin/c')
-          subject.stub(:run).with('chmod +x bin/d')
+          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/a.tgz -s -o - | tar xzf -")
+          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/b.tgz -s -o - | tar xzf -")
+          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/c.tgz -s -o - | tar xzf -")
+
+          subject.should_receive(:run).with('chmod +x bin/c')
+          subject.should_receive(:run).with('chmod +x bin/d')
 
           subject.compile
         end
@@ -410,7 +411,8 @@ params = CGI.parse(uri.query || "")
           subject.stub(:install_language_pack_gems)
           subject.stub(:build_bundler)
           subject.stub(:install_binaries)
-          subject.stub(:run, "env PATH=$PATH bundle exec rake assets:precompile --dry-run") { '' }
+
+          subject.should_receive(:run).with("env PATH=$PATH bundle exec rake assets:precompile --dry-run") { '' }
 
           subject.compile
         end
