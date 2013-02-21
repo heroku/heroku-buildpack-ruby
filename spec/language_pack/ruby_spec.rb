@@ -206,17 +206,51 @@ describe LanguagePack::Ruby do
 
       context 'installing the jvm' do
 
+        let(:slug_vendor_jvm) { 'slug_vendor_jvm' }
+
+        before :each do
+          subject.stub(:ruby_version_jruby?) { true }
+          subject.stub(:install_ruby)
+          subject.stub(:run).with('curl http://heroku-jvm-langpack-java.s3.amazonaws.com/openjdk7-latest.tar.gz -s -o - | tar xzf -')
+          ENV.stub(:[]=)
+        end
+
         it 'creates the slug vendor jvm directory' do
+          subject.stub(:slug_vendor_jvm) { slug_vendor_jvm }
+
+          subject.compile
+
+          expect(File.directory?(slug_vendor_jvm)).to be_true
         end
 
         it 'downloads the jvm' do
+          subject.compile
         end
 
         context 'creating bin dir' do
+
+          before :each do
+            subject.stub(:slug_vendor_jvm) { slug_vendor_jvm }
+          end
+
           it 'creates a bin dir' do
+            subject.compile
+
+            expect(File.directory?('bin')).to be_true
           end
 
           it 'symlinks vendored binaries into bin' do
+            FileUtils.mkdir_p File.join(slug_vendor_jvm, 'bin')
+            FileUtils.touch File.join(slug_vendor_jvm, 'bin', 'a')
+            FileUtils.touch File.join(slug_vendor_jvm, 'bin', 'b')
+
+            subject.stub(:run).with("ln -s ../#{slug_vendor_jvm}/bin/a bin").and_call_original
+            subject.stub(:run).with("ln -s ../#{slug_vendor_jvm}/bin/b bin").and_call_original
+
+            subject.compile
+
+            expect(File.symlink?(File.join('bin', 'a'))).to be_true
+            expect(File.symlink?(File.join('bin', 'b'))).to be_true
           end
 
         end
@@ -225,14 +259,108 @@ describe LanguagePack::Ruby do
 
       context 'setting up the language pack environment' do
 
-        it 'sets environment variables' do
+        let(:ruby_install_binstub_path) { 'ruby install binstub path' }
+        let(:slug_vendor_base) { 'slug vendor base' }
+
+        before :each do
+          subject.stub(:install_ruby)
+          subject.stub(:ruby_install_binstub_path) { ruby_install_binstub_path }
+          subject.stub(:slug_vendor_base) { slug_vendor_base }
+        end
+
+        context 'when ruby is MRI' do
+
+          it 'sets the environment variables' do
+            ENV.should_receive(:[]=).with('GEM_HOME', slug_vendor_base)
+            ENV.should_receive(:[]=).with('GEM_PATH', slug_vendor_base)
+            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/).twice
+
+            subject.compile
+          end
+        end
+
+        context 'when ruby is jruby' do
+          it 'sets the environment variables' do
+            subject.stub(:ruby_version_jruby?) { true }
+            subject.stub(:install_jvm)
+
+            ENV.should_receive(:[]=).with('GEM_HOME', slug_vendor_base)
+            ENV.should_receive(:[]=).with('GEM_PATH', slug_vendor_base)
+            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/).twice
+
+            ENV.should_receive(:[]=).with('JAVA_OPTS', '-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8').twice
+            ENV.should_receive(:[]=).with('JRUBY_OPTS', '-Xcompile.invokedynamic=true')
+
+            subject.compile
+          end
+
         end
 
       end
 
       context 'setting up profiled' do
 
-        it 'creates the correct profiled file' do
+        let(:slug_vendor_base) { 'slug_vendor_base' }
+        let(:staging_environment_path) { 'staging_environment_path' }
+
+        before :each do
+          subject.stub(:install_ruby)
+          subject.stub(:staging_environment_path) { staging_environment_path }
+          subject.stub(:slug_vendor_base) { slug_vendor_base }
+        end
+
+        context 'when ruby is MRI' do
+
+          before :each do
+            subject.compile
+
+            @ruby_profile = File.read('.profile.d/ruby.sh')
+          end
+
+          it 'writes the gem path to profiled' do
+            expect(@ruby_profile).to include "GEM_PATH=\"$HOME/#{slug_vendor_base}:$GEM_PATH\""
+          end
+
+          it 'writes the lang to profiled' do
+            expect(@ruby_profile).to include "LANG=${LANG:-en_US.UTF-8}"
+          end
+
+          it 'writes the path to profiled' do
+            expect(@ruby_profile).to include "PATH=\"$HOME/bin:$HOME/#{slug_vendor_base}/bin:#{staging_environment_path}:$PATH\""
+          end
+
+        end
+
+        context 'when ruby is jruby' do
+
+          before :each do
+            subject.stub(:ruby_version_jruby?) { true }
+            subject.stub(:install_jvm)
+
+            subject.compile
+
+            @ruby_profile = File.read('.profile.d/ruby.sh')
+          end
+
+          it 'writes the gem path to profiled' do
+            expect(@ruby_profile).to include "GEM_PATH=\"$HOME/#{slug_vendor_base}:$GEM_PATH\""
+          end
+
+          it 'writes the lang to profiled' do
+            expect(@ruby_profile).to include "LANG=${LANG:-en_US.UTF-8}"
+          end
+
+          it 'writes the path to profiled' do
+            expect(@ruby_profile).to include "PATH=\"$HOME/bin:$HOME/#{slug_vendor_base}/bin:#{staging_environment_path}:$PATH\""
+          end
+
+          it 'writes the java opts to profiled' do
+            expect(@ruby_profile).to include "JAVA_OPTS=${JAVA_OPTS:--Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8}"
+          end
+
+          it 'writes the jruby opts to profiled' do
+            expect(@ruby_profile).to include "JRUBY_OPTS=${JRUBY_OPTS:--Xcompile.invokedynamic=true}"
+          end
         end
 
       end
