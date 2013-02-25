@@ -12,7 +12,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   BUILDPACK_VERSION   = "v50"
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION     = "1.3.0.pre.5"
+  BUNDLER_VERSION     = "1.3.0"
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
