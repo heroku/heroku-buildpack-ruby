@@ -9,7 +9,7 @@ Bugfixes:
 
 * Better buildpack detection through Gemfile.lock gems
 
-## v50
+## v50 (1/31/2013)
 
 Features:
 
