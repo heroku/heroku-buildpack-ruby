@@ -1,3 +1,9 @@
+## v52 (2/25/2013)
+
+Bugfixes:
+
+* Revert back to 1.3.0.pre.5 due to bundler warnings
+
 ## v51 (2/25/2013)
 
 Features:
