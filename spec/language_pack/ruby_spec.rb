@@ -48,7 +48,7 @@ describe LanguagePack::Ruby do
     end
 
     context 'when pg gem is bundled' do
-      its(:default_addons) { should == ['shared-database:5mb'] }
+      its(:default_addons) { should == ['heroku-postgresql:dev'] }
     end
 
     context 'when pg gem is not bundled' do
