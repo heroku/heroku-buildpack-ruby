@@ -1,10 +1,46 @@
-## v47
+## v52 (2/25/2013)
+
+Bugfixes:
+
+* Revert back to 1.3.0.pre.5 due to bundler warnings
+
+## v51 (2/25/2013)
 
 Features:
 
+* Initial Rails 4 beta support
+* Upgrade bundler to 1.3.0
+
+Bugfixes:
+
+* Better buildpack detection through Gemfile.lock gems
+
+## v50 (1/31/2013)
+
+Features:
+
+* Restore ruby deploys back to normal
+
+## v49 (1/30/2013)
+
+Features:
+
+* Re-enable ruby deploys for apps just using the heroku cache
 * Display ruby version change when busting the cache
 
-## v46 (1/10/2012)
+## v48 (1/30/2013)
+
+Features:
+
+* Update deploy error message copy to link to status incident.
+
+## v47 (1/30/2013)
+
+Features:
+
+* Disable ruby deploys due to rubygems.org compromise
+
+## v46 (1/10/2013)
 
 Features:
 
