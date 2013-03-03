@@ -97,6 +97,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
+        run_compile_tasks
       end
       super
     end
@@ -727,6 +728,17 @@ params = CGI.parse(uri.query || "")
   # @return [Boolean] true if it's detected and false if it isn't
   def node_js_installed?
     @node_js_installed ||= run("#{node_bp_bin_path}/node -v") && $?.success?
+  end
+
+  def run_compile_tasks
+    tasks = ENV['COMPILE_TASKS']
+    if tasks =~ /\S/
+      puts "Running: rake #{tasks}"
+      pipe("env PATH=$PATH:bin bundle exec rake #{tasks} 2>&1")
+      unless $?.success?
+        error "Compile tasks failed."
+      end
+    end
   end
 
   def run_assets_precompile_rake_task
