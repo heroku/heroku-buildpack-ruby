@@ -1,15 +1,18 @@
-Heroku buildpack: Ruby
-======================
+# Heroku buildpack: Ruby: tpope edition
 
-This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for Ruby, Rack, and Rails apps. It uses [Bundler](http://gembundler.com) for dependency management.
+This is my fork of the [official Heroku Ruby
+buildpack](https://github.com/heroku/heroku-buildpack-ruby).  Use it when
+creating a new app:
 
-Usage
------
+    heroku create myapp --buildpack \
+      https://github.com/tpope/heroku-buildpack-ruby-tpope
 
-### Ruby
+Or add it to an existing app:
 
-Example Usage:
+    heroku config:add \
+      BUILDPACK_URL=https://github.com/tpope/heroku-buildpack-ruby-tpope
 
+<<<<<<< HEAD
     $ ls
     Gemfile Gemfile.lock
 
@@ -189,4 +192,9 @@ Rails 3 (config/application.rb is detected)
 * everything from Rails 2
 * install rails 3 plugins
   * [rails3_server_static_assets](https://github.com/pedro/rails3_serve_static_assets)
+=======
+Or just cherry-pick the parts you like into your own fork.
+>>>>>>> 4d5a2c7... Document forking
 
+Contained within are a few tiny but significant differences from the official
+version, distilled from project-specific buildpacks I've created in the past.
