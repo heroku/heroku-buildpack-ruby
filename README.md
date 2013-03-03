@@ -199,6 +199,11 @@ Or just cherry-pick the parts you like into your own fork.
 Contained within are a few tiny but significant differences from the official
 version, distilled from project-specific buildpacks I've created in the past.
 
+## Strict asset precompilation
+
+If asset precompilation fails, in lieu of enabling runtime asset
+compilation, the deploy will be aborted.
+
 ## Commit recording
 
 This takes the upcoming and previously deployed commit SHAs and makes them
