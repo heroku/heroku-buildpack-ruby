@@ -198,3 +198,10 @@ Or just cherry-pick the parts you like into your own fork.
 
 Contained within are a few tiny but significant differences from the official
 version, distilled from project-specific buildpacks I've created in the past.
+
+## Commit recording
+
+This takes the upcoming and previously deployed commit SHAs and makes them
+available as `$REVISION` and `$ORIGINAL_REVISION` for the duration of the
+compile.  They are also written to `HEAD` and `ORIG_HEAD` in the root of the
+application for easy access after the deploy is complete.
