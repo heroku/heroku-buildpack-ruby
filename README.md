@@ -8,7 +8,7 @@ With this [buildpack](http://devcenter.heroku.com/articles/buildpacks) you no lo
 Usage
 -----
 
-    heroku create -s cedar --buildpack http://github.com/mattmanning/heroku-buildpack-ruby-jekyll.git
+    heroku create --buildpack http://github.com/mattmanning/heroku-buildpack-ruby-jekyll.git
 
 or add this buildpack to your current app
 
