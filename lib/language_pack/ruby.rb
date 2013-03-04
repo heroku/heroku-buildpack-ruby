@@ -2,10 +2,14 @@ require "tmpdir"
 require "rubygems"
 require "language_pack"
 require "language_pack/base"
+require "language_pack/bundler_lockfile"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
-  BUILDPACK_VERSION   = "v50"
+  include LanguagePack::BundlerLockfile
+  extend LanguagePack::BundlerLockfile
+
+  BUILDPACK_VERSION   = "v52"
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION     = "1.3.0.pre.5"
@@ -21,12 +25,28 @@ class LanguagePack::Ruby < LanguagePack::Base
     File.exist?("Gemfile")
   end
 
+  def self.lockfile_parser
+    require "bundler"
+    Bundler::LockfileParser.new(File.read("Gemfile.lock"))
+  end
+
+  def self.gem_version(name)
+    gem_version = nil
+    bootstrap_bundler do |bundler_path|
+      $: << "#{bundler_path}/gems/bundler-#{LanguagePack::Ruby::BUNDLER_VERSION}/lib"
+      gem         = lockfile_parser.specs.detect {|gem| gem.name == name }
+      gem_version = gem.version if gem
+    end
+
+    gem_version
+  end
+
   def name
     "Ruby"
   end
 
   def default_addons
-    add_shared_database_addon
+    add_dev_database_addon
   end
 
   def default_config_vars
@@ -126,17 +146,6 @@ private
     end
 
     @ruby_version
-  end
-
-  # bootstraps bundler so we can pull the ruby version
-  def bootstrap_bundler(&block)
-    Dir.mktmpdir("bundler-") do |tmpdir|
-      Dir.chdir(tmpdir) do
-        run("curl #{VENDOR_URL}/#{BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
-      end
-
-      yield tmpdir
-    end
   end
 
   # determine if we're using rbx
@@ -543,8 +552,7 @@ params = CGI.parse(uri.query || "")
   # @return [Bundler::LockfileParser] a Bundler::LockfileParser
   def lockfile_parser
     add_bundler_to_load_path
-    require "bundler"
-    @lockfile_parser ||= Bundler::LockfileParser.new(File.read("Gemfile.lock"))
+    @lockfile_parser ||= LanguagePack::Ruby.lockfile_parser
   end
 
   # detects if a rake task is defined in the app
@@ -562,10 +570,10 @@ params = CGI.parse(uri.query || "")
     ENV["GIT_DIR"] = git_dir
   end
 
-  # decides if we need to enable the shared database addon
+  # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
-  def add_shared_database_addon
-    gem_is_bundled?("pg") ? ['shared-database:5mb'] : []
+  def add_dev_database_addon
+    gem_is_bundled?("pg") ? ['heroku-postgresql:dev'] : []
   end
 
   # decides if we need to install the node.js binary

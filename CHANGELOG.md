@@ -1,4 +1,21 @@
-## v50
+## v52 (2/25/2013)
+
+Bugfixes:
+
+* Revert back to 1.3.0.pre.5 due to bundler warnings
+
+## v51 (2/25/2013)
+
+Features:
+
+* Initial Rails 4 beta support
+* Upgrade bundler to 1.3.0
+
+Bugfixes:
+
+* Better buildpack detection through Gemfile.lock gems
+
+## v50 (1/31/2013)
 
 Features:
 
