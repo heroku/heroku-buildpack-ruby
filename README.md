@@ -20,13 +20,10 @@ Create a Ruby web app with dependencies managed by [Bundler](http://gembundler.c
 
 Watch it "Building jekyll site"
 
-    -----> Heroku receiving push
-    -----> Fetching custom build pack... done
+    -----> Fetching custom git buildpack... done
     -----> Ruby/Rack app detected
-    -----> Installing dependencies using Bundler version 1.1.rc
-           Running: bundle install --without development:test --path vendor/bundle --binstubs bin/ --deployment
-           Fetching gem metadata from http://rubygems.org/.......
-           Using RedCloth (4.2.8)
+    -----> Installing dependencies using Bundler version 1.3.0.pre.5
+           Running: bundle install --without development:test --path vendor/bundle --binstubs vendor/bundle/bin --deployment
            Using posix-spawn (0.3.6)
            Using albino (1.3.3)
            Using fast-stemmer (1.0.0)
@@ -40,21 +37,25 @@ Watch it "Building jekyll site"
            Using maruku (0.6.0)
            Using jekyll (0.11.0)
            Using rack (1.3.5)
+           Using rack-contrib (1.1.0)
+           Using rack-rewrite (1.2.1)
            Using thin (1.3.1)
-           Using bundler (1.1.rc)
+           Using bundler (1.3.0.pre.5)
            Your bundle is complete! It was installed into ./vendor/bundle
            Cleaning up the bundler cache.
+           Would have removed bundler (1.2.1)
            Building jekyll site
+           Configuration from /tmp/build_2khwpm40t8wev/_config.yml
+           Building site: . -> ./_site
+           Successfully generated site: . -> ./_site
     -----> Discovering process types
            Procfile declares types     -> web
            Default types for Ruby/Rack -> console, rake
-    -----> Compiled slug size is 7.2MB
-    -----> Launching... done, v47
+
+    -----> Compiled slug size: 6.1MB
+    -----> Launching... done, v99
     -----> Deploy hooks scheduled, check output in your logs
-           http://www.mwmanning.com deployed to Heroku
-    
-    To git@heroku.com:mattmanning.git
-       8f84bc4..9350a12  master -> master
+           http://mattmanning.herokuapp.com deployed to Heroku
 
 See Also
 --------
