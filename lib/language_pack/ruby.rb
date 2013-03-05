@@ -242,7 +242,8 @@ ERROR
         ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
         ruby_name = ruby_version.sub(ruby_vm, "#{ruby_vm}-build")
         ruby_filename = "#{ruby_name}.tgz"
-        download_blob(BLOB_IDS[ruby_name][:oid], BLOB_IDS[ruby_name][:sig], BLOB_IDS[ruby_name][:sha], ruby_filename )
+        #download_blob(BLOB_IDS[ruby_name][:oid], BLOB_IDS[ruby_name][:sig], BLOB_IDS[ruby_name][:sha], ruby_filename )
+        copy_cached_package(ruby_filename)
         run("tar zxf #{ruby_filename}")
       end
       error invalid_ruby_version_message unless $?.success?
@@ -251,7 +252,8 @@ ERROR
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
       ruby_filename = "#{ruby_version}.tgz"
-      download_blob(BLOB_IDS[ruby_version][:oid], BLOB_IDS[ruby_version][:sig], BLOB_IDS[ruby_version][:sha], ruby_filename )
+      #download_blob(BLOB_IDS[ruby_version][:oid], BLOB_IDS[ruby_version][:sig], BLOB_IDS[ruby_version][:sha], ruby_filename )
+      copy_cached_package(ruby_filename)
       run("tar zxf #{ruby_filename}")
     end
     error invalid_ruby_version_message unless $?.success?
@@ -280,7 +282,8 @@ ERROR
 
       FileUtils.mkdir_p(slug_vendor_jvm)
       Dir.chdir(slug_vendor_jvm) do
-        run("curl #{JVM_BASE_URL}/#{JVM_VERSION}.tar.gz -s -o - | tar xzf -")
+        copy_cached_package("#{JVM_VERSION}.tar.gz")
+        run("tar xzf #{JVM_VERSION}.tar.gz")
       end
 
       bin_dir = "bin"
@@ -324,7 +327,8 @@ ERROR
     FileUtils.mkdir_p(slug_vendor_base)
     Dir.chdir(slug_vendor_base) do |dir|
       gems.each do |gem|
-        run("curl #{VENDOR_URL}/#{gem}.tgz -s -o - | tar xzf -")
+        copy_cached_package("#{gem}.tar.gz")
+        run("tar xzf #{gem}.tgz")
       end
       Dir["bin/*"].each {|path| run("chmod 755 #{path}") }
     end
@@ -349,7 +353,8 @@ ERROR
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
     Dir.chdir(bin_dir) do |dir|
-      run("curl #{VENDOR_URL}/#{name}.tgz -s -o - | tar xzf -")
+      copy_cached_package("#{name}.tgz")
+      run("tar xzf #{name}.tgz")
     end
   end
 
@@ -364,7 +369,8 @@ ERROR
   def install_libyaml(dir)
     FileUtils.mkdir_p dir
     Dir.chdir(dir) do |dir|
-      run("curl #{VENDOR_URL}/#{LIBYAML_PATH}.tgz -s -o - | tar xzf -")
+      copy_cached_package("#{LIBYAML_PATH}.tgz")
+      run("tar xzf #{LIBYAML_PATH}.tgz")
     end
   end
 

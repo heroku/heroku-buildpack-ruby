@@ -41,6 +41,11 @@ module LanguagePack::BlobstoreClient
     end
   end
 
+  def copy_cached_package(filename)
+    puts "... copying #{filename} from the DEA cache"
+    FileUtils.cp("/var/vcap/packages/ruby_bin/#{filename}", filename)
+  end
+
   private
   def file_checksum(path)
     Digest::SHA1.file(path).hexdigest
