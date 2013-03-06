@@ -6,8 +6,10 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
-    rails_version = LanguagePack::Ruby.gem_version('rails')
-    rails_version >= Gem::Version.new('4.0.0.beta') && rails_version < Gem::Version.new('5.0.0') if rails_version
+    if gemfile_lock?
+      rails_version = LanguagePack::Ruby.gem_version('railties')
+      rails_version >= Gem::Version.new('4.0.0.beta') && rails_version < Gem::Version.new('5.0.0') if rails_version
+    end
   end
 
   def name

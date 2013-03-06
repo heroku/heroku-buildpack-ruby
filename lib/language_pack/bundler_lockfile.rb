@@ -1,5 +1,10 @@
 module LanguagePack
   module BundlerLockfile
+    # checks if the Gemfile and Gemfile.lock exist
+    def gemfile_lock?
+      File.exist?('Gemfile') && File.exist?('Gemfile.lock')
+    end
+
     # bootstraps bundler so we can use it before bundler is setup properlyLanguagePack::Ruby
     def bootstrap_bundler(&block)
       Dir.mktmpdir("bundler-") do |tmpdir|
