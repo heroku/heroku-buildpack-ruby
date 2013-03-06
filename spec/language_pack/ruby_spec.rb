@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe LanguagePack::Ruby do
 
-  let(:app_dir) { 'spec/support/ruby_app' }
+  let(:app_dir) { File.expand_path(File.join(File.dirname(__FILE__), '../support/ruby_app')) }
 
   let!(:app_work) { Dir.mktmpdir }
   let!(:cache_dir) { Dir.mktmpdir }
@@ -10,6 +10,7 @@ describe LanguagePack::Ruby do
 
   before :each do
     FileUtils.cp_r "#{app_dir}/.", app_work
+    subject.stub(:ruby_versions) { ["ruby-1.9.3", "ruby-1.9.2", "ruby-1.8.7"] }
   end
 
   after :each do
@@ -27,7 +28,7 @@ describe LanguagePack::Ruby do
     end
 
     context 'a non-ruby app' do
-      let(:app_dir) { 'spec/support/non_ruby_app' }
+      let(:app_dir) { File.expand_path(File.join(File.dirname(__FILE__), '../support/non_ruby_app')) }
 
       its(:'class.use?') { should be_false }
     end
@@ -122,19 +123,9 @@ describe LanguagePack::Ruby do
 
     context 'installing ruby' do
 
-      let(:ruby_blob) {
-        [("4e4e78bca31e122204e4e9863b1b740510096a2b8696"),
-          ("/45mjMKhckPxTUhNBeexTFAALA4="),
-          ("84134cbc0e3345244a039c8cb43fdbb056bc2d34"),
-          ("ruby-1.9.2.tgz")]
-      }
+      let(:ruby_package) { "ruby-1.9.2.tgz" }
 
-      let(:ruby_build_blob) {
-        [("4e4e78bca21e122204e4e9863926b10510096b389b02"),
-          ("HZ+96UdoJr324YZHcAcSjwkMq2I="),
-          ("6f17cd95878781334be656460ef4873f57c88643"),
-          ("ruby-build-1.9.2.tgz")]
-      }
+      let(:ruby_build_package) { "ruby-build-1.9.2.tgz" }
 
       let(:build_ruby) { true }
 
@@ -148,8 +139,8 @@ describe LanguagePack::Ruby do
       context 'when building ruby' do
 
         it 'downloads and untars the ruby and ruby-build blobs' do
-          subject.stub(:download_blob).with(*ruby_blob)
-          subject.stub(:download_blob).with(*ruby_build_blob)
+          subject.stub(:fetch_package).with(ruby_package)
+          subject.stub(:fetch_package).with(ruby_build_package)
           subject.stub(:run).with('tar zxf ruby-1.9.2.tgz') { %x{true} }
           subject.stub(:run).with('tar zxf ruby-build-1.9.2.tgz') { %x{true} }
           subject.stub(:run).with("ln -s ../vendor/ruby-1.9.2/bin/a bin")
@@ -165,7 +156,7 @@ describe LanguagePack::Ruby do
         let(:build_ruby) { false }
 
         it 'downloads and untars the ruby blob' do
-          subject.should_receive(:download_blob).with(*ruby_blob)
+          subject.should_receive(:fetch_package).with(ruby_package)
           subject.should_receive(:run).with('tar zxf ruby-1.9.2.tgz') { %x{true} }
           subject.should_receive(:run).with("ln -s ../vendor/ruby-1.9.2/bin/a bin")
           subject.should_receive(:run).with("ln -s ../vendor/ruby-1.9.2/bin/b bin")
@@ -178,7 +169,7 @@ describe LanguagePack::Ruby do
       context 'creating bin dir' do
 
         before :each do
-          subject.stub(:download_blob)
+          subject.stub(:fetch_package)
           subject.stub(:run).with('tar zxf ruby-1.9.2.tgz') { %x{true} }
           subject.stub(:run).with('tar zxf ruby-build-1.9.2.tgz') { %x{true} }
         end

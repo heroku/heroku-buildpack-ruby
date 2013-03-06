@@ -1,0 +1,25 @@
+---
+url: "http://blob.cfblob.com"
+uid: "bb6a0c89ef4048a8a0f814e25385d1c5/user1"
+exp: "1893484800" # expires on 2030 Jan-1
+blobs:
+  ruby-1.9.2.tgz:
+    oid: "4e4e78bca31e122204e4e9863b1b740510096a2b8696"
+    sig: "/45mjMKhckPxTUhNBeexTFAALA4="
+    sha: "84134cbc0e3345244a039c8cb43fdbb056bc2d34"
+  ruby-1.9.3.tgz:
+    oid: "4e4e78bca61e121004e4e7d51d950e0510096a910e5a"
+    sig: "+1Tod4mmEt4BG9j/1C6rYy6x4kw="
+    sha: "9160b6a5b1e66ad9bcd0f200b8be15e91d16c7c7"
+  ruby-1.8.7.tgz:
+    oid: "4e4e78bca21e122004e4e8ec647a54051009649e5732"
+    sig: "Pz/1y7YFwlsPcIaRte7RO79RSNo="
+    sha: "d59f166a28a130c6b89665efed10a7273716e981"
+  ruby-build-1.8.7.tgz:
+    oid: "4e4e78bca41e121204e4e86ee539210510096aee7893"
+    sig: "LVHbg6vNJh9cXzHb8bUBRDiJ09w="
+    sha: "70b291a400233d5076dd9fd7969570e164c6c484"
+  ruby-build-1.9.2.tgz:
+    oid: "4e4e78bca21e122204e4e9863926b10510096b389b02"
+    sig: "HZ+96UdoJr324YZHcAcSjwkMq2I="
+    sha: "6f17cd95878781334be656460ef4873f57c88643"
