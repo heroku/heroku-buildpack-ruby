@@ -9,7 +9,7 @@ module LanguagePack
     def bootstrap_bundler(&block)
       Dir.mktmpdir("bundler-") do |tmpdir|
         Dir.chdir(tmpdir) do
-          system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
+          fetch_package_and_untar("#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz")
         end
 
         yield tmpdir

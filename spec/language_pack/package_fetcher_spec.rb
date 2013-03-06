@@ -37,7 +37,7 @@ describe LanguagePack::PackageFetcher do
       before do
         subject.should_receive(:fetch_from_buildpack_cache).with(filename) { false }
         subject.should_receive(:fetch_from_blobstore).with(filename) { false }
-        subject.should_receive(:fetch_from_curl).with(filename) { true }
+        subject.should_receive(:fetch_from_curl).with(filename, LanguagePack::Base::VENDOR_URL) { true }
       end
 
       it "stops after successfully retrieving from the blobstore" do
@@ -49,7 +49,7 @@ describe LanguagePack::PackageFetcher do
       before do
         subject.should_receive(:fetch_from_buildpack_cache).with(filename) { false }
         subject.should_receive(:fetch_from_blobstore).with(filename) { false }
-        subject.should_receive(:fetch_from_curl).with(filename) { false }
+        subject.should_receive(:fetch_from_curl).with(filename, LanguagePack::Base::VENDOR_URL) { false }
       end
 
       it "returns false" do
@@ -122,18 +122,20 @@ describe LanguagePack::PackageFetcher do
   end
 
   describe "#fetch_from_curl" do
+    let(:url) { "https://s3.amazonaws.com/heroku-buildpack-ruby" }
+
     before do
-      subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/#{filename} -s -o #{filename}")
+      subject.should_receive(:run).with("curl #{url}/#{filename} -s -o #{filename}")
     end
 
     it "successfully downloads the file using curl and returns true" do
       File.should_receive(:exist?).with(filename) { true }
-      subject.send(:fetch_from_curl, filename).should be_true
+      subject.send(:fetch_from_curl, filename, url).should be_true
     end
 
     it "fails to downloads the file using curl and returns false" do
       File.should_receive(:exist?).with(filename) { false }
-      subject.send(:fetch_from_curl, filename).should be_false
+      subject.send(:fetch_from_curl, filename, url).should be_false
     end
   end
 end

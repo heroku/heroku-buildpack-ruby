@@ -70,7 +70,7 @@ private
     puts "Injecting #{name}"
     FileUtils.mkdir_p plugin_dir
     Dir.chdir(plugin_dir) do |dir|
-      run("curl #{VENDOR_URL}/#{name}.tgz -s -o - | tar xzf -")
+      fetch_package_and_untar("#{name}.tgz")
     end
   end
 

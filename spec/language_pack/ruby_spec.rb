@@ -139,10 +139,8 @@ describe LanguagePack::Ruby do
       context 'when building ruby' do
 
         it 'downloads and untars the ruby and ruby-build blobs' do
-          subject.stub(:fetch_package).with(ruby_package)
-          subject.stub(:fetch_package).with(ruby_build_package)
-          subject.stub(:run).with('tar zxf ruby-1.9.2.tgz') { %x{true} }
-          subject.stub(:run).with('tar zxf ruby-build-1.9.2.tgz') { %x{true} }
+          subject.stub(:fetch_package_and_untar).with(ruby_package) { %x{true} }
+          subject.stub(:fetch_package_and_untar).with(ruby_build_package) { %x{true} }
           subject.stub(:run).with("ln -s ../vendor/ruby-1.9.2/bin/a bin")
           subject.stub(:run).with("ln -s ../vendor/ruby-1.9.2/bin/b bin")
 
@@ -156,8 +154,7 @@ describe LanguagePack::Ruby do
         let(:build_ruby) { false }
 
         it 'downloads and untars the ruby blob' do
-          subject.should_receive(:fetch_package).with(ruby_package)
-          subject.should_receive(:run).with('tar zxf ruby-1.9.2.tgz') { %x{true} }
+          subject.should_receive(:fetch_package_and_untar).with(ruby_package) { %x{true} }
           subject.should_receive(:run).with("ln -s ../vendor/ruby-1.9.2/bin/a bin")
           subject.should_receive(:run).with("ln -s ../vendor/ruby-1.9.2/bin/b bin")
 
@@ -202,7 +199,7 @@ describe LanguagePack::Ruby do
         before :each do
           subject.stub(:ruby_version_jruby?) { true }
           subject.stub(:install_ruby)
-          subject.stub(:run).with('curl http://heroku-jvm-langpack-java.s3.amazonaws.com/openjdk7-latest.tar.gz -s -o - | tar xzf -')
+          subject.stub(:fetch_package_and_untar).with('openjdk7-latest.tar.gz', 'http://heroku-jvm-langpack-java.s3.amazonaws.com')
           ENV.stub(:[]=)
         end
 
@@ -374,9 +371,9 @@ describe LanguagePack::Ruby do
           subject.stub(:run_assets_precompile_rake_task)
           subject.stub(:gems) { %w{a b c} }
 
-          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/a.tgz -s -o - | tar xzf -")
-          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/b.tgz -s -o - | tar xzf -")
-          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/c.tgz -s -o - | tar xzf -")
+          subject.should_receive(:fetch_package_and_untar).with("a.tgz")
+          subject.should_receive(:fetch_package_and_untar).with("b.tgz")
+          subject.should_receive(:fetch_package_and_untar).with("c.tgz")
 
           subject.compile
         end
@@ -418,13 +415,13 @@ describe LanguagePack::Ruby do
         end
 
         it 'installs libyaml' do
-          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.4.tgz -s -o - | tar xzf -")
+          subject.should_receive(:fetch_package_and_untar).with("libyaml-0.1.4.tgz")
 
           subject.compile
         end
 
         it 'removes vendor cache from the slug' do
-          subject.stub(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.4.tgz -s -o - | tar xzf -")
+          subject.should_receive(:fetch_package_and_untar).with("libyaml-0.1.4.tgz")
 
           FileUtils.mkdir_p "#{slug_vendor_base}/cache"
 
@@ -516,9 +513,9 @@ params = CGI.parse(uri.query || "")
           subject.stub(:run_assets_precompile_rake_task)
           subject.stub(:binaries) { %w{a b c} }
 
-          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/a.tgz -s -o - | tar xzf -")
-          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/b.tgz -s -o - | tar xzf -")
-          subject.should_receive(:run).with("curl https://s3.amazonaws.com/heroku-buildpack-ruby/c.tgz -s -o - | tar xzf -")
+          subject.should_receive(:fetch_package_and_untar).with("a.tgz")
+          subject.should_receive(:fetch_package_and_untar).with("b.tgz")
+          subject.should_receive(:fetch_package_and_untar).with("c.tgz")
 
           subject.should_receive(:run).with('chmod +x bin/c')
           subject.should_receive(:run).with('chmod +x bin/d')

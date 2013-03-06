@@ -15,10 +15,14 @@ module LanguagePack
       super(*args)
     end
 
-    def fetch_package(filename)
+    def fetch_package(filename, url=VENDOR_URL)
       fetch_from_buildpack_cache(filename) ||
         fetch_from_blobstore(filename) ||
-        fetch_from_curl(filename)
+        fetch_from_curl(filename, url)
+    end
+
+    def fetch_package_and_untar(filename, url=VENDOR_URL)
+      fetch_package(filename, url) && run("tar xzf #{filename}")
     end
 
     private
@@ -26,6 +30,7 @@ module LanguagePack
     def fetch_from_buildpack_cache(filename)
       file_path = File.join(buildpack_cache_dir, filename)
       return false unless File.exist?(file_path)
+      puts "Copying #{filename} from the buildpack cache ..."
       FileUtils.cp(file_path, ".")
       true
     end
@@ -41,6 +46,8 @@ module LanguagePack
         puts "A valid object id, signature, and SHA are required"
         return false
       end
+
+      puts "Downloading #{filename} from the blobstore ..."
 
       File.open(filename, 'w') do |tf|
         url = config["url"] + "/rest/objects/#{oid}?uid=" +
@@ -69,8 +76,9 @@ module LanguagePack
       true
     end
 
-    def fetch_from_curl(filename)
-      run("curl #{VENDOR_URL}/#{filename} -s -o #{filename}")
+    def fetch_from_curl(filename, url)
+      puts "Downloading #{filename} from #{url} ..."
+      run("curl #{url}/#{filename} -s -o #{filename}")
       File.exist?(filename)
     end
 
