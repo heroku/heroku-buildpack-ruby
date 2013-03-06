@@ -1,3 +1,10 @@
+## v53 (3/6/2013)
+
+Bugfixes:
+
+* bin/detect for Rails 3 and 4 will use railties for detection vs the rails gem
+* bin/detect does not error out when Gemfile + Gemfile.lock are missing
+
 ## v52 (2/25/2013)
 
 Bugfixes:
