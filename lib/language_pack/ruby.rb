@@ -8,6 +8,7 @@ require "language_pack/package_fetcher"
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   include LanguagePack::PackageFetcher
+  extend LanguagePack::PackageFetcher
   include LanguagePack::BundlerLockfile
   extend LanguagePack::BundlerLockfile
 
