@@ -7,7 +7,7 @@ require "language_pack/bundler_lockfile"
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   include LanguagePack::BundlerLockfile
-  extend LanguagePack::BundlerLockfile
+  extend LanguagePack::BundlerLockfile::ClassMethods
 
   BUILDPACK_VERSION   = "v53"
   LIBYAML_VERSION     = "0.1.4"
