@@ -1,3 +1,9 @@
+## v54 (3/7/2013)
+
+Bugfixes:
+
+* Upgrade bundler to 1.3.2 to fix --dry-clean/Would have removed bug in bundle clean
+
 ## v53 (3/6/2013)
 
 Bugfixes:
