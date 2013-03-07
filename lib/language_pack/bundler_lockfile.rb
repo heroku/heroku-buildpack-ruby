@@ -7,23 +7,22 @@ module LanguagePack
       end
 
       def bundle
-        @bundle ||= init_bundle
+        @bundle ||= parse_bundle
       end
 
       def bundler_path
-        if @bundler_path
-          @bundler_path
-        else
-          @bundler_path = Dir.mktmpdir("bundler-")
-          bundle
-          @bundler_path
+        @bundler_path ||= fetch_bundler
+      end
+
+      def fetch_bundler
+        Dir.mktmpdir("bundler-").tap do |dir|
+          Dir.chdir(dir) do
+            system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
+          end
         end
       end
 
-      def init_bundle
-        Dir.chdir(bundler_path) do
-          system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
-        end
+      def parse_bundle
         $: << "#{bundler_path}/gems/bundler-#{LanguagePack::Ruby::BUNDLER_VERSION}/lib"
         require "bundler"
         Bundler::LockfileParser.new(File.read("Gemfile.lock"))
