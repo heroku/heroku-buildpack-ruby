@@ -5,15 +5,21 @@ module LanguagePack
       File.exist?('Gemfile') && File.exist?('Gemfile.lock')
     end
 
-    # bootstraps bundler so we can use it before bundler is setup properlyLanguagePack::Ruby
-    def bootstrap_bundler(&block)
-      Dir.mktmpdir("bundler-") do |tmpdir|
-        Dir.chdir(tmpdir) do
-          system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
-        end
+    def bundle
+      @bundle ||= init_bundle
+    end
 
-        yield tmpdir
+    def bundler_path
+      @bundler_path ||= Dir.mktmpdir("bundler-")
+    end
+
+    def init_bundle
+      Dir.chdir(bundler_path) do
+        system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
       end
+      $: << "#{bundler_path}/gems/bundler-#{LanguagePack::Ruby::BUNDLER_VERSION}/lib"
+      require "bundler"
+      Bundler::LockfileParser.new(File.read("Gemfile.lock"))
     end
   end
 end

@@ -25,20 +25,10 @@ class LanguagePack::Ruby < LanguagePack::Base
     File.exist?("Gemfile")
   end
 
-  def self.lockfile_parser
-    require "bundler"
-    Bundler::LockfileParser.new(File.read("Gemfile.lock"))
-  end
-
   def self.gem_version(name)
-    gem_version = nil
-    bootstrap_bundler do |bundler_path|
-      $: << "#{bundler_path}/gems/bundler-#{LanguagePack::Ruby::BUNDLER_VERSION}/lib"
-      gem         = lockfile_parser.specs.detect {|gem| gem.name == name }
-      gem_version = gem.version if gem
+    if gem = bundle.specs.detect {|g| g.name == name }
+      gem.version
     end
-
-    gem_version
   end
 
   def name
@@ -127,10 +117,8 @@ private
 
     @ruby_version_run = true
 
-    bootstrap_bundler do |bundler_path|
-      old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
-      @ruby_version = run_stdout("env PATH=#{old_system_path}:#{bundler_path}/bin GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
-    end
+    old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+    @ruby_version = run_stdout("env PATH=#{old_system_path}:#{bundler_path}/bin GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
 
     if @ruby_version == "No ruby version specified" && ENV['RUBY_VERSION']
       # for backwards compatibility.
@@ -523,18 +511,10 @@ params = CGI.parse(uri.query || "")
     end
   end
 
-  # add bundler to the load path
-  # @note it sets a flag, so the path can only be loaded once
-  def add_bundler_to_load_path
-    return if @bundler_loadpath
-    $: << File.expand_path(Dir["#{slug_vendor_base}/gems/bundler*/lib"].first)
-    @bundler_loadpath = true
-  end
-
   # detects whether the Gemfile.lock contains the Windows platform
   # @return [Boolean] true if the Gemfile.lock was created on Windows
   def has_windows_gemfile_lock?
-    lockfile_parser.platforms.detect do |platform|
+    bundle.platforms.detect do |platform|
       /mingw|mswin/.match(platform.os) if platform.is_a?(Gem::Platform)
     end
   end
@@ -543,15 +523,7 @@ params = CGI.parse(uri.query || "")
   # @param [String] name of the gem in question
   # @return [String, nil] if it finds the gem, it will return the line from bundle show or nil if nothing is found.
   def gem_is_bundled?(gem)
-    @bundler_gems ||= lockfile_parser.specs.map(&:name)
-    @bundler_gems.include?(gem)
-  end
-
-  # setup the lockfile parser
-  # @return [Bundler::LockfileParser] a Bundler::LockfileParser
-  def lockfile_parser
-    add_bundler_to_load_path
-    @lockfile_parser ||= LanguagePack::Ruby.lockfile_parser
+    bundle.specs.map(&:name).include?(gem)
   end
 
   # detects if a rake task is defined in the app
