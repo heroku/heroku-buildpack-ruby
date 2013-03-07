@@ -10,7 +10,13 @@ module LanguagePack
     end
 
     def bundler_path
-      @bundler_path ||= Dir.mktmpdir("bundler-")
+      if @bundler_path
+        @bundler_path
+      else
+        @bundler_path = Dir.mktmpdir("bundler-")
+        bundle
+        @bundler_path
+      end
     end
 
     def init_bundle

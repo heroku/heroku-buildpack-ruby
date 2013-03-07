@@ -115,8 +115,6 @@ private
   def ruby_version
     return @ruby_version if @ruby_version_run
 
-    bundle
-
     @ruby_version_run = true
 
     old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
