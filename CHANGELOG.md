@@ -1,3 +1,9 @@
+## v55 (3/7/2013)
+
+Bugfixes:
+
+* Revert back to Bundler 1.3.0.pre.5, see https://gist.github.com/mattonrails/e063caf86962995e7ba0
+
 ## v54 (3/7/2013)
 
 Bugfixes:
