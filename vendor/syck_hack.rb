@@ -10,6 +10,8 @@
 # class no matter if the full yaml library has loaded or not.
 #
 
+require 'bundler/psyched_yaml'
+
 module YAML
   # In newer 1.9.2, there is a Syck toplevel constant instead of it
   # being underneith YAML. If so, reference it back under YAML as
