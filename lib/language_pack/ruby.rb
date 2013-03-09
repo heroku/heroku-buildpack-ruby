@@ -579,7 +579,7 @@ params = CGI.parse(uri.query || "")
   # @note execjs will blow up if no JS RUNTIME is detected and is loaded.
   # @return [Array] the node.js binary path if we need it or an empty Array
   def add_node_js_binary
-    gem_is_bundled?('execjs') ? [NODE_JS_BINARY_PATH] : []
+    (gem_is_bundled?('execjs') && !File.exists?(".buildpacks") && `which node`.empty?) ? [NODE_JS_BINARY_PATH] : []
   end
 
   def run_assets_precompile_rake_task
