@@ -10,6 +10,7 @@
 # class no matter if the full yaml library has loaded or not.
 #
 
+require 'rubygems'
 require 'bundler/psyched_yaml'
 
 module YAML
