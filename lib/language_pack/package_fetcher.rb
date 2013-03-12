@@ -45,8 +45,6 @@ module LanguagePack
         return false
       end
 
-      puts "Downloading #{filename} from the blobstore ..."
-
       File.open(filename, 'w') do |tf|
         url = config["url"] + "/rest/objects/#{oid}?uid=" +
           URI::escape(config["uid"]) +
@@ -75,7 +73,6 @@ module LanguagePack
     end
 
     def fetch_from_curl(filename, url)
-      puts "Downloading #{filename} from #{url} ..."
       run("curl #{url}/#{filename} -s -o #{filename}")
       File.exist?(filename)
     end
