@@ -1,3 +1,21 @@
+## v56 (3/11/2013)
+
+Bugfixes:
+
+* Upgrade bundler to 1.3.2 to fix --dry-clean/Would have removed bug in bundle clean, part 2.
+
+## v55 (3/7/2013)
+
+Bugfixes:
+
+* Revert back to Bundler 1.3.0.pre.5, see https://gist.github.com/mattonrails/e063caf86962995e7ba0
+
+## v54 (3/7/2013)
+
+Bugfixes:
+
+* Upgrade bundler to 1.3.2 to fix --dry-clean/Would have removed bug in bundle clean
+
 ## v53 (3/6/2013)
 
 Bugfixes:
