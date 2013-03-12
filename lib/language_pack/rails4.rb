@@ -37,8 +37,8 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
       if rake_task_defined?("assets:precompile")
         topic("Preparing app for Rails asset pipeline")
-        if File.exists?("public/assets/manifest.yml")
-          puts "Detected manifest.yml, assuming assets were compiled locally"
+        if Dir.glob('public/assets/manifest-*.json').any?
+          puts "Detected manifest file, assuming assets were compiled locally"
         else
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
