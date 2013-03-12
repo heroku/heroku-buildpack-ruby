@@ -29,7 +29,6 @@ module LanguagePack
     def fetch_from_buildpack_cache(filename)
       file_path = File.join(buildpack_cache_dir, filename)
       return false unless File.exist?(file_path)
-      puts "Copying #{filename} from the buildpack cache ..."
       FileUtils.cp(file_path, ".")
       true
     end
