@@ -11,7 +11,7 @@ module LanguagePack
     attr_writer :buildpack_cache_dir
 
     def buildpack_cache_dir
-      @buildpack_cache_dir || "/var/vcap/packages/buildpack_cache"
+      @buildpack_cache_dir || ENV["BUILDPACK_CACHE"]
     end
 
     def fetch_package(filename, url=VENDOR_URL)
