@@ -36,7 +36,7 @@ describe LanguagePack::Ruby do
 
   describe ".gem_version" do
     it "does not crash" do
-      LanguagePack::Ruby.should_receive(:fetch_package_and_untar).with("bundler-1.3.0.pre.5.tgz")
+      LanguagePack::Ruby.should_receive(:fetch_package_and_untar).with("bundler-1.3.2.tgz")
       expect { LanguagePack::Ruby.gem_version('rake') }.to_not raise_error
     end
   end
