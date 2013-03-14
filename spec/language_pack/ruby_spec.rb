@@ -268,7 +268,7 @@ describe LanguagePack::Ruby do
           it 'sets the environment variables' do
             ENV.should_receive(:[]=).with('GEM_HOME', slug_vendor_base)
             ENV.should_receive(:[]=).with('GEM_PATH', slug_vendor_base)
-            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/).twice
+            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/)
 
             subject.compile
           end
@@ -281,7 +281,7 @@ describe LanguagePack::Ruby do
 
             ENV.should_receive(:[]=).with('GEM_HOME', slug_vendor_base)
             ENV.should_receive(:[]=).with('GEM_PATH', slug_vendor_base)
-            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/).twice
+            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/)
 
             if ENV['JAVA_OPTS']
               ENV.should_receive(:[]=).with('JAVA_OPTS', '-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8')

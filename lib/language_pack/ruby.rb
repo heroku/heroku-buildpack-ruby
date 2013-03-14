@@ -205,7 +205,6 @@ private
     end
     ENV["GEM_HOME"] = slug_vendor_base
     ENV["GEM_PATH"] = slug_vendor_base
-    ENV["PATH"]     = "#{ruby_install_binstub_path}:#{config_vars["PATH"]}:#{staging_environment_path}"
   end
 
   # sets up the profile.d script for this buildpack
@@ -304,7 +303,7 @@ ERROR
 
   # setup the environment so we can use the vendored ruby
   def setup_ruby_install_env
-    ENV["PATH"] = "#{ruby_install_binstub_path}:#{ENV["PATH"]}"
+    ENV["PATH"] = "#{ruby_install_binstub_path}:#{Dir.pwd}/#{slug_vendor_base}/bin:#{ENV["PATH"]}"
 
     if ruby_version_jruby?
       ENV['JAVA_OPTS']  = default_java_opts
