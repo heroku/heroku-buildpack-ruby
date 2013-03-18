@@ -408,21 +408,10 @@ ERROR
       load_bundler_cache
 
       bundler_output = ""
-      Dir.mktmpdir("libyaml-") do |tmpdir|
-        libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
-        install_libyaml(libyaml_dir)
-
-        # need to setup compile environment for the psych gem
-        yaml_include   = File.expand_path("#{libyaml_dir}/include")
-        yaml_lib       = File.expand_path("#{libyaml_dir}/lib")
-        pwd            = run("pwd").chomp
-        # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
-        # codon since it uses bundler.
-        env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH RUBYOPT=\"#{syck_hack}\""
-        puts "Running: #{bundle_command}"
-        bundler_output << pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
-
-      end
+      pwd            = run("pwd").chomp
+      env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config"
+      puts "Running: #{bundle_command}"
+      bundler_output << pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
 
       if $?.success?
         log "bundle", :status => "success"

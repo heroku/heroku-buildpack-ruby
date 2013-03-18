@@ -421,15 +421,7 @@ describe LanguagePack::Ruby do
           subject.stub(:pipe) { %x{true} }
         end
 
-        it 'installs libyaml' do
-          subject.should_receive(:fetch_package_and_untar).with("libyaml-0.1.4.tgz")
-
-          subject.compile
-        end
-
         it 'removes vendor cache from the slug' do
-          subject.should_receive(:fetch_package_and_untar).with("libyaml-0.1.4.tgz")
-
           FileUtils.mkdir_p "#{slug_vendor_base}/cache"
 
           subject.compile
