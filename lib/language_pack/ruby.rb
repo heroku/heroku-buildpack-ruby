@@ -625,7 +625,7 @@ params = CGI.parse(uri.query || "")
     end
 
     # fix git gemspec bug from Bundler 1.3.0+ upgrade
-    if File.exists?(bundler_cache) && !File.exists?(bundler_version_cache)
+    if File.exists?(bundler_cache) && !File.exists?(bundler_version_cache) && !run("find vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").empty?
       puts "Old bundler cache detected. Clearing bundler cache."
       purge_bundler_cache
     end
