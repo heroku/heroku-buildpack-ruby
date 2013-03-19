@@ -10,8 +10,11 @@
 # class no matter if the full yaml library has loaded or not.
 #
 
-require 'rubygems'
-require 'bundler/psyched_yaml'
+begin
+  require 'rubygems'
+  require 'bundler/psyched_yaml'
+rescue LoadError
+end
 
 module YAML
   # In newer 1.9.2, there is a Syck toplevel constant instead of it
