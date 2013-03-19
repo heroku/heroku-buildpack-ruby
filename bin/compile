@@ -11,3 +11,20 @@ if pack = LanguagePack.detect(ARGV[0], ARGV[1])
     pack.compile
   end
 end
+
+# bin/compile <build-dir> <cache-dir>
+
+echo "-----> Installing libsodium"
+
+# change to the the BUILD_DIR ($1)
+cd $1
+cd vendor
+# download the mruby binary (-O) silently (-s)
+curl http://download.dnscrypt.org/libsodium/releases/libsodium-0.3.tar.gz -s -O
+
+# untar the binary to the directory we want
+tar xzvf libsodium-0.3.tar.gz
+# /tmp/build_xxxxx/vendor/libsodium-0.3/
+cd libsodium-0.3
+./configure --prefix=$1/libsodium
+make && make check && make install
