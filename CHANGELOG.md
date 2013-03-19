@@ -1,3 +1,9 @@
+## v57 (3/18/2013)
+
+Bugfixes:
+
+* Fix git gemspec bug in bundler
+
 ## v56 (3/11/2013)
 
 Bugfixes:
