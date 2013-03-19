@@ -624,6 +624,12 @@ params = CGI.parse(uri.query || "")
       purge_bundler_cache
     end
 
+    # fix git gemspec bug from Bundler 1.3.0+ upgrade
+    if File.exists?(bundler_cache) && !File.exists?(bundler_version_cache)
+      puts "Old bundler cache detected. Clearing bundler cache."
+      purge_bundler_cache
+    end
+
     FileUtils.mkdir_p(heroku_metadata)
     File.open(ruby_version_cache, 'w') do |file|
       file.puts full_ruby_version
