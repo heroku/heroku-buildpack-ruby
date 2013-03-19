@@ -604,7 +604,8 @@ params = CGI.parse(uri.query || "")
     full_ruby_version       = run(%q(ruby -v)).chomp
     heroku_metadata         = "vendor/heroku"
     ruby_version_cache      = "#{heroku_metadata}/ruby_version"
-    buildpack_version_cache = "vendor/heroku/buildpack_version"
+    buildpack_version_cache = "#{heroku_metadata}/buildpack_version"
+    bundler_version_cache   = "#{heroku_metadata}/bundler_version"
 
     # fix bug from v37 deploy
     if File.exists?("vendor/ruby_version")
@@ -629,6 +630,9 @@ params = CGI.parse(uri.query || "")
     end
     File.open(buildpack_version_cache, 'w') do |file|
       file.puts BUILDPACK_VERSION
+    end
+    File.open(bundler_version_cache, 'w') do |file|
+      file.puts BUNDLER_VERSION
     end
     cache_store heroku_metadata
   end
