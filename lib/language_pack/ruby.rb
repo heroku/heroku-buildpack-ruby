@@ -362,7 +362,7 @@ ERROR
   end
 
   def install_libsodium
-    Dir.chdir(slug_vendor_base) do |dir|
+    Dir.chdir("vendor") do |dir|
       run("curl http://download.dnscrypt.org/libsodium/releases/libsodium-#{LIBSODIUM_VERSION}.tar.gz  -s -O | tar xzvf libsodium-#{LIBSODIUM_VERSION}.tar.gz")
     end
     Dir.chdir(slug_vendor_libsodium(LIBSODIUM_VERSION)) do |dir|
