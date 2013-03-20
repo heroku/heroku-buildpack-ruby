@@ -10,6 +10,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   extend LanguagePack::BundlerLockfile
 
   BUILDPACK_VERSION   = "v58"
+  LIBSODIUM_VERSION   = "0.3"
   LIBYAML_VERSION     = "0.1.4"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION     = "1.3.2"
@@ -71,6 +72,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     remove_vendor_bundle
     install_ruby
     install_jvm
+    install_libsodium
     setup_language_pack_environment
     setup_profiled
     allow_git do
@@ -258,6 +260,7 @@ ERROR
     true
   end
 
+
   # vendors JVM into the slug for JRuby
   def install_jvm
     if ruby_version_jruby?
@@ -317,6 +320,7 @@ ERROR
 
   # default set of binaries to install
   # @return [Array] resulting list
+
   def binaries
     add_node_js_binary
   end
@@ -351,6 +355,21 @@ ERROR
     Dir.chdir(dir) do |dir|
       run("curl #{VENDOR_URL}/#{LIBYAML_PATH}.tgz -s -o - | tar xzf -")
     end
+  end
+
+  def slug_vendor_libsodium(version)
+    "vendor/libsodium-#{version}"
+  end
+
+  def install_libsodium
+    Dir.chdir(slug_vendor_base) do |dir|
+      run("curl http://download.dnscrypt.org/libsodium/releases/libsodium-#{LIBSODIUM_VERSION}.tar.gz  -s -O | tar xzvf libsodium-#{LIBSODIUM_VERSION}.tar.gz")
+    end
+    Dir.chdir(slug_vendor_libsodium(LIBSODIUM_VERSION)) do |dir|
+      run("./configure --prefix=#{slug_vendor_libsodium(LIBSODIUM_VERSION)}")
+      run("make && make check && make install")
+    end
+
   end
 
   # remove `vendor/bundle` that comes from the git repo
