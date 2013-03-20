@@ -205,7 +205,7 @@ private
     set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
     set_env_default  "LANG",     "en_US.UTF-8"
     set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:$PATH"
-
+    set_env_override "LD_LIBRARY_PATH", "$LD_LIBRARY_PATH:$HOME/vendor/libsodium-#{LIBSODIUM_VERSION}"
     if ruby_version_jruby?
       set_env_default "JAVA_OPTS", default_java_opts
       set_env_default "JRUBY_OPTS", default_jruby_opts
@@ -370,7 +370,6 @@ ERROR
       run("./configure --prefix=#{Dir.getwd}")
       run("make && make check && make install")
     end
-
   end
 
   # remove `vendor/bundle` that comes from the git repo
