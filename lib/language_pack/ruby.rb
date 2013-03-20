@@ -363,10 +363,11 @@ ERROR
 
   def install_libsodium
     Dir.chdir("vendor") do |dir|
-      run("curl http://download.dnscrypt.org/libsodium/releases/libsodium-#{LIBSODIUM_VERSION}.tar.gz  -s -O | tar xzvf libsodium-#{LIBSODIUM_VERSION}.tar.gz")
+      run("curl http://download.dnscrypt.org/libsodium/releases/libsodium-#{LIBSODIUM_VERSION}.tar.gz  -s -O")
+      run("tar xzvf libsodium-#{LIBSODIUM_VERSION}.tar.gz")
     end
-    Dir.chdir(slug_vendor_libsodium(LIBSODIUM_VERSION)) do |dir|
-      run("./configure --prefix=#{slug_vendor_libsodium(LIBSODIUM_VERSION)}")
+    Dir.chdir("vendor/libsodium-#{LIBSODIUM_VERSION}") do |dir|
+      run("./configure --prefix=#{Dir.getwd}")
       run("make && make check && make install")
     end
 
