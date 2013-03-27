@@ -1,0 +1,22 @@
+{
+  "bundler": [
+    "git@github.com:georgewashington/git_gemspec.git",
+    "git@github.com:georgewashington/no_lockfile.git"
+  ],
+  "ruby": [
+    "git@github.com:georgewashington/mri_187.git"
+  ],
+  "rack": [
+    "git@github.com:georgewashington/mri_187_nokogiri.git",
+    "git@github.com:georgewashington/mri_192.git",
+    "git@github.com:georgewashington/mri_193.git",
+    "git@github.com:georgewashington/mri_200.git"
+  ],
+  "rails2": [
+    "git@github.com:georgewashington/rails23_mri_187.git"
+  ],
+  "rails3": [
+    "git@github.com:georgewashington/rails3_mri_193.git",
+    "git@github.com:georgewashington/railties3_mri_193.git"
+  ]
+}
