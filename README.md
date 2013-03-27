@@ -33,6 +33,22 @@ Example Usage:
 
 The buildpack will detect your app as Ruby if it has a `Gemfile` and `Gemfile.lock` files in the root directory. It will then proceed to run `bundle install` after setting up the appropriate environment for [ruby](http://ruby-lang.org) and [Bundler](http://gembundler.com).
 
+#### Run the Tests
+
+Clone the repo, then `bundle install` then clone the test fixtures by running:
+
+```sh
+$ hatchet install
+```
+
+Now run the tests:
+
+```sh
+$ bundle exec rspec spec
+```
+
+Now go take a nap or something for a really long time.
+
 #### Bundler
 
 For non-windows `Gemfile.lock` files, the `--deployment` flag will be used. In the case of windows, the Gemfile.lock will be deleted and Bundler will do a full resolve so native gems are handled properly. The `vendor/bundle` directory is cached between builds to allow for faster `bundle install` times. `bundle clean` is used to ensure no stale gems are stored between builds.
