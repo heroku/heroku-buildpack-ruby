@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/heroku/hatchet.git
-  revision: b4272aed93ce37f97c61a73c5f858190ee445209
+  revision: d0f100bf3ad3e9e3d70a30ea95fb7d8a47238eef
   branch: master
   specs:
     hatchet (0.0.1)
