@@ -5,4 +5,5 @@ group :development do
   gem "rspec-core"
   gem "rspec-expectations"
   gem "excon"
+  gem "rake"
 end
