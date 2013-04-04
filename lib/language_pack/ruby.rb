@@ -16,7 +16,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION        = "0.4.7"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
-  JVM_BASE_URL        = "http://heroku-jvm-langpack-java.s3.amazonaws.com"
+  JVM_BASE_URL        = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION         = "openjdk7-latest"
 
   # detects if this is a valid Ruby app
