@@ -14,8 +14,8 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION     = "1.3.2"
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
-  NODE_VERSION        = "0.4.7"
-  NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
+  #NODE_VERSION        = "0.4.7"
+  NODE_JS_BINARY_PATH = "node"
   JVM_BASE_URL        = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION         = "openjdk7-latest"
 
@@ -78,6 +78,9 @@ class LanguagePack::Ruby < LanguagePack::Base
       build_bundler
       create_database_yml
       install_binaries
+      install_node
+      install_bower
+      build_bower
       run_assets_precompile_rake_task
     end
   end
@@ -318,7 +321,7 @@ ERROR
   # default set of binaries to install
   # @return [Array] resulting list
   def binaries
-    add_node_js_binary
+    []
   end
 
   # vendors binaries into the slug
@@ -443,6 +446,39 @@ ERROR
         end
 
         error error_message
+      end
+    end
+  end
+
+  def install_node
+    log("node") do
+      bin_dir = "bin"
+      FileUtils.mkdir_p bin_dir
+      run("curl http://heroku-buildpack-nodejs.s3.amazonaws.com/nodejs-0.10.3.tgz -s -o - | tar xzf -")
+      unless $?.success?
+        error "Can't install node-0.10.3"
+      end
+      Dir["bin/*"].each {|path| run("chmod +x #{path}") }
+      pipe("ls -l bin")
+    end
+  end
+
+  # install bower as npm module
+  def install_bower
+    log("bower") do
+      pipe("node lib/node_modules/npm/bin/npm-cli.js install -g bower 2>&1")
+      unless $?.success?
+        error "Can't install bower"
+      end
+    end
+  end
+
+  # runs bower to install the dependencies
+  def build_bower
+    log("bower") do
+      pipe("bower install 2>&1")
+      unless $?.success?
+        error "Can't install JavaScript dependencies"
       end
     end
   end
