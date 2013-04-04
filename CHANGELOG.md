@@ -1,3 +1,9 @@
+## v59 (4/4/2013)
+
+Bugfixes:
+
+* Change JVM S3 bucket
+
 ## v58 (3/19/2013)
 
 Bugfixes:
