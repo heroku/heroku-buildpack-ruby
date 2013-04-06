@@ -1,4 +1,64 @@
-## v50
+## v59 (4/4/2013)
+
+Bugfixes:
+
+* Change JVM S3 bucket
+
+## v58 (3/19/2013)
+
+Bugfixes:
+
+* Fix ruby 1.8.7 not being able to compile native extensions
+
+## v57 (3/18/2013)
+
+Bugfixes:
+
+* Fix git gemspec bug in bundler
+
+## v56 (3/11/2013)
+
+Bugfixes:
+
+* Upgrade bundler to 1.3.2 to fix --dry-clean/Would have removed bug in bundle clean, part 2.
+
+## v55 (3/7/2013)
+
+Bugfixes:
+
+* Revert back to Bundler 1.3.0.pre.5, see https://gist.github.com/mattonrails/e063caf86962995e7ba0
+
+## v54 (3/7/2013)
+
+Bugfixes:
+
+* Upgrade bundler to 1.3.2 to fix --dry-clean/Would have removed bug in bundle clean
+
+## v53 (3/6/2013)
+
+Bugfixes:
+
+* bin/detect for Rails 3 and 4 will use railties for detection vs the rails gem
+* bin/detect does not error out when Gemfile + Gemfile.lock are missing
+
+## v52 (2/25/2013)
+
+Bugfixes:
+
+* Revert back to 1.3.0.pre.5 due to bundler warnings
+
+## v51 (2/25/2013)
+
+Features:
+
+* Initial Rails 4 beta support
+* Upgrade bundler to 1.3.0
+
+Bugfixes:
+
+* Better buildpack detection through Gemfile.lock gems
+
+## v50 (1/31/2013)
 
 Features:
 

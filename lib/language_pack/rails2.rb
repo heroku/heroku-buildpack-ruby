@@ -8,7 +8,10 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   # detects if this is a valid Rails 2 app
   # @return [Boolean] true if it's a Rails 2 app
   def self.use?
-    super && File.exist?("config/environment.rb")
+    if gemfile_lock?
+      rails_version = LanguagePack::Ruby.gem_version('rails')
+      rails_version >= Gem::Version.new('2.0.0') && rails_version < Gem::Version.new('3.0.0') if rails_version
+    end
   end
 
   def name
@@ -73,8 +76,8 @@ private
 
   # most rails apps need a database
   # @return [Array] shared database addon
-  def add_shared_database_addon
-    ['shared-database:5mb']
+  def add_dev_database_addon
+    ['heroku-postgresql:dev']
   end
 
   # sets up the profile.d script for this buildpack
