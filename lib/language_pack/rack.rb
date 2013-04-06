@@ -7,7 +7,7 @@ class LanguagePack::Rack < LanguagePack::Ruby
   # detects if this is a valid Rack app by seeing if "config.ru" exists
   # @return [Boolean] true if it's a Rack app
   def self.use?
-    super && File.exist?("config.ru")
+    gemfile_lock? && LanguagePack::Ruby.gem_version('rack')
   end
 
   def name
