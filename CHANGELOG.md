@@ -1,3 +1,39 @@
+## v59 (4/4/2013)
+
+Bugfixes:
+
+* Change JVM S3 bucket
+
+## v58 (3/19/2013)
+
+Bugfixes:
+
+* Fix ruby 1.8.7 not being able to compile native extensions
+
+## v57 (3/18/2013)
+
+Bugfixes:
+
+* Fix git gemspec bug in bundler
+
+## v56 (3/11/2013)
+
+Bugfixes:
+
+* Upgrade bundler to 1.3.2 to fix --dry-clean/Would have removed bug in bundle clean, part 2.
+
+## v55 (3/7/2013)
+
+Bugfixes:
+
+* Revert back to Bundler 1.3.0.pre.5, see https://gist.github.com/mattonrails/e063caf86962995e7ba0
+
+## v54 (3/7/2013)
+
+Bugfixes:
+
+* Upgrade bundler to 1.3.2 to fix --dry-clean/Would have removed bug in bundle clean
+
 ## v53 (3/6/2013)
 
 Bugfixes:
