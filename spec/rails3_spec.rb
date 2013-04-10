@@ -14,7 +14,7 @@ describe "Rails 3.x" do
       Hatchet::AnvilApp.new("railties3_mri_193", :buildpack => buildpack).deploy do |app, heroku, output|
         add_database(app, heroku)
         expect(app).to be_deployed
-        expect(output).to match("Detecting buildpack... done, .+Ruby/Rails")
+        expect(output).to match("Ruby/Rails")
         expect(Excon.get("http://#{app.name}.herokuapp.com").body).to eq("hello")
       end
     end
