@@ -29,3 +29,7 @@ def add_database(app, heroku)
   _, value = heroku.get_config_vars(app.name).body.detect {|key, value| key.match(/HEROKU_POSTGRESQL_[A-Z]+_URL/) }
   heroku.put_config_vars(app.name, 'DATABASE_URL' => value)
 end
+
+def successful_body(app)
+  Excon.get("http://#{app.name}.herokuapp.com", :idempotent => true, :expects => 200, :retry_limit => 10).body
+end
