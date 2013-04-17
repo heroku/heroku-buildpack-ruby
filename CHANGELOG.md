@@ -1,3 +1,9 @@
+## v60 (4/17/2013)
+
+Security:
+
+* Disable Java RMI Remote Classloading for CVE-2013-1537, <https://bugzilla.redhat.com/show_bug.cgi?id=952387>
+
 ## v59 (4/4/2013)
 
 Bugfixes:
