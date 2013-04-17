@@ -401,7 +401,7 @@ ERROR
         cache_load ".bundle"
       end
 
-      version = run("bundle version").strip
+      version = run_stdout("bundle version").strip
       topic("Installing dependencies using #{version}")
 
       load_bundler_cache
@@ -428,7 +428,7 @@ ERROR
       if $?.success?
         log "bundle", :status => "success"
         puts "Cleaning up the bundler cache."
-        pipe "bundle clean"
+        pipe "bundle clean 2> /dev/null"
         cache_store ".bundle"
         cache_store "vendor/bundle"
 
@@ -462,7 +462,7 @@ ERROR
   # @return [String] require string if needed or else an empty string
   def syck_hack
     syck_hack_file = File.expand_path(File.join(File.dirname(__FILE__), "../../vendor/syck_hack"))
-    ruby_version   = run('ruby -e "puts RUBY_VERSION"').chomp
+    ruby_version   = run_stdout('ruby -e "puts RUBY_VERSION"').chomp
     # < 1.9.3 includes syck, so we need to use the syck hack
     if Gem::Version.new(ruby_version) < Gem::Version.new("1.9.3")
       "-r#{syck_hack_file}"
@@ -614,7 +614,7 @@ params = CGI.parse(uri.query || "")
   def load_bundler_cache
     cache_load "vendor"
 
-    full_ruby_version       = run(%q(ruby -v)).chomp
+    full_ruby_version       = run_stdout(%q(ruby -v)).chomp
     heroku_metadata         = "vendor/heroku"
     ruby_version_cache      = "#{heroku_metadata}/ruby_version"
     buildpack_version_cache = "#{heroku_metadata}/buildpack_version"
