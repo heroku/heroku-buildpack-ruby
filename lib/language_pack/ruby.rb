@@ -58,7 +58,8 @@ class LanguagePack::Ruby < LanguagePack::Base
 
     ruby_version_jruby? ? vars.merge({
       "JAVA_OPTS" => default_java_opts,
-      "JRUBY_OPTS" => default_jruby_opts
+      "JRUBY_OPTS" => default_jruby_opts,
+      "JAVA_TOOL_OPTIONS" => default_java_tool_options
     }) : vars
   end
 
@@ -174,6 +175,12 @@ private
     "-Xcompile.invokedynamic=true"
   end
 
+  # default JAVA_TOOL_OPTIONS
+  # return [String] string of JAVA_TOOL_OPTIONS
+  def default_java_tool_options
+    "-Djava.rmi.server.useCodebaseOnly=true"
+  end
+
   # list the available valid ruby versions
   # @note the value is memoized
   # @return [Array] list of Strings of the ruby versions available
@@ -210,6 +217,7 @@ private
     if ruby_version_jruby?
       set_env_default "JAVA_OPTS", default_java_opts
       set_env_default "JRUBY_OPTS", default_jruby_opts
+      set_env_default "JAVA_TOOL_OPTIONS", default_java_tool_options
     end
   end
 
