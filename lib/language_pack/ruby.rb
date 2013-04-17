@@ -615,10 +615,12 @@ params = CGI.parse(uri.query || "")
     cache_load "vendor"
 
     full_ruby_version       = run_stdout(%q(ruby -v)).chomp
+    rubygems_version        = run_stdout(%q(gem -v)).chomp
     heroku_metadata         = "vendor/heroku"
     ruby_version_cache      = "#{heroku_metadata}/ruby_version"
     buildpack_version_cache = "#{heroku_metadata}/buildpack_version"
     bundler_version_cache   = "#{heroku_metadata}/bundler_version"
+    rubygems_version_cache  = "#{heroku_metadata}/rubygems_version"
 
     # fix bug from v37 deploy
     if File.exists?("vendor/ruby_version")
@@ -652,6 +654,9 @@ params = CGI.parse(uri.query || "")
     end
     File.open(bundler_version_cache, 'w') do |file|
       file.puts BUNDLER_VERSION
+    end
+    File.open(rubygems_version_cache, 'w') do |file|
+      file.puts rubygems_version
     end
     cache_store heroku_metadata
   end
