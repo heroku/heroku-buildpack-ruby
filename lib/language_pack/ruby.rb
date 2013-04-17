@@ -56,7 +56,10 @@ class LanguagePack::Ruby < LanguagePack::Base
       "GEM_PATH" => slug_vendor_base,
     }
 
-    ruby_version_jruby? ? vars.merge("JAVA_OPTS" => default_java_opts, "JRUBY_OPTS" => default_jruby_opts) : vars
+    ruby_version_jruby? ? vars.merge({
+      "JAVA_OPTS" => default_java_opts,
+      "JRUBY_OPTS" => default_jruby_opts
+    }) : vars
   end
 
   def default_process_types
