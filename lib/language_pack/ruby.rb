@@ -645,6 +645,12 @@ params = CGI.parse(uri.query || "")
       purge_bundler_cache
     end
 
+    # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
+    if !File.exists?(rubygems_version_cache) && File.exists?(ruby_version_cache) && File.read(ruby_version_cache).chomp.include?("ruby 2.0.0p0")
+      puts "Updating to rubygems #{rubygems_version}. Clearing bundler cache."
+      purge_bundler_cache
+    end
+
     FileUtils.mkdir_p(heroku_metadata)
     File.open(ruby_version_cache, 'w') do |file|
       file.puts full_ruby_version
