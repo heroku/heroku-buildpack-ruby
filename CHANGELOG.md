@@ -1,3 +1,13 @@
+## v61 (4/18/2013)
+
+Features:
+
+* Start caching the rubygems version used.
+
+Bugfixes:
+
+* Rebuild bundler cache if rubygems 2 is detected. Bugfixes in later rubygems.
+
 ## v60 (4/17/2013)
 
 Security:
