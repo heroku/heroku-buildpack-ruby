@@ -617,10 +617,13 @@ params = CGI.parse(uri.query || "")
     full_ruby_version       = run_stdout(%q(ruby -v)).chomp
     rubygems_version        = run_stdout(%q(gem -v)).chomp
     heroku_metadata         = "vendor/heroku"
+    old_rubygems_version    = nil
     ruby_version_cache      = "#{heroku_metadata}/ruby_version"
     buildpack_version_cache = "#{heroku_metadata}/buildpack_version"
     bundler_version_cache   = "#{heroku_metadata}/bundler_version"
     rubygems_version_cache  = "#{heroku_metadata}/rubygems_version"
+
+    old_rubygems_version = File.read(rubygems_version_cache).chomp if File.exists?(rubygems_version_cache)
 
     # fix bug from v37 deploy
     if File.exists?("vendor/ruby_version")
@@ -646,7 +649,9 @@ params = CGI.parse(uri.query || "")
     end
 
     # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
-    if !File.exists?(rubygems_version_cache) && File.exists?(ruby_version_cache) && File.read(ruby_version_cache).chomp.include?("ruby 2.0.0p0")
+    if (!File.exists?(rubygems_version_cache) ||
+          (old_rubygems_version == "2.0.0" && old_rubygems_version != rubygems_version)) &&
+        File.exists?(ruby_version_cache) && File.read(ruby_version_cache).chomp.include?("ruby 2.0.0p0")
       puts "Updating to rubygems #{rubygems_version}. Clearing bundler cache."
       purge_bundler_cache
     end
