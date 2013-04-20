@@ -1,22 +1,22 @@
 {
   "bundler": [
-    "git@github.com:georgewashington/git_gemspec.git",
-    "git@github.com:georgewashington/no_lockfile.git"
+    "sharpstone/git_gemspec",
+    "sharpstone/no_lockfile"
   ],
   "ruby": [
-    "git@github.com:georgewashington/mri_187.git"
+    "sharpstone/mri_187"
   ],
   "rack": [
-    "git@github.com:georgewashington/mri_187_nokogiri.git",
-    "git@github.com:georgewashington/mri_192.git",
-    "git@github.com:georgewashington/mri_193.git",
-    "git@github.com:georgewashington/mri_200.git"
+    "sharpstone/mri_187_nokogiri",
+    "sharpstone/mri_192",
+    "sharpstone/mri_193",
+    "sharpstone/mri_200"
   ],
   "rails2": [
-    "git@github.com:georgewashington/rails23_mri_187.git"
+    "sharpstone/rails23_mri_187"
   ],
   "rails3": [
-    "git@github.com:georgewashington/rails3_mri_193.git",
-    "git@github.com:georgewashington/railties3_mri_193.git"
+    "sharpstone/rails3_mri_193",
+    "sharpstone/railties3_mri_193"
   ]
 }
