@@ -72,6 +72,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     Dir.chdir(build_path)
+    write_ssh_key
     remove_vendor_bundle
     install_ruby
     install_jvm
@@ -364,6 +365,21 @@ ERROR
     end
   end
 
+  def write_ssh_key
+    return unless key = ENV['SSH_KEY']
+    FileUtils.mkdir_p File.expand_path('~/.ssh')
+    File.open(File.expand_path('~/.ssh/id_rsa'), 'w') do |f|
+      f.write key
+    end
+    File.open(File.expand_path('~/.ssh/shim'), 'w') do |f|
+      f.write <<EOF
+#!/bin/sh
+exec /usr/bin/ssh -o StrictHostKeyChecking=no -i "$HOME/.ssh/id_rsa" "$@"
+EOF
+      f.chmod(0700)
+    end
+  end
+
   # remove `vendor/bundle` that comes from the git repo
   # in case there are native ext.
   # users should be using `bundle pack` instead.
@@ -383,6 +399,7 @@ ERROR
     log("bundle") do
       bundle_without = ENV["BUNDLE_WITHOUT"] || "development:test"
       bundle_command = "bundle install --without #{bundle_without} --path vendor/bundle --binstubs vendor/bundle/bin"
+      bundle_command = 'GIT_SSH="$HOME/.ssh/shim" ' + bundle_command if ENV['SSH_KEY']
 
       unless File.exist?("Gemfile.lock")
         error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
