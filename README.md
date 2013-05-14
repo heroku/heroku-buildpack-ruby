@@ -121,6 +121,10 @@ The buildpack will detect your apps as a Rails 3 app if it has an `application.r
 
 To enable static assets being served on the dyno, [rails3_serve_static_assets](http://github.com/pedro/rails3_serve_static_assets) is installed by default. If the [execjs gem](http://github.com/sstephenson/execjs) is detected then [node.js](http://github.com/joyent/node) will be vendored. The `assets:precompile` rake task will get run if no `public/manifest.yml` is detected.  See [this article](http://devcenter.heroku.com/articles/rails31_heroku_cedar) on how rails 3.1 works on cedar.
 
+#### Asset Compilation Cache
+
+To greatly speed up deploys when your assets are unchanged, the buildpack caches your precompiled assets between deploys. Usually this is a seamless process. If your cache becomes stale (for example, when a gem updates its assets), you can force the buildpack to recompile by adding a newline to any file in your app/assets directory.
+
 Hacking
 -------
 
