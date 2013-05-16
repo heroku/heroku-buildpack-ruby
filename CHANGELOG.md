@@ -1,3 +1,25 @@
+## v61 (4/18/2013)
+
+Features:
+
+* Start caching the rubygems version used.
+
+Bugfixes:
+
+* Rebuild bundler cache if rubygems 2 is detected. Bugfixes in later rubygems.
+
+## v60 (4/17/2013)
+
+Security:
+
+* Disable Java RMI Remote Classloading for CVE-2013-1537, <https://bugzilla.redhat.com/show_bug.cgi?id=952387>
+
+## v59 (4/4/2013)
+
+Bugfixes:
+
+* Change JVM S3 bucket
+
 ## v58 (3/19/2013)
 
 Bugfixes:

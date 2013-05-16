@@ -1,0 +1,25 @@
+{
+  "bundler": [
+    "sharpstone/git_gemspec",
+    "sharpstone/no_lockfile"
+  ],
+  "ruby": [
+    "sharpstone/mri_187"
+  ],
+  "rack": [
+    "sharpstone/mri_187_nokogiri",
+    "sharpstone/mri_192",
+    "sharpstone/mri_193",
+    "sharpstone/mri_200"
+  ],
+  "rails2": [
+    "sharpstone/rails23_mri_187"
+  ],
+  "rails3": [
+    "sharpstone/rails3_mri_193",
+    "sharpstone/railties3_mri_193"
+  ],
+  "rails4": [
+    "sharpstone/rails4-manifest"
+  ]
+}

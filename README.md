@@ -6,6 +6,54 @@ This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) fo
 Usage
 -----
 
+### Adding this buildpack
+
+```bash
+heroku config:set BUILDPACK_URL=https://github.com/jaigouk/rbnacl-buildpack --remote staging
+```
+
+[heroku doc for this step](https://devcenter.heroku.com/articles/buildpacks)
+
+
+### Lib Sodium
+in ruby.rb line #75
+
+```ruby
+def compile
+  Dir.chdir(build_path)
+  remove_vendor_bundle
+  install_ruby
+  install_jvm
+  install_libsodium
+  setup_language_pack_environment
+  setup_profiled
+  allow_git do
+    install_language_pack_gems
+    build_bundler
+    create_database_yml
+    install_binaries
+    run_assets_precompile_rake_task
+  end
+end
+```
+
+line #371
+```ruby
+def slug_vendor_libsodium(version)
+  "vendor/libsodium-#{version}"
+end
+
+def install_libsodium
+  Dir.chdir("vendor") do |dir|
+    run("curl http://download.dnscrypt.org/libsodium/releases/libsodium-#{LIBSODIUM_VERSION}.tar.gz  -s -O")
+    run("tar xzvf libsodium-#{LIBSODIUM_VERSION}.tar.gz")
+  end
+  Dir.chdir("vendor/libsodium-#{LIBSODIUM_VERSION}") do |dir|
+    run("./configure --prefix=#{Dir.getwd}")
+    run("make && make check && make install")
+  end
+end
+```
 ### Ruby
 
 Example Usage:
@@ -32,6 +80,22 @@ Example Usage:
            Default types for Ruby  -> console, rake
 
 The buildpack will detect your app as Ruby if it has a `Gemfile` and `Gemfile.lock` files in the root directory. It will then proceed to run `bundle install` after setting up the appropriate environment for [ruby](http://ruby-lang.org) and [Bundler](http://gembundler.com).
+
+#### Run the Tests
+
+Clone the repo, then `bundle install` then clone the test fixtures by running:
+
+```sh
+$ hatchet install
+```
+
+Now run the tests:
+
+```sh
+$ bundle exec rspec spec
+```
+
+Now go take a nap or something for a really long time.
 
 #### Bundler
 
