@@ -571,7 +571,13 @@ params = CGI.parse(uri.query || "")
   # @param [String] the task in question
   # @return [Boolean] true if the rake task is defined in the app
   def rake_task_defined?(task)
-    run("env PATH=$PATH bundle exec rake #{task} --dry-run") && $?.success?
+    output = run("env PATH=$PATH bundle exec rake #{task} --dry-run")
+    if output && $?.success?
+      return true
+    elsif !output.match(/Don't know how to build task '#{task}'/)
+      puts "WARNING: There appears to have been an issue loading your rake file, you might like to check it out"
+    end
+    false
   end
 
   # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
