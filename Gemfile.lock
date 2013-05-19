@@ -1,5 +1,5 @@
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     activesupport (3.2.13)
       i18n (= 0.6.1)
@@ -21,6 +21,9 @@ GEM
     i18n (0.6.1)
     mime-types (1.22)
     multi_json (1.7.2)
+    parallel (0.6.5)
+    parallel_tests (0.13.1)
+      parallel
     progress (2.4.0)
     rake (10.0.4)
     rest-client (1.6.7)
@@ -36,6 +39,7 @@ PLATFORMS
 DEPENDENCIES
   excon
   heroku_hatchet
+  parallel_tests
   rake
   rspec-core
   rspec-expectations
