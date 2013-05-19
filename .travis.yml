@@ -1,0 +1,36 @@
+---
+language: ruby
+rvm:
+- 2.0.0
+
+before_script:
+  # Clone all repos to test against
+  - bundle exec hatchet install
+  # Disable stricthostkey checking
+  - echo -e "Host heroku.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  # install toolbelt
+  - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+  # generate ssh keys
+  - ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+  # login from HEROKU_API_KEY, clear then upload ssh keys
+  - heroku keys:add
+  - heroku login
+
+# Run tests in parallel
+script: bundle exec parallel_rspec -n 6 spec/
+
+after_script:
+  - heroku keys:remove ~/.ssh/id_rsa
+
+# sets the HEROKU_API_KEY to a dummy user for Heroku deploys
+secure: |-
+  cX9fJmLgyWQPC46jl9rYf9RZINiMWdeFmAurKV4VpD6+moMaISQhpKi6RAsr
+  ITS6dhdP6hPfWOGXkrOglkVEsm0bjPvxZ2UJZYzB6vA0t2+ckn+ijFYK1JET
+  JDS19B458Tyu/0CsJzOu83riUFVsLBVwPzW+vgQWeVUhFc3CrWY=
+env:
+  global:
+  - secure: |-
+      ccqb7fKumq2+VEkSrkCqmLjALj5R/ZDgAQGZULSFYeD0O0man3hezUEbMB53
+      U+7gLkbqz5saFX9S5Sz26f99vmhWz1bMHkC2UtlyFSlgaqSvXMZNHJAweqRY
+      ptqugqtvT0VVl1g3DInVgjDZhjINICv/CIorNuHijOFanP1Zmxg=
