@@ -1,3 +1,10 @@
+## v62 (5/21/2013)
+
+Bugfixes:
+
+* Correctly detect asset manifest files in Rails 4
+* Fix jruby 1.8.7 bundler/psych require bug
+
 ## v61 (4/18/2013)
 
 Features:
