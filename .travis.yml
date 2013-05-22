@@ -3,19 +3,7 @@ language: ruby
 rvm:
 - 2.0.0
 
-before_script:
-  # Clone all repos to test against
-  - bundle exec hatchet install
-  # Disable stricthostkey checking
-  - echo -e "Host heroku.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-  # install toolbelt
-  - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-  # generate ssh keys
-  - ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
-  # login from HEROKU_API_KEY, clear then upload ssh keys
-  - heroku keys:add
-  - heroku login
+before_script: bundle exec rake hatchet:setup_travis
 
 # Run tests in parallel
 script: bundle exec parallel_rspec -n 6 spec/
