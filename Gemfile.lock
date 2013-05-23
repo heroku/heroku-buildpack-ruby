@@ -12,11 +12,12 @@ GEM
     excon (0.22.1)
     heroku-api (0.3.11)
       excon (~> 0.22.1)
-    heroku_hatchet (0.1.0)
+    heroku_hatchet (0.1.1)
       activesupport
       anvil-cli
       excon
       heroku-api
+      rrrretry
       thor
     i18n (0.6.1)
     mime-types (1.23)
@@ -28,6 +29,7 @@ GEM
     rake (10.0.4)
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    rrrretry (0.0.1)
     rspec-core (2.13.1)
     rspec-expectations (2.12.1)
       diff-lcs (~> 1.1.3)
