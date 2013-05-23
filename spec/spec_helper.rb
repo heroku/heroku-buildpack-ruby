@@ -21,9 +21,11 @@ def git_repo
 end
 
 def add_database(app, heroku)
-  heroku.post_addon(app.name, 'heroku-postgresql:dev')
-  _, value = heroku.get_config_vars(app.name).body.detect {|key, value| key.match(/HEROKU_POSTGRESQL_[A-Z]+_URL/) }
-  heroku.put_config_vars(app.name, 'DATABASE_URL' => value)
+  Hatchet::RETRIES.times.retry do
+    heroku.post_addon(app.name, 'heroku-postgresql:dev')
+    _, value = heroku.get_config_vars(app.name).body.detect {|key, value| key.match(/HEROKU_POSTGRESQL_[A-Z]+_URL/) }
+    heroku.put_config_vars(app.name, 'DATABASE_URL' => value)
+  end
 end
 
 def successful_body(app, options = {})
