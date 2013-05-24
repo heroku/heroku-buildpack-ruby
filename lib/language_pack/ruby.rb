@@ -450,7 +450,7 @@ ERROR
 
 
 Detected sqlite3 gem which is not supported on Heroku.
-http://devcenter.heroku.com/articles/how-do-i-use-sqlite3-for-development
+https://devcenter.heroku.com/articles/sqlite3
 ERROR
         end
 
