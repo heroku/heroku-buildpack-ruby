@@ -597,12 +597,16 @@ params = CGI.parse(uri.query || "")
 
   def run_assets_precompile_rake_task
     if rake_task_defined?("assets:precompile")
-      require 'benchmark'
-
-      topic "Running: rake assets:precompile"
-      time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
-      if $?.success?
-        puts "Asset precompilation completed (#{"%.2f" % time}s)"
+      topic "Preparing assets"
+      if File.exists?("public/assets/manifest.json")
+        puts "Detected manifest.json, assuming assets were compiled locally"
+      else
+        puts "Running: rake assets:precompile"
+        require 'benchmark'
+        time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
+        if $?.success?
+          puts "Asset precompilation completed (#{"%.2f" % time}s)"
+        end
       end
     end
   end
