@@ -476,7 +476,7 @@ ERROR
   # install bower as npm module
   def install_bower
     log("bower") do
-      pipe("node lib/node_modules/npm/bin/npm-cli.js install -g bower 2>&1")
+      pipe("node lib/node_modules/npm/bin/npm-cli.js install -g http://heroku-buildpack-ruby-bower.s3.amazonaws.com/bower-0.9.2.tgz 2>&1")
       unless $?.success?
         error "Can't install bower"
       end
