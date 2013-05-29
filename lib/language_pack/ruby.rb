@@ -18,6 +18,8 @@ class LanguagePack::Ruby < LanguagePack::Base
   NODE_JS_BINARY_PATH = "node"
   JVM_BASE_URL        = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION         = "openjdk7-latest"
+  BOWER_VERSION       = "0.9.2"
+  BOWER_BASE_URL      = "http://heroku-buildpack-ruby-bower.s3.amazonaws.com"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -476,7 +478,8 @@ ERROR
   # install bower as npm module
   def install_bower
     log("bower") do
-      run("curl http://heroku-buildpack-ruby-bower.s3.amazonaws.com/bower-0.9.2/node_modules.tar.gz -s -o - | tar xzf -")
+      topic "Using bower version: #{BOWER_VERSION}"
+      run("curl #{BOWER_BASE_URL}/bower-#{BOWER_VERSION}/node_modules.tar.gz -s -o - | tar xzf -")
       unless $?.success?
         error "Can't install bower"
       end
@@ -486,6 +489,7 @@ ERROR
   # runs bower to install the dependencies
   def build_bower
     log("bower") do
+      topic("Installing JavaScript dependencies using bower #{BOWER_VERSION}")
       pipe("./node_modules/bower/bin/bower install 2>&1")
       unless $?.success?
         error "Can't install JavaScript dependencies"
