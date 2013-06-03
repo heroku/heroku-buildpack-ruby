@@ -39,6 +39,9 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
         topic("Preparing app for Rails asset pipeline")
         if Dir.glob('public/assets/manifest-*.json').any?
           puts "Detected manifest file, assuming assets were compiled locally"
+        elsif precompiled_assets_are_cached?
+          puts "Assets already compiled, loading from cache"
+          cache_load "public/assets"
         else
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
@@ -50,6 +53,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
           if $?.success?
             log "assets_precompile", :status => "success"
             puts "Asset precompilation completed (#{"%.2f" % time}s)"
+            cache_uncompiled_assets
           else
             log "assets_precompile", :status => "failure"
             error "Precompiling assets failed."

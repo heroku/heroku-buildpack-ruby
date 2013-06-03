@@ -43,6 +43,9 @@ private
         topic("Preparing app for Rails asset pipeline")
         if File.exists?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
+        elsif precompiled_assets_are_cached?
+          puts "Assets already compiled, loading from cache"
+          cache_load "public/assets"
         else
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
@@ -54,6 +57,7 @@ private
           if $?.success?
             log "assets_precompile", :status => "success"
             puts "Asset precompilation completed (#{"%.2f" % time}s)"
+            cache_uncompiled_assets
           else
             log "assets_precompile", :status => "failure"
             puts "Precompiling assets failed, enabling runtime asset compilation"
@@ -82,5 +86,26 @@ private
         end
       "#{scheme}://user:pass@127.0.0.1/dbname"
     end
+  end
+
+  # Stash uncompiled assets away, so we can run a diff against them the next time we deploy
+  def cache_uncompiled_assets
+    puts "Caching assets"
+    uncompiled_cache_directories.each { |directory| cache_store(directory) }
+    cache_store "public/assets"
+  end
+
+  # Have the assets changed since we last pre-compiled them?
+  def precompiled_assets_are_cached?
+    uncompiled_cache_directories.all? do |directory|
+      run("diff #{directory} #{cache_base + directory} --recursive").split("\n").length.zero?
+    end
+  end
+
+  # These are the directories we run a diff against to determine whether to re-compile our assets.
+  # If any lines in any files in any of these directories change, we will re-compile.
+  # Gemfile.lock is included to try to catch any changes in bundled assets
+  def uncompiled_cache_directories
+    %w(app/assets Gemfile.lock lib/assets vendor/assets)
   end
 end
