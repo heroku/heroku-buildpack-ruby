@@ -9,15 +9,16 @@ class LanguagePack::Ruby < LanguagePack::Base
   include LanguagePack::BundlerLockfile
   extend LanguagePack::BundlerLockfile
 
-  BUILDPACK_VERSION   = "v62"
-  LIBYAML_VERSION     = "0.1.4"
-  LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION     = "1.3.2"
-  BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
-  NODE_VERSION        = "0.4.7"
-  NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
-  JVM_BASE_URL        = "http://heroku-jdk.s3.amazonaws.com"
-  JVM_VERSION         = "openjdk7-latest"
+  BUILDPACK_VERSION    = "v62"
+  LIBYAML_VERSION      = "0.1.4"
+  LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
+  BUNDLER_VERSION      = "1.3.2"
+  BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
+  NODE_VERSION         = "0.4.7"
+  NODE_JS_BINARY_PATH  = "node-#{NODE_VERSION}"
+  JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
+  JVM_VERSION          = "openjdk7-latest"
+  DEFAULT_RUBY_VERSION = "ruby-1.9.3"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -142,7 +143,7 @@ private
       @ruby_version = ENV['RUBY_VERSION']
       @ruby_version_env_var = true
     elsif @ruby_version == "No ruby version specified"
-      @ruby_version = nil
+      @ruby_version = DEFAULT_RUBY_VERSION
     else
       @ruby_version = @ruby_version.sub('(', '').sub(')', '').split.join('-')
       @ruby_version_env_var = false
