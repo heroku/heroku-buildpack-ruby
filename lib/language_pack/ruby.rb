@@ -398,7 +398,7 @@ ERROR
       else
         # using --deployment is preferred if we can
         bundle_command += " --deployment"
-        cache_load ".bundle"
+        cache.load ".bundle"
       end
 
       version = run_stdout("bundle version").strip
@@ -429,8 +429,8 @@ ERROR
         log "bundle", :status => "success"
         puts "Cleaning up the bundler cache."
         pipe "bundle clean 2> /dev/null"
-        cache_store ".bundle"
-        cache_store "vendor/bundle"
+        cache.store ".bundle"
+        cache.store "vendor/bundle"
 
         # Keep gem cache out of the slug
         FileUtils.rm_rf("#{slug_vendor_base}/cache")
@@ -612,7 +612,7 @@ params = CGI.parse(uri.query || "")
   end
 
   def load_bundler_cache
-    cache_load "vendor"
+    cache.load "vendor"
 
     full_ruby_version       = run_stdout(%q(ruby -v)).chomp
     rubygems_version        = run_stdout(%q(gem -v)).chomp
@@ -628,14 +628,14 @@ params = CGI.parse(uri.query || "")
     # fix bug from v37 deploy
     if File.exists?("vendor/ruby_version")
       puts "Broken cache detected. Purging build cache."
-      cache_clear("vendor")
+      cache.clear("vendor")
       FileUtils.rm_rf("vendor/ruby_version")
       purge_bundler_cache
     # fix bug introduced in v38
     elsif !File.exists?(buildpack_version_cache) && File.exists?(ruby_version_cache)
       puts "Broken cache detected. Purging build cache."
       purge_bundler_cache
-    elsif cache_exists?(bundler_cache) && File.exists?(ruby_version_cache) && full_ruby_version != File.read(ruby_version_cache).chomp
+    elsif cache.exists?(bundler_cache) && File.exists?(ruby_version_cache) && full_ruby_version != File.read(ruby_version_cache).chomp
       puts "Ruby version change detected. Clearing bundler cache."
       puts "Old: #{File.read(ruby_version_cache).chomp}"
       puts "New: #{full_ruby_version}"
@@ -669,12 +669,12 @@ params = CGI.parse(uri.query || "")
     File.open(rubygems_version_cache, 'w') do |file|
       file.puts rubygems_version
     end
-    cache_store heroku_metadata
+    cache.store heroku_metadata
   end
 
   def purge_bundler_cache
     FileUtils.rm_rf(bundler_cache)
-    cache_clear bundler_cache
+    cache.clear bundler_cache
     # need to reinstall language pack gems
     install_language_pack_gems
   end
