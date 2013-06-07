@@ -4,6 +4,7 @@ require "yaml"
 require "digest/sha1"
 require "language_pack/shell_helpers"
 require "language_pack/cache"
+require "language_pack/metadata"
 
 Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 
@@ -20,7 +21,10 @@ class LanguagePack::Base
   # @param [String] the path of the cache dir this is nil during detect
   def initialize(build_path, cache_path=nil)
     @build_path = build_path
-    @cache      = LanguagePack::Cache.new(cache_path) if cache_path
+    if cache_path
+      @cache      = LanguagePack::Cache.new(cache_path)
+      @metadata   = LanguagePack::Metadata.new(@cache)
+    end
     @id         = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
 
     Dir.chdir build_path
