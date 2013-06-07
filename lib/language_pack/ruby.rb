@@ -618,12 +618,12 @@ params = CGI.parse(uri.query || "")
     rubygems_version        = run_stdout(%q(gem -v)).chomp
     heroku_metadata         = "vendor/heroku"
     old_rubygems_version    = nil
-    ruby_version_cache      = "#{heroku_metadata}/ruby_version"
-    buildpack_version_cache = "#{heroku_metadata}/buildpack_version"
-    bundler_version_cache   = "#{heroku_metadata}/bundler_version"
-    rubygems_version_cache  = "#{heroku_metadata}/rubygems_version"
+    ruby_version_cache      = "ruby_version"
+    buildpack_version_cache = "buildpack_version"
+    bundler_version_cache   = "bundler_version"
+    rubygems_version_cache  = "rubygems_version"
 
-    old_rubygems_version = File.read(rubygems_version_cache).chomp if File.exists?(rubygems_version_cache)
+    old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
 
     # fix bug from v37 deploy
     if File.exists?("vendor/ruby_version")
@@ -632,44 +632,36 @@ params = CGI.parse(uri.query || "")
       FileUtils.rm_rf("vendor/ruby_version")
       purge_bundler_cache
     # fix bug introduced in v38
-    elsif !File.exists?(buildpack_version_cache) && File.exists?(ruby_version_cache)
+    elsif !@metadata.exists?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
       puts "Broken cache detected. Purging build cache."
       purge_bundler_cache
-    elsif cache.exists?(bundler_cache) && File.exists?(ruby_version_cache) && full_ruby_version != File.read(ruby_version_cache).chomp
+    elsif cache.exists?(bundler_cache) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
       puts "Ruby version change detected. Clearing bundler cache."
-      puts "Old: #{File.read(ruby_version_cache).chomp}"
+      puts "Old: #{@metadata.read(ruby_version_cache).chomp}"
       puts "New: #{full_ruby_version}"
       purge_bundler_cache
     end
 
     # fix git gemspec bug from Bundler 1.3.0+ upgrade
-    if File.exists?(bundler_cache) && !File.exists?(bundler_version_cache) && !run("find vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").include?("No such file or directory")
+    if File.exists?(bundler_cache) && !@metadata.exists?(bundler_version_cache) && !run("find vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").include?("No such file or directory")
       puts "Old bundler cache detected. Clearing bundler cache."
       purge_bundler_cache
     end
 
     # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
-    if (!File.exists?(rubygems_version_cache) ||
+    if (!@metadata.exists?(rubygems_version_cache) ||
           (old_rubygems_version == "2.0.0" && old_rubygems_version != rubygems_version)) &&
-        File.exists?(ruby_version_cache) && File.read(ruby_version_cache).chomp.include?("ruby 2.0.0p0")
+        @metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).chomp.include?("ruby 2.0.0p0")
       puts "Updating to rubygems #{rubygems_version}. Clearing bundler cache."
       purge_bundler_cache
     end
 
     FileUtils.mkdir_p(heroku_metadata)
-    File.open(ruby_version_cache, 'w') do |file|
-      file.puts full_ruby_version
-    end
-    File.open(buildpack_version_cache, 'w') do |file|
-      file.puts BUILDPACK_VERSION
-    end
-    File.open(bundler_version_cache, 'w') do |file|
-      file.puts BUNDLER_VERSION
-    end
-    File.open(rubygems_version_cache, 'w') do |file|
-      file.puts rubygems_version
-    end
-    cache.store heroku_metadata
+    @metadata.write(ruby_version_cache, full_ruby_version, false)
+    @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
+    @metadata.write(bundler_version_cache, BUNDLER_VERSION, false)
+    @metadata.write(rubygems_version_cache, rubygems_version, false)
+    @metadata.save
   end
 
   def purge_bundler_cache
