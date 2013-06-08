@@ -444,7 +444,8 @@ ERROR
       else
         log "bundle", :status => "failure"
         error_message = "Failed to install gems via Bundler."
-        if bundler_output.match(/Installing sqlite3 \([\w.]+\) with native extensions\s+Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native extension./)
+        puts "Bundler Output: #{bundler_output}"
+        if bundler_output.match(/Installing sqlite3 \([\w.]+\)( with native extensions)?\s+Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native extension./)
           error_message += <<ERROR
 
 
