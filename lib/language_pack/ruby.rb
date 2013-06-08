@@ -143,7 +143,11 @@ private
       @ruby_version = ENV['RUBY_VERSION']
       @ruby_version_env_var = true
     elsif @ruby_version == "No ruby version specified"
-      @ruby_version = DEFAULT_RUBY_VERSION
+      if new_app? || !@metadata.exists?("buildpack_ruby_version")
+        @ruby_version = DEFAULT_RUBY_VERSION
+      else
+        @ruby_version = @metadata.read("buildpack_ruby_version").chomp
+      end
     else
       @ruby_version = @ruby_version.sub('(', '').sub(')', '').split.join('-')
       @ruby_version_env_var = false
@@ -270,6 +274,11 @@ ERROR
     end
 
     true
+  end
+
+  def new_app?
+    puts "new_app?: #{File.exist?("vendor/heroku")}"
+    File.exist?("vendor/heroku")
   end
 
   # vendors JVM into the slug for JRuby
