@@ -4,9 +4,11 @@ require "language_pack/base"
 class LanguagePack::Metadata
   FOLDER = "vendor/heroku"
 
-  def initialize(cache, fetch = true)
-    @cache = cache
-    @cache.load FOLDER if fetch
+  def initialize(cache)
+    if cache
+      @cache = cache
+      @cache.load FOLDER
+    end
   end
 
   def read(key)
@@ -28,6 +30,6 @@ class LanguagePack::Metadata
   end
 
   def save
-    @cache.store FOLDER
+    @cache ? @cache.store(FOLDER) : false
   end
 end
