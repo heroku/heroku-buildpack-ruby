@@ -18,7 +18,7 @@ class LanguagePack::Base
 
   # changes directory to the build_path
   # @param [String] the path of the build dir
-  # @param [String] the path of the cache dir this is nil during detect
+  # @param [String] the path of the cache dir this is nil during detect and release
   def initialize(build_path, cache_path=nil)
     @build_path = build_path
     @cache      = LanguagePack::Cache.new(cache_path) if cache_path
