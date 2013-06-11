@@ -130,7 +130,8 @@ private
   def ruby_version
     return @ruby_version if @ruby_version_run
 
-    @ruby_version_run = true
+    @ruby_version_run     = true
+    @ruby_version_env_var = false
 
     bootstrap_bundler do |bundler_path|
       old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -150,7 +151,6 @@ private
       end
     else
       @ruby_version = @ruby_version.sub('(', '').sub(')', '').split.join('-')
-      @ruby_version_env_var = false
     end
 
     @ruby_version
