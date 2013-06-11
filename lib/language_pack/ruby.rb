@@ -393,7 +393,8 @@ ERROR
   def build_bundler
     log("bundle") do
       bundle_without = ENV["BUNDLE_WITHOUT"] || "development:test"
-      bundle_command = "bundle install --without #{bundle_without} --path vendor/bundle --binstubs vendor/bundle/bin"
+      bundle_bin     = "bundle _#{BUNDLER_VERSION}_"
+      bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs vendor/bundle/bin"
 
       unless File.exist?("Gemfile.lock")
         error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
@@ -412,7 +413,7 @@ ERROR
         cache.load ".bundle"
       end
 
-      version = run_stdout("bundle version").strip
+      version = run_stdout("#{bundle_bin} version").strip
       topic("Installing dependencies using #{version}")
 
       load_bundler_cache
@@ -439,7 +440,7 @@ ERROR
       if $?.success?
         log "bundle", :status => "success"
         puts "Cleaning up the bundler cache."
-        pipe "bundle clean 2> /dev/null"
+        pipe "#{bundle_bin} clean 2> /dev/null"
         cache.store ".bundle"
         cache.store "vendor/bundle"
 
