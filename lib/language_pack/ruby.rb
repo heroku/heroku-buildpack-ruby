@@ -144,8 +144,10 @@ private
       @ruby_version = ENV['RUBY_VERSION']
       @ruby_version_env_var = true
     elsif @ruby_version == "No ruby version specified"
-      if new_app? || !@metadata.exists?("buildpack_ruby_version")
+      if new_app?
         @ruby_version = DEFAULT_RUBY_VERSION
+      elsif !@metadata.exists?("buildpack_ruby_version")
+        @ruby_version = "ruby-1.9.2"
       else
         @ruby_version = @metadata.read("buildpack_ruby_version").chomp
       end
