@@ -277,8 +277,7 @@ ERROR
   end
 
   def new_app?
-    puts "new_app?: #{File.exist?("vendor/heroku")}"
-    File.exist?("vendor/heroku")
+    !File.exist?("vendor/heroku")
   end
 
   # vendors JVM into the slug for JRuby
