@@ -272,7 +272,7 @@ ERROR
     if !@ruby_version_env_var
       topic "Using Ruby version: #{ruby_version}"
       if !@ruby_version_set
-        puts  "WARNING: you have not declared a ruby version in your Gemfile."
+        topic "WARNING: you have not declared a ruby version in your Gemfile."
         puts  "See https://devcenter.heroku.com/articles/ruby-versions for more information."
       end
     else
