@@ -401,7 +401,7 @@ ERROR
   def build_bundler
     log("bundle") do
       bundle_without = ENV["BUNDLE_WITHOUT"] || "development:test"
-      bundle_bin     = "bundle _#{BUNDLER_VERSION}_"
+      bundle_bin     = "bundle"
       bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs vendor/bundle/bin"
 
       unless File.exist?("Gemfile.lock")
