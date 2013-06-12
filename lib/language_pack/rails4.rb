@@ -28,6 +28,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
   def build_bundler
     super
+    check_for_rails_gems
     check_for_binstubs
   end
 
@@ -41,6 +42,17 @@ git add bin/
 git commit -m "add new rails binstubs"
 git push heroku master
 ERROR
+    end
+  end
+
+  def rails_gems
+    %w(rails_stdout_logging rails_serve_static_assets)
+  end
+
+  def check_for_rails_gems
+    if rails_gems.any? {|gem| !gem_is_bundled?(gem) }
+      topic "WARNING: Please include the gem \"rails_on_heroku\" in your Gemfile for Rails 4 Support on Heroku."
+      puts "See https://devcenter.heroku.com/articles/rails-integration-gems for more information."
     end
   end
 
