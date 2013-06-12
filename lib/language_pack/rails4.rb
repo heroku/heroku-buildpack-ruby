@@ -48,6 +48,10 @@ ERROR
     []
   end
 
+  def public_assets_folder
+    "public/assets"
+  end
+
   def run_assets_precompile_rake_task
     log("assets_precompile") do
       setup_database_url_env
@@ -60,13 +64,20 @@ ERROR
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
 
+          @cache.load public_assets_folder
+
           puts "Running: rake assets:precompile"
           require 'benchmark'
-          time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
+          time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1 > /dev/null") }
 
           if $?.success?
             log "assets_precompile", :status => "success"
             puts "Asset precompilation completed (#{"%.2f" % time}s)"
+
+            puts "Cleaning assets"
+            pipe "env PATH=$PATH:bin bundle exec rake assets:clean 2>& 1"
+
+            @cache.store public_assets_folder
           else
             log "assets_precompile", :status => "failure"
             error "Precompiling assets failed."
