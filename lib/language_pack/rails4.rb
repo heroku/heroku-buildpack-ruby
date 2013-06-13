@@ -48,8 +48,10 @@ ERROR
 
   def check_for_rails_gems
     if rails_gems.any? {|gem| !gem_is_bundled?(gem) }
-      topic "WARNING: Please include the gem \"rails_on_heroku\" in your Gemfile for Rails 4 Support on Heroku."
-      puts "See https://devcenter.heroku.com/articles/rails-integration-gems for more information."
+      warn(<<WARNING)
+Please include the gem \"rails_on_heroku\" in your Gemfile for Rails 4 Support on Heroku.
+See https://devcenter.heroku.com/articles/rails-integration-gems for more information.
+WARNING
     end
   end
 

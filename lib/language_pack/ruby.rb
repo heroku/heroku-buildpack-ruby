@@ -85,6 +85,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       install_binaries
       run_assets_precompile_rake_task
     end
+    super
   end
 
 private
@@ -272,13 +273,17 @@ ERROR
     if !@ruby_version_env_var
       topic "Using Ruby version: #{ruby_version}"
       if !@ruby_version_set
-        topic "WARNING: you have not declared a ruby version in your Gemfile."
-        puts  "See https://devcenter.heroku.com/articles/ruby-versions for more information."
+        warn(<<WARNING)
+you have not declared a ruby version in your Gemfile.
+See https://devcenter.heroku.com/articles/ruby-versions for more information.
+WARNING
       end
     else
-      topic "Using RUBY_VERSION: #{ruby_version}"
-      puts  "WARNING: RUBY_VERSION support has been deprecated and will be removed entirely on August 1, 2012."
-      puts  "See https://devcenter.heroku.com/articles/ruby-versions#selecting_a_version_of_ruby for more information."
+      warn(<<WARNING)
+Using RUBY_VERSION: #{ruby_version}
+RUBY_VERSION support has been deprecated and will be removed entirely on August 1, 2012.
+See https://devcenter.heroku.com/articles/ruby-versions#selecting_a_version_of_ruby for more information.
+WARNING
     end
 
     true
@@ -389,10 +394,12 @@ ERROR
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
   def remove_vendor_bundle
     if File.exists?("vendor/bundle")
-      topic "WARNING:  Removing `vendor/bundle`."
-      puts  "Checking in `vendor/bundle` is not supported. Please remove this directory"
-      puts  "and add it to your .gitignore. To vendor your gems with Bundler, use"
-      puts  "`bundle pack` instead."
+      warn(<<WARNING)
+Removing `vendor/bundle`.
+Checking in `vendor/bundle` is not supported. Please remove this directory
+and add it to your .gitignore. To vendor your gems with Bundler, use
+`bundle pack` instead.
+WARNING
       FileUtils.rm_rf("vendor/bundle")
     end
   end
@@ -409,9 +416,11 @@ ERROR
       end
 
       if has_windows_gemfile_lock?
-        topic "WARNING: Removing `Gemfile.lock` because it was generated on Windows."
-        puts "Bundler will do a full resolve so native gems are handled properly."
-        puts "This may result in unexpected gem versions being used in your app."
+        warn(<<WARNING)
+Removing `Gemfile.lock` because it was generated on Windows.
+Bundler will do a full resolve so native gems are handled properly.
+This may result in unexpected gem versions being used in your app.
+WARNING
 
         log("bundle", "has_windows_gemfile_lock")
         File.unlink("Gemfile.lock")

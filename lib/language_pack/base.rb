@@ -24,6 +24,7 @@ class LanguagePack::Base
     @cache      = LanguagePack::Cache.new(cache_path) if cache_path
     @metadata   = LanguagePack::Metadata.new(@cache)
     @id         = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
+    @warnings   = []
 
     Dir.chdir build_path
   end
@@ -59,6 +60,8 @@ class LanguagePack::Base
 
   # this is called to build the slug
   def compile
+    topic "WARNINGS:"
+    puts @warnings.join("--\n")
   end
 
   # collection of values passed for a release
