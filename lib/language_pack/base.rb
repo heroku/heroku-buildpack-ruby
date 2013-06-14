@@ -60,8 +60,10 @@ class LanguagePack::Base
 
   # this is called to build the slug
   def compile
-    topic "WARNINGS:"
-    puts @warnings.join("--\n")
+    if @warnings.any?
+      topic "WARNINGS:"
+      puts @warnings.join("--\n")
+    end
   end
 
   # collection of values passed for a release
