@@ -1,3 +1,10 @@
+## v63 (6/17/2013)
+
+Features:
+
+* Lock default ruby if default ruby is used
+* Change default ruby to 2.0.0
+
 ## v62 (5/21/2013)
 
 Bugfixes:
