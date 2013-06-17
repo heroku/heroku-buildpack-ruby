@@ -9,7 +9,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   include LanguagePack::BundlerLockfile
   extend LanguagePack::BundlerLockfile
 
-  BUILDPACK_VERSION    = "v62"
+  BUILDPACK_VERSION    = "v63"
   LIBYAML_VERSION      = "0.1.4"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.3.2"
@@ -274,8 +274,10 @@ ERROR
       topic "Using Ruby version: #{ruby_version}"
       if !@ruby_version_set
         warn(<<WARNING)
-you have not declared a ruby version in your Gemfile.
-See https://devcenter.heroku.com/articles/ruby-versions for more information.
+you have not declared a Ruby version in your Gemfile.
+To set your Ruby version add this line to your Gemfile:"
+ruby '#{ruby_version.split("-").last}'"
+# See https://devcenter.heroku.com/articles/ruby-versions for more information."
 WARNING
       end
     else
