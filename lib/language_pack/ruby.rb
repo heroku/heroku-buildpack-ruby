@@ -84,6 +84,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       create_database_yml
       install_binaries
       run_assets_precompile_rake_task
+      late_slug_ignore # Pavan added this to start processing a .lateslugignore file to do late-stage compilation deletions
     end
     super
   end
@@ -701,5 +702,34 @@ params = CGI.parse(uri.query || "")
     cache.clear bundler_cache
     # need to reinstall language pack gems
     install_language_pack_gems
+  end
+
+  # I needed this to clean assets before my slug compilation on heroku.  This basically reimplements
+  # the heroku change #179 (http://goo.gl/m5QIL) that was rolled back by heroku change #185 (http://goo.gl/miPpK)
+  # It should be pretty generic -- it looks for file extensions to purge from a .lateslugignore file in the RoR root.
+  #
+  # If you have any questions, feel free to hunt me down: pg8p@virginia.edu
+  
+  def late_slug_ignore
+    # Meh, I should log something here.
+    if File.exist?(".lateslugignore")
+      topic("Beep Bloop. Processing your .lateslugignore file!.")
+      ignored_extensions = Array.new
+  
+      late_slug_ignore_file = File.new(".lateslugignore", "r")
+      late_slug_ignore_file.each do |line|
+        unless line.chomp!.empty?
+          ignored_extensions.push line
+        end
+      end
+      late_slug_ignore_file.close
+
+      matched_files = Array.new
+      ignored_extensions.each {|ext| matched_files.push Dir.glob(File.join("**",ext))}
+      matched_files.flatten!
+      puts "Deleting #{matched_files.count} files matching .lateslugignore patterns."
+      matched_files.each { |f| File.delete(f)}
+  else
+     topic("Beep Bloop. Did not find your .lateslugignore file.  If you need this, place the file in your root directory?")
   end
 end
