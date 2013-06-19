@@ -83,7 +83,7 @@ private
   # the base PATH environment variable to be used
   # @return [String] the resulting PATH
   def default_path
-    "bin:#{slug_vendor_base}/bin:/usr/local/bin:/usr/bin:/bin"
+    "bin:#{bundler_binstubs_path}:/usr/local/bin:/usr/bin:/bin"
   end
 
   # the relative path to the bundler directory of gems
@@ -394,12 +394,16 @@ WARNING
     end
   end
 
+  def bundler_binstubs_path
+    "vendor/bundle/bin"
+  end
+
   # runs bundler to install the dependencies
   def build_bundler
     log("bundle") do
       bundle_without = ENV["BUNDLE_WITHOUT"] || "development:test"
       bundle_bin     = "bundle"
-      bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs vendor/bundle/bin"
+      bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
 
       unless File.exist?("Gemfile.lock")
         error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
@@ -453,13 +457,6 @@ WARNING
 
         # Keep gem cache out of the slug
         FileUtils.rm_rf("#{slug_vendor_base}/cache")
-
-        # symlink binstubs
-        bin_dir = "bin"
-        FileUtils.mkdir_p bin_dir
-        Dir["#{slug_vendor_base}/bin/*"].each do |bin|
-          run("ln -s ../#{bin} #{bin_dir}") unless File.exist?("#{bin_dir}/#{bin}")
-        end
       else
         log "bundle", :status => "failure"
         error_message = "Failed to install gems via Bundler."
