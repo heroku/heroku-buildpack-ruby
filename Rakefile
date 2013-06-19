@@ -210,12 +210,12 @@ task "rbx:install", :version do |t, args|
   end
 end
 
-desc "install rbx 2.0.0dev"
-task "rbx2dev:install", :version, :ruby_version do |t, args|
+desc "install rbx 2.0.0rc1"
+task "rbx2rc1:install", :version, :ruby_version do |t, args|
   version      = args[:version]
   ruby_version = args[:ruby_version]
   source       = "rubinius-#{version}"
-  name         = "rubinius-2.0.0dev"
+  name         = "release-2.0.0-rc1"
   output       = "rbx-#{version}-#{ruby_version}"
   usr_dir      = "usr"
 
@@ -223,7 +223,7 @@ task "rbx2dev:install", :version, :ruby_version do |t, args|
     Dir.chdir(tmpdir) do |dir|
       FileUtils.rm_rf("#{tmpdir}/*")
 
-      sh "curl http://asset.rubini.us/#{source}.tar.gz -s -o - | tar vzxf -"
+      sh "curl https://github.com/rubinius/rubinius/archive/#{name}.tar.gz -L -s -o - | tar vzxf -"
       FileUtils.mkdir_p("#{name}/#{usr_dir}")
       Dir.chdir("#{name}/#{usr_dir}") do
         sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar vzxf -"
