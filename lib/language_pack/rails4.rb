@@ -49,7 +49,7 @@ ERROR
   def check_for_rails_gems
     if rails_gems.any? {|gem| !gem_is_bundled?(gem) }
       warn(<<WARNING)
-Please include the gem \"rails_on_heroku\" in your Gemfile for Rails 4 Support on Heroku.
+Include "rails_12factor" gem to enable all platform features
 See https://devcenter.heroku.com/articles/rails-integration-gems for more information.
 WARNING
     end
