@@ -1,3 +1,23 @@
+## v64 (6/19/2013)
+
+Features:
+
+* only download one copy of bundler per process (@dpiddy, #69)
+* roll up all warnings for end of push output
+* write database.yml for Rails 4
+
+Bugfixes:
+
+* fix sqlite3 error messaging detection
+
+## v63 (6/17/2013)
+
+Features:
+
+* Lock default ruby if default ruby is used
+* Change default ruby to 2.0.0
+* Stop using the stack image ruby and always vendor ruby
+
 ## v62 (5/21/2013)
 
 Bugfixes:
