@@ -1,19 +1,40 @@
 module LanguagePack
   module BundlerLockfile
-    # checks if the Gemfile and Gemfile.lock exist
-    def gemfile_lock?
-      File.exist?('Gemfile') && File.exist?('Gemfile.lock')
+    module ClassMethods
+      # checks if the Gemfile and Gemfile.lock exist
+      def gemfile_lock?
+        File.exist?('Gemfile') && File.exist?('Gemfile.lock')
+      end
+
+      def bundle
+        @bundle ||= parse_bundle
+      end
+
+      def bundler_path
+        @bundler_path ||= fetch_bundler
+      end
+
+      def fetch_bundler
+        Dir.mktmpdir("bundler-").tap do |dir|
+          Dir.chdir(dir) do
+            system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
+          end
+        end
+      end
+
+      def parse_bundle
+        $: << "#{bundler_path}/gems/bundler-#{LanguagePack::Ruby::BUNDLER_VERSION}/lib"
+        require "bundler"
+        Bundler::LockfileParser.new(File.read("Gemfile.lock"))
+      end
     end
 
-    # bootstraps bundler so we can use it before bundler is setup properlyLanguagePack::Ruby
-    def bootstrap_bundler(&block)
-      Dir.mktmpdir("bundler-") do |tmpdir|
-        Dir.chdir(tmpdir) do
-          system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
-        end
+    def bundle
+      self.class.bundle
+    end
 
-        yield tmpdir
-      end
+    def bundler_path
+      self.class.bundler_path
     end
   end
 end
