@@ -7,4 +7,5 @@ group :development, :test do
   gem "excon"
   gem "rake"
   gem "parallel_tests"
+  gem 'rspec-retry'
 end
