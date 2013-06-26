@@ -21,6 +21,7 @@
     "sharpstone/railties3_mri_193"
   ],
   "rails4": [
-    "sharpstone/rails4-manifest"
+    "sharpstone/rails4-manifest",
+    "sharpstone/rails3-to-4-no-bin"
   ]
 }
