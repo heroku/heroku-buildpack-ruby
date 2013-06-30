@@ -45,7 +45,7 @@ private
           puts "Detected manifest.yml, assuming assets were compiled locally"
         else
           FileUtils.mkdir_p('public')
-          cache_load "public/assets"
+          cache.load "public/assets"
 
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
@@ -65,14 +65,14 @@ private
                 run("env PATH=$PATH:bin bundle exec rake assets:clean_expired 2>&1")
                 if $?.success?
                   log "assets_clean_expired", :status => "success"
-                  cache_store "public/assets"
+                  cache.store "public/assets"
                 else
                   log "assets_clean_expired", :status => "failure"
-                  cache_clear "public/assets"
+                  cache.clear "public/assets"
                 end
               end
             else
-              cache_clear "public/assets"
+              cache.clear "public/assets"
             end
           else
             log "assets_precompile", :status => "failure"
