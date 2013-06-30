@@ -58,5 +58,10 @@ module LanguagePack
       end
       $stdout.flush
     end
+
+    def warn(message)
+      @warnings ||= []
+      @warnings << message
+    end
   end
 end
