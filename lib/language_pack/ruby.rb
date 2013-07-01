@@ -262,7 +262,7 @@ ERROR
       topic "Using Ruby version: #{ruby_version}"
       if !@ruby_version_set
         warn(<<WARNING)
-you have not declared a Ruby version in your Gemfile.
+You have not declared a Ruby version in your Gemfile.
 To set your Ruby version add this line to your Gemfile:"
 ruby '#{ruby_version.split("-").last}'"
 # See https://devcenter.heroku.com/articles/ruby-versions for more information."
