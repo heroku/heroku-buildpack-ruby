@@ -58,8 +58,10 @@ private
 
   # vendors all the plugins into the slug
   def install_plugins
-    topic "Rails plugin injection"
-    plugins.each { |plugin| install_plugin(plugin) }
+    if plugins.any?
+      topic "Rails plugin injection"
+      plugins.each { |plugin| install_plugin(plugin) }
+    end
   end
 
   # vendors an individual plugin

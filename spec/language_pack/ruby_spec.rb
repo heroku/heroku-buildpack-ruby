@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'cloudfoundry_spec_helper'
 
 describe LanguagePack::Ruby do
 
@@ -10,7 +10,7 @@ describe LanguagePack::Ruby do
 
   before :each do
     FileUtils.cp_r "#{app_dir}/.", app_work
-    subject.stub(:ruby_versions) { ["ruby-1.9.3", "ruby-1.9.2", "ruby-1.8.7"] }
+    subject.stub(:ruby_versions) { ["ruby-1.9.3", "ruby-1.9.2", "ruby-1.8.7", "ruby-2.0.0"] }
   end
 
   after :each do
@@ -36,7 +36,6 @@ describe LanguagePack::Ruby do
 
   describe ".gem_version" do
     it "does not crash" do
-      LanguagePack::Ruby.should_receive(:fetch_package_and_untar).with("#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz")
       expect { LanguagePack::Ruby.gem_version('rake') }.to_not raise_error
     end
   end
@@ -76,7 +75,8 @@ describe LanguagePack::Ruby do
         :default_path => 'default path',
         :slug_vendor_base => 'slug vendor base',
         :default_java_opts => 'default java opts',
-        :default_jruby_opts => 'default jruby opts'
+        :default_jruby_opts => 'default jruby opts',
+        :default_java_tool_options => 'default java tool opts'
       )
     end
 
@@ -89,7 +89,8 @@ describe LanguagePack::Ruby do
           'PATH' => 'default path',
           'GEM_PATH' => 'slug vendor base',
           'JAVA_OPTS' => 'default java opts',
-          'JRUBY_OPTS' => 'default jruby opts'
+          'JRUBY_OPTS' => 'default jruby opts',
+          'JAVA_TOOL_OPTIONS' => 'default java tool opts'
         })
       end
     end
@@ -206,7 +207,7 @@ describe LanguagePack::Ruby do
         before :each do
           subject.stub(:ruby_version_jruby?) { true }
           subject.stub(:install_ruby)
-          subject.stub(:fetch_package_and_untar).with('openjdk7-latest.tar.gz', 'http://heroku-jvm-langpack-java.s3.amazonaws.com')
+          subject.stub(:fetch_package_and_untar).with('openjdk7-latest.tar.gz', "http://heroku-jdk.s3.amazonaws.com")
           ENV.stub(:[]=)
         end
 
@@ -268,7 +269,7 @@ describe LanguagePack::Ruby do
           it 'sets the environment variables' do
             ENV.should_receive(:[]=).with('GEM_HOME', slug_vendor_base)
             ENV.should_receive(:[]=).with('GEM_PATH', slug_vendor_base)
-            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/)
+            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/).twice
 
             subject.compile
           end
@@ -281,13 +282,15 @@ describe LanguagePack::Ruby do
 
             ENV.should_receive(:[]=).with('GEM_HOME', slug_vendor_base)
             ENV.should_receive(:[]=).with('GEM_PATH', slug_vendor_base)
-            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/)
+            ENV.should_receive(:[]=).with('PATH', /^#{ruby_install_binstub_path}/).twice
 
             if ENV['JAVA_OPTS']
               ENV.should_receive(:[]=).with('JAVA_OPTS', '-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8')
             else
               ENV.should_receive(:[]=).with('JAVA_OPTS', '-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8').twice
             end
+
+            ENV.should_receive(:[]=).with('JAVA_TOOL_OPTIONS', '-Djava.rmi.server.useCodebaseOnly=true')
 
             ENV.should_receive(:[]=).with('JRUBY_OPTS', '-Xcompile.invokedynamic=true') unless ENV['JRUBY_OPTS']
 
@@ -417,7 +420,7 @@ describe LanguagePack::Ruby do
           subject.stub(:syck_hack) { 'syck hack' }
           subject.stub(:run).with('env RUBYOPT="syck hack" bundle version') { '' }
           subject.stub(:load_bundler_cache)
-          subject.stub(:run).with('pwd') { '' }
+          subject.stub(:run).with(any_args) { '' }
           subject.stub(:pipe) { %x{true} }
         end
 

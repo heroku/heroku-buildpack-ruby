@@ -10,7 +10,7 @@
 # class no matter if the full yaml library has loaded or not.
 #
 
-require 'rubygems'
+$: << ENV['BUNDLER_LIB_PATH'] if ENV['BUNDLER_LIB_PATH']
 require 'bundler/psyched_yaml'
 
 module YAML

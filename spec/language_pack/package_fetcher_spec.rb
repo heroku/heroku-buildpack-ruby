@@ -1,4 +1,4 @@
-require "spec_helper"
+require "cloudfoundry_spec_helper"
 require "webmock/rspec"
 
 describe LanguagePack::PackageFetcher do
@@ -17,7 +17,7 @@ describe LanguagePack::PackageFetcher do
       end
 
       it "stops after successfully retrieving from from cache" do
-        subject.fetch_package(filename).should be_true
+        expect(subject.fetch_package(filename)).to be_true
       end
     end
 
@@ -29,7 +29,7 @@ describe LanguagePack::PackageFetcher do
       end
 
       it "stops after successfully retrieving from the blobstore" do
-        subject.fetch_package(filename).should be_true
+        expect(subject.fetch_package(filename)).to be_true
       end
     end
 
@@ -41,7 +41,7 @@ describe LanguagePack::PackageFetcher do
       end
 
       it "stops after successfully retrieving from the blobstore" do
-        subject.fetch_package(filename).should be_true
+        expect(subject.fetch_package(filename)).to be_true
       end
     end
 
@@ -53,7 +53,7 @@ describe LanguagePack::PackageFetcher do
       end
 
       it "returns false" do
-        subject.fetch_package(filename).should be_false
+        expect(subject.fetch_package(filename)).to be_false
       end
     end
   end
@@ -61,7 +61,7 @@ describe LanguagePack::PackageFetcher do
   describe "#fetch_from_buildpack_cache" do
 
     it "should default the buildpack_cache_dir" do
-      subject.buildpack_cache_dir.should == "/var/vcap/packages/buildpack_cache"
+      expect(subject.buildpack_cache_dir).to eq "/var/vcap/packages/buildpack_cache"
     end
 
     describe "copying from a test cache dir" do
@@ -73,15 +73,15 @@ describe LanguagePack::PackageFetcher do
         after { FileUtils.rm(filename) }
 
         it "copies the file to the current directory and returns true" do
-          File.exists?(filename).should be_false
-          subject.send(:fetch_from_buildpack_cache, filename).should be_true
-          File.exists?(filename).should be_true
+          expect(File.exists?(filename)).to be_false
+          expect(subject.send(:fetch_from_buildpack_cache, filename)).to be_true
+          expect(File.exists?(filename)).to be_true
         end
       end
 
       context "when the file doesn't exist" do
         it "returns false" do
-          subject.send(:fetch_from_buildpack_cache, "unknown-package.tgz").should be_false
+          expect(subject.send(:fetch_from_buildpack_cache, "unknown-package.tgz")).to be_false
         end
       end
     end
@@ -100,24 +100,24 @@ describe LanguagePack::PackageFetcher do
       stub_request(:get, expected_url).to_return :status => 200, :body => response_body
       subject.stub(:file_checksum).and_return(sha)
 
-      subject.send(:fetch_from_blobstore, filename).should be_true
-      File.exists?(filename).should be_true
-      File.read(filename).should == response_body
+      expect(subject.send(:fetch_from_blobstore, filename)).to be_true
+      expect(File.exists?(filename)).to be_true
+      expect(File.read(filename)).to eq response_body
     end
 
     it "returns false if object is not found" do
       stub_request(:get, expected_url).to_return :status => 404, :body => "NOT FOUND"
-      subject.send(:fetch_from_blobstore, filename).should be_false
+      expect(subject.send(:fetch_from_blobstore, filename)).to be_false
     end
 
     it "returns false if oid, sig, or sha are missing" do
-      subject.send(:fetch_from_blobstore, "unknown-package.tgz").should be_false
+      expect(subject.send(:fetch_from_blobstore, "unknown-package.tgz")).to be_false
     end
 
     it "raises an Error if SHA is mismatched" do
       stub_request(:get, expected_url).to_return :status => 200, :body => "Whatever"
       subject.stub(:file_checksum).and_return("blajejs")
-      subject.send(:fetch_from_blobstore, filename).should be_false
+      expect(subject.send(:fetch_from_blobstore, filename)).to be_false
     end
   end
 
@@ -130,12 +130,12 @@ describe LanguagePack::PackageFetcher do
 
     it "successfully downloads the file using curl and returns true" do
       File.should_receive(:exist?).with(filename) { true }
-      subject.send(:fetch_from_curl, filename, url).should be_true
+      expect(subject.send(:fetch_from_curl, filename, url)).to be_true
     end
 
     it "fails to downloads the file using curl and returns false" do
       File.should_receive(:exist?).with(filename) { false }
-      subject.send(:fetch_from_curl, filename, url).should be_false
+      expect(subject.send(:fetch_from_curl, filename, url)).to be_false
     end
   end
 end

@@ -1,3 +1,64 @@
+## v64 (6/19/2013)
+
+Features:
+
+* only download one copy of bundler per process (@dpiddy, #69)
+* roll up all warnings for end of push output
+* write database.yml for Rails 4
+
+Bugfixes:
+
+* fix sqlite3 error messaging detection
+
+## v63 (6/17/2013)
+
+Features:
+
+* Lock default ruby if default ruby is used
+* Change default ruby to 2.0.0
+* Stop using the stack image ruby and always vendor ruby
+
+## v62 (5/21/2013)
+
+Bugfixes:
+
+* Correctly detect asset manifest files in Rails 4
+* Fix jruby 1.8.7 bundler/psych require bug
+
+## v61 (4/18/2013)
+
+Features:
+
+* Start caching the rubygems version used.
+
+Bugfixes:
+
+* Rebuild bundler cache if rubygems 2 is detected. Bugfixes in later rubygems.
+
+## v60 (4/17/2013)
+
+Security:
+
+* Disable Java RMI Remote Classloading for CVE-2013-1537, <https://bugzilla.redhat.com/show_bug.cgi?id=952387>
+
+## v59 (4/4/2013)
+
+Bugfixes:
+
+* Change JVM S3 bucket
+
+## v58 (3/19/2013)
+
+Bugfixes:
+
+* Fix ruby 1.8.7 not being able to compile native extensions
+
+## v57 (3/18/2013)
+
+Bugfixes:
+
+* Fix git gemspec bug in bundler
+
 ## v56 (3/11/2013)
 
 Bugfixes:

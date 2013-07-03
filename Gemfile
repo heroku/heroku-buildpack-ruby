@@ -1,8 +1,12 @@
-source :rubygems
+source "https://rubygems.org"
 
-gem "rake"
-
-group :test do
-  gem "rspec"
+group :development, :test do
+  gem "heroku_hatchet"
+  gem "rspec-core"
+  gem "rspec-expectations"
+  gem "excon"
+  gem "rake"
+  gem "parallel_tests"
+  gem 'rspec-retry'
   gem "webmock"
 end
