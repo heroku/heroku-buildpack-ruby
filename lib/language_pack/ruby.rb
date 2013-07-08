@@ -21,7 +21,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   NODE_JS_BINARY_PATH  = "node-#{NODE_VERSION}"
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION          = "openjdk7-latest"
-  DEFAULT_RUBY_VERSION = "ruby-2.0.0"
+  DEFAULT_RUBY_VERSION = "ruby-1.9.3"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app

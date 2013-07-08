@@ -76,7 +76,8 @@ def build_ruby_command(name, output, prefix, usr_dir, tmpdir, rubygems = nil, en
   puts "Running #{build_command}"
 
   sh build_command
-
+  
+  puts "File was created in /tmp/#{output}.tgz"
   # TODO implement automatic upload to cf blobstore
 end
 
@@ -160,7 +161,7 @@ task "node:install", :version do |t, args|
   end
 end
 
-desc "install ruby"
+desc "install ruby (don't use bundle exec)"
 task "ruby:install", :version do |t, args|
   full_version   = args[:version]
   full_name      = "ruby-#{full_version}"
