@@ -71,7 +71,7 @@ private
     ENV["DATABASE_URL"] ||= begin
       # need to use a dummy DATABASE_URL here, so rails can load the environment
       scheme =
-        if gem_is_bundled?("pg")
+        if gem_is_bundled?("pg") || gem_is_bundled?("jdbc-postgres")
           "postgres"
         elsif gem_is_bundled?("mysql")
           "mysql"
