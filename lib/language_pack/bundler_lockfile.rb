@@ -15,17 +15,21 @@ module LanguagePack
       end
 
       def fetch_bundler
-        Dir.mktmpdir("bundler-").tap do |dir|
-          Dir.chdir(dir) do
-            system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
+        instrument 'fetch_bundler' do
+          Dir.mktmpdir("bundler-").tap do |dir|
+            Dir.chdir(dir) do
+              system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
+            end
           end
         end
       end
 
       def parse_bundle
-        $: << "#{bundler_path}/gems/bundler-#{LanguagePack::Ruby::BUNDLER_VERSION}/lib"
-        require "bundler"
-        Bundler::LockfileParser.new(File.read("Gemfile.lock"))
+        instrument 'parse_bundle' do
+          $: << "#{bundler_path}/gems/bundler-#{LanguagePack::Ruby::BUNDLER_VERSION}/lib"
+          require "bundler"
+          Bundler::LockfileParser.new(File.read("Gemfile.lock"))
+        end
       end
     end
 

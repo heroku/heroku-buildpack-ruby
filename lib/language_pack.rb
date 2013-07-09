@@ -7,17 +7,24 @@ module LanguagePack
   # @param [Array] first argument is a String of the build directory
   # @return [LanguagePack] the {LanguagePack} detected
   def self.detect(*args)
-    Dir.chdir(args.first)
+    Instrument.instrument 'detect' do
+      Dir.chdir(args.first)
 
-    pack = [ NoLockfile, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
-      klass.use?
+      pack = [ NoLockfile, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+        klass.use?
+      end
+
+      pack ? pack.new(*args) : nil
     end
-
-    pack ? pack.new(*args) : nil
   end
 
 end
 
+
+$:.unshift File.expand_path("../../vendor", __FILE__)
+
+require 'dotenv'
+require 'instrument'
 require "language_pack/ruby"
 require "language_pack/rack"
 require "language_pack/rails2"
@@ -25,3 +32,5 @@ require "language_pack/rails3"
 require "language_pack/disable_deploys"
 require "language_pack/rails4"
 require "language_pack/no_lockfile"
+
+

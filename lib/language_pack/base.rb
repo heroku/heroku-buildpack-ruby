@@ -10,6 +10,7 @@ Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
+  INSTRUMENT = ::Instrument
   include LanguagePack::ShellHelpers
 
   VENDOR_URL = "https://s3.amazonaws.com/heroku-buildpack-ruby"
@@ -20,13 +21,23 @@ class LanguagePack::Base
   # @param [String] the path of the build dir
   # @param [String] the path of the cache dir this is nil during detect and release
   def initialize(build_path, cache_path=nil)
-    @build_path = build_path
-    @cache      = LanguagePack::Cache.new(cache_path) if cache_path
-    @metadata   = LanguagePack::Metadata.new(@cache)
-    @id         = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
-    @warnings   = []
+     self.class.instrument "base.initialize" do
+      @build_path = build_path
+      @cache      = LanguagePack::Cache.new(cache_path) if cache_path
+      @metadata   = LanguagePack::Metadata.new(@cache)
+      @id         = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
+      @warnings   = []
 
-    Dir.chdir build_path
+      Dir.chdir build_path
+    end
+  end
+
+  def instrument(*args, &block)
+    self.class.instrument(*args, &block)
+  end
+
+  def self.instrument(*args, &block)
+    INSTRUMENT.instrument(*args, &block)
   end
 
   def self.===(build_path)
@@ -60,21 +71,25 @@ class LanguagePack::Base
 
   # this is called to build the slug
   def compile
-    if @warnings.any?
-      topic "WARNINGS:"
-      puts @warnings.join("--\n")
+    instrument 'base.compile' do
+      if @warnings.any?
+        topic "WARNINGS:"
+        puts @warnings.join("--\n")
+      end
     end
   end
 
   # collection of values passed for a release
   # @return [String] in YAML format of the result
   def release
-    setup_language_pack_environment
+    instrument "base.release" do
+      setup_language_pack_environment
 
-    {
-      "addons" => default_addons,
-      "default_process_types" => default_process_types
-    }.to_yaml
+      {
+        "addons" => default_addons,
+        "default_process_types" => default_process_types
+      }.to_yaml
+    end
   end
 
   # log output
