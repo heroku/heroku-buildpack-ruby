@@ -1,3 +1,5 @@
+require 'fileutils'
+require 'language_pack/ruby'
 require 'language_pack/fetcher'
 
 module LanguagePack
@@ -8,10 +10,6 @@ module LanguagePack
         File.exist?('Gemfile') && File.exist?('Gemfile.lock')
       end
 
-      def fetcher
-        @fetcher ||= LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL)
-      end
-
       def bundle
         @bundle ||= parse_bundle
       end
@@ -20,14 +18,22 @@ module LanguagePack
         @bundler_path ||= fetch_bundler
       end
 
+      def vendor_dir
+        @vendor_dir ||= File.expand_path("../../../tmp/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}", __FILE__)
+      end
+
       def fetch_bundler
         instrument 'fetch_bundler' do
-          Dir.mktmpdir("bundler-").tap do |dir|
-            Dir.chdir(dir) do
+          unless Dir.exists?(vendor_dir)
+            FileUtils.mkdir_p(vendor_dir)
+            fetcher = LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL)
+            Dir.chdir(vendor_dir) do
               fetcher.fetch_untar("#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz")
             end
           end
         end
+
+        vendor_dir
       end
 
       def parse_bundle
