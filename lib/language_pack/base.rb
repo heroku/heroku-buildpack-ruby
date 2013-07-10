@@ -5,6 +5,7 @@ require "digest/sha1"
 require "language_pack/shell_helpers"
 require "language_pack/cache"
 require "language_pack/metadata"
+require "language_pack/fetcher"
 
 Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 
@@ -27,6 +28,7 @@ class LanguagePack::Base
       @metadata   = LanguagePack::Metadata.new(@cache)
       @id         = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
       @warnings   = []
+      @fetchers   = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
 
       Dir.chdir build_path
     end

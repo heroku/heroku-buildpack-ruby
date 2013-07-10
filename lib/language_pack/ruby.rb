@@ -36,6 +36,11 @@ class LanguagePack::Ruby < LanguagePack::Base
     end
   end
 
+  def initialize(build_path, cache_path=nil)
+    super(build_path, cache_path)
+    @fetchers[:jvm] = LanguagePack::Fetcher.new(JVM_BASE_URL)
+  end
+
   def name
     "Ruby"
   end
@@ -203,7 +208,7 @@ private
 
     Dir.mktmpdir("ruby_versions-") do |tmpdir|
       Dir.chdir(tmpdir) do
-        run("curl -O #{VENDOR_URL}/ruby_versions.yml")
+        @fetchers[:buildpack].fetch("ruby_versions.yml")
         @ruby_versions = YAML::load_file("ruby_versions.yml")
       end
     end
@@ -261,7 +266,7 @@ ERROR
         Dir.chdir(build_ruby_path) do
           ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
           instrument "ruby.fetch_build_ruby" do
-            run("curl #{VENDOR_URL}/#{ruby_version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz -s -o - | tar zxf -")
+            @fetchers[:buildpack].fetch_untar("#{ruby_version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz")
           end
         end
         error invalid_ruby_version_message unless $?.success?
@@ -270,7 +275,7 @@ ERROR
       FileUtils.mkdir_p(slug_vendor_ruby)
       Dir.chdir(slug_vendor_ruby) do
         instrument "ruby.fetch_ruby" do
-          run("curl #{VENDOR_URL}/#{ruby_version}.tgz -s -o - | tar zxf -")
+          @fetchers[:buildpack].fetch_untar("#{ruby_version}.tgz")
         end
       end
       error invalid_ruby_version_message unless $?.success?
@@ -317,7 +322,7 @@ WARNING
 
         FileUtils.mkdir_p(slug_vendor_jvm)
         Dir.chdir(slug_vendor_jvm) do
-          run("curl #{JVM_BASE_URL}/#{JVM_VERSION}.tar.gz -s -o - | tar xzf -")
+          @fetchers[:jvm].fetch_untar("#{JVM_VERSION}.tar.gz")
         end
 
         bin_dir = "bin"
@@ -365,7 +370,7 @@ WARNING
       FileUtils.mkdir_p(slug_vendor_base)
       Dir.chdir(slug_vendor_base) do |dir|
         gems.each do |gem|
-          run("curl #{VENDOR_URL}/#{gem}.tgz -s -o - | tar xzf -")
+          @fetchers[:buildpack].fetch_untar("#{gem}.tgz")
         end
         Dir["bin/*"].each {|path| run("chmod 755 #{path}") }
       end
@@ -393,7 +398,7 @@ WARNING
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
     Dir.chdir(bin_dir) do |dir|
-      run("curl #{VENDOR_URL}/#{name}.tgz -s -o - | tar xzf -")
+      @fetchers[:buildpack].fetch_untar("#{name}.tgz")
     end
   end
 
@@ -409,7 +414,7 @@ WARNING
     instrument 'ruby.install_libyaml' do
       FileUtils.mkdir_p dir
       Dir.chdir(dir) do |dir|
-        run("curl #{VENDOR_URL}/#{LIBYAML_PATH}.tgz -s -o - | tar xzf -")
+        @fetchers[:buildpack].fetch_untar("#{LIBYAML_PATH}.tgz")
       end
     end
   end

@@ -1,9 +1,15 @@
+require 'language_pack/fetcher'
+
 module LanguagePack
   module BundlerLockfile
     module ClassMethods
       # checks if the Gemfile and Gemfile.lock exist
       def gemfile_lock?
         File.exist?('Gemfile') && File.exist?('Gemfile.lock')
+      end
+
+      def fetcher
+        @fetcher ||= LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL)
       end
 
       def bundle
@@ -18,7 +24,7 @@ module LanguagePack
         instrument 'fetch_bundler' do
           Dir.mktmpdir("bundler-").tap do |dir|
             Dir.chdir(dir) do
-              system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
+              fetcher.fetch_untar("#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz")
             end
           end
         end
