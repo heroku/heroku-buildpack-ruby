@@ -1,3 +1,9 @@
+## v67
+
+Bugfixes:
+
+* Don't print DEBUG messages for lxpc when env var is present
+
 ## v66 (7/9/2013)
 
 Bugfixes:
