@@ -1,3 +1,19 @@
+## v66 (7/9/2013)
+
+Bugfixes:
+
+* Include logtoken properly
+
+## v65 (7/9/2013)
+
+Features:
+
+* Instrument timing infrastructure for the buildpack
+
+Bugfixes:
+
+* Fix DATABASE_URL to use jdbc-postgres for JRuby (@jkrall, #116)
+
 ## v64 (6/19/2013)
 
 Features:
