@@ -293,8 +293,8 @@ ERROR
         if !@ruby_version_set
           warn(<<WARNING)
 You have not declared a Ruby version in your Gemfile.
-To set your Ruby version add this line to your Gemfile:"
-ruby '#{ruby_version.split("-").last}'"
+To set your Ruby version add this line to your Gemfile:
+#{ruby_version_to_gemfile}
 # See https://devcenter.heroku.com/articles/ruby-versions for more information."
 WARNING
         end
@@ -308,6 +308,16 @@ WARNING
     end
 
     true
+  end
+
+  def ruby_version_to_gemfile
+    parts = ruby_version.split('-')
+    if parts.size > 2
+      # not mri
+      "ruby '#{parts[1]}', :engine => '#{parts[2]}', :engine_version => '#{parts.last}'"
+    else
+      "ruby '#{parts.last}'"
+    end
   end
 
   def new_app?
