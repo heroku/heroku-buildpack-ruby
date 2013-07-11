@@ -24,7 +24,7 @@ end
 $:.unshift File.expand_path("../../vendor", __FILE__)
 
 require 'dotenv'
-require 'instrument'
+require 'language_pack/instrument'
 require "language_pack/ruby"
 require "language_pack/rack"
 require "language_pack/rails2"

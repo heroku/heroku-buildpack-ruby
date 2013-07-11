@@ -6,12 +6,12 @@ require "language_pack/shell_helpers"
 require "language_pack/cache"
 require "language_pack/metadata"
 require "language_pack/fetcher"
+require "language_pack/instrument"
 
 Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
-  INSTRUMENT = ::Instrument
   include LanguagePack::ShellHelpers
 
   VENDOR_URL = "https://s3.amazonaws.com/heroku-buildpack-ruby"
@@ -39,7 +39,7 @@ class LanguagePack::Base
   end
 
   def self.instrument(*args, &block)
-    INSTRUMENT.instrument(*args, &block)
+    LanguagePack::Instrument.instrument(*args, &block)
   end
 
   def self.===(build_path)
