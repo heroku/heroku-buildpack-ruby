@@ -1,5 +1,9 @@
 ## v67
 
+Features:
+
+* Fetcher uses CDN if available
+
 Bugfixes:
 
 * Don't print DEBUG messages for lxpc when env var is present
