@@ -1,12 +1,14 @@
-## v67
+## v67 (7/10/2013)
 
 Features:
 
 * Fetcher uses CDN if available
+* Add buildpack_version to the instrumentation output
 
 Bugfixes:
 
 * Don't print DEBUG messages for lxpc when env var is present
+* Fix ruby gemfile warning line for JRuby
 
 ## v66 (7/9/2013)
 
