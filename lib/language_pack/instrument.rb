@@ -7,7 +7,7 @@ require 'language_pack/ruby'
 module LanguagePack
   module Instrument
     def self.bench_msg(message, level = 0, start_time, end_time, duration, build_id, buildpack_version)
-      out.puts "measure.#{message}.start=#{start_time} measure.#{message}.end=#{end_time} measure.#{message}.duration=#{duration} measure.#{message}.level=#{level} measure.#{message}.build_id=#{build_id} measure.#{message}.buildpack_version=#{buildpack_version}"
+      out.puts "measure.#{message}.start=#{start_time} measure.#{message}.end=#{end_time} measure.#{message}.duration=#{duration} measure.#{message}.level=#{level} measure.#{message}.build_id=#{build_id} measure.#{message}.buildpack_version=#{buildpack_version} measure.#{message}.buildpack=#{buildpack_name}"
       out.send :flush
     end
 
@@ -57,6 +57,10 @@ module LanguagePack
 
     def self.buildpack_version
       LanguagePack::Ruby::BUILDPACK_VERSION
+    end
+
+    def self.buildpack_name
+      LanguagePack::Ruby::NAME
     end
   end
 end
