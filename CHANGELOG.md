@@ -1,3 +1,9 @@
+## v68 (7/16/2013)
+
+Features:
+
+* Log buildpack name and entering rails3/4 compile
+
 ## v67 (7/10/2013)
 
 Features:
