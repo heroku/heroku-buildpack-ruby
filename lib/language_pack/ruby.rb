@@ -638,6 +638,8 @@ params = CGI.parse(uri.query || "")
       out = run("env PATH=$PATH bundle exec #{task_check}")
       if $?.success?
         out.strip == "true"
+      elsif out.include?("No Rakefile found")
+        false
       else
         error(out)
       end
