@@ -32,6 +32,12 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     end
   end
 
+  def compile
+    instrument "rails3.compile" do
+      super
+    end
+  end
+
 private
 
   def plugins

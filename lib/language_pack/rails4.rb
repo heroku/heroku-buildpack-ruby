@@ -34,6 +34,12 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
     end
   end
 
+  def compile
+    instrument "rails4.compile" do
+      super
+    end
+  end
+
   private
   def rails_gems
     %w(rails_stdout_logging rails_serve_static_assets)
