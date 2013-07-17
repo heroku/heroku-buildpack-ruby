@@ -1,3 +1,9 @@
+## v69 (7/16/2013)
+
+Bugfixes:
+
+* Add spacing to end of instrumentation
+
 ## v68 (7/16/2013)
 
 Features:
