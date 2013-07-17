@@ -10,7 +10,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   extend LanguagePack::BundlerLockfile::ClassMethods
 
   NAME                 = "ruby"
-  BUILDPACK_VERSION    = "v68"
+  BUILDPACK_VERSION    = "v69"
   LIBYAML_VERSION      = "0.1.4"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.3.2"
