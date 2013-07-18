@@ -1,3 +1,9 @@
+## v70 (7/18/2013)
+
+Bugfixes:
+
+* Don't silently fail rake task checks (@gabrielg, #34)
+
 ## v69 (7/16/2013)
 
 Bugfixes:
