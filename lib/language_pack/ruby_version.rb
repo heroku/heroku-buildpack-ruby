@@ -11,10 +11,10 @@ module LanguagePack
     attr_reader :set
 
     def initialize(bundler_path, app = {})
-      @version      = ""
-      @app          = app
-      @bundler_path = bundler_path
-      @set          = nil
+      @versions      = []
+      @app           = app
+      @bundler_path  = bundler_path
+      @set           = nil
     end
 
     def gemfile
@@ -27,11 +27,13 @@ module LanguagePack
     end
 
     def ruby_version_file
-      rv = File.read(DOT_RV_FILE).chomp
-      if rv.match(/^\d/)
-        "ruby-#{rv}"
-      else
-        rv
+      rvs = File.read(DOT_RV_FILE).split("\n")
+      rvs.map do |rv|
+        if rv.match(/^\d/)
+          "ruby-#{rv}"
+        else
+          rv
+        end
       end
     end
 
@@ -46,24 +48,28 @@ module LanguagePack
     end
 
     def version
-      return @version unless @version.empty?
+      versions.first
+    end
+
+    def versions
+      return @versions unless @versions.empty?
 
       if File.exists?(DOT_RV_FILE)
-        @set     = :ruby_version
-        @version = ruby_version_file
+        @set       = :ruby_version
+        @versions += ruby_version_file
       else
         bundler_output = gemfile
         if bundler_output == "No ruby version specified" && env_var
           # for backwards compatibility.
           # this will go away in the future
-          @set     = :env_var
-          @version = env_var
+          @set      = :env_var
+          @versions << env_var
         elsif bundler_output == "No ruby version specified"
-          @set     = false
-          @version = none
+          @set      = false
+          @versions << none
         else
-          @set     = :gemfile
-          @version = bundler_output.sub('(', '').sub(')', '').split.join('-')
+          @set      = :gemfile
+          @versions << bundler_output.sub('(', '').sub(')', '').split.join('-')
         end
       end
     end

@@ -82,7 +82,12 @@ class LanguagePack::Ruby < LanguagePack::Base
     instrument 'ruby.compile' do
       Dir.chdir(build_path)
       remove_vendor_bundle
-      install_ruby
+
+      ruby_version
+      @ruby_version.versions.each do |version|
+        install_ruby(version)
+      end
+
       install_jvm
       setup_language_pack_environment
       setup_profiled
@@ -121,8 +126,8 @@ private
 
   # the relative path to the vendored ruby directory
   # @return [String] resulting path
-  def slug_vendor_ruby
-    "vendor/#{ruby_version}"
+  def slug_vendor_ruby(version = ruby_version)
+    "vendor/#{version}"
   end
 
   # the relative path to the vendored jvm
@@ -159,8 +164,8 @@ private
 
   # determine if we're using rbx
   # @return [Boolean] true if we are and false if we aren't
-  def ruby_version_rbx?
-    ruby_version ? ruby_version.match(/rbx-/) : false
+  def ruby_version_rbx?(version)
+    version ? version.match(/rbx-/) : false
   end
 
   # determine if we're using jruby
@@ -239,44 +244,43 @@ private
 
   # install the vendored ruby
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
-  def install_ruby
+  def install_ruby(version)
     instrument 'ruby.install_ruby' do
-      return false unless ruby_version
-
       invalid_ruby_version_message = <<ERROR
-Invalid RUBY_VERSION specified: #{ruby_version}
+Invalid RUBY_VERSION specified: #{version}
 Valid versions: #{ruby_versions.join(", ")}
 ERROR
 
       if build_ruby?
         FileUtils.mkdir_p(build_ruby_path)
         Dir.chdir(build_ruby_path) do
-          ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
+          ruby_vm = ruby_version_rbx?(version) ? "rbx" : "ruby"
           instrument "ruby.fetch_build_ruby" do
-            @fetchers[:buildpack].fetch_untar("#{ruby_version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz")
+            @fetchers[:buildpack].fetch_untar("#{version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz")
           end
         end
         error invalid_ruby_version_message unless $?.success?
       end
 
-      FileUtils.mkdir_p(slug_vendor_ruby)
-      Dir.chdir(slug_vendor_ruby) do
+      FileUtils.mkdir_p(slug_vendor_ruby(version))
+      Dir.chdir(slug_vendor_ruby(version)) do
         instrument "ruby.fetch_ruby" do
-          @fetchers[:buildpack].fetch_untar("#{ruby_version}.tgz")
+          @fetchers[:buildpack].fetch_untar("#{version}.tgz")
         end
       end
       error invalid_ruby_version_message unless $?.success?
 
       bin_dir = "bin"
       FileUtils.mkdir_p bin_dir
-      Dir["#{slug_vendor_ruby}/bin/*"].each do |bin|
+      Dir["#{slug_vendor_ruby(version)}/bin/*"].each do |bin|
         run("ln -s ../#{bin} #{bin_dir}")
       end
+      run("ln -s ../#{slug_vendor_ruby(version)}/bin/ruby #{bin_dir}/#{version}")
 
       @metadata.write("buildpack_ruby_version", ruby_version)
 
       if !(@ruby_version.set == :env_var)
-        topic "Using Ruby version: #{ruby_version}"
+        topic "Using Ruby version: #{version}"
         if !@ruby_version.set
           warn(<<WARNING)
 You have not declared a Ruby version in your Gemfile.
@@ -287,7 +291,7 @@ WARNING
         end
       else
         warn(<<WARNING)
-Using RUBY_VERSION: #{ruby_version}
+Using RUBY_VERSION: #{version}
 RUBY_VERSION support has been deprecated and will be removed entirely on August 1, 2012.
 See https://devcenter.heroku.com/articles/ruby-versions#selecting_a_version_of_ruby for more information.
 WARNING
