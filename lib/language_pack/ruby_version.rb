@@ -26,8 +26,13 @@ module LanguagePack
       ENV['RUBY_VERSION']
     end
 
-    def ruby_verson_file
-      File.read(DOT_RV_FILE)
+    def ruby_version_file
+      rv = File.read(DOT_RV_FILE).chomp
+      if rv.match(/^\d/)
+        "ruby-#{rv}"
+      else
+        rv
+      end
     end
 
     def none
@@ -43,18 +48,23 @@ module LanguagePack
     def version
       return @version unless @version.empty?
 
-      bundler_output = gemfile
-      if bundler_output == "No ruby version specified" && env_var
-        # for backwards compatibility.
-        # this will go away in the future
-        @set     = :env_var
-        @version = env_var
-      elsif bundler_output == "No ruby version specified"
-        @set     = false
-        @version = none
+      if File.exists?(DOT_RV_FILE)
+        @set     = :ruby_version
+        @version = ruby_version_file
       else
-        @set     = :gemfile
-        @version = bundler_output.sub('(', '').sub(')', '').split.join('-')
+        bundler_output = gemfile
+        if bundler_output == "No ruby version specified" && env_var
+          # for backwards compatibility.
+          # this will go away in the future
+          @set     = :env_var
+          @version = env_var
+        elsif bundler_output == "No ruby version specified"
+          @set     = false
+          @version = none
+        else
+          @set     = :gemfile
+          @version = bundler_output.sub('(', '').sub(')', '').split.join('-')
+        end
       end
     end
   end

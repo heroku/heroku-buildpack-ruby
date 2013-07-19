@@ -111,7 +111,7 @@ private
     instrument 'ruby.slug_vendor_base' do
       if @slug_vendor_base
         @slug_vendor_base
-      elsif ruby_version == "ruby-1.8.7"
+      elsif ruby_version.match(/^ruby-1\.8\.7/)
         @slug_vendor_base = "vendor/bundle/1.8"
       else
         @slug_vendor_base = run(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
@@ -234,7 +234,7 @@ private
   # determines if a build ruby is required
   # @return [Boolean] true if a build ruby is required
   def build_ruby?
-    @build_ruby ||= !ruby_version_rbx? && !ruby_version_jruby? && !%w{ruby-1.9.3 ruby-2.0.0}.include?(ruby_version)
+    @build_ruby ||= ruby_version.match(/^ruby-(1\.8\.7|1\.9\.2)/)
   end
 
   # install the vendored ruby
@@ -523,9 +523,9 @@ ERROR
   def syck_hack
     instrument "ruby.syck_hack" do
       syck_hack_file = File.expand_path(File.join(File.dirname(__FILE__), "../../vendor/syck_hack"))
-      ruby_version   = run_stdout('ruby -e "puts RUBY_VERSION"').chomp
+      rv             = run_stdout('ruby -e "puts RUBY_VERSION"').chomp
       # < 1.9.3 includes syck, so we need to use the syck hack
-      if Gem::Version.new(ruby_version) < Gem::Version.new("1.9.3")
+      if Gem::Version.new(rv) < Gem::Version.new("1.9.3")
         "-r#{syck_hack_file}"
       else
         ""
