@@ -3,6 +3,7 @@ require "rubygems"
 require "language_pack"
 require "language_pack/base"
 require "language_pack/bundler_lockfile"
+require "language_pack/ruby_version"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
@@ -136,39 +137,24 @@ private
     "/tmp/#{ruby_version}"
   end
 
+  def ruby_version_file
+    ".ruby-version"
+  end
+
   # fetch the ruby version from bundler
   # @return [String, nil] returns the ruby version if detected or nil if none is detected
   def ruby_version
     instrument 'ruby.ruby_version' do
-      return @ruby_version if @ruby_version_run
+      return @ruby_version.version if @ruby_version
+      new_app        = !File.exist?("vendor/heroku")
+      legacy_file    = "buildpack_ruby_version"
+      legacy_version = @metadata.read(legacy_file).chomp if @metadata.exists?(legacy_file)
 
-      @ruby_version_run     = true
-      @ruby_version_env_var = false
-      @ruby_version_set     = false
-
-      old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
-      @ruby_version = run_stdout("env PATH=#{bundler_path}/bin:#{old_system_path} GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
-
-      if @ruby_version == "No ruby version specified" && ENV['RUBY_VERSION']
-        # for backwards compatibility.
-        # this will go away in the future
-        @ruby_version = ENV['RUBY_VERSION']
-        @ruby_version_env_var = true
-      elsif @ruby_version == "No ruby version specified"
-        if new_app?
-          @ruby_version = DEFAULT_RUBY_VERSION
-        elsif !@metadata.exists?("buildpack_ruby_version")
-          @ruby_version = "ruby-1.9.2"
-        else
-          @ruby_version = @metadata.read("buildpack_ruby_version").chomp
-        end
-      else
-        @ruby_version     = @ruby_version.sub('(', '').sub(')', '').split.join('-')
-        @ruby_version_set = true
-      end
+      @ruby_version = LanguagePack::RubyVersion.new(bundler_path, {
+        new: new_app,
+        leagcy_version: legacy_version})
+      @ruby_version.version
     end
-
-    @ruby_version
   end
 
   # determine if we're using rbx
@@ -289,9 +275,9 @@ ERROR
 
       @metadata.write("buildpack_ruby_version", ruby_version)
 
-      if !@ruby_version_env_var
+      if !(@ruby_version.set == :env_var)
         topic "Using Ruby version: #{ruby_version}"
-        if !@ruby_version_set
+        if !@ruby_version.set
           warn(<<WARNING)
 You have not declared a Ruby version in your Gemfile.
 To set your Ruby version add this line to your Gemfile:
