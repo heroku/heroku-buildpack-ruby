@@ -170,8 +170,12 @@ private
 
   # determine if we're using jruby
   # @return [Boolean] true if we are and false if we aren't
-  def ruby_version_jruby?
-    @ruby_version_jruby ||= ruby_version ? ruby_version.match(/jruby-/) : false
+  def ruby_version_jruby?(version = nil)
+    return version.match(/jruby-/) if version
+    ruby_version unless @ruby_version
+    @ruby_version_jruby ||= @ruby_version.versions.any? do |version|
+      version.match(/jruby-/)
+    end
   end
 
   # default JAVA_OPTS
