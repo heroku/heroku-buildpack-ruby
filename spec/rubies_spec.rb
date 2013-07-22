@@ -47,4 +47,14 @@ describe "Ruby Versions" do
       expect(app.run('ruby -v')).to match("ruby 2.0.0p195")
     end
   end
+
+  it "should use a .ruby-versison file for ruby 2 and jruby" do
+    Hatchet::AnvilApp.new("mri_193_p429_jruby_174").deploy do |app|
+      expect(app.output).to match("ruby-1.9.3-p429")
+      expect(app.output).to match("ruby-1.9.3-jruby-1.7.4")
+      expect(app.run('ruby -v')).to match("ruby 1.9.3p429")
+      expect(app.run('ruby-1.9.3-p429')).to match("ruby 1.9.3p429")
+      expect(app.run('ruby-1.9.3-jruby-1.7.4')).to match("jruby 1.7.4 (1.9.3p392")
+    end
+  end
 end

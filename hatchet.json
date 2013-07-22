@@ -5,7 +5,9 @@
     "sharpstone/sqlite3_gemfile"
   ],
   "ruby": [
-    "sharpstone/mri_187"
+    "sharpstone/mri_187",
+    "sharpstone/mri_200_p195_ruby_version",
+    "sharpstone/mri_193_p429_jruby_174"
   ],
   "rack": [
     "sharpstone/mri_187_nokogiri",
