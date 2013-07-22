@@ -1,3 +1,7 @@
+## v71 (7/18/2013)
+
+* Revert to v69 due to asset:precompile bugs
+
 ## v70 (7/18/2013)
 
 Bugfixes:
