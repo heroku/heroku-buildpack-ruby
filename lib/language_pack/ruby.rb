@@ -19,7 +19,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION          = "openjdk7-latest"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
-  BOWER_VERSION        = "0.10.0"
+  BOWER_VERSION        = "1.0.0"
   BOWER_BASE_URL       = "http://heroku-buildpack-ruby-bower.s3.amazonaws.com"
 
   # detects if this is a valid Ruby app
@@ -505,11 +505,22 @@ ERROR
 
   # runs bower to install the dependencies
   def build_bower
+    error_message = <<ERROR
+Can't install JavaScript dependencies
+
+Bower 1.0.0 released at 2013-07-23
+https://github.com/bower/bower/blob/master/CHANGELOG.md
+
+Check these points:
+* Change from component.json to bower.json
+* bower.json requires 'name' option
+ERROR
+
     log("bower") do
       topic("Installing JavaScript dependencies using bower #{BOWER_VERSION}")
       pipe("./node_modules/bower/bin/bower install 2>&1")
       unless $?.success?
-        error "Can't install JavaScript dependencies"
+        error error_message
       end
     end
   end
