@@ -505,11 +505,22 @@ ERROR
 
   # runs bower to install the dependencies
   def build_bower
+    error_message = <<ERROR
+Can't install JavaScript dependencies
+
+Bower 1.0.0 released at 2013-07-23
+https://github.com/bower/bower/blob/master/CHANGELOG.md
+
+Check these points:
+* Change from component.json to bower.json
+* bower.json requires 'name' option
+ERROR
+
     log("bower") do
       topic("Installing JavaScript dependencies using bower #{BOWER_VERSION}")
       pipe("./node_modules/bower/bin/bower install 2>&1")
       unless $?.success?
-        error "Can't install JavaScript dependencies"
+        error error_message
       end
     end
   end
