@@ -629,17 +629,33 @@ params = CGI.parse(uri.query || "")
     bundle.specs.map(&:name).include?(gem)
   end
 
+  def rake_exists?
+    return false unless gem_is_bundled?('rake')
+    return false unless File.exist?("Rakefile")
+    return false if rake_task_list.include?("no such file to load -- rake")
+    true
+  end
+
+  def rake_works?
+    rake_task_list
+    @rake_can_run
+  end
+
+  def rake_task_list
+    @rake_task_list ||= run("env PATH=$PATH:bin bundle exec rake -P")
+    @rake_can_run   ||= $?.success?
+    @rake_task_list
+  end
+
   # detects if a rake task is defined in the app
   # @param [String] the task in question
   # @return [Boolean] true if the rake task is defined in the app
   def rake_task_defined?(task)
     instrument "ruby.rake_task_defined" do
-      task_check = "ruby -S rake -p 'Rake.application.load_rakefile; Rake::Task.task_defined?(ARGV[0])' #{task}"
-      out = run("env PATH=$PATH:bin bundle exec #{task_check}")
-      if $?.success?
-        out.split($/).any? {|line| line.strip == "true" }
-      elsif ["No Rakefile found", "rake is not part of the bundle.", "no such file to load -- rake"].any? {|e| out.include?(e) }
-        false
+      return false unless rake_exists?
+      out = rake_task_list
+      if rake_works?
+        out.match(/\s#{task}\s/)
       else
         error(out)
       end
