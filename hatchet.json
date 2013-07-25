@@ -18,7 +18,8 @@
     "sharpstone/mri_187_no_rakefile",
     "sharpstone/mri_200_no_rakefile",
     "sharpstone/mri_200_rakefile",
-    "sharpstone/mri_200_assets"
+    "sharpstone/mri_200_assets",
+    "sharpstone/mri_200_logger_output"
   ],
   "rails2": [
     "sharpstone/rails23_mri_187"
