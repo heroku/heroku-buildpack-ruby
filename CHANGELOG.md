@@ -1,3 +1,9 @@
+## v74 (7/24/2013)
+
+Bugfixes:
+
+* Lock JRuby 1.7.3 and lower to older version of JDK due to <https://github.com/jruby/jruby/issues/626>
+
 ## v73 (7/23/2013)
 
 * Revert to v69 due to asset:precompile bugs
