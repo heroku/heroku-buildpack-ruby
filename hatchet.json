@@ -13,13 +13,6 @@
     "sharpstone/mri_193",
     "sharpstone/mri_200"
   ],
-  "rake": [
-    "sharpstone/mri_187_no_rake",
-    "sharpstone/mri_187_no_rakefile",
-    "sharpstone/mri_200_no_rakefile",
-    "sharpstone/mri_200_rakefile",
-    "sharpstone/mri_200_assets"
-  ],
   "rails2": [
     "sharpstone/rails23_mri_187"
   ],

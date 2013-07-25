@@ -10,7 +10,6 @@ describe "Rails 4.x" do
 
   it "upgraded from 3 to 4 missing ./bin still works" do
     Hatchet::AnvilApp.new("rails3-to-4-no-bin").deploy do |app, heroku|
-      expect(app.output).to include("Asset precompilation completed")
       add_database(app, heroku)
 
       app.run("rails console") do |console|
