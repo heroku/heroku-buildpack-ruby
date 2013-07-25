@@ -19,6 +19,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   NODE_JS_BINARY_PATH  = "node-#{NODE_VERSION}"
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION          = "openjdk7-latest"
+  JVM_LEGACY_VERSION   = "openjdk71.7.0_21"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
 
   # detects if this is a valid Ruby app
@@ -329,11 +330,18 @@ WARNING
   def install_jvm
     instrument 'ruby.install_jvm' do
       if ruby_version_jruby?
-        topic "Installing JVM: #{JVM_VERSION}"
+        jvm_version =
+          if Gem::Version.new(ruby_version.split("-").last) < Gem::Version.new("1.7.4")
+            JVM_LEGACY_VERSION
+          else
+            JVM_VERSION
+          end
+
+        topic "Installing JVM: #{jvm_version}"
 
         FileUtils.mkdir_p(slug_vendor_jvm)
         Dir.chdir(slug_vendor_jvm) do
-          @fetchers[:jvm].fetch_untar("#{JVM_VERSION}.tar.gz")
+          @fetchers[:jvm].fetch_untar("#{jvm_version}.tar.gz")
         end
 
         bin_dir = "bin"
