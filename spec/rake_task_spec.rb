@@ -35,11 +35,4 @@ describe "Rake Task" do
       expect(successful_body(app)).to eq("hello")
     end
   end
-
-  it "should deploy ruby 2.0.0 and run assets:precompile even with logging messages" do
-    Hatchet::AnvilApp.new("mri_200_logger_output").deploy do |app|
-      expect(app.output).to include("Asset precompilation completed")
-      expect(successful_body(app)).to eq("hello")
-    end
-  end
 end
