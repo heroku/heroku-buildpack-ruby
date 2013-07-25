@@ -21,6 +21,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   JVM_VERSION          = "openjdk7-latest"
   JVM_LEGACY_VERSION   = "openjdk71.7.0_21"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
+  RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -41,6 +42,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   def initialize(build_path, cache_path=nil)
     super(build_path, cache_path)
     @fetchers[:jvm] = LanguagePack::Fetcher.new(JVM_BASE_URL)
+    @fetchers[:rbx] = LanguagePack::Fetcher.new(RBX_BASE_URL)
   end
 
   def name
@@ -266,7 +268,7 @@ ERROR
       if build_ruby?
         FileUtils.mkdir_p(build_ruby_path)
         Dir.chdir(build_ruby_path) do
-          ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
+          ruby_vm = "ruby"
           instrument "ruby.fetch_build_ruby" do
             @fetchers[:buildpack].fetch_untar("#{ruby_version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz")
           end
@@ -277,7 +279,13 @@ ERROR
       FileUtils.mkdir_p(slug_vendor_ruby)
       Dir.chdir(slug_vendor_ruby) do
         instrument "ruby.fetch_ruby" do
-          @fetchers[:buildpack].fetch_untar("#{ruby_version}.tgz")
+          if ruby_version_rbx?
+            @fetchers[:rbx].fetch_bunzip2("#{ruby_version}.tar.bz2")
+            FileUtils.mv(Dir.glob("app/#{slug_vendor_ruby}/*"), ".")
+            FileUtils.rm_rf("app")
+          else
+            @fetchers[:buildpack].fetch_untar("#{ruby_version}.tgz")
+          end
         end
       end
       error invalid_ruby_version_message unless $?.success?

@@ -18,6 +18,10 @@ module LanguagePack
       run("curl #{@host_url}/#{path} -s -o - | tar zxf -")
     end
 
+    def fetch_bunzip2(path)
+      run("curl #{@host_url}/#{path} -s -o - | tar jxf -")
+    end
+
     private
     def load_config
       YAML.load_file(File.expand_path("../../../config/cdn.yml", __FILE__))
