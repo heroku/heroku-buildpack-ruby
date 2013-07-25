@@ -637,7 +637,7 @@ params = CGI.parse(uri.query || "")
       task_check = "ruby -S rake -p 'Rake.application.load_rakefile; Rake::Task.task_defined?(ARGV[0])' #{task}"
       out = run("env PATH=$PATH:bin bundle exec #{task_check}")
       if $?.success?
-        out.split($/).any? {|line| line.strip == "true" }
+        out.split($/).last.strip == "true"
       elsif ["No Rakefile found", "rake is not part of the bundle.", "no such file to load -- rake"].any? {|e| out.include?(e) }
         false
       else
