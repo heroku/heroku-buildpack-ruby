@@ -16,7 +16,7 @@ GEM
     excon (0.25.3)
     heroku-api (0.3.14)
       excon (~> 0.25.1)
-    heroku_hatchet (1.1.3)
+    heroku_hatchet (1.1.4)
       activesupport
       anvil-cli
       excon
