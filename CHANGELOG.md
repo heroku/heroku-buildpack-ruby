@@ -1,3 +1,14 @@
+## v75 (7/29/2013)
+
+Features:
+
+* add request_id to instrumentation
+* switchover to rubinius hosted rbx binaries
+
+Bugfixes:
+
+* OpenJDK version was rolled back, stop special casing JRuby 1.7.3.
+
 ## v74 (7/24/2013)
 
 Bugfixes:
