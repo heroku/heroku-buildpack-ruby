@@ -40,12 +40,4 @@ describe "Ruby Versions" do
       expect(app.run('ruby -v')).to match(version)
     end
   end
-
-  it "should deploy jruby 1.7.3 properly" do
-    Hatchet::AnvilApp.new("ruby_193_jruby_173").deploy do |app|
-      expect(app.output).to match("ruby-1.9.3-jruby-1.7.3")
-      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
-      expect(app.run('ruby -v')).to match("jruby 1.7.3")
-    end
-  end
 end
