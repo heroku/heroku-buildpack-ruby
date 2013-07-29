@@ -1,4 +1,5 @@
 require "tmpdir"
+require "digest/md5"
 require "rubygems"
 require "language_pack"
 require "language_pack/base"
@@ -280,9 +281,25 @@ ERROR
       Dir.chdir(slug_vendor_ruby) do
         instrument "ruby.fetch_ruby" do
           if ruby_version_rbx?
-            @fetchers[:rbx].fetch_bunzip2("#{ruby_version}.tar.bz2")
+            file     = "#{ruby_version}.tar.bz2"
+            sha_file = "#{file}.sha1"
+            @fetchers[:rbx].fetch(file)
+            @fetchers[:rbx].fetch(sha_file)
+
+            expected_checksum = File.read(sha_file).chomp
+            actual_checksum   = Digest::SHA1.file(file).hexdigest
+
+            error <<-ERROR_MSG unless expected_checksum == actual_checksum
+RBX Checksum for #{file} does not match.
+Expected #{expected_checksum} but got #{actual_checksum}.
+Please try pushing again in a few minutes.
+ERROR_MSG
+
+            run("tar jxf #{file}")
             FileUtils.mv(Dir.glob("app/#{slug_vendor_ruby}/*"), ".")
             FileUtils.rm_rf("app")
+            FileUtils.rm(file)
+            FileUtils.rm(sha_file)
           else
             @fetchers[:buildpack].fetch_untar("#{ruby_version}.tgz")
           end
