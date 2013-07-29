@@ -1,3 +1,9 @@
+## v76 (7/29/2013)
+
+Bugfixes:
+
+* fix request_id for instrumentation to follow standard
+
 ## v75 (7/29/2013)
 
 Features:
