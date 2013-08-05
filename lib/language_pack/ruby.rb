@@ -519,7 +519,7 @@ WARNING
           bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
-          env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH RUBYOPT=\"#{syck_hack}\""
+          env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH RUBYOPT=\"#{syck_hack}\" NOKOGIRI_USE_SYSTEM_LIBRARIES=true"
           env_vars      += " BUNDLER_LIB_PATH=#{bundler_path}" if ruby_version && ruby_version.match(/^ruby-1\.8\.7/)
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
@@ -747,6 +747,8 @@ params = CGI.parse(uri.query || "")
         puts "Updating to rubygems #{rubygems_version}. Clearing bundler cache."
         purge_bundler_cache
       end
+
+      purge_bundler_cache if @metadata.exists?(buildpack_version_cache) && @metadata.read(buildpack_version_cache).sub('v', '').to_i <= 76
 
       FileUtils.mkdir_p(heroku_metadata)
       @metadata.write(ruby_version_cache, full_ruby_version, false)
