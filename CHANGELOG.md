@@ -1,3 +1,9 @@
+## v77 (8/5/2013)
+
+Features:
+
+* Force nokogiri to compile with system libs
+
 ## v76 (7/29/2013)
 
 Bugfixes:
