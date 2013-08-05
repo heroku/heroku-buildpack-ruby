@@ -2,7 +2,8 @@
   "bundler": [
     "sharpstone/git_gemspec",
     "sharpstone/no_lockfile",
-    "sharpstone/sqlite3_gemfile"
+    "sharpstone/sqlite3_gemfile",
+    "sharpstone/nokogiri_160"
   ],
   "ruby": [
     "sharpstone/mri_187"
