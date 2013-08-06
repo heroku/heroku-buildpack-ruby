@@ -748,7 +748,12 @@ params = CGI.parse(uri.query || "")
         purge_bundler_cache
       end
 
-      purge_bundler_cache if @metadata.exists?(buildpack_version_cache) && @metadata.read(buildpack_version_cache).sub('v', '').to_i <= 76
+      # fix for https://github.com/sparklemotion/nokogiri/issues/923
+      if @metadata.exists?(buildpack_version_cache) && @metadata.read(buildpack_version_cache).sub('v', '').to_i <= 76
+        puts "Fixing nokogiri install. Clearing bundler cache."
+        puts "See https://github.com/sparklemotion/nokogiri/issues/923."
+        purge_bundler_cache
+      end
 
       FileUtils.mkdir_p(heroku_metadata)
       @metadata.write(ruby_version_cache, full_ruby_version, false)
