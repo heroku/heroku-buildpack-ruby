@@ -68,7 +68,7 @@ private
   def install_plugins
     instrument "rails2.install_plugins" do
       plugins_to_install = plugins.select { |plugin| install_plugin?(plugin) }
-      unless plugins_to_install.empty?
+      if plugins_to_install.any?
         topic "Rails plugin injection"
         plugins_to_install.each { |plugin| install_plugin(plugin) }
       end
