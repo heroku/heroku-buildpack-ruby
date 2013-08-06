@@ -4,7 +4,7 @@ require "language_pack/rack"
 
 # Rails 2 Language Pack. This is for any Rails 2.x apps.
 class LanguagePack::Rails2 < LanguagePack::Ruby
-
+  PLUGINS = ["rails_log_stdout"]
   # detects if this is a valid Rails 2 app
   # @return [Boolean] true if it's a Rails 2 app
   def self.use?
@@ -45,52 +45,22 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
 
   def compile
     instrument "rails2.compile" do
-      super
       install_plugins
+      super
     end
   end
 
 private
 
-  # list of plugins to be installed
-  # @return [Array] resulting list in a String Array
   def plugins
-    %w( rails_log_stdout )
+    @plugins ||= PLUGINS.reject { |plugin| gem_is_bundled?(plugin) }
   end
 
-  # the root path of where the plugins are to be installed from
-  # @return [String] the resulting path
-  def plugin_root
-    File.expand_path("../../../vendor/plugins", __FILE__)
-  end
-
-  # vendors all the plugins into the slug
   def install_plugins
     instrument "rails2.install_plugins" do
-      plugins_to_install = plugins.select { |plugin| install_plugin?(plugin) }
-      if plugins_to_install.any?
-        topic "Rails plugin injection"
-        plugins_to_install.each { |plugin| install_plugin(plugin) }
-      end
+      topic "Rails plugin injection"
+      LanguagePack::Helpers::PluginsInstaller.new(plugins).install
     end
-  end
-
-  # vendors an individual plugin
-  # @param [String] name of the plugin
-  def install_plugin(name)
-    puts "Injecting #{name}; add #{name} to your Gemfile to avoid plugin injection"
-    plugin_dir = "vendor/plugins/#{name}"
-    FileUtils.mkdir_p plugin_dir
-    Dir.chdir(plugin_dir) do |dir|
-      run("curl #{VENDOR_URL}/#{name}.tgz -s -o - | tar xzf -")
-    end
-  end
-
-  # determines if a particular plugin should be installed
-  # @param [String] name of the plugin
-  def install_plugin?(name)
-    plugin_dir = "vendor/plugins/#{name}"
-    !File.exist?(plugin_dir) && !gem_is_bundled?(name)
   end
 
   # most rails apps need a database

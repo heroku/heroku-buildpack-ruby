@@ -3,6 +3,7 @@ require "language_pack/rails2"
 
 # Rails 3 Language Pack. This is for all Rails 3.x apps.
 class LanguagePack::Rails3 < LanguagePack::Rails2
+  PLUGINS = ["rails_log_stdout", "rails3_serve_static_assets"]
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
@@ -40,8 +41,12 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 
 private
 
-  def plugins
-    super.concat(%w( rails3_serve_static_assets )).uniq
+  def install_plugins
+    return false unless plugins.any?
+    plugins.each do |name|
+      warn "Injecting plugin '#{name}', to skip add 'rails_12factor' gem to your Gemfile"
+    end
+    super
   end
 
   # runs the tasks for the Rails 3.1 asset pipeline

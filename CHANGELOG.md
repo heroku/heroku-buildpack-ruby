@@ -1,5 +1,9 @@
 ## Master
 
+Features:
+
+* Don't add plugins if already gems
+
 Bugfixes:
 
 * Fix issue #127 Race condition with LPXC
