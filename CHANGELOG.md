@@ -1,3 +1,9 @@
+## Master
+
+Bugfixes:
+
+* Fix issue #127 Race condition with LPXC
+
 ## v77 (8/5/2013)
 
 Features:
