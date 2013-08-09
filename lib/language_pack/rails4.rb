@@ -30,7 +30,6 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   def build_bundler
     instrument "rails4.build_bundler" do
       super
-      check_for_rails_gems
     end
   end
 
@@ -41,23 +40,14 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   end
 
   private
-  def rails_gems
-    %w(rails_stdout_logging rails_serve_static_assets)
-  end
 
-  def check_for_rails_gems
-    instrument "rails4.check_for_rails_gems" do
-      if rails_gems.any? {|gem| !gem_is_bundled?(gem) }
-        warn(<<WARNING)
-Include "rails_12factor" gem to enable all platform features
+  def install_plugins
+    return false unless plugins.any?
+    warn <<-WARNING
+Include 'rails_12factor' gem to enable all platform features
 See https://devcenter.heroku.com/articles/rails-integration-gems for more information.
 WARNING
-      end
-    end
-  end
-
-  def plugins
-    []
+    # do not install plugins, do not call super
   end
 
   def public_assets_folder
