@@ -4,6 +4,7 @@ require "language_pack/rack"
 
 # Rails 2 Language Pack. This is for any Rails 2.x apps.
 class LanguagePack::Rails2 < LanguagePack::Ruby
+  PLUGINS = ["rails_log_stdout"]
   # detects if this is a valid Rails 2 app
   # @return [Boolean] true if it's a Rails 2 app
   def self.use?
@@ -51,9 +52,12 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
 
 private
 
+  def plugins
+    @plugins ||= PLUGINS.reject { |plugin| gem_is_bundled?(plugin) }
+  end
+
   def install_plugins
     instrument "rails2.install_plugins" do
-      plugins = ["rails_log_stdout"].reject { |plugin| gem_is_bundled?(plugin) }
       topic "Rails plugin injection"
       LanguagePack::Helpers::PluginsInstaller.new(plugins).install
     end

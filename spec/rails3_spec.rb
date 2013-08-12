@@ -8,8 +8,6 @@ describe "Rails 3.x" do
 
       expect(app.output).to match("WARNINGS")
       expect(app.output).to match("Injecting plugin 'rails_log_stdout', to skip add 'rails_12factor' gem to your Gemfile")
-      expect(app.output).to match("Injecting plugin 'rails3_serve_static_assets', to skip add 'rails_12factor' gem to your Gemfile")
-
       expect(successful_body(app)).to eq("hello")
     end
   end
