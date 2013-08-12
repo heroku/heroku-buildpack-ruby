@@ -13,6 +13,9 @@ describe "Rails 4.x" do
       expect(app.output).to include("Asset precompilation completed")
       add_database(app, heroku)
 
+      expect(app.output).to match("WARNINGS")
+      expect(app.output).to match("Include 'rails_12factor' gem to enable all platform features")
+
       app.run("rails console") do |console|
         console.run("'hello' + 'world'") {|result| expect(result).to match('helloworld')}
       end
