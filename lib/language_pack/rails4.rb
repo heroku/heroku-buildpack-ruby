@@ -43,9 +43,9 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
   def install_plugins
     instrument "rails4.install_plugins" do
+      return false if gem_is_bundled?('rails_12factor')
       plugins = ["rails_serve_static_assets", "rails_stdout_logging"].reject { |plugin| gem_is_bundled?(plugin) }
       return false if plugins.empty?
-      return false if gem_is_bundled?('rails_12_factor')
 
     warn <<-WARNING
 Include 'rails_12factor' gem to enable all platform features
