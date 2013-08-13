@@ -42,13 +42,14 @@ private
 
   def install_plugins
     instrument "rails3.install_plugins" do
-      plugins = ["rails_log_stdout", "rails3_serve_static_assets"].reject { |plugin| gem_is_bundled?(plugin) }
+      return false if gem_is_bundled?('rails_12factor')
+      plugins = {"rails_log_stdout" => "rails_stdout_logging", "rails3_serve_static_assets" => "rails_serve_static_assets" }.
+                 reject { |plugin, gem| gem_is_bundled?(gem) }
       return false if plugins.empty?
-      return false if gem_is_bundled?('rails_12_factor')
-      plugins.each do |name|
-        warn "Injecting plugin '#{name}', to skip add 'rails_12factor' gem to your Gemfile"
+      plugins.each do |plugin, gem|
+        warn "Injecting plugin '#{plugin}', to skip add 'rails_12factor' gem to your Gemfile"
       end
-      LanguagePack::Helpers::PluginsInstaller.new(plugins).install
+      LanguagePack::Helpers::PluginsInstaller.new(plugins.keys).install
     end
   end
 
