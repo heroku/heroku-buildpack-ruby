@@ -6,13 +6,15 @@
     "sharpstone/nokogiri_160"
   ],
   "ruby": [
-    "sharpstone/mri_187"
+    "sharpstone/mri_187",
+    "sharpstone/ruby_193_jruby_173"
   ],
   "rack": [
     "sharpstone/mri_187_nokogiri",
     "sharpstone/mri_192",
     "sharpstone/mri_193",
-    "sharpstone/mri_200"
+    "sharpstone/mri_200",
+    "sharpstone/mri_200_p195_ruby_version"
   ],
   "rails2": [
     "sharpstone/rails23_mri_187"
