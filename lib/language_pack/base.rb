@@ -76,7 +76,7 @@ class LanguagePack::Base
     instrument 'base.compile' do
       if @warnings.any?
         topic "WARNINGS:"
-        puts @warnings.join("--\n")
+        puts @warnings.join("\n")
       end
     end
   end
