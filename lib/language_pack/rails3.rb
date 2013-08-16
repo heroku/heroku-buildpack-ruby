@@ -47,8 +47,9 @@ private
                  reject { |plugin, gem| gem_is_bundled?(gem) }
       return false if plugins.empty?
       plugins.each do |plugin, gem|
-        warn "Injecting plugin '#{plugin}', to skip add 'rails_12factor' gem to your Gemfile"
+        warn "Injecting plugin '#{plugin}'"
       end
+      warn "Add 'rails_12factor' gem to your Gemfile to skip plugin injection"
       LanguagePack::Helpers::PluginsInstaller.new(plugins.keys).install
     end
   end
