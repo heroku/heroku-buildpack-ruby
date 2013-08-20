@@ -23,6 +23,7 @@
   ],
   "rails4": [
     "sharpstone/rails4-manifest",
-    "sharpstone/rails3-to-4-no-bin"
+    "sharpstone/rails3-to-4-no-bin",
+    "sharpstone/rails4_windows_mri193"
   ]
 }

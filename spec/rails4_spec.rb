@@ -18,4 +18,16 @@ describe "Rails 4.x" do
       end
     end
   end
+
+  it "works with windows" do
+      result = app.run("rails -v")
+      expect(result).to match("4.0.0")
+
+      result = app.run("rake -T")
+      expect(result).to match("assets:precompile")
+
+      result = app.run("bundle show rails")
+      expect(result).to match("rails-4.0.0")
+    end
+  end
 end
