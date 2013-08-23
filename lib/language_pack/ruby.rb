@@ -234,7 +234,7 @@ private
       filename = "#{version}.sh"
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base(version)}:$GEM_PATH", filename
       set_env_default  "LANG",     "en_US.UTF-8", filename
-      set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base(version)}/bin:$PATH", filename
+      set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base(version)}/bin:$HOME/#{slug_vendor_ruby(version)}/bin:$PATH", filename
 
       if ruby_version_jruby?(version)
         set_env_default "JAVA_OPTS", default_java_opts, filename
