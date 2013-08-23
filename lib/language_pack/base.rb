@@ -123,19 +123,19 @@ private ##################################
   def setup_language_pack_environment
   end
 
-  def add_to_profiled(string)
+  def add_to_profiled(string, filename = "ruby.sh")
     FileUtils.mkdir_p "#{build_path}/.profile.d"
-    File.open("#{build_path}/.profile.d/ruby.sh", "a") do |file|
+    File.open("#{build_path}/.profile.d/#{filename}", "a") do |file|
       file.puts string
     end
   end
 
-  def set_env_default(key, val)
-    add_to_profiled "export #{key}=${#{key}:-#{val}}"
+  def set_env_default(key, val, filename = "ruby.sh")
+    add_to_profiled "export #{key}=${#{key}:-#{val}}", filename
   end
 
-  def set_env_override(key, val)
-    add_to_profiled %{export #{key}="#{val.gsub('"','\"')}"}
+  def set_env_override(key, val, filename = "ruby.sh")
+    add_to_profiled %{export #{key}="#{val.gsub('"','\"')}"}, filename
   end
 
   def log_internal(*args)

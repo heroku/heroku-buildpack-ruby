@@ -16,7 +16,7 @@ class LanguagePack::Rack < LanguagePack::Ruby
     "Ruby/Rack"
   end
 
-  def default_config_vars
+  def default_config_vars(version = ruby_version)
     instrument "rack.default_config_vars" do
       super.merge({
         "RACK_ENV" => "production"
@@ -40,9 +40,9 @@ class LanguagePack::Rack < LanguagePack::Ruby
 private
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled
+  def setup_profiled(version)
     super
-    set_env_default "RACK_ENV", "production"
+    set_env_default "RACK_ENV", "production", "#{version}.sh"
   end
 
 end
