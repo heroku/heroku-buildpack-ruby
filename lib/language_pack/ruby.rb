@@ -112,7 +112,14 @@ private
   # the base PATH environment variable to be used
   # @return [String] the resulting PATH
   def default_path(version)
-    "bin:#{bundler_binstubs_path(version)}:/usr/local/bin:/usr/bin:/bin"
+    path_parts = [
+      "bin",
+      bundler_binstubs_path(version),
+      (ruby_version_jruby? ? "vendor/jvm/bin" : nil),
+      "/usr/local/bin",
+      "/usr/bin",
+      "/bin"
+    ].compact.join(":")
   end
 
   # the relative path to the bundler directory of gems
@@ -175,8 +182,7 @@ private
   # @return [Boolean] true if we are and false if we aren't
   def ruby_version_jruby?(version = nil)
     return version.match(/jruby-/) if version
-    ruby_version unless @ruby_version
-    @ruby_version_jruby ||= @ruby_version.versions.any? do |version|
+     @ruby_version.versions.any? do |version|
       version.match(/jruby-/)
     end
   end
@@ -234,7 +240,12 @@ private
       filename = "#{version}.sh"
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base(version)}:$GEM_PATH", filename
       set_env_default  "LANG",     "en_US.UTF-8", filename
-      set_env_override "PATH",     "$HOME/#{slug_vendor_base(version)}/bin:$HOME/#{slug_vendor_ruby(version)}/bin:$PATH", filename
+      set_env_override "PATH",     [
+        "$HOME/#{slug_vendor_base(version)}/bin",
+        "$HOME/#{slug_vendor_ruby(version)}/bin",
+        (ruby_version_jruby? ? "$HOME/vendor/jvm/bin" : nil),
+        "$PATH"
+      ].compact.join(":"), filename
 
       if ruby_version_jruby?(version)
         set_env_default "JAVA_OPTS", default_java_opts, filename
