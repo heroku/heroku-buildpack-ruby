@@ -17,7 +17,7 @@ module LanguagePack
       def fetch_bundler
         Dir.mktmpdir("bundler-").tap do |dir|
           Dir.chdir(dir) do
-            system("curl #{LanguagePack::Base::VENDOR_URL}/#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz -s -o - | tar xzf -")
+            fetch_package_and_untar("#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz")
           end
         end
       end
