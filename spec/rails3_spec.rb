@@ -7,8 +7,7 @@ describe "Rails 3.x" do
       add_database(app, heroku)
 
       expect(app.output).to match("WARNINGS")
-      expect(app.output).to match("Injecting plugin 'rails_log_stdout', to skip add 'rails_12factor' gem to your Gemfile")
-      expect(app.output).to match("Injecting plugin 'rails3_serve_static_assets', to skip add 'rails_12factor' gem to your Gemfile")
+      expect(app.output).to match("Add 'rails_12factor' gem to your Gemfile to skip plugin injection")
 
       ls = app.run("ls vendor/plugins")
       expect(ls).to match("rails3_serve_static_assets")
@@ -21,8 +20,7 @@ describe "Rails 3.x" do
   it "should not have warnings when using the rails_12factor gem" do
     Hatchet::Runner.new("rails3_12factor").deploy do |app, heroku|
       add_database(app, heroku)
-      expect(app.output).not_to match("Injecting plugin 'rails_log_stdout', to skip add 'rails_12factor' gem to your Gemfile")
-      expect(app.output).not_to match("Injecting plugin 'rails3_serve_static_assets', to skip add 'rails_12factor' gem to your Gemfile")
+      expect(app.output).not_to match("Add 'rails_12factor' gem to your Gemfile to skip plugin injection")
       expect(successful_body(app)).to eq("hello")
     end
   end
@@ -30,7 +28,7 @@ describe "Rails 3.x" do
   it "should only display the correct plugin warning" do
     Hatchet::Runner.new("rails3_one_plugin").deploy do |app, heroku|
       add_database(app, heroku)
-      expect(app.output).not_to match("Injecting plugin 'rails_log_stdout', to skip add 'rails_12factor' gem to your Gemfile")
+      expect(app.output).not_to match("Include 'rails_12factor' gem to enable all platform features")
       expect(app.output).to match("Injecting plugin 'rails3_serve_static_assets', to skip add 'rails_12factor' gem to your Gemfile")
       expect(successful_body(app)).to eq("hello")
     end
