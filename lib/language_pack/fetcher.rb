@@ -39,6 +39,7 @@ module LanguagePack
       YAML.load_file(CDN_YAML_FILE) || {}
     end
 
+
     def fetch_cdn(url)
       url = @config[url] || url
       Pathname.new(url)
