@@ -531,6 +531,7 @@ WARNING
           end
         end
 
+
         if $?.success?
           puts "Bundle completed (#{"%.2f" % bundle_time}s)"
           log "bundle", :status => "success"
