@@ -77,6 +77,10 @@ private
               puts "Asset precompilation completed (#{"%.2f" % time}s)"
             else
               log "assets_precompile", :status => "failure"
+              deprecate <<-DEPRECATION
+                Runtime asset compilation is being removed on Sep. 18, 2013.
+                Builds will soon fail if assets fail to compile.
+              DEPRECATION
               puts "Precompiling assets failed, enabling runtime asset compilation"
               LanguagePack::Helpers::PluginsInstaller.new(["rails31_enable_runtime_asset_compilation"]).install
               puts "Please see this article for troubleshooting help:"

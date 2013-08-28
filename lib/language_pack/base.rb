@@ -23,12 +23,13 @@ class LanguagePack::Base
   # @param [String] the path of the cache dir this is nil during detect and release
   def initialize(build_path, cache_path=nil)
      self.class.instrument "base.initialize" do
-      @build_path = build_path
-      @cache      = LanguagePack::Cache.new(cache_path) if cache_path
-      @metadata   = LanguagePack::Metadata.new(@cache)
-      @id         = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
-      @warnings   = []
-      @fetchers   = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
+      @build_path   = build_path
+      @cache        = LanguagePack::Cache.new(cache_path) if cache_path
+      @metadata     = LanguagePack::Metadata.new(@cache)
+      @id           = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
+      @warnings     = []
+      @deprecations = []
+      @fetchers     = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
 
       Dir.chdir build_path
     end
@@ -77,6 +78,10 @@ class LanguagePack::Base
       if @warnings.any?
         topic "WARNINGS:"
         puts @warnings.join("\n")
+      end
+      if @deprecations.any?
+        topic "DEPRECATIONS:"
+        puts @deprecations.join("\n")
       end
     end
   end
