@@ -28,7 +28,28 @@ module LanguagePack
 
     # run a shell command and stream the output
     # @param [String] command to be run
-    def pipe(command)
+    def pipe(command, options = {})
+      retry_count = options[:retry] || 1
+      name        = options[:name]
+      output      = ""
+      puts "Running: #{name}" if name
+
+      retry_count.times do |attempt|
+        attempt += 1
+
+        if attempt > 1
+          puts "\n Retrying (#{attempt}/#{retry_count}): #{name}" if name
+        end
+
+        output = popen(command)
+
+        break if $?.success?
+      end
+
+      output
+    end
+
+    def popen(command)
       output = ""
       IO.popen(command) do |io|
         until io.eof?
@@ -37,7 +58,6 @@ module LanguagePack
           puts buffer
         end
       end
-
       output
     end
 
@@ -53,7 +73,7 @@ module LanguagePack
     # (indented by 6 spaces)
     # @param [String] message to be displayed
     def puts(message)
-      message.split("\n").each do |line|
+      message.to_s.split("\n").each do |line|
         super "       #{line.strip}"
       end
       $stdout.flush

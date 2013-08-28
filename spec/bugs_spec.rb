@@ -16,4 +16,16 @@ describe "Bugs" do
       expect(app.run("bundle exec nokogiri -v")).not_to include("ARNING: Nokogiri was built against LibXML version")
     end
   end
+
+  it "retries on bad bundler install" do
+    Hatchet::Runner.new("bad_gemfile_on_install", allow_failure: true).deploy do |app|
+      expect(app).not_to be_deployed
+
+      exp = Regexp.escape("Retrying (2/3): bundle install")
+      expect(app.output).to match(exp)
+
+      exp = Regexp.escape("Retrying (3/3): bundle install")
+      expect(app.output).to match(exp)
+    end
+  end
 end
