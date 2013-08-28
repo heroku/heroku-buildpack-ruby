@@ -553,7 +553,7 @@ WARNING
           log "bundle", :status => "failure"
           error_message = "Failed to install gems via Bundler."
           puts "Bundler Output: #{bundler_output}"
-          if bundler_output.match(/Installing sqlite3 \([\w.]+\)( with native extensions)?\s+Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native extension./)
+          if bundler_output.match(/An error occurred while installing sqlite3/)
             error_message += <<ERROR
 
 
