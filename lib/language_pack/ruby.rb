@@ -229,6 +229,7 @@ private
         ENV[key] ||= value
       end
       ENV["GEM_HOME"] = slug_vendor_base
+      ENV["GEM_PATH"] = slug_vendor_base
       ENV["PATH"]     = "#{ruby_install_binstub_path}:#{slug_vendor_base}/bin:#{config_vars["PATH"]}"
     end
   end

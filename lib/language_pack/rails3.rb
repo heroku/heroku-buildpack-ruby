@@ -3,7 +3,6 @@ require "language_pack/rails2"
 
 # Rails 3 Language Pack. This is for all Rails 3.x apps.
 class LanguagePack::Rails3 < LanguagePack::Rails2
-  PLUGINS = ["rails_log_stdout", "rails3_serve_static_assets"]
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
@@ -42,11 +41,17 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 private
 
   def install_plugins
-    return false unless plugins.any?
-    plugins.each do |name|
-      warn "Injecting plugin '#{name}', to skip add 'rails_12factor' gem to your Gemfile"
+    instrument "rails3.install_plugins" do
+      return false if gem_is_bundled?('rails_12factor')
+      plugins = {"rails_log_stdout" => "rails_stdout_logging", "rails3_serve_static_assets" => "rails_serve_static_assets" }.
+                 reject { |plugin, gem| gem_is_bundled?(gem) }
+      return false if plugins.empty?
+      plugins.each do |plugin, gem|
+        warn "Injecting plugin '#{plugin}'"
+      end
+      warn "Add 'rails_12factor' gem to your Gemfile to skip plugin injection"
+      LanguagePack::Helpers::PluginsInstaller.new(plugins.keys).install
     end
-    super
   end
 
   # runs the tasks for the Rails 3.1 asset pipeline
@@ -72,8 +77,12 @@ private
               puts "Asset precompilation completed (#{"%.2f" % time}s)"
             else
               log "assets_precompile", :status => "failure"
+              deprecate <<-DEPRECATION
+                Runtime asset compilation is being removed on Sep. 18, 2013.
+                Builds will soon fail if assets fail to compile.
+              DEPRECATION
               puts "Precompiling assets failed, enabling runtime asset compilation"
-              install_plugin("rails31_enable_runtime_asset_compilation")
+              LanguagePack::Helpers::PluginsInstaller.new(["rails31_enable_runtime_asset_compilation"]).install
               puts "Please see this article for troubleshooting help:"
               puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
             end
