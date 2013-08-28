@@ -34,6 +34,13 @@ describe "Rails 3.x" do
     end
   end
 
+  it "should install the runtime assets" do
+    Hatchet::Runner.new("rails3_runtime_assets").deploy do |app, heroku|
+      add_database(app, heroku)
+      expect(app.output).to match("Precompiling assets failed, enabling runtime asset compilation")
+    end
+  end
+
   context "when not using the rails gem" do
     it "should deploy on ruby 1.9.3" do
       Hatchet::Runner.new("railties3_mri_193").deploy do |app, heroku|

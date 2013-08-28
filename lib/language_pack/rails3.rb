@@ -78,7 +78,7 @@ private
             else
               log "assets_precompile", :status => "failure"
               puts "Precompiling assets failed, enabling runtime asset compilation"
-              install_plugin("rails31_enable_runtime_asset_compilation")
+              LanguagePack::Helpers::PluginsInstaller.new(["rails31_enable_runtime_asset_compilation"]).install
               puts "Please see this article for troubleshooting help:"
               puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
             end

@@ -21,7 +21,8 @@
     "sharpstone/rails3_mri_193",
     "sharpstone/railties3_mri_193",
     "sharpstone/rails3_12factor",
-    "sharpstone/rails3_one_plugin"
+    "sharpstone/rails3_one_plugin",
+    "sharpstone/rails3_runtime_assets"
   ],
   "rails4": [
     "sharpstone/rails4-manifest",
