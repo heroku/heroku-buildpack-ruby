@@ -24,6 +24,7 @@ describe "Rails 4.x" do
   end
 
   it "works with windows" do
+    Hatchet::Runner.new("rails4_windows_mri193").deploy do |app, heroku|
       result = app.run("rails -v")
       expect(result).to match("4.0.0")
 
