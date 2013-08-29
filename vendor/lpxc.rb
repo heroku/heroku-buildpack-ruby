@@ -121,7 +121,6 @@ class Lpxc
         end
         sleep(0.01)
       rescue => e
-        $stderr.puts("at=start-error error=#{e.message}") if ENV['DEBUG']
       end
     end
   end
@@ -149,7 +148,6 @@ class Lpxc
   def outlet
     loop do
       http = Net::HTTP.new(@logplex_url.host, @logplex_url.port)
-      http.set_debug_output($stdout) if ENV['DEBUG']
       http.use_ssl = true if @logplex_url.scheme == 'https'
       begin
         http.start do |conn|
@@ -162,17 +160,14 @@ class Lpxc
             begin
               Timeout::timeout(@conn_timeout) {resp = conn.request(req)}
             rescue => e
-              $stdout.puts("at=req-error msg=#{e.message}") if ENV['DEBUG']
               next
             ensure
               @req_in_flight -= 1
             end
             num_reqs += 1
-            $stdout.puts("at=req-sent status=#{resp.code}") if ENV['DEBUG']
           end
         end
       rescue => e
-        $stdout.puts("at=req-error msg=#{e.message}") if ENV['DEBUG']
       ensure
         http.finish if http.started?
       end
