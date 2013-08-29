@@ -307,10 +307,13 @@ ERROR_MSG
       end
       error invalid_ruby_version_message unless $?.success?
 
-      bin_dir = "bin"
-      FileUtils.mkdir_p bin_dir
-      Dir["#{slug_vendor_ruby}/bin/*"].each do |bin|
-        run("ln -s ../#{bin} #{bin_dir}")
+      app_bin_dir = "bin"
+      FileUtils.mkdir_p app_bin_dir
+
+      run("ln -s ruby #{slug_vendor_ruby}/bin/ruby.exe")
+
+      Dir["#{slug_vendor_ruby}/bin/*"].each do |vendor_bin|
+        run("ln -s ../#{vendor_bin} #{app_bin_dir}")
       end
 
       @metadata.write("buildpack_ruby_version", ruby_version)
