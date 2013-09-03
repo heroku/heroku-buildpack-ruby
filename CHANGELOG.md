@@ -1,3 +1,10 @@
+## v79 (9/3/2013)
+
+Bugfixes:
+
+* Remove LPXC debug output when `DEBUG` env var is set (#141)
+* Symlink ruby.exe, so Rails 4 bins work for Windows (#139)
+
 ## v78 (8/28/2013)
 
 Features:
