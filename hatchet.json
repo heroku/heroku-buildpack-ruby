@@ -2,7 +2,8 @@
   "bundler": [
     "sharpstone/git_gemspec",
     "sharpstone/no_lockfile",
-    "sharpstone/sqlite3_gemfile"
+    "sharpstone/sqlite3_gemfile",
+    "sharpstone/nokogiri_160"
   ],
   "ruby": [
     "sharpstone/mri_187"
@@ -18,9 +19,14 @@
   ],
   "rails3": [
     "sharpstone/rails3_mri_193",
-    "sharpstone/railties3_mri_193"
+    "sharpstone/railties3_mri_193",
+    "sharpstone/rails3_12factor",
+    "sharpstone/rails3_one_plugin",
+    "sharpstone/rails3_runtime_assets"
   ],
   "rails4": [
-    "sharpstone/rails4-manifest"
+    "sharpstone/rails4-manifest",
+    "sharpstone/rails3-to-4-no-bin",
+    "sharpstone/rails4_windows_mri193"
   ]
 }

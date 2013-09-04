@@ -63,5 +63,10 @@ module LanguagePack
       @warnings ||= []
       @warnings << message
     end
+
+    def deprecate(message)
+      @deprecations ||= []
+      @deprecations << message
+    end
   end
 end

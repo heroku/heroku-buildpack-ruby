@@ -2,3 +2,4 @@ repos/*
 .DS_Store
 vendor/bundler/*
 vendor/bundle/*
+.env
