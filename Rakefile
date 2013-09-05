@@ -1,6 +1,15 @@
 require "fileutils"
 require "tmpdir"
-require 'hatchet/tasks'
+begin
+  require 'hatchet/tasks'
+rescue LoadError
+  # This can happen if hatchet is not installed.
+  $stderr.puts(<<ERROR)
+heroku_hatchet gem is not installed.
+Please bundle install and try again.
+ERROR
+  exit 1
+end
 
 S3_BUCKET_NAME  = "heroku-buildpack-ruby"
 VENDOR_URL      = "https://s3.amazonaws.com/#{S3_BUCKET_NAME}"
