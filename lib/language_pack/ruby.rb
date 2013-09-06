@@ -146,18 +146,12 @@ private
       return @ruby_version if @ruby_version_run
 
       @ruby_version_run     = true
-      @ruby_version_env_var = false
       @ruby_version_set     = false
 
       old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
       @ruby_version = run_stdout("env PATH=#{bundler_path}/bin:#{old_system_path} GEM_PATH=#{bundler_path} bundle platform --ruby").chomp
 
-      if @ruby_version == "No ruby version specified" && ENV['RUBY_VERSION']
-        # for backwards compatibility.
-        # this will go away in the future
-        @ruby_version = ENV['RUBY_VERSION']
-        @ruby_version_env_var = true
-      elsif @ruby_version == "No ruby version specified"
+      if @ruby_version == "No ruby version specified"
         if new_app?
           @ruby_version = DEFAULT_RUBY_VERSION
         elsif !@metadata.exists?("buildpack_ruby_version")
@@ -318,21 +312,13 @@ ERROR_MSG
 
       @metadata.write("buildpack_ruby_version", ruby_version)
 
-      if !@ruby_version_env_var
-        topic "Using Ruby version: #{ruby_version}"
-        if !@ruby_version_set
-          warn(<<WARNING)
+      topic "Using Ruby version: #{ruby_version}"
+      if !@ruby_version_set
+        warn(<<WARNING)
 You have not declared a Ruby version in your Gemfile.
 To set your Ruby version add this line to your Gemfile:
 #{ruby_version_to_gemfile}
 # See https://devcenter.heroku.com/articles/ruby-versions for more information."
-WARNING
-        end
-      else
-        warn(<<WARNING)
-Using RUBY_VERSION: #{ruby_version}
-RUBY_VERSION support has been deprecated and will be removed entirely on August 1, 2012.
-See https://devcenter.heroku.com/articles/ruby-versions#selecting_a_version_of_ruby for more information.
 WARNING
       end
     end
