@@ -604,8 +604,16 @@ ERROR
 
     log("bower") do
       topic("Installing JavaScript dependencies using bower #{BOWER_VERSION}")
-      pipe("./node_modules/bower/bin/bower install 2>&1")
-      unless $?.success?
+
+      load_bower_cache
+
+      pipe("./node_modules/bower/bin/bower install --config.storage.packages=vendor/bower/packages --config.storage.registry=vendor/bower/registry --config.tmp=vendor/bower/tmp 2>&1")
+      if $?.success?
+        log "bower", :status => "success"
+        puts "Cleaning up the bower tmp."
+        FileUtils.rm_rf("vendor/bower/tmp")
+        cache.store "vendor/bower"
+      else
         error error_message
       end
     end
@@ -754,6 +762,12 @@ params = CGI.parse(uri.query || "")
 
   def bundler_cache
     "vendor/bundle"
+  end
+
+  def load_bower_cache
+    instrument "ruby.load_bower_cache" do
+      cache.load "vendor/bower"
+    end
   end
 
   def load_bundler_cache
