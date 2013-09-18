@@ -189,7 +189,7 @@ private
   # default JRUBY_OPTS
   # return [String] string of JRUBY_OPTS
   def default_jruby_opts
-    "-Xcompile.invokedynamic=true"
+    "-Xcompile.invokedynamic=false"
   end
 
   # default JAVA_TOOL_OPTIONS
