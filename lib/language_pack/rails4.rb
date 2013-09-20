@@ -3,7 +3,7 @@ require "language_pack/rails3"
 
 # Rails 4 Language Pack. This is for all Rails 4.x apps.
 class LanguagePack::Rails4 < LanguagePack::Rails3
-  ASSETS_CACHE_LIMIT = 52428800
+  ASSETS_CACHE_LIMIT = 52428800 # bytes
 
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
@@ -109,12 +109,7 @@ WARNING
 
   def cleanup_assets_cache
     instrument "rails4.cleanup_assets_cache" do
-      file_stat     = Hash.new {|h, k| h[k] = File.stat(k) }
-      sorted_assets = Dir["#{default_assets_cache}/**/*"].select {|file| !File.directory?(file) }.sort {|a, b| file_stat[a].mtime <=> file_stat[b].mtime }
-      total_size    = sorted_assets.inject(0) {|sum, asset| sum + file_stat[asset].size }
-      diff          = total_size - ASSETS_CACHE_LIMIT
-
-      sorted_assets.take_while {|asset| diff -= file_stat[asset].size if diff > 0 }.each {|asset| FileUtils.rm(asset) }
+      LanguagePack::Helpers::StaleFileCleaner.new(default_assets_cache).clean_over(ASSETS_CACHE_LIMIT)
     end
   end
 end
