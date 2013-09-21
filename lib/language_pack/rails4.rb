@@ -3,6 +3,8 @@ require "language_pack/rails3"
 
 # Rails 4 Language Pack. This is for all Rails 4.x apps.
 class LanguagePack::Rails4 < LanguagePack::Rails3
+  ASSETS_CACHE_LIMIT = 52428800 # bytes
+
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
@@ -59,6 +61,10 @@ WARNING
     "public/assets"
   end
 
+  def default_assets_cache
+    "tmp/cache/assets"
+  end
+
   def run_assets_precompile_rake_task
     instrument "rails4.run_assets_precompile_rake_task" do
       log("assets_precompile") do
@@ -73,6 +79,7 @@ WARNING
             ENV["RAILS_ENV"]    ||= "production"
 
             @cache.load public_assets_folder
+            @cache.load default_assets_cache
 
             puts "Running: rake assets:precompile"
             require 'benchmark'
@@ -85,7 +92,9 @@ WARNING
               puts "Cleaning assets"
               pipe "env PATH=$PATH:bin bundle exec rake assets:clean 2>& 1"
 
+              cleanup_assets_cache
               @cache.store public_assets_folder
+              @cache.store default_assets_cache
             else
               log "assets_precompile", :status => "failure"
               error "Precompiling assets failed."
@@ -95,6 +104,12 @@ WARNING
           puts "Error detecting the assets:precompile task"
         end
       end
+    end
+  end
+
+  def cleanup_assets_cache
+    instrument "rails4.cleanup_assets_cache" do
+      LanguagePack::Helpers::StaleFileCleaner.new(default_assets_cache).clean_over(ASSETS_CACHE_LIMIT)
     end
   end
 end
