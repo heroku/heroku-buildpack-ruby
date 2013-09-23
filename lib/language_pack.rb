@@ -2,6 +2,8 @@ require "pathname"
 
 # General Language Pack module
 module LanguagePack
+  module Helpers
+  end
 
   # detects which language pack to use
   # @param [Array] first argument is a String of the build directory
@@ -26,6 +28,7 @@ $:.unshift File.expand_path("../../vendor", __FILE__)
 require 'dotenv'
 require 'language_pack/instrument'
 require "language_pack/helpers/plugin_installer"
+require "language_pack/helpers/stale_file_cleaner"
 require "language_pack/ruby"
 require "language_pack/rack"
 require "language_pack/rails2"
