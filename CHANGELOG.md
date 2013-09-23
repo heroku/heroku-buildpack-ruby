@@ -1,3 +1,14 @@
+## v80 (9/23/2013)
+
+Features:
+
+* Cache 50mb of Rails 4 intermediate cache
+* Support for Ruby 2.1.0
+
+Bugfixes:
+
+* Disable invoke dynamic on JRuby by default until JDK stabalizes it
+
 ## v79 (9/3/2013)
 
 Bugfixes:
