@@ -4,7 +4,6 @@ module LanguagePack
   class RubyVersion
     include LanguagePack::ShellHelpers
 
-    DOT_RV_FILE     = ".ruby-version"
     DEFAULT_VERSION = "ruby-2.0.0"
     LEGACY_VERSION  = "ruby-1.9.2"
 
@@ -54,15 +53,6 @@ module LanguagePack
       run_stdout("env PATH=#{@bundler_path}/bin:#{old_system_path} GEM_PATH=#{@bundler_path} bundle platform --ruby").chomp
     end
 
-    def ruby_version_file
-      rv = File.read(DOT_RV_FILE).chomp
-      if rv.match(/^\d/)
-        "ruby-#{rv}"
-      else
-        rv
-      end
-    end
-
     def none
       if @app[:new]
         DEFAULT_VERSION
@@ -74,18 +64,13 @@ module LanguagePack
     end
 
     def set_version
-      if File.exists?(DOT_RV_FILE)
-        @set     = :ruby_version
-        @version = ruby_version_file
+      bundler_output = gemfile
+      if bundler_output == "No ruby version specified"
+        @set     = false
+        @version = none
       else
-        bundler_output = gemfile
-        if bundler_output == "No ruby version specified"
-          @set     = false
-          @version = none
-        else
-          @set     = :gemfile
-          @version = bundler_output.sub('(', '').sub(')', '').split.join('-')
-        end
+        @set     = :gemfile
+        @version = bundler_output.sub('(', '').sub(')', '').split.join('-')
       end
     end
 
