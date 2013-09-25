@@ -1,2 +1,2 @@
 ---
-https://s3.amazonaws.com/heroku-buildpack-ruby: https://d3nlvu62nhllo4.cloudfront.net
+https://s3-external-1.amazonaws.com/heroku-buildpack-ruby: https://d3nlvu62nhllo4.cloudfront.net
