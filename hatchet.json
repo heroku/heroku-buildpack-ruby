@@ -1,5 +1,6 @@
 {
   "bundler": [
+    "sharpstone/bad_gemfile_on_platform",
     "sharpstone/git_gemspec",
     "sharpstone/no_lockfile",
     "sharpstone/sqlite3_gemfile",
@@ -10,6 +11,7 @@
     "sharpstone/ruby_193_jruby_173"
   ],
   "rack": [
+    "sharpstone/default_ruby",
     "sharpstone/mri_187_nokogiri",
     "sharpstone/mri_192",
     "sharpstone/mri_193",

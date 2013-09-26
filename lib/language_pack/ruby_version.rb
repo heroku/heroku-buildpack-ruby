@@ -2,16 +2,34 @@ require "language_pack/shell_helpers"
 
 module LanguagePack
   class RubyVersion
-    include LanguagePack::ShellHelpers
+    class BadVersionError < StandardError
+      def initialize(output = "")
+        msg = "Can not parse Ruby Version:\n"
+        msg << "Valid versions listed on: https://devcenter.heroku.com/articles/ruby-support\n"
+        msg << output
+        super msg
+      end
+    end
 
-    DEFAULT_VERSION = "ruby-2.0.0"
-    LEGACY_VERSION  = "ruby-1.9.2"
+    DEFAULT_VERSION_NUMBER = "2.0.0"
+    DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}"
+    LEGACY_VERSION_NUMBER  = "1.9.2"
+    LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}"
+    RUBY_VERSION_REGEX     = %r{
+        (?<ruby_version>\d+\.\d+\.\d+){0}
+        (?<patchlevel>p\d+){0}
+        (?<engine>\w+){0}
+        (?<engine_version>.+){0}
+
+        ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
+      }x
 
     attr_reader :set, :version, :version_without_patchlevel, :patchlevel, :engine, :ruby_version, :engine_version
+    include LanguagePack::ShellHelpers
 
-    def initialize(bundler_path, app = {})
+    def initialize(bundler, app = {})
       @set          = nil
-      @bundler_path = bundler_path
+      @bundler      = bundler
       @app          = app
       set_version
       parse_version
@@ -49,12 +67,12 @@ module LanguagePack
 
     private
     def gemfile
-      old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
-      run_stdout("env PATH=#{@bundler_path}/bin:#{old_system_path} GEM_PATH=#{@bundler_path} bundle platform --ruby").chomp
+      ruby_version = @bundler.ruby_version
+      return ruby_version.to_s
     end
 
     def none
-      if @app[:new]
+      if @app[:is_new]
         DEFAULT_VERSION
       elsif @app[:last_version]
         @app[:last_version]
@@ -65,7 +83,7 @@ module LanguagePack
 
     def set_version
       bundler_output = gemfile
-      if bundler_output == "No ruby version specified"
+      if bundler_output.empty?
         @set     = false
         @version = none
       else
@@ -75,29 +93,12 @@ module LanguagePack
     end
 
     def parse_version
-      regex = %r{
-        (?<ruby_version>\d+\.\d+\.\d+){0}
-        (?<patchlevel>p\d+){0}
-        (?<engine>\w+){0}
-        (?<engine_version>.+){0}
-
-        ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
-      }x
-
-      md = regex.match(version)
-      if md
-        @ruby_version   = md[:ruby_version]
-        @patchlevel     = md[:patchlevel]
-        @engine         = md[:engine]
-        @engine_version = md[:engine_version]
-
-        if @engine.nil?
-          @engine         = :ruby
-          @engine_version = @ruby_version
-        end
-      else
-        raise "Can not parse Ruby Version: #{version}"
-      end
+      md = RUBY_VERSION_REGEX.match(version)
+      raise BadVersionError.new("'#{version}' is not valid") unless md
+      @ruby_version   = md[:ruby_version]
+      @patchlevel     = md[:patchlevel]
+      @engine_version = md[:engine_version] || @ruby_version
+      @engine         = (md[:engine]        || :ruby).to_sym
     end
   end
 end
