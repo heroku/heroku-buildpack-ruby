@@ -29,7 +29,7 @@ module LanguagePack
 
     def initialize(bundler_path, app = {})
       @set          = nil
-      @bundler_path  = bundler_path
+      @bundler_path = bundler_path
       @app          = app
       set_version
       parse_version
@@ -68,8 +68,8 @@ module LanguagePack
     private
     def gemfile
       old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
-      path            = "#{@bundler_path}/bin:#{old_system_path}:$PATH"
-      platform_output = run("env PATH=#{path} GEM_PATH=#{@bundler_path} bundle platform --ruby").chomp
+      path            = "$PATH:/bin:#{old_system_path}"
+      platform_output = run("env PATH=#{path} GEM_PATH=#{@bundler_path} #{@bundler_path}/bin/bundle platform --ruby").chomp
       raise BadVersionError.new("Command `$ bundle platform --ruby` failed: #{platform_output}") unless $?.success?
       platform_output
     end
