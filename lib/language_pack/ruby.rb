@@ -151,7 +151,7 @@ private
       last_version      = @metadata.read(last_version_file).chomp if @metadata.exists?(last_version_file)
 
       @ruby_version = LanguagePack::RubyVersion.new(bundler_path, {
-        new: new_app,
+        is_new:       new_app,
         last_version: last_version})
     end
   end

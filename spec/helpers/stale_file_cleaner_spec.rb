@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-require 'language_pack'
-
 describe "Cleans Stale Files" do
 
   it "removes files if they go over the limit" do
