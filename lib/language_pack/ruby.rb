@@ -3,14 +3,10 @@ require "digest/md5"
 require "rubygems"
 require "language_pack"
 require "language_pack/base"
-require "language_pack/bundler_lockfile"
 require "language_pack/ruby_version"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
-  include LanguagePack::BundlerLockfile
-  extend LanguagePack::BundlerLockfile::ClassMethods
-
   NAME                 = "ruby"
   BUILDPACK_VERSION    = "v80"
   LIBYAML_VERSION      = "0.1.4"
@@ -32,10 +28,34 @@ class LanguagePack::Ruby < LanguagePack::Base
     end
   end
 
+  def self.gemfile_lock?
+    File.exist?('Gemfile') && File.exist?('Gemfile.lock')
+  end
+
+  def self.bundler
+    @bundler ||= LanguagePack::Helpers::BundlerWrapper.new
+  end
+
+  def bundler
+    self.class.bundler
+  end
+
+  def self.bundle
+    bundler.lockfile_parser
+  end
+
+  def bundle
+    self.class.bundle
+  end
+
+  def bundler_path
+    bundler.bundler_path
+  end
+
   def self.gem_version(name)
     instrument "ruby.gem_version" do
       if gem = bundle.specs.detect {|g| g.name == name }
-        gem.version
+        return gem.version
       end
     end
   end
@@ -150,9 +170,10 @@ private
       last_version      = nil
       last_version      = @metadata.read(last_version_file).chomp if @metadata.exists?(last_version_file)
 
-      @ruby_version = LanguagePack::RubyVersion.new(bundler_path, {
+      @ruby_version = LanguagePack::RubyVersion.new(bundler,
         is_new:       new_app,
-        last_version: last_version})
+        last_version: last_version)
+      return @ruby_version
     end
   end
 

@@ -27,9 +27,9 @@ module LanguagePack
     attr_reader :set, :version, :version_without_patchlevel, :patchlevel, :engine, :ruby_version, :engine_version
     include LanguagePack::ShellHelpers
 
-    def initialize(bundler_path, app = {})
+    def initialize(bundler, app = {})
       @set          = nil
-      @bundler_path = bundler_path
+      @bundler      = bundler
       @app          = app
       set_version
       parse_version
@@ -67,11 +67,8 @@ module LanguagePack
 
     private
     def gemfile
-      old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
-      path            = "$PATH:/bin:#{old_system_path}"
-      platform_output = run("env PATH=#{path} GEM_PATH=#{@bundler_path} #{@bundler_path}/bin/bundle platform --ruby").chomp
-      raise BadVersionError.new("Command `$ bundle platform --ruby` failed: #{platform_output}") unless $?.success?
-      platform_output
+      ruby_version = @bundler.ruby_version
+      return ruby_version.to_s
     end
 
     def none
@@ -86,7 +83,7 @@ module LanguagePack
 
     def set_version
       bundler_output = gemfile
-      if bundler_output == "No ruby version specified"
+      if bundler_output.empty?
         @set     = false
         @version = none
       else

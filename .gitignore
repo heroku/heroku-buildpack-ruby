@@ -3,3 +3,4 @@ repos/*
 vendor/bundler/*
 vendor/bundle/*
 .env
+.ruby-version

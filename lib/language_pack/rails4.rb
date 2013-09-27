@@ -11,7 +11,10 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
     instrument "rails4.use" do
       if gemfile_lock?
         rails_version = LanguagePack::Ruby.gem_version('railties')
-        rails_version >= Gem::Version.new('4.0.0.beta') && rails_version < Gem::Version.new('5.0.0') if rails_version
+        return false unless rails_version
+        is_rails4     = rails_version >= Gem::Version.new('4.0.0.beta') &&
+                        rails_version <  Gem::Version.new('5.0.0')
+        return is_rails4
       end
     end
   end
