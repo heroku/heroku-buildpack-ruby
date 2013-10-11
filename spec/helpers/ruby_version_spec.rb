@@ -9,7 +9,7 @@ describe "RubyVersion" do
     @bundler.clean
   end
 
-  it "correctly sets ruby version for bundler specified versions", focused: true  do
+  it "correctly sets ruby version for bundler specified versions" do
     Hatchet::App.new("mri_193").in_directory do |dir|
       @bundler       = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: "./Gemfile")
       ruby_version   = LanguagePack::RubyVersion.new(@bundler, {is_new: true})
@@ -22,7 +22,7 @@ describe "RubyVersion" do
     end
   end
 
-  it "correctly sets default ruby versions", focused: true do
+  it "correctly sets default ruby versions" do
     Hatchet::App.new("default_ruby").in_directory do |dir|
       @bundler       = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: "./Gemfile")
 
@@ -36,7 +36,7 @@ describe "RubyVersion" do
     end
   end
 
-  it "correctly sets default legacy version", focused: true do
+  it "correctly sets default legacy version" do
     Hatchet::App.new("default_ruby").in_directory do |dir|
       @bundler       = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: "./Gemfile")
       ruby_version   = LanguagePack::RubyVersion.new(@bundler, {is_new: false})
@@ -49,7 +49,7 @@ describe "RubyVersion" do
     end
   end
 
-  it "detects Ruby 2.0.0", focused: true do
+  it "detects Ruby 2.0.0" do
     Hatchet::App.new("mri_200").in_directory do |dir|
       @bundler       = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: "./Gemfile")
       ruby_version   = LanguagePack::RubyVersion.new(@bundler, {is_new: true})
@@ -63,7 +63,7 @@ describe "RubyVersion" do
   end
 
 
-  it "detects non mri engines", focused: true  do
+  it "detects non mri engines" do
     Hatchet::App.new("ruby_193_jruby_173").in_directory do |dir|
       @bundler       = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: "./Gemfile")
       ruby_version   = LanguagePack::RubyVersion.new(@bundler, {is_new: true})
@@ -79,7 +79,7 @@ describe "RubyVersion" do
     end
   end
 
-  it "surfaces error message from bundler", focused: true  do
+  it "surfaces error message from bundler"  do
     bundle_error_msg = "Zomg der was a problem in da gemfile"
     error_klass      = LanguagePack::Helpers::BundlerWrapper::GemfileParseError
     Hatchet::App.new("bad_gemfile_on_platform").in_directory do |dir|

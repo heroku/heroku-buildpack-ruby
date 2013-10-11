@@ -26,10 +26,19 @@ class LanguagePack::Helpers::BundlerWrapper
     @unlock               = false
     @path                 = Pathname.new "#{@bundler_path}/gems/#{BUNDLER_DIR_NAME}/lib"
     fetch_bundler
-
     $LOAD_PATH << @path
-    load @path.join("bundler.rb")
+    without_warnings do
+      load @path.join("bundler.rb")
+    end
   end
+
+    def without_warnings(&block)
+      orig_verb  = $VERBOSE
+      $VERBOSE   = nil
+      yield
+    ensure
+      $VERBOSE = orig_verb
+    end
 
   def instrument(*args, &block)
     LanguagePack::Instrument.instrument(*args, &block)

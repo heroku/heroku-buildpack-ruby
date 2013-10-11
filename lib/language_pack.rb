@@ -37,5 +37,3 @@ require "language_pack/disable_deploys"
 require "language_pack/rails4"
 require "language_pack/no_lockfile"
 require "language_pack/helpers/bundler_wrapper"
-
-
