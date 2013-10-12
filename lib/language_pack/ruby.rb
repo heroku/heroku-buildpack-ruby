@@ -21,7 +21,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION          = "openjdk7-latest"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
-  DEFAULT_CACHE        = "#{DEFAULT_RUBY_VERSION}-default-cache"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
 
   # detects if this is a valid Ruby app
@@ -439,9 +438,13 @@ WARNING
 
   # loads a default bundler cache for new apps to speed up initial bundle installs
   def load_default_cache
-    if new_app? && ruby_version == DEFAULT_RUBY_VERSION
-      puts "New app detected loading default bundler cache"
-      @fetchers[:buildpack].fetch_untar("#{DEFAULT_CACHE}.tgz")
+    instrument "ruby.load_default_cache" do
+      if new_app? && ruby_version == DEFAULT_RUBY_VERSION
+        puts "New app detected loading default bundler cache"
+        patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").chomp
+        cache_name  = "#{DEFAULT_RUBY_VERSION}-p#{patchlevel}-default-cache"
+        @fetchers[:buildpack].fetch_untar("#{cache_name}.tgz")
+      end
     end
   end
 
