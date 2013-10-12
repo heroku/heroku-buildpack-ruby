@@ -318,7 +318,7 @@ ERROR_MSG
 You have not declared a Ruby version in your Gemfile.
 To set your Ruby version add this line to your Gemfile:
 #{ruby_version_to_gemfile}
-# See https://devcenter.heroku.com/articles/ruby-versions for more information."
+# See https://devcenter.heroku.com/articles/ruby-versions for more information.
 WARNING
       end
     end
