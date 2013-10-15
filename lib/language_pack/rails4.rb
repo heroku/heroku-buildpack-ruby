@@ -17,18 +17,37 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   end
 
   def default_process_types
-    web_process = gem_is_bundled?("thin") ?
-      "bin/rails server thin -p $PORT -e $RAILS_ENV" :
-      "bin/rails server -p $PORT -e $RAILS_ENV"
     super.merge({
-      "web"     => web_process,
+      "web"     => "bin/rails server -p $PORT -e $RAILS_ENV",
       "console" => "bin/rails console"
     })
   end
 
+  def build_bundler
+    super
+    check_for_rails_gems
+  end
+
   private
+  def rails_gems
+    %w(rails_stdout_logging rails_serve_static_assets)
+  end
+
+  def check_for_rails_gems
+    if rails_gems.any? {|gem| !gem_is_bundled?(gem) }
+      warn(<<WARNING)
+Include "rails_12factor" gem to enable all platform features
+See https://devcenter.heroku.com/articles/rails-integration-gems for more information.
+WARNING
+    end
+  end
+
   def plugins
     []
+  end
+
+  def public_assets_folder
+    "public/assets"
   end
 
   def run_assets_precompile_rake_task
@@ -37,19 +56,26 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
       if rake_task_defined?("assets:precompile")
         topic("Preparing app for Rails asset pipeline")
-        if File.exists?("public/assets/manifest.yml")
-          puts "Detected manifest.yml, assuming assets were compiled locally"
+        if Dir.glob('public/assets/manifest-*.json').any?
+          puts "Detected manifest file, assuming assets were compiled locally"
         else
           ENV["RAILS_GROUPS"] ||= "assets"
           ENV["RAILS_ENV"]    ||= "production"
 
+          @cache.load public_assets_folder
+
           puts "Running: rake assets:precompile"
           require 'benchmark'
-          time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
+          time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1 > /dev/null") }
 
           if $?.success?
             log "assets_precompile", :status => "success"
             puts "Asset precompilation completed (#{"%.2f" % time}s)"
+
+            puts "Cleaning assets"
+            pipe "env PATH=$PATH:bin bundle exec rake assets:clean 2>& 1"
+
+            @cache.store public_assets_folder
           else
             log "assets_precompile", :status => "failure"
             error "Precompiling assets failed."
@@ -59,8 +85,5 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
         puts "Error detecting the assets:precompile task"
       end
     end
-  end
-
-  def create_database_yml
   end
 end
