@@ -1,3 +1,10 @@
+## v81 (10/15/2013)
+
+Features:
+
+* add Default Bundler Cache for new Ruby 2.0.0 apps
+* use Virginia S3 bucket instead of Cloudfront
+
 ## v80 (9/23/2013)
 
 Features:
