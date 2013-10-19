@@ -12,8 +12,8 @@ describe "Bugs" do
 
   it "nokogiri should use the system libxml2" do
     Hatchet::Runner.new("nokogiri_160").deploy do |app|
-      expect(app.output).to match("Installing nokogiri")
-      expect(app.run("bundle exec nokogiri -v")).not_to include("ARNING: Nokogiri was built against LibXML version")
+      expect(app.output).to match("nokogiri")
+      expect(app.run("bundle exec nokogiri -v")).not_to include("WARNING: Nokogiri was built against LibXML version")
     end
   end
 end
