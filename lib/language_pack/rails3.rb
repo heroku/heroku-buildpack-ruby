@@ -59,34 +59,27 @@ private
     instrument "rails3.run_assets_precompile_rake_task" do
       log("assets_precompile") do
         setup_database_url_env
+        return true unless rake_task_defined?("assets:precompile")
 
-        if rake_task_defined?("assets:precompile")
-          topic("Preparing app for Rails asset pipeline")
-          if File.exists?("public/assets/manifest.yml")
-            puts "Detected manifest.yml, assuming assets were compiled locally"
-          else
-            ENV["RAILS_GROUPS"] ||= "assets"
-            ENV["RAILS_ENV"]    ||= "production"
+        topic("Preparing app for Rails asset pipeline")
+        if File.exists?("public/assets/manifest.yml")
+          puts "Detected manifest.yml, assuming assets were compiled locally"
+          return true
+        end
 
-            puts "Running: rake assets:precompile"
-            require 'benchmark'
-            time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
+        ENV["RAILS_GROUPS"] ||= "assets"
+        ENV["RAILS_ENV"]    ||= "production"
 
-            if $?.success?
-              log "assets_precompile", :status => "success"
-              puts "Asset precompilation completed (#{"%.2f" % time}s)"
-            else
-              log "assets_precompile", :status => "failure"
-              deprecate <<-DEPRECATION
-                Runtime asset compilation is being removed on Sep. 18, 2013.
-                Builds will soon fail if assets fail to compile.
-              DEPRECATION
-              puts "Precompiling assets failed, enabling runtime asset compilation"
-              LanguagePack::Helpers::PluginsInstaller.new(["rails31_enable_runtime_asset_compilation"]).install
-              puts "Please see this article for troubleshooting help:"
-              puts "http://devcenter.heroku.com/articles/rails31_heroku_cedar#troubleshooting"
-            end
-          end
+        puts "Running: rake assets:precompile"
+        require 'benchmark'
+        time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
+
+        if $?.success?
+          log "assets_precompile", :status => "success"
+          puts "Asset precompilation completed (#{"%.2f" % time}s)"
+        else
+          log "assets_precompile", :status => "failure"
+          error "Precompiling assets failed."
         end
       end
     end
