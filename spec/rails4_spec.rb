@@ -35,4 +35,11 @@ describe "Rails 4.x" do
       expect(result).to match("rails-4.0.0")
     end
   end
+
+  it "fails compile if assets:precompile fails" do
+    Hatchet::Runner.new("rails4-fail-assets-compile", allow_failure: true).deploy do |app, heroku|
+      expect(app.output).to include("raising on assets:precompile on purpose")
+      expect(app).not_to be_deployed
+    end
+  end
 end

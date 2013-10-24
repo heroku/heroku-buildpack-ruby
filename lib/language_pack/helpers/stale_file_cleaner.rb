@@ -15,11 +15,11 @@ class LanguagePack::Helpers::StaleFileCleaner
   end
 
   def files
-    @files ||= Dir[glob].select {|file| !File.directory?(file) }
+    @files ||= Dir[glob].reject {|file| File.directory?(file) }
   end
 
   def sorted_files
-    @sorted ||= files.sort {|a, b| FILE_STAT_CACHE[a].mtime <=> FILE_STAT_CACHE[b].mtime }
+    @sorted ||= files.sort_by {|a| FILE_STAT_CACHE[a].mtime }
   end
 
   def total_size

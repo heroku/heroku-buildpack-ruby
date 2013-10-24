@@ -24,7 +24,7 @@ module LanguagePack
 
     private
     def load_config
-      YAML.load_file(File.expand_path("../../../config/cdn.yml", __FILE__))
+      YAML.load_file(File.expand_path("../../../config/cdn.yml", __FILE__)) || {}
     end
 
     def fetch_cdn(url)
