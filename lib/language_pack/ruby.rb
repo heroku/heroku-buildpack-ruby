@@ -759,7 +759,7 @@ params = CGI.parse(uri.query || "")
       end
 
       # fix for https://github.com/sparklemotion/nokogiri/issues/923
-      if @metadata.exists?(buildpack_version_cache) && @metadata.read(buildpack_version_cache).sub('v', '').to_i <= 76
+      if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 76
         puts "Fixing nokogiri install. Clearing bundler cache."
         puts "See https://github.com/sparklemotion/nokogiri/issues/923."
         purge_bundler_cache
