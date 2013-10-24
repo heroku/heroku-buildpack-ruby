@@ -22,7 +22,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   JVM_VERSION          = "openjdk7-latest"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
-  BOWER_VERSION        = "1.2.6"
+  BOWER_VERSION        = "1.2.7"
   BOWER_BASE_URL       = "http://heroku-buildpack-ruby-bower.s3.amazonaws.com"
 
   # detects if this is a valid Ruby app
