@@ -1,5 +1,6 @@
 require "tmpdir"
 require "digest/md5"
+require "benchmark"
 require "rubygems"
 require "language_pack"
 require "language_pack/base"
@@ -695,7 +696,6 @@ params = CGI.parse(uri.query || "")
   def run_assets_precompile_rake_task
     instrument 'ruby.run_assets_precompile_rake_task' do
       if rake_task_defined?("assets:precompile")
-        require 'benchmark'
 
         topic "Running: rake assets:precompile"
         time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
