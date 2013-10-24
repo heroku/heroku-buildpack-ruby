@@ -35,13 +35,6 @@ describe "Rails 3.x" do
     end
   end
 
-  it "should install the runtime assets" do
-    Hatchet::Runner.new("rails3_runtime_assets").deploy do |app, heroku|
-      add_database(app, heroku)
-      expect(app.output).to match("Precompiling assets failed, enabling runtime asset compilation")
-    end
-  end
-
   context "when not using the rails gem" do
     it "should deploy on ruby 1.9.3" do
       Hatchet::Runner.new("railties3_mri_193").deploy do |app, heroku|
@@ -50,6 +43,13 @@ describe "Rails 3.x" do
         expect(app.output).to match("Ruby/Rails")
         expect(successful_body(app)).to eq("hello")
       end
+    end
+  end
+
+  it "fails compile if assets:precompile fails" do
+    Hatchet::Runner.new("rails3-fail-assets-compile", allow_failure: true).deploy do |app, heroku|
+      expect(app.output).to include("raising on assets:precompile on purpose")
+      expect(app).not_to be_deployed
     end
   end
 end

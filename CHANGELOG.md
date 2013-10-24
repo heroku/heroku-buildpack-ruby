@@ -1,3 +1,25 @@
+## Master
+
+* Rails3 deploys that do not successfully run `assets:precompile` will now fail.
+
+## v81 (10/15/2013)
+
+Features:
+
+* add Default Bundler Cache for new Ruby 2.0.0 apps
+* use Virginia S3 bucket instead of Cloudfront
+
+## v80 (9/23/2013)
+
+Features:
+
+* Cache 50mb of Rails 4 intermediate cache
+* Support for Ruby 2.1.0
+
+Bugfixes:
+
+* Disable invoke dynamic on JRuby by default until JDK stabalizes it
+
 ## v79 (9/3/2013)
 
 Bugfixes:

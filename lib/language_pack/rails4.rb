@@ -70,38 +70,37 @@ WARNING
       log("assets_precompile") do
         setup_database_url_env
 
-        if rake_task_defined?("assets:precompile")
-          topic("Preparing app for Rails asset pipeline")
-          if Dir.glob('public/assets/manifest-*.json').any?
-            puts "Detected manifest file, assuming assets were compiled locally"
-          else
-            ENV["RAILS_GROUPS"] ||= "assets"
-            ENV["RAILS_ENV"]    ||= "production"
+        return true unless rake_task_defined?("assets:precompile")
 
-            @cache.load public_assets_folder
-            @cache.load default_assets_cache
+        if Dir.glob('public/assets/manifest-*.json').any?
+          puts "Detected manifest file, assuming assets were compiled locally"
+          return true
+        end
 
-            puts "Running: rake assets:precompile"
-            require 'benchmark'
-            time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1 > /dev/null") }
+        topic("Preparing app for Rails asset pipeline")
+        ENV["RAILS_GROUPS"] ||= "assets"
+        ENV["RAILS_ENV"]    ||= "production"
 
-            if $?.success?
-              log "assets_precompile", :status => "success"
-              puts "Asset precompilation completed (#{"%.2f" % time}s)"
+        @cache.load public_assets_folder
+        @cache.load default_assets_cache
 
-              puts "Cleaning assets"
-              pipe "env PATH=$PATH:bin bundle exec rake assets:clean 2>& 1"
+        puts "Running: rake assets:precompile"
+        require 'benchmark'
+        time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1 > /dev/null") }
 
-              cleanup_assets_cache
-              @cache.store public_assets_folder
-              @cache.store default_assets_cache
-            else
-              log "assets_precompile", :status => "failure"
-              error "Precompiling assets failed."
-            end
-          end
+        if $?.success?
+          log "assets_precompile", :status => "success"
+          puts "Asset precompilation completed (#{"%.2f" % time}s)"
+
+          puts "Cleaning assets"
+          pipe "env PATH=$PATH:bin bundle exec rake assets:clean 2>& 1"
+
+          cleanup_assets_cache
+          @cache.store public_assets_folder
+          @cache.store default_assets_cache
         else
-          puts "Error detecting the assets:precompile task"
+          log "assets_precompile", :status => "failure"
+          error "Precompiling assets failed."
         end
       end
     end

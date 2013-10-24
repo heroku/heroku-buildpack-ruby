@@ -11,7 +11,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   extend LanguagePack::BundlerLockfile::ClassMethods
 
   NAME                 = "ruby"
-  BUILDPACK_VERSION    = "v79"
+  BUILDPACK_VERSION    = "v81"
   LIBYAML_VERSION      = "0.1.4"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.3.2"
@@ -84,6 +84,8 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     instrument 'ruby.compile' do
+      # check for new app at the beginning of the compile
+      new_app?
       Dir.chdir(build_path)
       remove_vendor_bundle
       install_ruby
@@ -238,7 +240,7 @@ private
     instrument 'setup_profiled' do
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_default  "LANG",     "en_US.UTF-8"
-      set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:$PATH"
+      set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:$HOME/#{bundler_binstubs_path}:$PATH"
 
       if ruby_version_jruby?
         set_env_default "JAVA_OPTS", default_java_opts
@@ -323,7 +325,7 @@ ERROR_MSG
 You have not declared a Ruby version in your Gemfile.
 To set your Ruby version add this line to your Gemfile:
 #{ruby_version_to_gemfile}
-# See https://devcenter.heroku.com/articles/ruby-versions for more information."
+# See https://devcenter.heroku.com/articles/ruby-versions for more information.
 WARNING
       end
     end
@@ -342,7 +344,7 @@ WARNING
   end
 
   def new_app?
-    !File.exist?("vendor/heroku")
+    @new_app ||= !File.exist?("vendor/heroku")
   end
 
   # vendors JVM into the slug for JRuby
@@ -439,6 +441,18 @@ WARNING
     FileUtils.rm File.join('bin', File.basename(path)), :force => true
   end
 
+  # loads a default bundler cache for new apps to speed up initial bundle installs
+  def load_default_cache
+    instrument "ruby.load_default_cache" do
+      if new_app? && ruby_version == DEFAULT_RUBY_VERSION
+        puts "New app detected loading default bundler cache"
+        patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").chomp
+        cache_name  = "#{DEFAULT_RUBY_VERSION}-p#{patchlevel}-default-cache"
+        @fetchers[:buildpack].fetch_untar("#{cache_name}.tgz")
+      end
+    end
+  end
+
   # install libyaml into the LP to be referenced for psych compilation
   # @param [String] tmpdir to store the libyaml files
   def install_libyaml(dir)
@@ -503,6 +517,7 @@ WARNING
         load_bundler_cache
 
         bundler_output = ""
+        bundle_time    = nil
         Dir.mktmpdir("libyaml-") do |tmpdir|
           libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
           install_libyaml(libyaml_dir)
@@ -518,11 +533,14 @@ WARNING
           env_vars      += " BUNDLER_LIB_PATH=#{bundler_path}" if ruby_version && ruby_version.match(/^ruby-1\.8\.7/)
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
-            bundler_output << pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+            bundle_time = Benchmark.realtime do
+              bundler_output << pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+            end
           end
         end
 
         if $?.success?
+          puts "Bundle completed (#{"%.2f" % bundle_time}s)"
           log "bundle", :status => "success"
           puts "Cleaning up the bundler cache."
           instrument "ruby.bundle_clean" do
@@ -770,6 +788,8 @@ params = CGI.parse(uri.query || "")
       rubygems_version_cache  = "rubygems_version"
 
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
+
+      load_default_cache
 
       # fix bug from v37 deploy
       if File.exists?("vendor/ruby_version")
