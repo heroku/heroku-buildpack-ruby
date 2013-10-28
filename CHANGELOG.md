@@ -1,6 +1,8 @@
-## Master
+## v82 (10/28/2013)
 
-* Rails3 deploys that do not successfully run `assets:precompile` will now fail.
+Bugfixes:
+
+* Rails 3 deploys that do not successfully run `assets:precompile` will now fail.
 
 ## v81 (10/15/2013)
 
