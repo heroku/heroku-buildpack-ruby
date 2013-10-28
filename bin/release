@@ -1,13 +1,6 @@
 #!/usr/bin/env ruby
 
-# sync output
-$stdout.sync = true
+require 'pathname'
 
-$:.unshift File.expand_path("../../lib", __FILE__)
-require "language_pack"
-
-LanguagePack::Instrument.trace 'release', 'app.release' do
-  Dir.chdir(ARGV.first) do
-    puts LanguagePack::Base.release
-  end
-end
+release = Pathname.new(ARGV.first).join("tmp/heroku-buildpack-release-step.yml")
+puts release.read if release.exist?

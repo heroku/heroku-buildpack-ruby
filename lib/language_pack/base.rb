@@ -97,14 +97,6 @@ class LanguagePack::Base
     end
   end
 
-  # collection of values passed for a release
-  # @return [String] in YAML format of the result
-  def self.release
-    instrument "base.release" do
-      return File.read("tmp/heroku-buildpack-release-step.yml")
-    end
-  end
-
   # log output
   # Ex. log "some_message", "here", :someattr="value"
   def log(*args)
