@@ -17,7 +17,6 @@ module LanguagePack
     end
 
     def fetch_untar(path)
-      path << ".tgz" unless path.match(/.tgz$/)
       curl = curl_command("#{@host_url.join(path)} -s -o")
       run!("#{curl} - | tar zxf -")
     end
