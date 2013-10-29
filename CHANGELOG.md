@@ -10,6 +10,7 @@ Features:
 Bugfixes:
 
 * Errors in Gemfiles will no longer show up as bad ruby versions #36
+* Fix warning warning libjffi-1.2.so on < JRuby 1.7.3
 
 ## v82 (10/28/2013)
 
