@@ -1,3 +1,16 @@
+## Master
+
+Features:
+
+* RubyVersion extracted into it's own class
+* Release no longer requires language_pack
+* Detect no longer requires language_pack
+* Downloads with curl now retry on failed connections, pass exit status appropriately
+
+Bugfixes:
+
+* Errors in Gemfiles will no longer show up as bad ruby versions #36
+
 ## v82 (10/28/2013)
 
 Bugfixes:
