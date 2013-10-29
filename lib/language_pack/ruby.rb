@@ -329,13 +329,14 @@ WARNING
   def install_jvm
     instrument 'ruby.install_jvm' do
       if ruby_version.jruby?
-        topic "Installing JVM: #{LATEST_JVM_VERSION}"
         jvm_version =
           if Gem::Version.new(ruby_version.engine_version) >= Gem::Version.new("1.7.4")
             LATEST_JVM_VERSION
           else
             LEGACY_JVM_VERSION
           end
+
+        topic "Installing JVM: #{jvm_version}"
 
         FileUtils.mkdir_p(slug_vendor_jvm)
         Dir.chdir(slug_vendor_jvm) do
