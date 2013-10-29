@@ -1,8 +1,10 @@
 ## Master
 
+## v83 (10/29/2013)
+
 Features:
 
-* RubyVersion extracted into it's own class
+* RubyVersion extracted into its own class
 * Release no longer requires language_pack
 * Detect no longer requires language_pack
 * Downloads with curl now retry on failed connections, pass exit status appropriately
