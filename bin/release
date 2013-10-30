@@ -3,4 +3,11 @@
 require 'pathname'
 
 release = Pathname.new(ARGV.first).join("tmp/heroku-buildpack-release-step.yml")
-puts release.read if release.exist?
+
+if release.exist?
+  puts release.read
+else
+  puts <<YML
+addons: []
+default_process_types:
+YML
