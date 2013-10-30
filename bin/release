@@ -11,3 +11,4 @@ else
 addons: []
 default_process_types:
 YML
+end
