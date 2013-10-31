@@ -8,7 +8,7 @@ class Lpxc
 
   #After parsing opts and initializing defaults, the initializer
   #will start 2 threads. One thread for sending HTTP requests and another
-  #thread for flusing log messages to the outlet thread periodically.
+  #thread for flushing log messages to the outlet thread periodically.
   #:hash => {}:: A data structure for grouping log messages by token.
   #:request_queue => SizedQueue.new::  Contains HTTP requests ready for outlet thread to deliver to logplex.
   #:default_token => nil:: You can specify a token that will be used for any call to Lpxc#puts that doesn't include a token.
