@@ -73,7 +73,8 @@ WARNING
       log("assets_precompile") do
         setup_database_url_env
 
-        return true unless rake_task_defined?("assets:precompile")
+        precompile = rake.task("assets:precompile")
+        return true unless precompile.is_defined?
 
         if Dir.glob('public/assets/manifest-*.json').any?
           puts "Detected manifest file, assuming assets were compiled locally"
@@ -87,13 +88,11 @@ WARNING
         @cache.load public_assets_folder
         @cache.load default_assets_cache
 
-        puts "Running: rake assets:precompile"
-        require 'benchmark'
-        time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1 > /dev/null") }
+        precompile.invoke
 
-        if $?.success?
+        if precompile.success?
           log "assets_precompile", :status => "success"
-          puts "Asset precompilation completed (#{"%.2f" % time}s)"
+          puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
 
           puts "Cleaning assets"
           pipe "env PATH=$PATH:bin bundle exec rake assets:clean 2>& 1"
