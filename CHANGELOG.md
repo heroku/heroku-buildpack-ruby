@@ -1,5 +1,10 @@
 ## Master
 
+Bugfixes:
+
+* Fix default gem cache
+
+
 ## v83 (10/29/2013)
 
 Features:

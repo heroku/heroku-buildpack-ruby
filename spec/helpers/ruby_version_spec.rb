@@ -33,6 +33,7 @@ describe "RubyVersion" do
       expect(ruby_version.engine_version).to eq(version_number)
       expect(ruby_version.to_gemfile).to eq("ruby '#{version_number}'")
       expect(ruby_version.engine).to eq(:ruby)
+      expect(ruby_version.default?).to eq(true)
     end
   end
 
