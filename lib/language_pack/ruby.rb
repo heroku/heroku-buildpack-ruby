@@ -426,10 +426,14 @@ WARNING
     FileUtils.rm File.join('bin', File.basename(path)), :force => true
   end
 
+  def load_default_cache?
+    new_app? && ruby_version.default?
+  end
+
   # loads a default bundler cache for new apps to speed up initial bundle installs
   def load_default_cache
     instrument "ruby.load_default_cache" do
-      if new_app? && ruby_version.default?
+      if load_default_cache?
         puts "New app detected loading default bundler cache"
         patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").chomp
         cache_name  = "#{DEFAULT_RUBY_VERSION}-p#{patchlevel}-default-cache"
@@ -529,7 +533,12 @@ WARNING
           log "bundle", :status => "success"
           puts "Cleaning up the bundler cache."
           instrument "ruby.bundle_clean" do
-            pipe "#{bundle_bin} clean 2> /dev/null"
+            # Only show bundle clean output when not using default cache
+            if load_default_cache?
+              run "bundle clean > /dev/null"
+            else
+              pipe "#{bundle_bin} clean 2> /dev/null"
+            end
           end
           cache.store ".bundle"
           cache.store "vendor/bundle"
