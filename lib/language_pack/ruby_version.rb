@@ -37,6 +37,10 @@ module LanguagePack
       @version_without_patchlevel = @version.sub(/-p[\d]+/, '')
     end
 
+    def default?
+      @version == none
+    end
+
     # determine if we're using jruby
     # @return [Boolean] true if we are and false if we aren't
     def jruby?
