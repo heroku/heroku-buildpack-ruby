@@ -4,6 +4,7 @@ describe "Rails 3.x" do
   it "should deploy on ruby 1.9.3" do
     Hatchet::Runner.new("rails3_mri_193").deploy do |app, heroku|
       expect(app.output).to include("Asset precompilation completed")
+      expect(app.output).to include("No JS runtime detected, installing node version:")
       add_database(app, heroku)
 
       expect(app.output).to match("WARNINGS")
