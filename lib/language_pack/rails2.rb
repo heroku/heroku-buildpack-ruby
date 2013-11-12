@@ -62,7 +62,7 @@ private
   # most rails apps need a database
   # @return [Array] shared database addon
   def add_dev_database_addon
-    ['heroku-postgresql:dev']
+    ['heroku-postgresql:hobby-dev']
   end
 
   # sets up the profile.d script for this buildpack

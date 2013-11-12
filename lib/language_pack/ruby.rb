@@ -672,7 +672,7 @@ params = CGI.parse(uri.query || "")
   # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
   def add_dev_database_addon
-    gem_is_bundled?("pg") ? ['heroku-postgresql:dev'] : []
+    gem_is_bundled?("pg") ? ['heroku-postgresql:hobby-dev'] : []
   end
 
   # decides if we need to install the node.js binary
