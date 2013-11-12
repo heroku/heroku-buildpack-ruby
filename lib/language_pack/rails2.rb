@@ -30,7 +30,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
 
   def default_process_types
     instrument "rails2.default_process_types" do
-      web_process = gem_is_bundled?("thin") ?
+      web_process = bundler.has_gem?("thin") ?
         "bundle exec thin start -e $RAILS_ENV -p $PORT" :
         "bundle exec ruby script/server -p $PORT"
 
@@ -53,7 +53,7 @@ private
 
   def install_plugins
     instrument "rails2.install_plugins" do
-      plugins = ["rails_log_stdout"].reject { |plugin| gem_is_bundled?(plugin) }
+      plugins = ["rails_log_stdout"].reject { |plugin| bundler.has_gem?(plugin) }
       topic "Rails plugin injection"
       LanguagePack::Helpers::PluginsInstaller.new(plugins).install
     end

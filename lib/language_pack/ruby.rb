@@ -504,8 +504,7 @@ WARNING
           cache.load ".bundle"
         end
 
-        version = run_stdout("#{bundle_bin} version").strip
-        topic("Installing dependencies using #{version}")
+        topic("Installing dependencies using #{bundler.version}")
 
         load_bundler_cache
 
@@ -682,14 +681,14 @@ params = CGI.parse(uri.query || "")
   # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
   def add_dev_database_addon
-    gem_is_bundled?("pg") ? ['heroku-postgresql:hobby-dev'] : []
+    bundler.has_gem?("pg") ? ['heroku-postgresql:hobby-dev'] : []
   end
 
   # decides if we need to install the node.js binary
   # @note execjs will blow up if no JS RUNTIME is detected and is loaded.
   # @return [Array] the node.js binary path if we need it or an empty Array
   def add_node_js_binary
-    gem_is_bundled?('execjs') ? [NODE_JS_BINARY_PATH] : []
+    bundler.has_gem?('execjs') ? [NODE_JS_BINARY_PATH] : []
   end
 
   def run_assets_precompile_rake_task
