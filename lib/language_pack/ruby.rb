@@ -481,20 +481,9 @@ WARNING
           error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
         end
 
-        if has_windows_gemfile_lock?
-          warn(<<WARNING)
-Removing `Gemfile.lock` because it was generated on Windows.
-Bundler will do a full resolve so native gems are handled properly.
-This may result in unexpected gem versions being used in your app.
-WARNING
-
-          log("bundle", "has_windows_gemfile_lock")
-          File.unlink("Gemfile.lock")
-        else
-          # using --deployment is preferred if we can
-          bundle_command += " --deployment"
-          cache.load ".bundle"
-        end
+        # using --deployment is preferred if we can
+        bundle_command += " --deployment"
+        cache.load ".bundle"
 
         version = run_stdout("#{bundle_bin} version").strip
         topic("Installing dependencies using #{version}")
