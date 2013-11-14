@@ -7,10 +7,11 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
     instrument "rails3.use" do
-      if gemfile_lock?
-        rails_version = LanguagePack::Ruby.gem_version('railties')
-        rails_version >= Gem::Version.new('3.0.0') && rails_version < Gem::Version.new('4.0.0') if rails_version
-      end
+      rails_version = bundler.gem_version('railties')
+      return false unless rails_version
+      is_rails3 = rails_version >= Gem::Version.new('3.0.0') &&
+                  rails_version <  Gem::Version.new('4.0.0')
+      return is_rails3
     end
   end
 

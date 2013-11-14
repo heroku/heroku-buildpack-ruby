@@ -8,7 +8,7 @@ class LanguagePack::Rack < LanguagePack::Ruby
   # @return [Boolean] true if it's a Rack app
   def self.use?
     instrument "rack.use" do
-      gemfile_lock? && LanguagePack::Ruby.gem_version('rack')
+      bundler.gem_version('rack')
     end
   end
 

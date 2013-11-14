@@ -8,10 +8,11 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   # @return [Boolean] true if it's a Rails 2 app
   def self.use?
     instrument "rails2.use" do
-      if gemfile_lock?
-        rails_version = LanguagePack::Ruby.gem_version('rails')
-        rails_version >= Gem::Version.new('2.0.0') && rails_version < Gem::Version.new('3.0.0') if rails_version
-      end
+      rails_version = bundler.gem_version('rails')
+      return false unless rails_version
+      is_rails2 = rails_version >= Gem::Version.new('2.0.0') &&
+                  rails_version <  Gem::Version.new('3.0.0')
+      return is_rails2
     end
   end
 

@@ -9,13 +9,11 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
     instrument "rails4.use" do
-      if gemfile_lock?
-        rails_version = LanguagePack::Ruby.gem_version('railties')
-        return false unless rails_version
-        is_rails4     = rails_version >= Gem::Version.new('4.0.0.beta') &&
-                        rails_version <  Gem::Version.new('5.0.0')
-        return is_rails4
-      end
+      rails_version = bundler.gem_version('railties')
+      return false unless rails_version
+      is_rails4 = rails_version >= Gem::Version.new('4.0.0.beta') &&
+                  rails_version <  Gem::Version.new('5.0.0')
+      return is_rails4
     end
   end
 

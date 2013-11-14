@@ -30,10 +30,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     end
   end
 
-  def self.gemfile_lock?
-    File.exist?('Gemfile') && File.exist?('Gemfile.lock')
-  end
-
   def self.bundler
     @bundler ||= LanguagePack::Helpers::BundlerWrapper.new
   end
@@ -52,14 +48,6 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def bundler_path
     bundler.bundler_path
-  end
-
-  def self.gem_version(name)
-    instrument "ruby.gem_version" do
-      if gem = bundle.specs.detect {|g| g.name == name }
-        return gem.version
-      end
-    end
   end
 
   def initialize(build_path, cache_path=nil)
