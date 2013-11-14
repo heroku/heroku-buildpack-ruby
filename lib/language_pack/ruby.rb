@@ -487,7 +487,7 @@ WARNING
           error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
         end
 
-        if has_windows_gemfile_lock?
+        if bundler.windows_gemfile_lock?
           warn(<<WARNING, inline: true)
 Removing `Gemfile.lock` because it was generated on Windows.
 Bundler will do a full resolve so native gems are handled properly.
@@ -647,21 +647,6 @@ params = CGI.parse(uri.query || "")
         end
       end
     end
-  end
-
-  # detects whether the Gemfile.lock contains the Windows platform
-  # @return [Boolean] true if the Gemfile.lock was created on Windows
-  def has_windows_gemfile_lock?
-    bundle.platforms.detect do |platform|
-      /mingw|mswin/.match(platform.os) if platform.is_a?(Gem::Platform)
-    end
-  end
-
-  # detects if a gem is in the bundle.
-  # @param [String] name of the gem in question
-  # @return [String, nil] if it finds the gem, it will return the line from bundle show or nil if nothing is found.
-  def gem_is_bundled?(gem)
-    bundle.specs.map(&:name).include?(gem)
   end
 
   def rake

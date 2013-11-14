@@ -52,6 +52,14 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
+  # detects whether the Gemfile.lock contains the Windows platform
+  # @return [Boolean] true if the Gemfile.lock was created on Windows
+  def windows_gemfile_lock?
+    platforms.detect do |platform|
+      /mingw|mswin/.match(platform.os) if platform.is_a?(Gem::Platform)
+    end
+  end
+
   def specs
     @specs     ||= lockfile_parser.specs.each_with_object({}) {|spec, hash| hash[spec.name] = spec }
   end
