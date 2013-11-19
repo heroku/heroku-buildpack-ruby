@@ -1,5 +1,11 @@
 ## Master
 
+Features:
+
+Bugfixes:
+
+* Windows warnings will now display before bundle install, this prevents an un-resolvable `Gemfile` from erroring which previously prevented the warning roll up from being shown. When this happened the developer did not see that we are clearing the `Gemfile.lock` from the git repository when bundled on a windows machine.
+
 
 ## v85 (12/05/2012)
 
