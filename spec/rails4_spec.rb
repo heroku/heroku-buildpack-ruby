@@ -33,6 +33,9 @@ describe "Rails 4.x" do
 
       result = app.run("bundle show rails")
       expect(result).to match("rails-4.0.0")
+
+      before_warnings = app.output.split("WARNINGS:").first
+      expect(before_warnings).to match("Removing `Gemfile.lock`")
     end
   end
 
