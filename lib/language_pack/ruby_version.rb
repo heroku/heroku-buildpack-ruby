@@ -29,7 +29,7 @@ module LanguagePack
     def ruby_version_file
       rvs = File.read(DOT_RV_FILE).split("\n")
       rvs.map do |rv|
-        if rv.match(/^\d/)
+        if rv.match(/\A[\d.]+(-p[\d]+)?\Z/)
           "ruby-#{rv}"
         else
           rv
