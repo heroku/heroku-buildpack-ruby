@@ -17,13 +17,15 @@ class LanguagePack::Ruby < LanguagePack::Base
   BUNDLER_VERSION      = "1.3.2"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
   #NODE_VERSION         = "0.4.7"
-  NODE_JS_BINARY_PATH = "node"
+  NODE_JS_BINARY_PATH  = "node"
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION          = "openjdk7-latest"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   BOWER_VERSION        = "1.2.7"
   BOWER_BASE_URL       = "http://heroku-buildpack-ruby-bower.s3.amazonaws.com"
+  NODE_JS_VERSION      = "0.10.21"
+  NODE_JS_BASE_URL     = "http://heroku-buildpack-nodejs.s3.amazonaws.com"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -574,9 +576,11 @@ ERROR
     log("node") do
       bin_dir = "bin"
       FileUtils.mkdir_p bin_dir
-      run("curl http://heroku-buildpack-nodejs.s3.amazonaws.com/nodejs-0.10.3.tgz -s -o - | tar xzf -")
-      unless $?.success?
-        error "Can't install node-0.10.3"
+      run("curl #{NODE_JS_BASE_URL}/nodejs-#{NODE_JS_VERSION}.tgz -s -o - | tar xzf -")
+      if $?.success?
+        topic "Using Node.js version: #{NODE_JS_VERSION}"
+      else
+        error "Can't install nodejs-#{NODE_JS_VERSION}"
       end
       Dir["bin/*"].each {|path| run("chmod +x #{path}") }
     end
