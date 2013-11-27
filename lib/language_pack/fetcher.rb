@@ -28,8 +28,11 @@ module LanguagePack
 
     private
     def curl_command(command)
-      # TODO: Make max-time variable. Users have different requirements for this.
-      "set -o pipefail; curl --fail --retry 3 --retry-delay 1 --connect-timeout 3 --max-time 120 #{command}"
+      "set -o pipefail; curl --fail --retry 3 --retry-delay 1 --connect-timeout 3 --max-time #{curl_timeout_in_seconds} #{command}"
+    end
+
+    def curl_timeout_in_seconds
+      ENV['CURL_TIMEOUT'] || 30
     end
 
     def load_config
