@@ -387,8 +387,8 @@ WARNING
     instrument 'ruby.install_language_pack_gems' do
       FileUtils.mkdir_p(slug_vendor_base)
       Dir.chdir(slug_vendor_base) do |dir|
-        gems.each do |gem|
-          @fetchers[:buildpack].fetch_untar("#{gem}.tgz")
+        gems.each do |g|
+          @fetchers[:buildpack].fetch_untar("#{g}.tgz")
         end
         Dir["bin/*"].each {|path| run("chmod 755 #{path}") }
       end
@@ -652,13 +652,8 @@ params = CGI.parse(uri.query || "")
     bundle.specs.map(&:name).include?(gem)
   end
 
-  # detects if a rake task is defined in the app
-  # @param [String] the task in question
-  # @return [Boolean] true if the rake task is defined in the app
-  def rake_task_defined?(task)
-    instrument "ruby.rake_task_defined" do
-      run("env PATH=$PATH bundle exec rake #{task} --dry-run") && $?.success?
-    end
+  def rake
+    @rake ||= LanguagePack::Helpers::RakeRunner.new(gem_is_bundled?("rake")).load_rake_tasks!
   end
 
   # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
@@ -684,13 +679,17 @@ params = CGI.parse(uri.query || "")
 
   def run_assets_precompile_rake_task
     instrument 'ruby.run_assets_precompile_rake_task' do
-      if rake_task_defined?("assets:precompile")
 
-        topic "Running: rake assets:precompile"
-        time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1") }
-        if $?.success?
-          puts "Asset precompilation completed (#{"%.2f" % time}s)"
-        end
+      precompile = rake.task("assets:precompile")
+      return true unless precompile.is_defined?
+
+      topic "Running: rake assets:precompile"
+      precompile.invoke
+      if precompile.success?
+        puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
+      else
+        log "assets_precompile", :status => "failure"
+        error "Precompiling assets failed."
       end
     end
   end
