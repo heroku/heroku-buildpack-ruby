@@ -1,15 +1,22 @@
 ## Master
 
+
+## v85 (12/05/2012)
+
 Features:
 
-* Any Ruby app with a rake `assets:precompile` task present that does not run successfully will now fail. This matches the current behavior of Rails 3 and 4 deploys.
-* Any Ruby app with rake present that cannot produce a list of Rake tasks (via `rake -P`) will now fail.
 
 Bugfixes:
 
 * Any errors in a Rakefile will now be explicitly shown as such instead of hidden in a `assets:precompile` task detection failure (#171)
+* Now using correct default "hobby" database #179
 
 ## v84 (11/06/2013)
+
+Features:
+
+* Any Ruby app with a rake `assets:precompile` task present that does not run successfully will now fail. This matches the current behavior of Rails 3 and 4 deploys.
+
 
 Bugfixes:
 
