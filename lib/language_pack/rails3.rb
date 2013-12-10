@@ -60,14 +60,15 @@ private
       log("assets_precompile") do
         setup_database_url_env
 
-        precompile = rake.task("assets:precompile")
-        return true unless precompile.is_defined?
-
-        topic("Preparing app for Rails asset pipeline")
         if File.exists?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
           return true
         end
+
+        precompile = rake.task("assets:precompile")
+        return true unless precompile.is_defined?
+
+        topic("Preparing app for Rails asset pipeline")
 
         ENV["RAILS_GROUPS"] ||= "assets"
         ENV["RAILS_ENV"]    ||= "production"
