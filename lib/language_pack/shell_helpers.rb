@@ -67,7 +67,11 @@ module LanguagePack
       $stdout.flush
     end
 
-    def warn(message)
+    def warn(message, options = {})
+      if options.key?(:inline) ? options[:inline] : false
+        topic "Warning:"
+        puts message
+      end
       @warnings ||= []
       @warnings << message
     end

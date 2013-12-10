@@ -482,10 +482,12 @@ WARNING
         end
 
         if has_windows_gemfile_lock?
-          warn(<<WARNING)
+          warn(<<WARNING, inline: true)
 Removing `Gemfile.lock` because it was generated on Windows.
 Bundler will do a full resolve so native gems are handled properly.
 This may result in unexpected gem versions being used in your app.
+In rare occasions Bundler may not be able to resolve your dependencies at all.
+https://devcenter.heroku.com/articles/bundler-windows-gemfile
 WARNING
 
           log("bundle", "has_windows_gemfile_lock")
