@@ -74,6 +74,7 @@ class LanguagePack::Base
 
   # this is called to build the slug
   def compile
+    write_release_yaml
     instrument 'base.compile' do
       if @warnings.any?
         topic "WARNINGS:"
@@ -86,16 +87,13 @@ class LanguagePack::Base
     end
   end
 
-  # collection of values passed for a release
-  # @return [String] in YAML format of the result
-  def release
-    instrument "base.release" do
-      setup_language_pack_environment
-
-      {
-        "addons" => default_addons,
-        "default_process_types" => default_process_types
-      }.to_yaml
+  def write_release_yaml
+    release = {}
+    release["addons"]                = default_addons
+    release["default_process_types"] = default_process_types
+    FileUtils.mkdir("tmp") unless File.exists?("tmp")
+    File.open("tmp/heroku-buildpack-release-step.yml", 'w') do |f|
+      f.write(release.to_yaml)
     end
   end
 
