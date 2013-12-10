@@ -579,10 +579,9 @@ ERROR
   # install bower as npm module
   def install_bower
     log("bower") do
-      topic "Using bower version: #{BOWER_VERSION}"
       run("curl #{BOWER_BASE_URL}/bower-#{BOWER_VERSION}/node_modules.tar.gz -s -o - | tar xzf -")
       unless $?.success?
-        error "Can't install bower"
+        error "Can't install Bower #{BOWER_VERSION}"
       end
     end
   end
@@ -601,14 +600,14 @@ Check these points:
 ERROR
 
     log("bower") do
-      topic("Installing JavaScript dependencies using bower #{BOWER_VERSION}")
+      topic("Installing JavaScript dependencies using Bower #{BOWER_VERSION}")
 
       load_bower_cache
 
       pipe("./node_modules/bower/bin/bower install --config.storage.packages=vendor/bower/packages --config.storage.registry=vendor/bower/registry --config.tmp=vendor/bower/tmp 2>&1")
       if $?.success?
         log "bower", :status => "success"
-        puts "Cleaning up the bower tmp."
+        puts "Cleaning up the Bower tmp."
         FileUtils.rm_rf("vendor/bower/tmp")
         cache.store "vendor/bower"
       else
