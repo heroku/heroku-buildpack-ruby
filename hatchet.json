@@ -1,4 +1,10 @@
 {
+  "rake": [
+    "sharpstone/asset_precompile_fail",
+    "sharpstone/asset_precompile_pass",
+    "sharpstone/asset_precompile_not_found",
+    "sharpstone/bad_rakefile"
+  ],
   "bundler": [
     "sharpstone/bad_gemfile_on_platform",
     "sharpstone/git_gemspec",
