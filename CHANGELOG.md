@@ -4,6 +4,12 @@ Features:
 
 Bugfixes:
 
+## v86 (12/11/2013)
+
+Features:
+
+Bugfixes:
+
 * Windows warnings will now display before bundle install, this prevents an un-resolvable `Gemfile` from erroring which previously prevented the warning roll up from being shown. When this happened the developer did not see that we are clearing the `Gemfile.lock` from the git repository when bundled on a windows machine.
 * Checks for `public/assets/manifest*.json` and `public/assets/manifest.yml` will now come before Rake task detection introduced in v85.
 
