@@ -74,9 +74,6 @@ private
         ENV["RAILS_GROUPS"] ||= "assets"
         ENV["RAILS_ENV"]    ||= "production"
 
-        puts "Running: rake assets:precompile"
-        require 'benchmark'
-
         precompile.invoke
         if precompile.success?
           log "assets_precompile", :status => "success"

@@ -93,7 +93,7 @@ WARNING
           puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
 
           puts "Cleaning assets"
-          pipe "env PATH=$PATH:bin bundle exec rake assets:clean 2>& 1"
+          rake.task("assets:clean").invoke
 
           cleanup_assets_cache
           @cache.store public_assets_folder
