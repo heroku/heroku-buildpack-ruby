@@ -13,7 +13,7 @@ module LanguagePack
     end
 
     def self.blacklist?(key)
-      false
+      %w(PATH GEM_PATH GEM_HOME GIT_DIR).include?(key)
     end
 
     def self.initialize_env(path)
