@@ -2,6 +2,29 @@ require "shellwords"
 
 module LanguagePack
   module ShellHelpers
+    @@user_env_hash = {}
+
+    def self.user_env_hash
+      @@user_env_hash
+    end
+
+    def user_env_hash
+      @@user_env_hash
+    end
+
+    def self.blacklist?(key)
+      false
+    end
+
+    def self.initialize_env(path)
+      file = Pathname.new("#{path}")
+      if file.exist?
+        file.read.split("\n").map {|x| x.split("=") }.each do |k,v|
+          user_env_hash[k.strip] = v.strip unless blacklist?(k.strip)
+        end
+      end
+    end
+
     # display error message and stop the build process
     # @param [String] error message
     def error(message)
@@ -14,9 +37,8 @@ module LanguagePack
       exit 1
     end
 
-
-    def run!(command)
-      result = run(command)
+    def run!(command, options = {})
+      result = run(command, options)
       error("Command: '#{command}' failed unexpectedly:\n#{result}") unless $?.success?
       return result
     end
@@ -24,30 +46,45 @@ module LanguagePack
     # doesn't do any special piping. stderr won't be redirected.
     # @param [String] command to be run
     # @return [String] output of stdout
-    def run_no_pipe(command)
-      run(command, "")
+    def run_no_pipe(command, options = {})
+      run_with_env(command, options.merge({:out => "" }))
     end
 
-    # run a shell comannd and pipe stderr to stdout
-    # @param [String] command to be run
-    # @param [out] optional IO redirect
-    # @return [String] output of stdout and stderr
-    def run(command, out = "2>&1")
-      %x{ bash -c #{command.shellescape} #{out} }
+    def run_with_env(command, options = {})
+      env = user_env_hash.merge(options[:env]||{}).map {|key, value| "#{key}=#{value}"}.join(" ")
+      run("env #{env} #{command}", options)
+    end
+
+    # run a shell command and pipe stderr to stdout
+    # @param [String] command
+    # @option options [String] :out the IO redirect of the command
+    # @option options [Hash] :env explicit environment to run command in
+    # @option options [Boolean] :user_env whether or not a user's environment variables will be loaded
+    def run(command, options = {})
+      options[:out] ||= "2>&1"
+      options[:env] ||= {}
+      options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
+      env           = options[:env].map {|key, value| "#{key}=#{value}"}.join(" ")
+      %x{ bash -c #{env} #{command.shellescape} #{options[:out]} }
     end
 
     # run a shell command and pipe stderr to /dev/null
     # @param [String] command to be run
     # @return [String] output of stdout
-    def run_stdout(command)
-      run(command, '2>dev/null')
+    def run_stdout(command, options = {})
+      options[:out] ||= '2>/dev/null'
+      run(command, options)
     end
 
     # run a shell command and stream the output
     # @param [String] command to be run
-    def pipe(command)
+    def pipe(command, options = {})
       output = ""
-      IO.popen(command) do |io|
+      options[:out] ||= "2>&1"
+      options[:env] ||= {}
+      options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
+      env = options[:env].map {|key, value| "#{key}=#{value}"}.join(" ")
+      IO.popen("env #{env} #{command} #{options[:out]}") do |io|
         until io.eof?
           buffer = io.gets
           output << buffer
