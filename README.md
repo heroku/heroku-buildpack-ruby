@@ -97,7 +97,7 @@ The buildpack will detect your app as a Rails 2 app if it has a `environment.rb`
 
 Any vendored plugin can be stopped from being installed by creating the directory it's installed to in the slug. For instance, to prevent rails_log_stdout plugin from being injected, add `vendor/plugins/rails_log_stdout/.gitkeep` to your git repo.
 
-### Rails 3
+### Rails 3 & 4
 
 Example Usage:
 
@@ -125,7 +125,7 @@ Example Usage:
            Procfile declares types      -> web
            Default types for Ruby/Rails -> console, rake, worker
 
-The buildpack will detect your apps as a Rails 3 app if it has an `application.rb` file in the `config` directory.
+The buildpack will detect your apps as a Rails 3 or 4 app if it has an `application.rb` file in the `config` directory.
 
 #### Assets
 
@@ -184,9 +184,9 @@ Rails 2 (config/environment.rb is detected)
 * install rails 2 plugins
   * [rails_log_stdout](http://github.com/ddollar/rails_log_stdout)
 
-Rails 3 (config/application.rb is detected)
+Rails 3 & 4 (config/application.rb is detected)
 
 * everything from Rails 2
-* install rails 3 plugins
+* install rails 3/4 plugins
   * [rails3_server_static_assets](https://github.com/pedro/rails3_serve_static_assets)
 
