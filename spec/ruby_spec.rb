@@ -23,7 +23,7 @@ describe "Ruby apps" do
         end
       end
 
-      fit "runs a rake task if the gem exists" do
+      it "runs a rake task if the gem exists" do
         Hatchet::Runner.new('mri_200_rake').deploy do |app, heroku|
           expect(app.output).to include("foo")
         end
