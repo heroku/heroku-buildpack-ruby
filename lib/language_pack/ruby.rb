@@ -655,7 +655,9 @@ params = CGI.parse(uri.query || "")
   end
 
   def rake
-    @rake ||= LanguagePack::Helpers::RakeRunner.new(gem_is_bundled?("rake")).load_rake_tasks!
+    @rake ||= LanguagePack::Helpers::RakeRunner.new(
+                gem_is_bundled?("rake") || ruby_version.rake_is_vendored?
+              ).load_rake_tasks!
   end
 
   # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
