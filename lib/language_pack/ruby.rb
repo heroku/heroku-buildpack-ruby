@@ -117,6 +117,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         install_language_pack_gems
         build_bundler
         create_database_yml
+        create_secrets_yml
         install_binaries
         run_assets_precompile_rake_task
       end
@@ -634,6 +635,27 @@ params = CGI.parse(uri.query || "")
   <%= key %>: <%= value.first %>
 <% end %>
         DATABASE_YML
+        end
+      end
+    end
+  end
+
+  # writes ERB based secrets.yml for Rails 4+. The secrets.yml uses the environment during runtime.
+  def create_secrets_yml
+    instrument 'ruby.create_secrets_yml' do
+      log("create_secrets_yml") do
+        return unless File.directory?("config")
+        topic("Writing config/secrets.yml to read from environment")
+        File.open("config/secrets.yml", "w") do |file|
+          file.puts <<-SECRETS_YML
+<%
+raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
+%>
+<%= ENV["RAILS_ENV"] || ENV["RACK_ENV"] %>:
+<% ENV.each do |key, value| %>
+  <%= key.downcase %>: <%= value.first %>
+<% end %>
+        SECRETS_YML
         end
       end
     end
