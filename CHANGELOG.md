@@ -4,6 +4,16 @@ Features:
 
 Bugfixes:
 
+* When running rake tasks, detects rake in stdlib for Ruby 1.9+
+
+## v87 (12/30/2013)
+
+Features:
+
+Bugfixes:
+
+* When running rake tasks, detects rake in stdlib for Ruby 1.9+
+
 ## v86 (12/11/2013)
 
 Features:
