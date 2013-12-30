@@ -354,6 +354,7 @@ namespace :buildpack do
     require 'json'
     require 'time'
     require 'cgi'
+    require 'git'
 
     user, password = Netrc.read["api.heroku.com"]
     buildpack_name = "heroku/ruby"
@@ -378,6 +379,14 @@ namespace :buildpack do
     require version_file
 
     if LanguagePack::Base::BUILDPACK_VERSION != new_version
+      git     = Git.open(".")
+      stashes = nil
+
+      if git.status.changed
+        stashes = Git::Stashes.new(git)
+        stashes.save("WIP")
+      end
+
       File.open("#{version_file}.rb", 'w') do |file|
       file.puts <<-FILE
 require "language_pack/base"
@@ -391,8 +400,10 @@ end
 FILE
       end
 
-      sh "git add #{version_file}.rb"
-      sh "git commit -m \"bump to #{new_version}\""
+      git.add "#{version_file}.rb"
+      git.commit "bump to #{new_version}"
+
+      stashes.pop if stashes
     else
       puts "Already on #{new_version}"
     end
