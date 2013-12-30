@@ -28,6 +28,7 @@ GEM
     mime-types (1.25)
     minitest (4.7.5)
     multi_json (1.8.2)
+    netrc (0.7.7)
     parallel (0.6.5)
     parallel_tests (0.13.1)
       parallel
@@ -59,6 +60,7 @@ PLATFORMS
 DEPENDENCIES
   excon
   heroku_hatchet
+  netrc
   parallel_tests
   rake
   rspec-core
