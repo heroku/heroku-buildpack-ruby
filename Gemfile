@@ -8,4 +8,5 @@ group :development, :test do
   gem "rake"
   gem "parallel_tests"
   gem 'rspec-retry'
+  gem "netrc"
 end
