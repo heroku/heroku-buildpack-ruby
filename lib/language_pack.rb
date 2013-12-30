@@ -25,6 +25,7 @@ end
 
 
 $:.unshift File.expand_path("../../vendor", __FILE__)
+$:.unshift File.expand_path("..", __FILE__)
 
 require 'dotenv'
 require 'language_pack/shell_helpers'
