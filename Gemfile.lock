@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/hone/ruby-git.git
+  revision: 8b93d4f3891f5c2553be4e759cf7da92883551fd
+  branch: stash
+  specs:
+    git (1.2.6)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -59,6 +66,7 @@ PLATFORMS
 
 DEPENDENCIES
   excon
+  git!
   heroku_hatchet
   netrc
   parallel_tests

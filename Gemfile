@@ -9,4 +9,5 @@ group :development, :test do
   gem "parallel_tests"
   gem 'rspec-retry'
   gem "netrc"
+  gem "git", github: "hone/ruby-git", branch: "stash"
 end
