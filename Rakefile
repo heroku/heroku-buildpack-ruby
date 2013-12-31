@@ -454,6 +454,13 @@ FILE
       FileUtils.cp("#{tmpdir}/buildpack.tgz", filename)
     end
   end
+
+  desc "tag a release"
+  task :tag do
+    git = Git.open(".")
+    git.add_tag(new_version)
+    puts "Created tag #{new_version}"
+  end
 end
 
 begin
