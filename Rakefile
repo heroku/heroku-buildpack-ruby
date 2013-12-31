@@ -347,33 +347,42 @@ task "libffi:install", :version do |t, args|
 end
 
 namespace :buildpack do
+  require 'netrc'
+  require 'excon'
+  require 'json'
+  require 'time'
+  require 'cgi'
+  require 'git'
+  require 'fileutils'
+  require 'digest/md5'
+
+  def latest_release
+    @latest_release ||= begin
+      user, password = Netrc.read["api.heroku.com"]
+      buildpack_name = "heroku/ruby"
+      response       = Excon.get("https://#{CGI.escape(user)}:#{password}@buildkits.herokuapp.com/buildpacks/#{buildpack_name}/revisions")
+      releases       = JSON.parse(response.body)
+
+      # {
+      #   "tar_link": "https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/ruby-v84.tgz",
+      #   "created_at": "2013-11-06T18:55:04Z",
+      #   "published_by": "richard@heroku.com",
+      #   "id": 84
+      #  }
+      releases.map! do |a|
+        a["created_at"] = Time.parse(a["created_at"])
+        a
+      end.sort! { |a,b| b["created_at"] <=> a["created_at"] }
+      releases.first
+    end
+  end
+
+  def new_version
+    @new_version ||= "v#{latest_release["id"] + 1}"
+  end
+
   desc "increment buildpack version"
   task :increment do
-    require 'netrc'
-    require 'excon'
-    require 'json'
-    require 'time'
-    require 'cgi'
-    require 'git'
-
-    user, password = Netrc.read["api.heroku.com"]
-    buildpack_name = "heroku/ruby"
-    response       = Excon.get("https://#{CGI.escape(user)}:#{password}@buildkits.herokuapp.com/buildpacks/#{buildpack_name}/revisions")
-    releases       = JSON.parse(response.body)
-
-    # {
-    #   "tar_link": "https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/ruby-v84.tgz",
-    #   "created_at": "2013-11-06T18:55:04Z",
-    #   "published_by": "richard@heroku.com",
-    #   "id": 84
-    #  }
-    releases.map! do |a|
-      a["created_at"] = Time.parse(a["created_at"])
-      a
-    end.sort! { |a,b| b["created_at"] <=> a["created_at"] }
-    latest_release = releases.first
-
-    new_version  = "v#{latest_release["id"] + 1}"
     version_file = './lib/language_pack/version'
     require './lib/language_pack'
     require version_file
@@ -406,6 +415,43 @@ FILE
       stashes.pop if stashes
     else
       puts "Already on #{new_version}"
+    end
+  end
+
+  def changelog_entry?
+    File.read("./CHANGELOG.md").split("\n").any? {|line| line.match(/^## #{new_version}/) }
+  end
+
+  desc "check if there's a changelog for the new version"
+  task :changelog do
+    if changelog_entry?
+      puts "Changelog for #{new_version} exists"
+    else
+      puts "Please add a changelog entry for #{new_version}"
+    end
+  end
+
+  desc "stage a tarball of the buildpack"
+  task :stage do
+    Dir.mktmpdir("heroku-buildpack-ruby") do |tmpdir|
+      Git.clone(File.expand_path("."), 'heroku-buildpack-ruby', path: tmpdir)
+      Dir.chdir(tmpdir) do |dir|
+        streamer = lambda do |chunk, remaining_bytes, total_bytes|
+          File.open("ruby.tgz", "w") {|file| file.print(chunk) }
+        end
+        Excon.get(latest_release["tar_link"], :response_block => streamer)
+        Dir.chdir("heroku-buildpack-ruby") do |dir|
+          sh "tar xzf ../ruby.tgz .env"
+          sh "tar czf ../buildpack.tgz * .env"
+        end
+
+        @digest = Digest::MD5.hexdigest(File.read("buildpack.tgz"))
+      end
+
+      filename = "buildpacks/#{@digest}.tgz"
+      puts "Writing to #{filename}"
+      FileUtils.mkdir_p("buildpacks/")
+      FileUtils.cp("#{tmpdir}/buildpack.tgz", filename)
     end
   end
 end
