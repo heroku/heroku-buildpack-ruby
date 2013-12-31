@@ -355,13 +355,20 @@ namespace :buildpack do
   require 'git'
   require 'fileutils'
   require 'digest/md5'
+  require 'securerandom'
+
+  def connection
+    @connection ||= begin
+      user, password = Netrc.read["api.heroku.com"]
+      Excon.new("https://#{CGI.escape(user)}:#{password}@buildkits.herokuapp.com")
+    end
+  end
 
   def latest_release
     @latest_release ||= begin
-      user, password = Netrc.read["api.heroku.com"]
       buildpack_name = "heroku/ruby"
-      response       = Excon.get("https://#{CGI.escape(user)}:#{password}@buildkits.herokuapp.com/buildpacks/#{buildpack_name}/revisions")
-      releases       = JSON.parse(response.body)
+      response = connection.get(path: "buildpacks/#{buildpack_name}/revisions")
+      releases = JSON.parse(response.body)
 
       # {
       #   "tar_link": "https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/ruby-v84.tgz",
@@ -452,7 +459,39 @@ FILE
       puts "Writing to #{filename}"
       FileUtils.mkdir_p("buildpacks/")
       FileUtils.cp("#{tmpdir}/buildpack.tgz", filename)
+      FileUtils.cp("#{tmpdir}/buildpack.tgz", "buildpacks/buildpack.tgz")
     end
+  end
+
+  def multipart_form_data(buildpack_file_path)
+    body = ''
+    boundary = SecureRandom.hex(4)
+    data = File.open(buildpack_file_path)
+
+    data.binmode if data.respond_to?(:binmode)
+    data.pos = 0 if data.respond_to?(:pos=)
+
+    body << "--#{boundary}" << Excon::CR_NL
+    body << %{Content-Disposition: form-data; name="buildpack"; filename="#{File.basename(buildpack_file_path)}"} << Excon::CR_NL
+    body << 'Content-Type: application/x-gtar' << Excon::CR_NL
+    body << Excon::CR_NL
+    body << File.read(buildpack_file_path)
+    body << Excon::CR_NL
+    body << "--#{boundary}--" << Excon::CR_NL
+
+    {
+      :headers => { 'Content-Type' => %{multipart/form-data; boundary="#{boundary}"} },
+      :body => body
+    }
+  end
+
+  desc "publish buildpack"
+  task :publish do
+    buildpack_name = "heroku/ruby"
+    puts "Publishing #{buildpack_name} buildpack"
+    resp = connection.post(multipart_form_data("buildpacks/buildpack.tgz").merge(path: "/buildpacks/#{buildpack_name}"))
+    puts resp.status
+    puts resp.body
   end
 
   desc "tag a release"
