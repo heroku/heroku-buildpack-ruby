@@ -4,7 +4,7 @@ Features:
 
 Bugfixes:
 
-* When running rake tasks, detects rake in stdlib for Ruby 1.9+
+## v89 (12/31/2013)
 
 ## v87 (12/30/2013)
 
