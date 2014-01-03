@@ -1,3 +1,5 @@
+require 'shellwords'
+
 module LanguagePack
   module ShellHelpers
     # display error message and stop the build process
@@ -8,7 +10,7 @@ module LanguagePack
         Kernel.puts " !     #{line.strip}"
       end
       Kernel.puts " !"
-      log "exit", :error => message
+      log "exit", :error => message if respond_to?(:log)
       exit 1
     end
 
@@ -16,14 +18,20 @@ module LanguagePack
     # @param [String] command to be run
     # @return [String] output of stdout and stderr
     def run(command)
-      %x{ #{command} 2>&1 }
+      %x{ bash -c #{command.shellescape} 2>&1 }
+    end
+
+    def run!(command)
+      result = run(command)
+      error("Command: '#{command}' failed unexpectedly:\n#{result}") unless $?.success?
+      return result
     end
 
     # run a shell command and pipe stderr to /dev/null
     # @param [String] command to be run
     # @return [String] output of stdout
     def run_stdout(command)
-      %x{ #{command} 2>/dev/null }
+      %x{ bash -c  #{command.shellescape} 2>/dev/null }
     end
 
     # run a shell command and stream the output
@@ -59,9 +67,18 @@ module LanguagePack
       $stdout.flush
     end
 
-    def warn(message)
+    def warn(message, options = {})
+      if options.key?(:inline) ? options[:inline] : false
+        topic "Warning:"
+        puts message
+      end
       @warnings ||= []
       @warnings << message
+    end
+
+    def deprecate(message)
+      @deprecations ||= []
+      @deprecations << message
     end
   end
 end
