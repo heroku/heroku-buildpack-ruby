@@ -47,6 +47,8 @@ def install_gem(gem, version)
 
       in_gem_env(tmpdir) do
         sh("unset RUBYOPT; gem install #{gem} --version #{version} --no-ri --no-rdoc --env-shebang")
+        sh("rm #{gem}-#{version}.gem")
+        sh("rm -rf cache/#{gem}-#{version}.gem")
         sh("tar czvf #{tmpdir}/#{name}.tgz *")
         s3_upload(tmpdir, name)
       end
