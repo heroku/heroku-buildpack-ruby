@@ -6,14 +6,13 @@ require "language_pack"
 require "language_pack/base"
 require "language_pack/ruby_version"
 
-
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
-  BUILDPACK_VERSION    = "v81"
+  BUILDPACK_VERSION    = "v89"
   LIBYAML_VERSION      = "0.1.4"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION      = "1.4.0.rc.1"
+  BUNDLER_VERSION      = "1.5.1"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION         = "0.4.7"
   NODE_JS_BINARY_PATH  = "node-#{NODE_VERSION}"
@@ -531,7 +530,6 @@ WARNING
             end
           end
         end
-
 
         if $?.success?
           puts "Bundle completed (#{"%.2f" % bundle_time}s)"
