@@ -26,6 +26,11 @@ module LanguagePack
       run!("#{curl} - | tar jxf -")
     end
 
+    def exist?(path)
+      run("curl #{@host_url.join(path)} --head --silent --fail --retry 3")
+      $?.success?
+    end
+
     private
     def curl_command(command)
       "set -o pipefail; curl --fail --retry 3 --retry-delay 1 --connect-timeout 3 --max-time #{curl_timeout_in_seconds} #{command}"
