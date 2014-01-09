@@ -2,6 +2,12 @@
 
 Features:
 
+Bugfixes
+
+## v89 (01/09/2013)
+
+Features:
+
 * Use most recent version of bundler with support for parallel Gem installation
 
 Bugfixes:
