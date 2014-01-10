@@ -26,7 +26,8 @@
     "sharpstone/mri_187_nokogiri",
     "sharpstone/mri_192",
     "sharpstone/mri_193",
-    "sharpstone/mri_200"
+    "sharpstone/mri_200",
+    "sharpstone/mri_210"
   ],
   "rails2": [
     "sharpstone/rails23_mri_187"

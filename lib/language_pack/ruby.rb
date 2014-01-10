@@ -321,9 +321,16 @@ WARNING
     true
   end
 
-  def new_app?
-    @new_app ||= !File.exist?("vendor/heroku")
+
+
+  def cache_exist?
+    @cache_exist ||= File.exist?("vendor/heroku")
   end
+
+  def cache_missing?
+    !cache_exist?
+  end
+  alias :new_app? :cache_missing?
 
   # vendors JVM into the slug for JRuby
   def install_jvm
@@ -426,20 +433,11 @@ WARNING
     FileUtils.rm File.join('bin', File.basename(path)), :force => true
   end
 
-  def load_default_cache?
-    new_app? && ruby_version.default?
-  end
-
-  # loads a default bundler cache for new apps to speed up initial bundle installs
-  def load_default_cache
-    instrument "ruby.load_default_cache" do
-      if load_default_cache?
-        puts "New app detected loading default bundler cache"
-        patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").chomp
-        cache_name  = "#{DEFAULT_RUBY_VERSION}-p#{patchlevel}-default-cache"
-        @fetchers[:buildpack].fetch_untar("#{cache_name}.tgz")
-      end
-    end
+  def default_cache
+    @default_cache ||= LanguagePack::Helpers::DefaultCache.new(
+                         self.ruby_version.version,
+                         self.cache_missing?,
+                         @fetchers[:buildpack])
   end
 
   # install libyaml into the LP to be referenced for psych compilation
@@ -537,7 +535,7 @@ WARNING
           puts "Cleaning up the bundler cache."
           instrument "ruby.bundle_clean" do
             # Only show bundle clean output when not using default cache
-            if load_default_cache?
+            if default_cache.can_load?
               run "bundle clean > /dev/null"
             else
               pipe "#{bundle_bin} clean 2> /dev/null"
@@ -727,7 +725,9 @@ params = CGI.parse(uri.query || "")
 
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
 
-      load_default_cache
+      instrument "ruby.load_default_cache" do
+        default_cache.load
+      end
 
       # fix bug from v37 deploy
       if File.exists?("vendor/ruby_version")

@@ -33,6 +33,8 @@ require 'language_pack/instrument'
 require "language_pack/helpers/plugin_installer"
 require "language_pack/helpers/stale_file_cleaner"
 require "language_pack/helpers/rake_runner"
+require "language_pack/helpers/default_cache"
+
 require "language_pack/ruby"
 require "language_pack/rack"
 require "language_pack/rails2"
