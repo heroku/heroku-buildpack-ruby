@@ -11,16 +11,16 @@ class LanguagePack::Helpers::BundlerWrapper
   VENDOR_URL         = LanguagePack::Base::VENDOR_URL                # coupling
   DEFAULT_FETCHER    = LanguagePack::Fetcher.new(VENDOR_URL)         # coupling
   BUNDLER_DIR_NAME   = LanguagePack::Ruby::BUNDLER_GEM_PATH          # coupling
-  BUNDLER_TAR        = "#{LanguagePack::Ruby::BUNDLER_GEM_PATH}.tgz" # coupling
   BUNDLER_PATH       = File.expand_path("../../../../tmp/#{BUNDLER_DIR_NAME}", __FILE__)
   GEMFILE_PATH       = Pathname.new "./Gemfile"
 
   attr_reader   :bundler_path
 
   def initialize(options = {})
-    @fetcher              = options[:fetcher]           || DEFAULT_FETCHER
-    @bundler_path         = options[:bundler_path]      || BUNDLER_PATH
-    @gemfile_path         = options[:gemfile_path]      || GEMFILE_PATH
+    @fetcher              = options[:fetcher]      || DEFAULT_FETCHER
+    @bundler_path         = options[:bundler_path] || BUNDLER_PATH
+    @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
+    @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
     @gemfile_lock_path    = "#{@gemfile_path}.lock"
     ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
     @unlock               = false
@@ -32,13 +32,13 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-    def without_warnings(&block)
-      orig_verb  = $VERBOSE
-      $VERBOSE   = nil
-      yield
-    ensure
-      $VERBOSE = orig_verb
-    end
+  def without_warnings(&block)
+    orig_verb  = $VERBOSE
+    $VERBOSE   = nil
+    yield
+  ensure
+    $VERBOSE = orig_verb
+  end
 
   def instrument(*args, &block)
     LanguagePack::Instrument.instrument(*args, &block)
@@ -85,7 +85,7 @@ class LanguagePack::Helpers::BundlerWrapper
       return true if Dir.exists?(bundler_path)
       FileUtils.mkdir_p(bundler_path)
       Dir.chdir(bundler_path) do
-        @fetcher.fetch_untar(BUNDLER_TAR)
+        @fetcher.fetch_untar(@bundler_tar)
       end
     end
   end
