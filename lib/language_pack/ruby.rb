@@ -639,7 +639,7 @@ params = CGI.parse(uri.query || "")
 
   def rake
     @rake ||= LanguagePack::Helpers::RakeRunner.new(
-                gem_is_bundled?("rake") || ruby_version.rake_is_vendored?
+                bundler.has_gem?("rake") || ruby_version.rake_is_vendored?
               ).load_rake_tasks!
   end
 
