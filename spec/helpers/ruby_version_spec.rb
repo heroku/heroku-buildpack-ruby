@@ -6,7 +6,7 @@ describe "RubyVersion" do
   end
 
   after(:each) do
-    @bundler.clean
+    FileUtils.remove_entry_secure("tmp") if Dir.exist?("tmp")
   end
 
   it "correctly sets ruby version for bundler specified versions" do
