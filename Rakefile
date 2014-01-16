@@ -160,6 +160,8 @@ FILE
       git.commit "bump to #{new_version}"
 
       stashes.pop if stashes
+
+      puts "Bumped to #{new_version}"
     else
       puts "Already on #{new_version}"
     end
