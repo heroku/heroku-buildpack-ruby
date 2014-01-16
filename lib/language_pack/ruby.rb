@@ -142,6 +142,7 @@ private
         @slug_vendor_base = "vendor/bundle/1.8"
       else
         @slug_vendor_base = run(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
+        error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
       end
     end
   end
