@@ -138,7 +138,7 @@ namespace :buildpack do
       git     = Git.open(".")
       stashes = nil
 
-      if git.status.changed
+      if git.status.changed.any?
         stashes = Git::Stashes.new(git)
         stashes.save("WIP")
       end
