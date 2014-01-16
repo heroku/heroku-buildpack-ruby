@@ -138,7 +138,7 @@ namespace :buildpack do
       git     = Git.open(".")
       stashes = nil
 
-      if git.status.changed
+      if git.status.changed.any?
         stashes = Git::Stashes.new(git)
         stashes.save("WIP")
       end
@@ -160,6 +160,8 @@ FILE
       git.commit "bump to #{new_version}"
 
       stashes.pop if stashes
+
+      puts "Bumped to #{new_version}"
     else
       puts "Already on #{new_version}"
     end
