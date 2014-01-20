@@ -8,10 +8,11 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   # @return [Boolean] true if it's a Rails 2 app
   def self.use?
     instrument "rails2.use" do
-      if gemfile_lock?
-        rails_version = LanguagePack::Ruby.gem_version('rails')
-        rails_version >= Gem::Version.new('2.0.0') && rails_version < Gem::Version.new('3.0.0') if rails_version
-      end
+      rails_version = bundler.gem_version('rails')
+      return false unless rails_version
+      is_rails2 = rails_version >= Gem::Version.new('2.0.0') &&
+                  rails_version <  Gem::Version.new('3.0.0')
+      return is_rails2
     end
   end
 
@@ -30,7 +31,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
 
   def default_process_types
     instrument "rails2.default_process_types" do
-      web_process = gem_is_bundled?("thin") ?
+      web_process = bundler.has_gem?("thin") ?
         "bundle exec thin start -e $RAILS_ENV -p $PORT" :
         "bundle exec ruby script/server -p $PORT"
 
@@ -53,7 +54,7 @@ private
 
   def install_plugins
     instrument "rails2.install_plugins" do
-      plugins = ["rails_log_stdout"].reject { |plugin| gem_is_bundled?(plugin) }
+      plugins = ["rails_log_stdout"].reject { |plugin| bundler.has_gem?(plugin) }
       topic "Rails plugin injection"
       LanguagePack::Helpers::PluginsInstaller.new(plugins).install
     end

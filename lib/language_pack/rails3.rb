@@ -7,10 +7,11 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
     instrument "rails3.use" do
-      if gemfile_lock?
-        rails_version = LanguagePack::Ruby.gem_version('railties')
-        rails_version >= Gem::Version.new('3.0.0') && rails_version < Gem::Version.new('4.0.0') if rails_version
-      end
+      rails_version = bundler.gem_version('railties')
+      return false unless rails_version
+      is_rails3 = rails_version >= Gem::Version.new('3.0.0') &&
+                  rails_version <  Gem::Version.new('4.0.0')
+      return is_rails3
     end
   end
 
@@ -21,7 +22,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   def default_process_types
     instrument "rails3.default_process_types" do
       # let's special case thin here
-      web_process = gem_is_bundled?("thin") ?
+      web_process = bundler.has_gem?("thin") ?
         "bundle exec thin start -R config.ru -e $RAILS_ENV -p $PORT" :
         "bundle exec rails server -p $PORT"
 
@@ -42,9 +43,9 @@ private
 
   def install_plugins
     instrument "rails3.install_plugins" do
-      return false if gem_is_bundled?('rails_12factor')
+      return false if bundler.has_gem?('rails_12factor')
       plugins = {"rails_log_stdout" => "rails_stdout_logging", "rails3_serve_static_assets" => "rails_serve_static_assets" }.
-                 reject { |plugin, gem| gem_is_bundled?(gem) }
+                 reject { |plugin, gem| bundler.has_gem?(gem) }
       return false if plugins.empty?
       plugins.each do |plugin, gem|
         warn "Injecting plugin '#{plugin}'"
@@ -94,13 +95,13 @@ private
       ENV["DATABASE_URL"] ||= begin
         # need to use a dummy DATABASE_URL here, so rails can load the environment
         scheme =
-          if gem_is_bundled?("pg") || gem_is_bundled?("jdbc-postgres")
+          if bundler.has_gem?("pg") || bundler.has_gem?("jdbc-postgres")
             "postgres"
-          elsif gem_is_bundled?("mysql")
+          elsif bundler.has_gem?("mysql")
             "mysql"
-          elsif gem_is_bundled?("mysql2")
+          elsif bundler.has_gem?("mysql2")
             "mysql2"
-          elsif gem_is_bundled?("sqlite3") || gem_is_bundled?("sqlite3-ruby")
+          elsif bundler.has_gem?("sqlite3") || bundler.has_gem?("sqlite3-ruby")
             "sqlite3"
           end
         "#{scheme}://user:pass@127.0.0.1/dbname"
