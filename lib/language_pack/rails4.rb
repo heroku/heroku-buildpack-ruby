@@ -5,8 +5,8 @@ require "language_pack/rails3"
 class LanguagePack::Rails4 < LanguagePack::Rails3
   ASSETS_CACHE_LIMIT = 52428800 # bytes
 
-  # detects if this is a Rails 3.x app
-  # @return [Boolean] true if it's a Rails 3.x app
+  # detects if this is a Rails 4.x app
+  # @return [Boolean] true if it's a Rails 4.x app
   def self.use?
     instrument "rails4.use" do
       rails_version = bundler.gem_version('railties')
