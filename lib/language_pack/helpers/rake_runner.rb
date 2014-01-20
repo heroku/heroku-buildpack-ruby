@@ -52,9 +52,9 @@ class LanguagePack::Helpers::RakeRunner
     end
   end
 
-  def initialize(has_rake = true)
-    @has_rake = has_rake
-    if has_rake
+  def initialize(has_rake_gem = true)
+    @has_rake = has_rake_gem && has_rakefile?
+    if @has_rake
       load_rake_tasks
     else
       @rake_tasks    = ""
@@ -113,5 +113,11 @@ class LanguagePack::Helpers::RakeRunner
 
   def invoke(task, command = nil)
     self.task(task, command).invoke
+  end
+
+private
+
+  def has_rakefile?
+    %W{ Rakefile rakefile  rakefile.rb Rakefile.rb}.detect {|file| File.exist?(file) }
   end
 end

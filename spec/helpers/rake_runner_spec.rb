@@ -40,4 +40,11 @@ describe "Rake Runner" do
       expect(task.task_defined?).to be_false
     end
   end
+
+  it "detects when no rakefile is present" do
+    Hatchet::App.new('no_rakefile').in_directory do
+      runner = LanguagePack::Helpers::RakeRunner.new
+      expect(runner.rakefile_can_load?).to be_false
+    end
+  end
 end
