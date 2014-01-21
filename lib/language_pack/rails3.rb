@@ -57,10 +57,19 @@ private
 
   # runs the tasks for the Rails 3.1 asset pipeline
   def run_assets_precompile_rake_task
+    ENV["RAILS_GROUPS"] ||= "assets"
+    ENV["RAILS_ENV"]    ||= "production"
+
+    setup_database_url_env
+
+    if bundler.has_gem?('turbo-sprockets-rails3')
+      log('clear_assets_cache') do
+        @cache.load 'public/assets'
+      end
+    end
+
     instrument "rails3.run_assets_precompile_rake_task" do
       log("assets_precompile") do
-        setup_database_url_env
-
         if File.exists?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
           return true
@@ -70,9 +79,6 @@ private
         return true unless precompile.is_defined?
 
         topic("Preparing app for Rails asset pipeline")
-
-        ENV["RAILS_GROUPS"] ||= "assets"
-        ENV["RAILS_ENV"]    ||= "production"
 
         puts "Running: rake assets:precompile"
         require 'benchmark'
@@ -84,6 +90,25 @@ private
         else
           log "assets_precompile", :status => "failure"
           error "Precompiling assets failed."
+        end
+      end
+    end
+
+    if bundler.has_gem?('turbo-sprockets-rails3')
+      instrument "rails3.run_assets_clean_expired_rake_task" do
+        log("assets_clean_expired") do
+          clean = rake.task("assets:clean_expired")
+          return true unless clean.is_defined?
+
+          clean.invoke
+          if clean.success?
+            log "assets_clean_expired", :status => "success"
+            puts "Cleared expired assets (#{".2f" % clean.time}s)"
+            @cache.store 'public/assets'
+          else
+            log "assets_clean_expired", :status => "failure"
+            error "Clearing expired assets failed."
+          end
         end
       end
     end
