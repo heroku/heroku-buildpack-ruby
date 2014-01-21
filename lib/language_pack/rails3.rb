@@ -93,8 +93,6 @@ private
         if precompile.success?
           log "assets_precompile", :status => "success"
           puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
-          puts "Removing app/assets from slug"
-          FileUtils.rm_rf('app/assets')
         else
           log "assets_precompile", :status => "failure"
           error "Precompiling assets failed."
