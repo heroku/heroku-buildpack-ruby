@@ -675,6 +675,10 @@ params = CGI.parse(uri.query || "")
         error "Precompiling assets failed."
       end
     end
+
+    instrument 'ruby.remove_assets_from_slug' do
+      FileUtils.rm_rf('app/assets')
+    end
   end
 
   def bundler_cache
