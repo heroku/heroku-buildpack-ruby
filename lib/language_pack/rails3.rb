@@ -62,19 +62,19 @@ private
 
     setup_database_url_env
 
-    if bundler.has_gem?('turbo-sprockets-rails3')
-      log('clear_assets_cache') do
-        @cache.load 'public/assets'
-
-        # If it's not a turbo-sprockets version that is cached, clean it.
-        if !File.exists?('public/assets/source_manifest.yml')
-          FileUtils.rm 'public/assets'
-        end
-      end
-    end
-
     instrument "rails3.run_assets_precompile_rake_task" do
       log("assets_precompile") do
+        if bundler.has_gem?('turbo-sprockets-rails3')
+          log('clear_assets_cache') do
+            @cache.load 'public/assets'
+
+            # If it's not a turbo-sprockets version that is cached, clean it.
+            if !File.exists?('public/assets/sources_manifest.yml')
+              FileUtils.rm_rf 'public/assets'
+            end
+          end
+        end
+
         if File.exists?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
           return true
