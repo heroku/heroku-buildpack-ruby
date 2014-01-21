@@ -65,6 +65,7 @@ private
     if bundler.has_gem?('turbo-sprockets-rails3')
       log('clear_assets_cache') do
         @cache.load 'public/assets'
+        FileUtils.rm 'public/assets/manifest.yml'
       end
     end
 
