@@ -69,8 +69,14 @@ private
           return true
         end
 
+        precompile = rake.task("assets:precompile")
+        return true unless precompile.is_defined?
+
+        topic("Preparing app for Rails asset pipeline")
+
         if bundler.has_gem?('turbo-sprockets-rails3')
           log('clear_assets_cache') do
+            puts "turbo-sprockets-rails3 detected, loading cached assets"
             @cache.load 'public/assets'
 
             # If it's not a turbo-sprockets version that is cached, clean it.
@@ -79,11 +85,6 @@ private
             end
           end
         end
-
-        precompile = rake.task("assets:precompile")
-        return true unless precompile.is_defined?
-
-        topic("Preparing app for Rails asset pipeline")
 
         puts "Running: rake assets:precompile"
         require 'benchmark'
