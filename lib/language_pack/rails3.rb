@@ -64,6 +64,11 @@ private
 
     instrument "rails3.run_assets_precompile_rake_task" do
       log("assets_precompile") do
+        if File.exists?("public/assets/manifest.yml")
+          puts "Detected manifest.yml, assuming assets were compiled locally"
+          return true
+        end
+
         if bundler.has_gem?('turbo-sprockets-rails3')
           log('clear_assets_cache') do
             @cache.load 'public/assets'
@@ -73,11 +78,6 @@ private
               FileUtils.rm_rf 'public/assets'
             end
           end
-        end
-
-        if File.exists?("public/assets/manifest.yml")
-          puts "Detected manifest.yml, assuming assets were compiled locally"
-          return true
         end
 
         precompile = rake.task("assets:precompile")
