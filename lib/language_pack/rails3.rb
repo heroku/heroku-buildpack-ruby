@@ -65,7 +65,11 @@ private
     if bundler.has_gem?('turbo-sprockets-rails3')
       log('clear_assets_cache') do
         @cache.load 'public/assets'
-        FileUtils.rm 'public/assets/manifest.yml'
+
+        # If it's not a turbo-sprockets version that is cached, clean it.
+        if !File.exists?('public/assets/source_manifest.yml')
+          FileUtils.rm 'public/assets'
+        end
       end
     end
 
@@ -88,6 +92,8 @@ private
         if precompile.success?
           log "assets_precompile", :status => "success"
           puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
+          puts "Removing app/assets from slug"
+          FileUtils.rm_rf('app/assets')
         else
           log "assets_precompile", :status => "failure"
           error "Precompiling assets failed."

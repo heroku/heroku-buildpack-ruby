@@ -670,14 +670,12 @@ params = CGI.parse(uri.query || "")
       precompile.invoke
       if precompile.success?
         puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
+        puts "Removing app/assets from slug"
+        FileUtils.rm_rf('app/assets')
       else
         log "assets_precompile", :status => "failure"
         error "Precompiling assets failed."
       end
-    end
-
-    instrument 'ruby.remove_assets_from_slug' do
-      FileUtils.rm_rf('app/assets')
     end
   end
 
