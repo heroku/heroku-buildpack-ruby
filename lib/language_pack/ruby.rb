@@ -13,7 +13,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_VERSION      = "0.1.4"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.5.2"
-  BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
+  BUNDLER_DIR_NAME     = "bundler-#{BUNDLER_VERSION}"
   NODE_VERSION         = "0.4.7"
   NODE_JS_BINARY_PATH  = "node-#{NODE_VERSION}"
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
@@ -31,7 +31,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def self.bundler
-    @bundler ||= LanguagePack::Helpers::BundlerWrapper.new
+    @bundler ||= LanguagePack::Helpers::BundlerWrapper.new.install
   end
 
   def bundler
@@ -44,10 +44,6 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def bundle
     self.class.bundle
-  end
-
-  def bundler_path
-    bundler.bundler_path
   end
 
   def initialize(build_path, cache_path=nil)
@@ -75,8 +71,8 @@ class LanguagePack::Ruby < LanguagePack::Base
       }
 
       ruby_version.jruby? ? vars.merge({
-        "JAVA_OPTS" => default_java_opts,
-        "JRUBY_OPTS" => default_jruby_opts,
+        "JAVA_OPTS"         => default_java_opts,
+        "JRUBY_OPTS"        => default_jruby_opts,
         "JAVA_TOOL_OPTIONS" => default_java_tool_options
       }) : vars
     end
@@ -125,32 +121,34 @@ private
   def slug_vendor_base
     instrument 'ruby.slug_vendor_base' do
       if @slug_vendor_base
-        @slug_vendor_base
+        return @slug_vendor_base
       elsif ruby_version.ruby_version == "1.8.7"
         @slug_vendor_base = "vendor/bundle/1.8"
       else
         @slug_vendor_base = run_no_pipe(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
         error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
       end
+
+      FileUtils.mkdir_p(@slug_vendor_base).first
     end
   end
 
   # the relative path to the vendored ruby directory
   # @return [String] resulting path
   def slug_vendor_ruby
-    "vendor/#{ruby_version.version_without_patchlevel}"
+    @slug_vendor_ruby ||= FileUtils.mkdir_p("vendor/#{ruby_version.version_without_patchlevel}").first
   end
 
   # the relative path to the vendored jvm
   # @return [String] resulting path
   def slug_vendor_jvm
-    "vendor/jvm"
+    @slug_vendor_jvm  ||= FileUtils.mkdir_p("vendor/jvm").first
   end
 
   # the absolute path of the build ruby to use during the buildpack
   # @return [String] resulting path
   def build_ruby_path
-    "/tmp/#{ruby_version.version_without_patchlevel}"
+    @build_ruby_path  ||= FileUtils.mkdir_p("/tmp/#{ruby_version.version_without_patchlevel}").first
   end
 
   # fetch the ruby version from bundler
@@ -245,7 +243,6 @@ Valid versions: #{ruby_versions.join(", ")}
 ERROR
 
       if ruby_version.build?
-        FileUtils.mkdir_p(build_ruby_path)
         Dir.chdir(build_ruby_path) do
           ruby_vm = "ruby"
           instrument "ruby.fetch_build_ruby" do
@@ -255,7 +252,6 @@ ERROR
         error invalid_ruby_version_message unless $?.success?
       end
 
-      FileUtils.mkdir_p(slug_vendor_ruby)
       Dir.chdir(slug_vendor_ruby) do
         instrument "ruby.fetch_ruby" do
           if ruby_version.rbx?
@@ -327,7 +323,6 @@ WARNING
 
         topic "Installing JVM: #{jvm_version}"
 
-        FileUtils.mkdir_p(slug_vendor_jvm)
         Dir.chdir(slug_vendor_jvm) do
           @fetchers[:jvm].fetch_untar("#{jvm_version}.tar.gz")
         end
@@ -368,14 +363,15 @@ WARNING
   # list of default gems to vendor into the slug
   # @return [Array] resulting list of gems
   def gems
-    [BUNDLER_GEM_PATH]
+    []
   end
 
   # installs vendored gems into the slug
   def install_language_pack_gems
     instrument 'ruby.install_language_pack_gems' do
-      FileUtils.mkdir_p(slug_vendor_base)
       Dir.chdir(slug_vendor_base) do |dir|
+        bundle.copy_into(dir)
+
         gems.each do |g|
           @fetchers[:buildpack].fetch_untar("#{g}.tgz")
         end
@@ -502,11 +498,11 @@ WARNING
           yaml_include   = File.expand_path("#{libyaml_dir}/include")
           yaml_lib       = File.expand_path("#{libyaml_dir}/lib")
           pwd            = run("pwd").chomp
-          bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
+
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
           env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH RUBYOPT=\"#{syck_hack}\" NOKOGIRI_USE_SYSTEM_LIBRARIES=true"
-          env_vars      += " BUNDLER_LIB_PATH=#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
+          env_vars      += " BUNDLER_LIB_PATH=#{bundler.lib_path}" if ruby_version.ruby_version == "1.8.7"
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
             bundle_time = Benchmark.realtime do
