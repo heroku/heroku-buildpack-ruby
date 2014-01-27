@@ -38,14 +38,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.bundler
   end
 
-  def self.bundle
-    bundler.lockfile_parser
-  end
-
-  def bundle
-    self.class.bundle
-  end
-
   def initialize(build_path, cache_path=nil)
     super(build_path, cache_path)
     @fetchers[:jvm] = LanguagePack::Fetcher.new(JVM_BASE_URL)
@@ -370,7 +362,7 @@ WARNING
   def install_language_pack_gems
     instrument 'ruby.install_language_pack_gems' do
       Dir.chdir(slug_vendor_base) do |dir|
-        bundle.copy_into(dir)
+        bundler.copy_into(dir)
 
         gems.each do |g|
           @fetchers[:buildpack].fetch_untar("#{g}.tgz")
