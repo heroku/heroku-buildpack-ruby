@@ -16,4 +16,3 @@ describe "BundlerWrapper" do
     end
   end
 end
-
