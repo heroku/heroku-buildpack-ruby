@@ -17,10 +17,12 @@ module LanguagePack
     end
 
     def self.initialize_env(path)
-      file = Pathname.new("#{path}")
-      if file.exist?
-        file.read.split("\n").map {|x| x.split("=") }.each do |k,v|
-          user_env_hash[k.strip] = v.strip unless blacklist?(k.strip)
+      env_dir = Pathname.new("#{path}")
+      if env_dir.exist? && env_dir.directory?
+        env_dir.each_child do |file|
+          key   = file.basename.to_s
+          value = file.read.strip
+          user_env_hash[key] = value
         end
       end
     end
