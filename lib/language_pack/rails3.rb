@@ -59,8 +59,6 @@ private
   def run_assets_precompile_rake_task
     instrument "rails3.run_assets_precompile_rake_task" do
       log("assets_precompile") do
-        setup_database_url_env
-
         if File.exists?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
           return true
@@ -71,13 +69,22 @@ private
 
         topic("Preparing app for Rails asset pipeline")
 
-        ENV["RAILS_GROUPS"] ||= "assets"
-        ENV["RAILS_ENV"]    ||= "production"
+        if user_env_hash.empty?
+          default_env = {
+            "RAILS_GROUPS" => ENV["RAILS_GROUPS"] || "assets",
+            "RAILS_ENV"    => ENV["RAILS_ENV"]    || "production",
+            "DATABASE_URL" => ENV["DATABASE_URL"] || default_database_url
+          }
+        else
+          default_env = {
+            "RAILS_GROUPS" => "assets",
+            "RAILS_ENV"    => "production",
+            "DATABASE_URL" => default_database_url
+          }
+        end
 
-        puts "Running: rake assets:precompile"
-        require 'benchmark'
+        precompile.invoke(env: default_env.merge(user_env_hash))
 
-        precompile.invoke
         if precompile.success?
           log "assets_precompile", :status => "success"
           puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
@@ -89,23 +96,21 @@ private
     end
   end
 
-  # setup the database url as an environment variable
-  def setup_database_url_env
+  # generate a dummy database_url
+  def default_database_url
     instrument "rails3.setup_database_url_env" do
-      ENV["DATABASE_URL"] ||= begin
-        # need to use a dummy DATABASE_URL here, so rails can load the environment
-        scheme =
-          if bundler.has_gem?("pg") || bundler.has_gem?("jdbc-postgres")
-            "postgres"
-          elsif bundler.has_gem?("mysql")
-            "mysql"
-          elsif bundler.has_gem?("mysql2")
-            "mysql2"
-          elsif bundler.has_gem?("sqlite3") || bundler.has_gem?("sqlite3-ruby")
-            "sqlite3"
-          end
-        "#{scheme}://user:pass@127.0.0.1/dbname"
+      # need to use a dummy DATABASE_URL here, so rails can load the environment
+      scheme =
+        if bundler.has_gem?("pg") || bundler.has_gem?("jdbc-postgres")
+          "postgres"
+      elsif bundler.has_gem?("mysql")
+        "mysql"
+      elsif bundler.has_gem?("mysql2")
+        "mysql2"
+      elsif bundler.has_gem?("sqlite3") || bundler.has_gem?("sqlite3-ruby")
+        "sqlite3"
       end
+      "#{scheme}://user:pass@127.0.0.1/dbname"
     end
   end
 end

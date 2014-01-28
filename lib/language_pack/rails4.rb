@@ -69,8 +69,6 @@ WARNING
   def run_assets_precompile_rake_task
     instrument "rails4.run_assets_precompile_rake_task" do
       log("assets_precompile") do
-        setup_database_url_env
-
         if Dir.glob('public/assets/manifest-*.json').any?
           puts "Detected manifest file, assuming assets were compiled locally"
           return true
@@ -80,20 +78,33 @@ WARNING
         return true unless precompile.is_defined?
 
         topic("Preparing app for Rails asset pipeline")
-        ENV["RAILS_GROUPS"] ||= "assets"
-        ENV["RAILS_ENV"]    ||= "production"
 
         @cache.load public_assets_folder
         @cache.load default_assets_cache
 
-        precompile.invoke
+        if user_env_hash.empty?
+          default_env = {
+            "RAILS_GROUPS" => ENV["RAILS_GROUPS"] || "assets",
+            "RAILS_ENV"    => ENV["RAILS_ENV"]    || "production",
+            "DATABASE_URL" => ENV["DATABASE_URL"] || default_database_url
+          }
+        else
+          default_env = {
+            "RAILS_GROUPS" => "assets",
+            "RAILS_ENV"    => "production",
+            "DATABASE_URL" => default_database_url
+          }
+        end
+        rake_options = {env: default_env.merge(user_env_hash) }
+
+        precompile.invoke(rake_options)
 
         if precompile.success?
           log "assets_precompile", :status => "success"
           puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
 
           puts "Cleaning assets"
-          pipe "env PATH=$PATH:bin bundle exec rake assets:clean 2>& 1"
+          rake.task("assets:clean").invoke(rake_options)
 
           cleanup_assets_cache
           @cache.store public_assets_folder
