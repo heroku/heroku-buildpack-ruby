@@ -8,28 +8,41 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  VENDOR_URL         = LanguagePack::Base::VENDOR_URL                # coupling
-  DEFAULT_FETCHER    = LanguagePack::Fetcher.new(VENDOR_URL)         # coupling
-  BUNDLER_DIR_NAME   = LanguagePack::Ruby::BUNDLER_GEM_PATH          # coupling
-  BUNDLER_PATH       = File.expand_path("../../../../tmp/#{BUNDLER_DIR_NAME}", __FILE__)
-  GEMFILE_PATH       = Pathname.new "./Gemfile"
-
-  attr_reader   :bundler_path
+  DEFAULT_FETCHER  = LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL)
+  BUNDLER_DIR_NAME = LanguagePack::Ruby::BUNDLER_DIR_NAME
 
   def initialize(options = {})
-    @fetcher              = options[:fetcher]      || DEFAULT_FETCHER
-    @bundler_path         = options[:bundler_path] || BUNDLER_PATH
-    @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
-    @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
-    @gemfile_lock_path    = "#{@gemfile_path}.lock"
-    ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
     @unlock               = false
-    @path                 = Pathname.new "#{@bundler_path}/gems/#{BUNDLER_DIR_NAME}/lib"
+    @install_into         = options[:install_into] || Dir.mktmpdir
+    @fetcher              = options[:fetcher]      || DEFAULT_FETCHER
+    @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
+    @gemfile_path         = options[:gemfile_path] || "./Gemfile"
+
+    @lib_path             = Pathname.new "#{@install_into}/gems/#{BUNDLER_DIR_NAME}/lib"
+    @orig_gemfile_path    = ENV['BUNDLE_GEMFILE']
+    ENV['BUNDLE_GEMFILE'] = @gemfile_path
+  end
+
+  def copy_into(path)
+    FileUtils.cp_r(@install_into, File.join(path, BUNDLER_DIR_NAME))
+  end
+
+  def gemfile_lock_path
+    "#{@gemfile_path}.lock"
+  end
+
+  def install
     fetch_bundler
-    $LOAD_PATH << @path
+    $LOAD_PATH << @lib_path
     without_warnings do
-      load @path.join("bundler.rb")
+      load @lib_path.join("bundler.rb")
     end
+    return self
+  end
+
+  def clean
+    ENV['BUNDLE_GEMFILE'] = @orig_gemfile_path
+    FileUtils.remove_entry_secure(@install_into) if Dir.exist?(@install_into)
   end
 
   def without_warnings(&block)
@@ -76,10 +89,6 @@ class LanguagePack::Helpers::BundlerWrapper
     LanguagePack::Instrument.instrument(*args, &block)
   end
 
-  def clean
-    FileUtils.remove_entry_secure(bundler_path)
-  end
-
   def ui
     Bundler.ui = Bundler::UI::Shell.new({})
   end
@@ -110,9 +119,7 @@ class LanguagePack::Helpers::BundlerWrapper
   private
   def fetch_bundler
     instrument 'fetch_bundler' do
-      return true if Dir.exists?(bundler_path)
-      FileUtils.mkdir_p(bundler_path)
-      Dir.chdir(bundler_path) do
+      Dir.chdir(@install_into) do
         @fetcher.fetch_untar(@bundler_tar)
       end
     end
@@ -120,7 +127,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def parse_gemfile_lock
     instrument 'parse_bundle' do
-      gemfile_contents = File.read(@gemfile_lock_path)
+      gemfile_contents = File.read(gemfile_lock_path)
       Bundler::LockfileParser.new(gemfile_contents)
     end
   end
