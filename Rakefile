@@ -238,9 +238,16 @@ FILE
 
   desc "tag a release"
   task :tag do
+    tagged_version =
+      if @new_version.nil?
+        "v#{latest_release["id"]}"
+      else
+        new_version
+      end
+
     git = Git.open(".")
-    git.add_tag(new_version)
-    puts "Created tag #{new_version}"
+    git.add_tag(tagged_version)
+    puts "Created tag #{tagged_version}"
 
     remote = git.remotes.detect {|remote| remote.url.match(%r{heroku/heroku-buildpack-ruby.git$}) }
     puts "Pushing tag to remote #{remote}"
