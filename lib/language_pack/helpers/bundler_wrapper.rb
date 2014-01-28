@@ -18,18 +18,28 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def initialize(options = {})
     @fetcher              = options[:fetcher]      || DEFAULT_FETCHER
-    @bundler_path         = options[:bundler_path] || BUNDLER_PATH
+    @bundler_path         = options[:bundler_path] || File.join(Dir.mktmpdir, BUNDLER_DIR_NAME)
     @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
     @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
     @gemfile_lock_path    = "#{@gemfile_path}.lock"
+    @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
     ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
     @unlock               = false
     @path                 = Pathname.new "#{@bundler_path}/gems/#{BUNDLER_DIR_NAME}/lib"
+  end
+
+  def install
     fetch_bundler
     $LOAD_PATH << @path
     without_warnings do
       load @path.join("bundler.rb")
     end
+    self
+  end
+
+  def clean
+    ENV['BUNDLE_GEMFILE'] = @orig_bundle_gemfile
+    FileUtils.remove_entry_secure(bundler_path) if Dir.exist?(bundler_path)
   end
 
   def without_warnings(&block)
@@ -76,10 +86,6 @@ class LanguagePack::Helpers::BundlerWrapper
     LanguagePack::Instrument.instrument(*args, &block)
   end
 
-  def clean
-    FileUtils.remove_entry_secure(bundler_path)
-  end
-
   def ui
     Bundler.ui = Bundler::UI::Shell.new({})
   end
@@ -115,6 +121,7 @@ class LanguagePack::Helpers::BundlerWrapper
       Dir.chdir(bundler_path) do
         @fetcher.fetch_untar(@bundler_tar)
       end
+      Dir["bin/*"].each {|path| `chmod 755 #{path}` }
     end
   end
 

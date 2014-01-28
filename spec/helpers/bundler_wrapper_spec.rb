@@ -2,14 +2,17 @@ require 'spec_helper'
 
 describe "BundlerWrapper" do
 
+  before(:each) do
+    @bundler = LanguagePack::Helpers::BundlerWrapper.new
+  end
+
   after(:each) do
-    FileUtils.remove_entry_secure("tmp") if Dir.exist?("tmp")
+    @bundler.clean
   end
 
   it "detects windows gemfiles" do
     Hatchet::App.new("rails4_windows_mri193").in_directory do |dir|
-      @bundler = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: "./Gemfile")
-      expect(@bundler.windows_gemfile_lock?).to be_true
+      expect(@bundler.install.windows_gemfile_lock?).to be_true
     end
   end
 end
