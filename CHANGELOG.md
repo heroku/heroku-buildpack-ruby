@@ -4,6 +4,14 @@ Features:
 
 Bugfixes:
 
+## v93 (01/28/2014)
+
+Features:
+
+* buildpack-env-arg (ponies) support
+
+Bugfixes:
+
 ## v92 (01/27/2014)
 
 Features:
