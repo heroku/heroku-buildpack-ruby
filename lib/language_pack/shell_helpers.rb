@@ -67,7 +67,7 @@ module LanguagePack
       options[:env] ||= {}
       options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
       env           = options[:env].map {|key, value| "#{key}=#{value}"}.join(" ")
-      %x{ bash -c #{env} #{command.shellescape} #{options[:out]} }
+      %x{ env #{env} bash -c #{command.shellescape} #{options[:out]} }
     end
 
     # run a shell command and pipe stderr to /dev/null
