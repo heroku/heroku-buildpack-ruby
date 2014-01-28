@@ -73,7 +73,7 @@ class LanguagePack::Helpers::RakeRunner
 
   def load_rake_tasks
     instrument "ruby.rake_task_defined" do
-      @rake_tasks        ||= run("env PATH=$PATH bundle exec rake -P --trace")
+      @rake_tasks        ||= run("bundle exec rake -P --trace", user_env: true)
       @rakefile_can_load ||= $?.success?
       @rake_tasks
     end
