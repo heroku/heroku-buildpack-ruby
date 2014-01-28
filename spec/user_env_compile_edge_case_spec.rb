@@ -9,4 +9,10 @@ describe "User env compile" do
       expect(app.run("bundle version")).to match(LanguagePack::Ruby::BUNDLER_VERSION)
     end
   end
+
+  it "DATABASE_URL is present even without user-env-compile" do
+    Hatchet::Runner.new("database_url_expected_in_rakefile").deploy do |app|
+      expect(app.output).to match("Asset precompilation completed")
+    end
+  end
 end

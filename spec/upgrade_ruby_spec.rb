@@ -15,4 +15,3 @@ describe "Upgrading ruby apps" do
     end
   end
 end
-
