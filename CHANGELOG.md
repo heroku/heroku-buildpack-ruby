@@ -4,6 +4,15 @@ Features:
 
 Bugfixes:
 
+## v92 (01/27/2014)
+
+Features:
+
+Bugfixes:
+
+* Only display rake error messages if a `Rakefile` exists
+* when detecting for ruby version, don't use stderr messages
+
 ## v91 (01/16/2013)
 
 Features:
