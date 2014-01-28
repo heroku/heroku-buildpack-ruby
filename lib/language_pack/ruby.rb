@@ -489,7 +489,6 @@ WARNING
         end
 
         topic("Installing dependencies using #{bundler.version}")
-
         load_bundler_cache
 
         bundler_output = ""
@@ -505,12 +504,20 @@ WARNING
           bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
-          env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH RUBYOPT=\"#{syck_hack}\" NOKOGIRI_USE_SYSTEM_LIBRARIES=true"
-          env_vars      += " BUNDLER_LIB_PATH=#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
+          env_vars       = {
+            "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
+            "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
+            "CPATH"                         => "#{yaml_include}:$CPATH",
+            "CPPATH"                        => "#{yaml_include}:$CPPATH",
+            "LIBRARY_PATH"                  => "#{yaml_lib}:$LIBRARY_PATH",
+            "RUBYOPT"                       => "\"#{syck_hack}\"",
+            "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
+          }
+          env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
             bundle_time = Benchmark.realtime do
-              bundler_output << pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+              bundler_output << pipe("#{bundle_command} --no-clean 2>&1", env: env_vars, user_env: true)
             end
           end
         end
