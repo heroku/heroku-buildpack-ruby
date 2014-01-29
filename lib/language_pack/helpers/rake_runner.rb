@@ -81,7 +81,7 @@ class LanguagePack::Helpers::RakeRunner
 
   def load_rake_tasks
     instrument "ruby.rake_task_defined" do
-      @rake_tasks        ||= run("bundle exec rake -P --trace", user_env: true)
+      @rake_tasks        ||= RakeTask.new("-P --trace").invoke(quiet: true).output
       @rakefile_can_load ||= $?.success?
       @rake_tasks
     end
