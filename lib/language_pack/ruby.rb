@@ -31,23 +31,11 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def self.bundler
-    @bundler ||= LanguagePack::Helpers::BundlerWrapper.new
+    @bundler ||= LanguagePack::Helpers::BundlerWrapper.new.install
   end
 
   def bundler
     self.class.bundler
-  end
-
-  def self.bundle
-    bundler.lockfile_parser
-  end
-
-  def bundle
-    self.class.bundle
-  end
-
-  def bundler_path
-    bundler.bundler_path
   end
 
   def initialize(build_path, cache_path=nil)
@@ -102,7 +90,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       setup_language_pack_environment
       setup_profiled
       allow_git do
-        install_language_pack_gems
+        install_bundler_in_app
         build_bundler
         create_database_yml
         install_binaries
@@ -365,21 +353,12 @@ WARNING
     end
   end
 
-  # list of default gems to vendor into the slug
-  # @return [Array] resulting list of gems
-  def gems
-    [BUNDLER_GEM_PATH]
-  end
-
   # installs vendored gems into the slug
-  def install_language_pack_gems
+  def install_bundler_in_app
     instrument 'ruby.install_language_pack_gems' do
       FileUtils.mkdir_p(slug_vendor_base)
       Dir.chdir(slug_vendor_base) do |dir|
-        gems.each do |g|
-          @fetchers[:buildpack].fetch_untar("#{g}.tgz")
-        end
-        Dir["bin/*"].each {|path| run("chmod 755 #{path}") }
+        `cp -R #{bundler.bundler_path}/. .`
       end
     end
   end
