@@ -594,7 +594,7 @@ require 'uri'
 begin
   uri = URI.parse(ENV["DATABASE_URL"])
 rescue URI::InvalidURIError
-  raise "Invalid DATABASE_URL"
+  raise "Invalid DATABASE_URL: #{ENV['DATABASE_URL'].inspect}"
 end
 
 raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
