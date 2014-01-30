@@ -1,5 +1,13 @@
 ## Master
 
+## v97 (1/30/2014)
+
+Features:
+
+Bugfixes:
+
+* Actually finalize method rename to `install_bundler_in_app`
+
 
 ## v96 (1/29/2014)
 
