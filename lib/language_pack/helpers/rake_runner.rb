@@ -33,10 +33,18 @@ class LanguagePack::Helpers::RakeRunner
     end
 
     def invoke(options = {})
-      options = @default_options.merge(options)
-      puts "Running: rake #{task}"
+      options      = @default_options.merge(options)
+      quiet_option = options.delete(:quiet)
+
+      puts "Running: rake #{task}" unless quiet_option
       time = Benchmark.realtime do
-        self.output = pipe("rake #{task}", options)
+        cmd = "rake #{task}"
+
+        if quiet_option
+          self.output = run("rake #{task}", options)
+        else
+          self.output = pipe("rake #{task}", options)
+        end
       end
       self.time = time
 
@@ -73,7 +81,7 @@ class LanguagePack::Helpers::RakeRunner
 
   def load_rake_tasks
     instrument "ruby.rake_task_defined" do
-      @rake_tasks        ||= run("bundle exec rake -P --trace", user_env: true)
+      @rake_tasks        ||= RakeTask.new("-P --trace").invoke(quiet: true).output
       @rakefile_can_load ||= $?.success?
       @rake_tasks
     end
