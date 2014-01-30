@@ -1,8 +1,17 @@
 ## Master
 
+
+## v96 (1/29/2014)
+
 Features:
 
 Bugfixes:
+
+* Finalize method rename to `install_bundler_in_app`
+
+## v95
+
+Rollback to v93
 
 ## v94 (1/29/2014)
 
