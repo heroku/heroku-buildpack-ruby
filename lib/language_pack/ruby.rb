@@ -757,7 +757,7 @@ params = CGI.parse(uri.query || "")
       FileUtils.rm_rf(bundler_cache)
       cache.clear bundler_cache
       # need to reinstall language pack gems
-      install_language_pack_gems
+      install_bundler_in_app
     end
   end
 end
