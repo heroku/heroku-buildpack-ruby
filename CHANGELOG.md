@@ -4,6 +4,14 @@ Features:
 
 Bugfixes:
 
+## v94 (1/29/2014)
+
+Features:
+
+Bugfixes:
+
+* Fixed `uninitialized constant Rake::DSL` error when running rake tasks on Ruby 1.9.2
+
 ## v93 (01/28/2014)
 
 Features:
