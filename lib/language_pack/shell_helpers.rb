@@ -12,6 +12,10 @@ module LanguagePack
       @@user_env_hash
     end
 
+    def env(var)
+      ENV[var] || user_env_hash[var]
+    end
+
     def self.blacklist?(key)
       %w(PATH GEM_PATH GEM_HOME GIT_DIR).include?(key)
     end
