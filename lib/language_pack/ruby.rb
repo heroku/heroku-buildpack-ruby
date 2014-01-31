@@ -110,7 +110,15 @@ private
     # to the wrong --prefix ruby binstubs
     # breaking require. This only applies to Ruby 1.9.2 and 1.8.7.
     safe_binstubs = binstubs_relative_paths - ["bin"]
-    "#{safe_binstubs.join(":")}:#{ENV["PATH"]}:bin:#{system_paths}"
+    paths         = [
+      ENV["PATH"],
+      "bin",
+      system_paths,
+    ]
+    paths.unshift("#{slug_vendor_jvm}/bin") if ruby_version.jruby?
+    paths.unshift(safe_binstubs)
+
+    paths.join(":")
   end
 
   def binstubs_relative_paths
