@@ -1,5 +1,14 @@
 ## Master
 
+## v98 (1/30/2014)
+
+Features:
+
+Bugfixes:
+
+* Use vendored JDK binary during build
+
+
 ## v97 (1/30/2014)
 
 Features:
