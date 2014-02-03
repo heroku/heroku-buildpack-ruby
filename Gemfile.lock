@@ -24,7 +24,7 @@ GEM
     heroku-api (0.3.17)
       excon (~> 0.27)
       multi_json (~> 1.8.2)
-    heroku_hatchet (1.1.9)
+    heroku_hatchet (1.2.1)
       activesupport
       anvil-cli
       excon
