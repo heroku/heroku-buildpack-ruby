@@ -751,6 +751,13 @@ params = CGI.parse(uri.query || "")
         purge_bundler_cache
       end
 
+      # recompile nokogiri to use new libyaml
+      if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 98 && bundler.has_gem?("psych")
+        puts "Need to recompile psych for CVE-2013-6393. Clearing bundler cache."
+        puts "See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=737076."
+        purge_bundler_cache
+      end
+
       FileUtils.mkdir_p(heroku_metadata)
       @metadata.write(ruby_version_cache, full_ruby_version, false)
       @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
