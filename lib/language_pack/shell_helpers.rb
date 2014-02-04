@@ -53,12 +53,7 @@ module LanguagePack
     # @param [String] command to be run
     # @return [String] output of stdout
     def run_no_pipe(command, options = {})
-      run_with_env(command, options.merge({:out => "" }))
-    end
-
-    def run_with_env(command, options = {})
-      env = user_env_hash.merge(options[:env]||{}).map {|key, value| "#{key}=\"#{value}\""}.join(" ")
-      run("env #{env} #{command}", options)
+      run(command, options.merge({:out => ""}))
     end
 
     # run a shell command and pipe stderr to stdout
