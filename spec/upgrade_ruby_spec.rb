@@ -4,8 +4,7 @@ describe "Upgrading ruby apps" do
   it "upgrades from 2.0.0 to 2.1.0" do
     Hatchet::Runner.new("mri_200").deploy do |app|
       expect(app.run("ruby -v")).to match("2.0.0")
-      `git config user.email "buildpack+tester@example.com"`
-      `git config user.name "Buildpack Tester"`
+
       `echo "" > Gemfile; rm Gemfile.lock`
       `env BUNDLE_GEMFILE=./Gemfile bundle install`
       `echo "ruby '2.1.0'" > Gemfile`
