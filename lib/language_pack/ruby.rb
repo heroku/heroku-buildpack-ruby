@@ -10,7 +10,7 @@ require "language_pack/version"
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
-  LIBYAML_VERSION      = "0.1.4"
+  LIBYAML_VERSION      = "0.1.5"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.5.2"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
@@ -748,6 +748,13 @@ params = CGI.parse(uri.query || "")
       if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 76
         puts "Fixing nokogiri install. Clearing bundler cache."
         puts "See https://github.com/sparklemotion/nokogiri/issues/923."
+        purge_bundler_cache
+      end
+
+      # recompile nokogiri to use new libyaml
+      if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 98 && bundler.has_gem?("psych")
+        puts "Need to recompile psych for CVE-2013-6393. Clearing bundler cache."
+        puts "See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=737076."
         purge_bundler_cache
       end
 
