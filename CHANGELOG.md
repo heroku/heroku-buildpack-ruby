@@ -1,7 +1,112 @@
 ## Master
 
+## v100 (2/4/2014)
 
-## v85 (12/05/2012)
+Features:
+
+Bugfixes:
+
+* compile psych with libyaml 0.1.5 for CVE-2013-6393
+
+## v99 (2/4/2014)
+
+Features:
+
+* Noop
+
+Bugfixes:
+
+
+## v98 (1/30/2014)
+
+Features:
+
+Bugfixes:
+
+* Use vendored JDK binary during build
+
+
+## v97 (1/30/2014)
+
+Features:
+
+Bugfixes:
+
+* Actually finalize method rename to `install_bundler_in_app`
+
+
+## v96 (1/29/2014)
+
+Features:
+
+Bugfixes:
+
+* Finalize method rename to `install_bundler_in_app`
+
+## v95
+
+Rollback to v93
+
+## v94 (1/29/2014)
+
+Features:
+
+Bugfixes:
+
+* Fixed `uninitialized constant Rake::DSL` error when running rake tasks on Ruby 1.9.2
+
+## v93 (01/28/2014)
+
+Features:
+
+* buildpack-env-arg (ponies) support
+
+Bugfixes:
+
+## v92 (01/27/2014)
+
+Features:
+
+Bugfixes:
+
+* Only display rake error messages if a `Rakefile` exists
+* when detecting for ruby version, don't use stderr messages
+
+## v91 (01/16/2014)
+
+Features:
+
+* Parallel gem installation with bundler 1.5.2
+
+Bugfixes:
+
+
+## v90 (01/09/2014)
+
+Features:
+
+* Rollback v89 due to bug in bundler 1.5.1
+
+Bugfixes:
+
+## v89 (01/09/2014)
+
+Features:
+
+* Use most recent version of bundler with support for parallel Gem installation
+
+Bugfixes:
+
+## v86 (12/11/2013)
+
+Features:
+
+Bugfixes:
+
+* Windows warnings will now display before bundle install, this prevents an un-resolvable `Gemfile` from erroring which previously prevented the warning roll up from being shown. When this happened the developer did not see that we are clearing the `Gemfile.lock` from the git repository when bundled on a windows machine.
+* Checks for `public/assets/manifest*.json` and `public/assets/manifest.yml` will now come before Rake task detection introduced in v85.
+
+## v85 (12/05/2013)
 
 Features:
 

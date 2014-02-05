@@ -3,7 +3,12 @@
     "sharpstone/asset_precompile_fail",
     "sharpstone/asset_precompile_pass",
     "sharpstone/asset_precompile_not_found",
-    "sharpstone/bad_rakefile"
+    "sharpstone/no_rakefile",
+    "sharpstone/bad_rakefile",
+    "sharpstone/mri_187_no_rake",
+    "sharpstone/mri_187_rake",
+    "sharpstone/mri_200_no_rake",
+    "sharpstone/mri_200_rake"
   ],
   "bundler": [
     "sharpstone/bad_gemfile_on_platform",
@@ -22,7 +27,8 @@
     "sharpstone/mri_187_nokogiri",
     "sharpstone/mri_192",
     "sharpstone/mri_193",
-    "sharpstone/mri_200"
+    "sharpstone/mri_200",
+    "sharpstone/mri_210"
   ],
   "rails2": [
     "sharpstone/rails23_mri_187"

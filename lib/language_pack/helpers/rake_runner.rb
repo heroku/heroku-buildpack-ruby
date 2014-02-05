@@ -5,20 +5,17 @@ class LanguagePack::Helpers::RakeRunner
     ALLOWED = [:pass, :fail, :no_load, :not_found]
     include LanguagePack::ShellHelpers
 
-    attr_accessor :output, :time, :command, :status, :task_defined, :rakefile_can_load
+    attr_accessor :output, :time, :task, :status, :task_defined, :rakefile_can_load
 
     alias :rakefile_can_load? :rakefile_can_load
     alias :task_defined?      :task_defined
     alias :is_defined?        :task_defined
 
-    def initialize(task, command = nil)
-      @task    = task
-      command  = "env PATH=$PATH:bin bundle exec rake #{task} 2>&1" if command.nil?
-      raise "expect #{command} to contain #{task}" unless command.include?(task)
-
-      @command = command
-      @status  = :nil
-      @output  = ""
+    def initialize(task, options = {})
+      @task            = task
+      @default_options = {user_env: true}.merge(options)
+      @status          = :nil
+      @output          = ""
     end
 
     def success?
@@ -35,11 +32,19 @@ class LanguagePack::Helpers::RakeRunner
       @status
     end
 
-    def invoke(cmd = nil)
-      cmd = cmd || @command
-      puts "Running: rake #{@task}"
+    def invoke(options = {})
+      options      = @default_options.merge(options)
+      quiet_option = options.delete(:quiet)
+
+      puts "Running: rake #{task}" unless quiet_option
       time = Benchmark.realtime do
-        self.output = pipe(cmd)
+        cmd = "rake #{task}"
+
+        if quiet_option
+          self.output = run("rake #{task}", options)
+        else
+          self.output = pipe("rake #{task}", options)
+        end
       end
       self.time = time
 
@@ -52,9 +57,9 @@ class LanguagePack::Helpers::RakeRunner
     end
   end
 
-  def initialize(has_rake = true)
-    @has_rake = has_rake
-    if has_rake
+  def initialize(has_rake_gem = true)
+    @has_rake = has_rake_gem && has_rakefile?
+    if @has_rake
       load_rake_tasks
     else
       @rake_tasks    = ""
@@ -76,7 +81,7 @@ class LanguagePack::Helpers::RakeRunner
 
   def load_rake_tasks
     instrument "ruby.rake_task_defined" do
-      @rake_tasks        ||= run("env PATH=$PATH bundle exec rake -P --trace")
+      @rake_tasks        ||= RakeTask.new("-P --trace").invoke(quiet: true).output
       @rakefile_can_load ||= $?.success?
       @rake_tasks
     end
@@ -104,14 +109,20 @@ class LanguagePack::Helpers::RakeRunner
     !task_defined?(task)
   end
 
-  def task(rake_task, command = nil)
-    t = RakeTask.new(rake_task, command)
+  def task(rake_task, options = {})
+    t = RakeTask.new(rake_task, options)
     t.task_defined      = task_defined?(rake_task)
     t.rakefile_can_load = rakefile_can_load?
     t
   end
 
-  def invoke(task, command = nil)
-    self.task(task, command).invoke
+  def invoke(task, options = {})
+    self.task(task, options).invoke
+  end
+
+private
+
+  def has_rakefile?
+    %W{ Rakefile rakefile  rakefile.rb Rakefile.rb}.detect {|file| File.exist?(file) }
   end
 end

@@ -5,14 +5,14 @@ require "rubygems"
 require "language_pack"
 require "language_pack/base"
 require "language_pack/ruby_version"
+require "language_pack/version"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
-  BUILDPACK_VERSION    = "v81"
-  LIBYAML_VERSION      = "0.1.4"
+  LIBYAML_VERSION      = "0.1.5"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION      = "1.3.2"
+  BUNDLER_VERSION      = "1.5.2"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
   #NODE_VERSION         = "0.4.7"
   NODE_JS_BINARY_PATH  = "node"
@@ -34,36 +34,12 @@ class LanguagePack::Ruby < LanguagePack::Base
     end
   end
 
-  def self.gemfile_lock?
-    File.exist?('Gemfile') && File.exist?('Gemfile.lock')
-  end
-
   def self.bundler
-    @bundler ||= LanguagePack::Helpers::BundlerWrapper.new
+    @bundler ||= LanguagePack::Helpers::BundlerWrapper.new.install
   end
 
   def bundler
     self.class.bundler
-  end
-
-  def self.bundle
-    bundler.lockfile_parser
-  end
-
-  def bundle
-    self.class.bundle
-  end
-
-  def bundler_path
-    bundler.bundler_path
-  end
-
-  def self.gem_version(name)
-    instrument "ruby.gem_version" do
-      if gem = bundle.specs.detect {|g| g.name == name }
-        return gem.version
-      end
-    end
   end
 
   def initialize(build_path, cache_path=nil)
@@ -88,6 +64,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         "LANG"     => "en_US.UTF-8",
         "PATH"     => default_path,
         "GEM_PATH" => slug_vendor_base,
+        "GEM_HOME" => slug_vendor_base
       }
 
       ruby_version.jruby? ? vars.merge({
@@ -118,7 +95,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       setup_language_pack_environment
       setup_profiled
       allow_git do
-        install_language_pack_gems
+        install_bundler_in_app
         build_bundler
         create_database_yml
         install_binaries
@@ -136,7 +113,31 @@ private
   # the base PATH environment variable to be used
   # @return [String] the resulting PATH
   def default_path
-    "bin:#{bundler_binstubs_path}:/usr/local/bin:/usr/bin:/bin"
+    # need to remove bin/ folder since it links
+    # to the wrong --prefix ruby binstubs
+    # breaking require. This only applies to Ruby 1.9.2 and 1.8.7.
+    safe_binstubs = binstubs_relative_paths - ["bin"]
+    paths         = [
+      ENV["PATH"],
+      "bin",
+      system_paths,
+    ]
+    paths.unshift("#{slug_vendor_jvm}/bin") if ruby_version.jruby?
+    paths.unshift(safe_binstubs)
+
+    paths.join(":")
+  end
+
+  def binstubs_relative_paths
+    [
+      "bin",
+      bundler_binstubs_path,
+      "#{slug_vendor_base}/bin"
+    ]
+  end
+
+  def system_paths
+    "/usr/local/bin:/usr/bin:/bin"
   end
 
   # the relative path to the bundler directory of gems
@@ -148,7 +149,9 @@ private
       elsif ruby_version.ruby_version == "1.8.7"
         @slug_vendor_base = "vendor/bundle/1.8"
       else
-        @slug_vendor_base = run(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
+        @slug_vendor_base = run_no_pipe(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
+        error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
+        @slug_vendor_base
       end
     end
   end
@@ -227,12 +230,15 @@ private
     instrument 'ruby.setup_language_pack_environment' do
       setup_ruby_install_env
 
+      # TODO when buildpack-env-args rolls out, we can get rid of
+      # ||= and the manual setting below
       config_vars = default_config_vars.each do |key, value|
         ENV[key] ||= value
       end
-      ENV["GEM_HOME"] = slug_vendor_base
+
       ENV["GEM_PATH"] = slug_vendor_base
-      ENV["PATH"]     = "#{ruby_install_binstub_path}:#{slug_vendor_base}/bin:#{config_vars["PATH"]}"
+      ENV["GEM_HOME"] = slug_vendor_base
+      ENV["PATH"]     = config_vars["PATH"]
     end
   end
 
@@ -241,7 +247,7 @@ private
     instrument 'setup_profiled' do
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_default  "LANG",     "en_US.UTF-8"
-      set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:$HOME/#{bundler_binstubs_path}:$PATH"
+      set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
 
       if ruby_version.jruby?
         set_env_default "JAVA_OPTS", default_java_opts
@@ -383,21 +389,12 @@ WARNING
     end
   end
 
-  # list of default gems to vendor into the slug
-  # @return [Array] resulting list of gems
-  def gems
-    [BUNDLER_GEM_PATH]
-  end
-
   # installs vendored gems into the slug
-  def install_language_pack_gems
+  def install_bundler_in_app
     instrument 'ruby.install_language_pack_gems' do
       FileUtils.mkdir_p(slug_vendor_base)
       Dir.chdir(slug_vendor_base) do |dir|
-        gems.each do |g|
-          @fetchers[:buildpack].fetch_untar("#{g}.tgz")
-        end
-        Dir["bin/*"].each {|path| run("chmod 755 #{path}") }
+        `cp -R #{bundler.bundler_path}/. .`
       end
     end
   end
@@ -433,10 +430,14 @@ WARNING
     FileUtils.rm File.join('bin', File.basename(path)), :force => true
   end
 
+  def load_default_cache?
+    new_app? && ruby_version.default?
+  end
+
   # loads a default bundler cache for new apps to speed up initial bundle installs
   def load_default_cache
     instrument "ruby.load_default_cache" do
-      if new_app? && ruby_version.default?
+      if load_default_cache?
         puts "New app detected loading default bundler cache"
         patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").chomp
         cache_name  = "#{DEFAULT_RUBY_VERSION}-p#{patchlevel}-default-cache"
@@ -480,19 +481,18 @@ WARNING
   def build_bundler
     instrument 'ruby.build_bundler' do
       log("bundle") do
-        bundle_without = ENV["BUNDLE_WITHOUT"] || "development:test"
+        bundle_without = env("BUNDLE_WITHOUT") || "development:test"
         bundle_bin     = "bundle"
         bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
+        bundle_command << " -j4"
 
-        unless File.exist?("Gemfile.lock")
-          error "Gemfile.lock is required. Please run \"bundle install\" locally\nand commit your Gemfile.lock."
-        end
-
-        if has_windows_gemfile_lock?
-          warn(<<WARNING)
+        if bundler.windows_gemfile_lock?
+          warn(<<WARNING, inline: true)
 Removing `Gemfile.lock` because it was generated on Windows.
 Bundler will do a full resolve so native gems are handled properly.
 This may result in unexpected gem versions being used in your app.
+In rare occasions Bundler may not be able to resolve your dependencies at all.
+https://devcenter.heroku.com/articles/bundler-windows-gemfile
 WARNING
 
           log("bundle", "has_windows_gemfile_lock")
@@ -503,9 +503,7 @@ WARNING
           cache.load ".bundle"
         end
 
-        version = run_stdout("#{bundle_bin} version").strip
-        topic("Installing dependencies using #{version}")
-
+        topic("Installing dependencies using #{bundler.version}")
         load_bundler_cache
 
         bundler_output = ""
@@ -521,12 +519,20 @@ WARNING
           bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
-          env_vars       = "env BUNDLE_GEMFILE=#{pwd}/Gemfile BUNDLE_CONFIG=#{pwd}/.bundle/config CPATH=#{yaml_include}:$CPATH CPPATH=#{yaml_include}:$CPPATH LIBRARY_PATH=#{yaml_lib}:$LIBRARY_PATH RUBYOPT=\"#{syck_hack}\" NOKOGIRI_USE_SYSTEM_LIBRARIES=true"
-          env_vars      += " BUNDLER_LIB_PATH=#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
+          env_vars       = {
+            "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
+            "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
+            "CPATH"                         => "#{yaml_include}:$CPATH",
+            "CPPATH"                        => "#{yaml_include}:$CPPATH",
+            "LIBRARY_PATH"                  => "#{yaml_lib}:$LIBRARY_PATH",
+            "RUBYOPT"                       => "\"#{syck_hack}\"",
+            "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
+          }
+          env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
             bundle_time = Benchmark.realtime do
-              bundler_output << pipe("#{env_vars} #{bundle_command} --no-clean 2>&1")
+              bundler_output << pipe("#{bundle_command} --no-clean 2>&1", env: env_vars, user_env: true)
             end
           end
         end
@@ -536,7 +542,12 @@ WARNING
           log "bundle", :status => "success"
           puts "Cleaning up the bundler cache."
           instrument "ruby.bundle_clean" do
-            pipe "#{bundle_bin} clean 2> /dev/null"
+            # Only show bundle clean output when not using default cache
+            if load_default_cache?
+              run "bundle clean > /dev/null"
+            else
+              pipe "#{bundle_bin} clean 2> /dev/null"
+            end
           end
           cache.store ".bundle"
           cache.store "vendor/bundle"
@@ -547,7 +558,7 @@ WARNING
           log "bundle", :status => "failure"
           error_message = "Failed to install gems via Bundler."
           puts "Bundler Output: #{bundler_output}"
-          if bundler_output.match(/Installing sqlite3 \([\w.]+\)( with native extensions)?\s+Gem::Installer::ExtensionBuildError: ERROR: Failed to build gem native extension./)
+          if bundler_output.match(/An error occurred while installing sqlite3/)
             error_message += <<ERROR
 
 
@@ -698,23 +709,10 @@ params = CGI.parse(uri.query || "")
     end
   end
 
-  # detects whether the Gemfile.lock contains the Windows platform
-  # @return [Boolean] true if the Gemfile.lock was created on Windows
-  def has_windows_gemfile_lock?
-    bundle.platforms.detect do |platform|
-      /mingw|mswin/.match(platform.os) if platform.is_a?(Gem::Platform)
-    end
-  end
-
-  # detects if a gem is in the bundle.
-  # @param [String] name of the gem in question
-  # @return [String, nil] if it finds the gem, it will return the line from bundle show or nil if nothing is found.
-  def gem_is_bundled?(gem)
-    bundle.specs.map(&:name).include?(gem)
-  end
-
   def rake
-    @rake ||= LanguagePack::Helpers::RakeRunner.new(gem_is_bundled?("rake")).load_rake_tasks!
+    @rake ||= LanguagePack::Helpers::RakeRunner.new(
+                bundler.has_gem?("rake") || ruby_version.rake_is_vendored?
+              ).load_rake_tasks!
   end
 
   # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
@@ -728,14 +726,14 @@ params = CGI.parse(uri.query || "")
   # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
   def add_dev_database_addon
-    gem_is_bundled?("pg") ? ['heroku-postgresql:hobby-dev'] : []
+    bundler.has_gem?("pg") ? ['heroku-postgresql:hobby-dev'] : []
   end
 
   # decides if we need to install the node.js binary
   # @note execjs will blow up if no JS RUNTIME is detected and is loaded.
   # @return [Array] the node.js binary path if we need it or an empty Array
   def add_node_js_binary
-    gem_is_bundled?('execjs') ? [NODE_JS_BINARY_PATH] : []
+    bundler.has_gem?('execjs') ? [NODE_JS_BINARY_PATH] : []
   end
 
   def run_assets_precompile_rake_task
@@ -820,6 +818,13 @@ params = CGI.parse(uri.query || "")
         purge_bundler_cache
       end
 
+      # recompile nokogiri to use new libyaml
+      if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 99 && bundler.has_gem?("psych")
+        puts "Need to recompile psych for CVE-2013-6393. Clearing bundler cache."
+        puts "See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=737076."
+        purge_bundler_cache
+      end
+
       FileUtils.mkdir_p(heroku_metadata)
       @metadata.write(ruby_version_cache, full_ruby_version, false)
       @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
@@ -834,7 +839,7 @@ params = CGI.parse(uri.query || "")
       FileUtils.rm_rf(bundler_cache)
       cache.clear bundler_cache
       # need to reinstall language pack gems
-      install_language_pack_gems
+      install_bundler_in_app
     end
   end
 end

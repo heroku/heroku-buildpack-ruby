@@ -37,6 +37,10 @@ module LanguagePack
       @version_without_patchlevel = @version.sub(/-p[\d]+/, '')
     end
 
+    def rake_is_vendored?
+      Gem::Version.new(self.ruby_version) >= Gem::Version.new("1.9")
+    end
+
     def default?
       @version == none
     end
