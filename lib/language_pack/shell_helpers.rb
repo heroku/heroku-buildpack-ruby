@@ -12,6 +12,10 @@ module LanguagePack
       @@user_env_hash
     end
 
+    def env(var)
+      ENV[var] || user_env_hash[var]
+    end
+
     def self.blacklist?(key)
       %w(PATH GEM_PATH GEM_HOME GIT_DIR).include?(key)
     end
@@ -49,12 +53,7 @@ module LanguagePack
     # @param [String] command to be run
     # @return [String] output of stdout
     def run_no_pipe(command, options = {})
-      run_with_env(command, options.merge({:out => "" }))
-    end
-
-    def run_with_env(command, options = {})
-      env = user_env_hash.merge(options[:env]||{}).map {|key, value| "#{key}=#{value}"}.join(" ")
-      run("env #{env} #{command}", options)
+      run(command, options.merge({:out => ""}))
     end
 
     # run a shell command and pipe stderr to stdout
@@ -66,7 +65,7 @@ module LanguagePack
       options[:out] ||= "2>&1"
       options[:env] ||= {}
       options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
-      env           = options[:env].map {|key, value| "#{key}=#{value}"}.join(" ")
+      env           = options[:env].map {|key, value| "#{key}=\"#{value}\""}.join(" ")
       %x{ env #{env} bash -c #{command.shellescape} #{options[:out]} }
     end
 
@@ -85,7 +84,7 @@ module LanguagePack
       options[:out] ||= "2>&1"
       options[:env] ||= {}
       options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
-      env = options[:env].map {|key, value| "#{key}=#{value}"}.join(" ")
+      env = options[:env].map {|key, value| "#{key}=\"#{value}\""}.join(" ")
       IO.popen("env #{env} #{command} #{options[:out]}") do |io|
         until io.eof?
           buffer = io.gets
