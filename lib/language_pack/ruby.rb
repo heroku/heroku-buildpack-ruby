@@ -649,9 +649,23 @@ params = CGI.parse(uri.query || "")
   end
 
   def rake
-    @rake ||= LanguagePack::Helpers::RakeRunner.new(
+    @rake ||= begin
+      LanguagePack::Helpers::RakeRunner.new(
                 bundler.has_gem?("rake") || ruby_version.rake_is_vendored?
-              ).load_rake_tasks!
+              ).load_rake_tasks!(env: rake_env)
+    end
+  end
+
+  def rake_env
+    if database_url
+      { "DATABASE_URL" => database_url }
+    else
+      {}
+    end.merge(user_env_hash)
+  end
+
+  def database_url
+    env("DATABASE_URL") if env("DATABASE_URL")
   end
 
   # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
@@ -682,7 +696,7 @@ params = CGI.parse(uri.query || "")
       return true unless precompile.is_defined?
 
       topic "Running: rake assets:precompile"
-      precompile.invoke
+      precompile.invoke(env: rake_env)
       if precompile.success?
         puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
       else
