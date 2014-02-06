@@ -267,8 +267,8 @@ FILE
     git.add_tag(tagged_version)
     puts "Created tag #{tagged_version}"
 
-    puts "Pushing tag to remote #{remote}"
-    git.push(remote, nil, true)
+    puts "Pushing tag to remote #{github_remote}"
+    git.push(github_remote, nil, true)
   end
 
   desc "release a new version of the buildpack"
