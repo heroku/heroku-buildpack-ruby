@@ -1,5 +1,16 @@
 ## Master
 
+## v101 (2/5/2014)
+
+Features:
+
+Bugfixes:
+
+* fix rake detection when DATABASE_URL is not present
+* support BUNDLE_WITHOUT when using ponies
+* quote ponies env vars, so build doesn't break
+
+
 ## v100 (2/4/2014)
 
 Features:
