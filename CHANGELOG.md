@@ -1,5 +1,14 @@
 ## Master
 
+## v102 (2/6/2014)
+
+Features:
+
+Bugfixes:
+
+* use blacklist of env vars, so users can't break the build process
+
+
 ## v101 (2/5/2014)
 
 Features:
