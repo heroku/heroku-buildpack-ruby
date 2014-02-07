@@ -525,7 +525,7 @@ WARNING
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
             bundle_time = Benchmark.realtime do
-              bundler_output << pipe("#{bundle_command} --no-clean 2>&1", env: env_vars, user_env: true)
+              bundler_output << pipe("#{bundle_command} --no-clean", out: "2>&1", env: env_vars, user_env: true)
             end
           end
         end
@@ -539,7 +539,7 @@ WARNING
             if load_default_cache?
               run "bundle clean > /dev/null"
             else
-              pipe "#{bundle_bin} clean 2> /dev/null"
+              pipe("#{bundle_bin} clean", out: "2> /dev/null")
             end
           end
           cache.store ".bundle"
