@@ -613,7 +613,7 @@ ERROR
     log("bower") do
       topic("Installing JavaScript dependencies using Bower #{BOWER_VERSION}")
 
-      pipe("./node_modules/bower/bin/bower install 2>&1")
+      pipe("./node_modules/bower/bin/bower install --production")
       unless $?.success?
         error error_message
       end
