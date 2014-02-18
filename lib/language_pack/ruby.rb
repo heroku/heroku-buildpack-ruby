@@ -58,9 +58,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     instrument "ruby.default_config_vars" do
       vars = {
         "LANG"     => "en_US.UTF-8",
-        "PATH"     => default_path,
-        "GEM_PATH" => slug_vendor_base,
-        "GEM_HOME" => slug_vendor_base
       }
 
       ruby_version.jruby? ? vars.merge({
@@ -231,7 +228,7 @@ private
 
       ENV["GEM_PATH"] = slug_vendor_base
       ENV["GEM_HOME"] = slug_vendor_base
-      ENV["PATH"]     = config_vars["PATH"]
+      ENV["PATH"]     = default_path
     end
   end
 
