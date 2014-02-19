@@ -1,5 +1,14 @@
 ## Master
 
+## v103 (2/18/2014)
+
+Features:
+
+* Rails 4.1.0 Support. Stop writing database.yml and support for secrets.yml by generating SECRET_KEY_BASE for users.
+
+Bugfixes:
+
+
 ## v102 (2/6/2014)
 
 Features:
