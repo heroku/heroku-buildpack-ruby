@@ -47,5 +47,8 @@
     "sharpstone/rails3-to-4-no-bin",
     "sharpstone/rails4_windows_mri193",
     "sharpstone/rails4-fail-assets-compile"
+  ],
+  "rails41": [
+    "sharpstone/rails41_scaffold"
   ]
 }
