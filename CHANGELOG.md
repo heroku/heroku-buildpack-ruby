@@ -1,5 +1,34 @@
 ## Master
 
+## v103 (2/18/2014)
+
+Features:
+
+* Rails 4.1.0 Support. Stop writing database.yml and support for secrets.yml by generating SECRET_KEY_BASE for users.
+
+Bugfixes:
+
+
+## v102 (2/6/2014)
+
+Features:
+
+Bugfixes:
+
+* use blacklist of env vars, so users can't break the build process
+
+
+## v101 (2/5/2014)
+
+Features:
+
+Bugfixes:
+
+* fix rake detection when DATABASE_URL is not present
+* support BUNDLE_WITHOUT when using ponies
+* quote ponies env vars, so build doesn't break
+
+
 ## v100 (2/4/2014)
 
 Features:

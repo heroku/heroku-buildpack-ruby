@@ -128,6 +128,10 @@ namespace :buildpack do
     @new_version ||= "v#{latest_release["id"] + 1}"
   end
 
+  def git
+    @git ||= Git.open(".")
+  end
+
   desc "increment buildpack version"
   task :increment do
     version_file = './lib/language_pack/version'
@@ -135,7 +139,6 @@ namespace :buildpack do
     require version_file
 
     if LanguagePack::Base::BUILDPACK_VERSION != new_version
-      git     = Git.open(".")
       stashes = nil
 
       if git.status.changed.any?
@@ -178,6 +181,22 @@ FILE
     else
       puts "Please add a changelog entry for #{new_version}"
     end
+  end
+
+  def github_remote
+    @github_remote ||= git.remotes.detect {|remote| remote.url.match(%r{heroku/heroku-buildpack-ruby.git$}) }
+
+  end
+
+  def git_push_master
+    puts "Pushing master"
+    git.push(github_remote, 'master', false)
+    $?.success?
+  end
+
+  desc "update master branch"
+  task :git_push_master do
+    git_push_master
   end
 
   desc "stage a tarball of the buildpack"
@@ -238,12 +257,6 @@ FILE
 
   desc "tag a release"
   task :tag do
-    git    = Git.open(".")
-    remote = git.remotes.detect {|remote| remote.url.match(%r{heroku/heroku-buildpack-ruby.git$}) }
-
-    puts "Pushing master"
-    git.push(remote, 'master', false)
-
     tagged_version =
       if @new_version.nil?
         "v#{latest_release["id"]}"
@@ -254,14 +267,15 @@ FILE
     git.add_tag(tagged_version)
     puts "Created tag #{tagged_version}"
 
-    puts "Pushing tag to remote #{remote}"
-    git.push(remote, nil, true)
+    puts "Pushing tag to remote #{github_remote}"
+    git.push(github_remote, nil, true)
   end
 
   desc "release a new version of the buildpack"
   task :release do
     Rake::Task["buildpack:increment"].invoke
     raise "Please add a changelog entry for #{new_version}" unless changelog_entry?
+    raise "Can't push to master" unless git_push_master
     Rake::Task["buildpack:stage"].invoke
     Rake::Task["buildpack:publish"].invoke
     Rake::Task["buildpack:tag"].invoke

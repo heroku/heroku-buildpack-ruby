@@ -13,7 +13,7 @@ module LanguagePack
     Instrument.instrument 'detect' do
       Dir.chdir(args.first)
 
-      pack = [ NoLockfile, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+      pack = [ NoLockfile, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
         klass.use?
       end
 
@@ -41,4 +41,5 @@ require "language_pack/rails2"
 require "language_pack/rails3"
 require "language_pack/disable_deploys"
 require "language_pack/rails4"
+require "language_pack/rails41"
 require "language_pack/no_lockfile"

@@ -26,7 +26,7 @@ module LanguagePack
         env_dir.each_child do |file|
           key   = file.basename.to_s
           value = file.read.strip
-          user_env_hash[key] = value
+          user_env_hash[key] = value unless blacklist?(key)
         end
       end
     end

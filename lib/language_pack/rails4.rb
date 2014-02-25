@@ -12,7 +12,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
       rails_version = bundler.gem_version('railties')
       return false unless rails_version
       is_rails4 = rails_version >= Gem::Version.new('4.0.0.beta') &&
-                  rails_version <  Gem::Version.new('5.0.0')
+                  rails_version <  Gem::Version.new('4.1.0.beta1')
       return is_rails4
     end
   end
@@ -82,29 +82,14 @@ WARNING
         @cache.load public_assets_folder
         @cache.load default_assets_cache
 
-        if user_env_hash.empty?
-          default_env = {
-            "RAILS_GROUPS" => ENV["RAILS_GROUPS"] || "assets",
-            "RAILS_ENV"    => ENV["RAILS_ENV"]    || "production",
-            "DATABASE_URL" => ENV["DATABASE_URL"] || default_database_url
-          }
-        else
-          default_env = {
-            "RAILS_GROUPS" => "assets",
-            "RAILS_ENV"    => "production",
-            "DATABASE_URL" => default_database_url
-          }
-        end
-        rake_options = {env: default_env.merge(user_env_hash) }
-
-        precompile.invoke(rake_options)
+        precompile.invoke(env: rake_env)
 
         if precompile.success?
           log "assets_precompile", :status => "success"
           puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
 
           puts "Cleaning assets"
-          rake.task("assets:clean").invoke(rake_options)
+          rake.task("assets:clean").invoke(env: rake_env)
 
           cleanup_assets_cache
           @cache.store public_assets_folder
