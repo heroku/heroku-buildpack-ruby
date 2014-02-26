@@ -1,5 +1,14 @@
 ## Master
 
+## v104 (2/26/2014)
+
+Features:
+
+Bugfixes:
+
+* fix bugs in shellescaping (#231)
+
+
 ## v103 (2/18/2014)
 
 Features:
