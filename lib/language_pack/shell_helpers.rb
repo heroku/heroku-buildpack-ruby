@@ -65,7 +65,7 @@ module LanguagePack
       options[:out] ||= "2>&1"
       options[:env] ||= {}
       options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
-      env           = options[:env].map {|key, value| "#{key}=#{value.shellescape}"}.join(" ")
+      env           = options[:env].map {|key, value| "#{key.shellescape}=#{value.shellescape}"}.join(" ")
       %x{ env #{env} bash -c #{command.shellescape} #{options[:out]} }
     end
 
@@ -84,7 +84,7 @@ module LanguagePack
       options[:out] ||= "2>&1"
       options[:env] ||= {}
       options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
-      env = options[:env].map {|key, value| "#{key}=#{value.shellescape}"}.join(" ")
+      env = options[:env].map {|key, value| "#{key.shellescape}=#{value.shellescape}"}.join(" ")
       IO.popen("env #{env} #{command} #{options[:out]}") do |io|
         until io.eof?
           buffer = io.gets
