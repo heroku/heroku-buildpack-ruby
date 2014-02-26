@@ -1,5 +1,11 @@
 require "shellwords"
 
+class NoShellEscape < String
+  def shellescape
+    self
+  end
+end
+
 module LanguagePack
   module ShellHelpers
     @@user_env_hash = {}
@@ -126,6 +132,10 @@ module LanguagePack
     def deprecate(message)
       @deprecations ||= []
       @deprecations << message
+    end
+
+    def noshellescape(string)
+      NoShellEscape.new(string)
     end
   end
 end

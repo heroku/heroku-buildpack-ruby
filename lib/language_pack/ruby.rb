@@ -503,18 +503,18 @@ WARNING
           install_libyaml(libyaml_dir)
 
           # need to setup compile environment for the psych gem
-          yaml_include   = File.expand_path("#{libyaml_dir}/include")
-          yaml_lib       = File.expand_path("#{libyaml_dir}/lib")
-          pwd            = run("pwd").chomp
+          yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
+          yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
+          pwd            = Dir.pwd
           bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
           env_vars       = {
             "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
             "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
-            "CPATH"                         => "#{yaml_include}:$CPATH",
-            "CPPATH"                        => "#{yaml_include}:$CPPATH",
-            "LIBRARY_PATH"                  => "#{yaml_lib}:$LIBRARY_PATH",
+            "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
+            "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
+            "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
             "RUBYOPT"                       => syck_hack,
             "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
           }
