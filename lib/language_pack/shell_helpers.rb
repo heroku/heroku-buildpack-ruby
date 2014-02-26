@@ -84,11 +84,7 @@ module LanguagePack
       options[:out] ||= "2>&1"
       options[:env] ||= {}
       options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
-<<<<<<< HEAD
-      env = options[:env].map {|key, value| "#{key.shellescape}=#{value.shellescape}"}.join(" ")
-=======
       env = options[:env].map {|key, value| "#{key}=\"#{value}\""}.join(" ")
->>>>>>> parent of 911642f... Uses shellescape for serializing options for `env`
       IO.popen("env #{env} #{command} #{options[:out]}") do |io|
         until io.eof?
           buffer = io.gets
