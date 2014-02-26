@@ -515,7 +515,7 @@ WARNING
             "CPATH"                         => "#{yaml_include}:$CPATH",
             "CPPATH"                        => "#{yaml_include}:$CPPATH",
             "LIBRARY_PATH"                  => "#{yaml_lib}:$LIBRARY_PATH",
-            "RUBYOPT"                       => "\"#{syck_hack}\"",
+            "RUBYOPT"                       => syck_hack,
             "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
           }
           env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
