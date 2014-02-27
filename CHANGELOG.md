@@ -1,5 +1,15 @@
 ## Master
 
+## v108 (2/27/2014)
+
+Features:
+
+* parse Bundler patchlevel option
+
+Bugfixes:
+
+* don't let users step on themselves by replacing `env` in `$PATH`
+
 ## v107 (2/26/2014)
 
 Features:
