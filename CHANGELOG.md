@@ -1,5 +1,14 @@
 ## Master
 
+## v107 (2/26/2014)
+
+Features:
+
+Bugfixes:
+
+* more shellescaping bug fixes
+
+
 ## v105
 
 Rollbacked to v103
