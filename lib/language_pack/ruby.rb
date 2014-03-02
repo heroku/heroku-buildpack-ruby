@@ -14,8 +14,9 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.5.2"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
-  NODE_VERSION         = "0.4.7"
-  NODE_JS_BINARY_PATH  = "node-#{NODE_VERSION}"
+  NODE_VERSION         = "0.11.11"
+  NODE_JS_BINARY_PATH  = "node/v#{NODE_VERSION}/node-v#{NODE_VERSION}-linux-x64.tar.gz"
+  NODE_JS_BASE_URL     = "http://s3pository.heroku.com"
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
   LATEST_JVM_VERSION   = "openjdk7-latest"
   LEGACY_JVM_VERSION   = "openjdk1.7.0_25"
@@ -40,6 +41,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def initialize(build_path, cache_path=nil)
     super(build_path, cache_path)
+    @fetchers[:node] = LanguagePack::Fetcher.new(NODE_JS_BASE_URL)
     @fetchers[:jvm] = LanguagePack::Fetcher.new(JVM_BASE_URL)
     @fetchers[:rbx] = LanguagePack::Fetcher.new(RBX_BASE_URL)
   end
@@ -92,6 +94,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         build_bundler
         create_database_yml
         install_binaries
+        run_npm_install
         run_assets_precompile_rake_task
       end
       super
@@ -410,7 +413,18 @@ WARNING
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
     Dir.chdir(bin_dir) do |dir|
-      @fetchers[:buildpack].fetch_untar("#{name}.tgz")
+      if name =~ /\Anode\/.*/
+        install_node(name)
+      else
+        @fetchers[:buildpack].fetch_untar("#{name}.tgz")
+      end
+    end
+  end
+
+  def install_node(node)
+    @fetchers[:node].fetch_untar(node)
+    Dir["node-v#{NODE_VERSION}-linux-x64/bin/*"].each do |executable|
+      run("ln -sfv #{executable} #{File.basename(executable)}")
     end
   end
 
@@ -701,6 +715,10 @@ params = CGI.parse(uri.query || "")
         error "Precompiling assets failed."
       end
     end
+  end
+
+  def run_npm_install
+    system('npm install') if File.exists?('package.json') and File.exists?('bin/npm')
   end
 
   def bundler_cache
