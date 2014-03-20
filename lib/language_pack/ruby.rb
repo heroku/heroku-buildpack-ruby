@@ -706,7 +706,7 @@ params = CGI.parse(uri.query || "")
     log "assets_precompile", :status => "failure"
     msg = "Precompiling assets failed.\n"
     if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
-      msg << "Attempted to access a non existant database:\n"
+      msg << "Attempted to access a nonexistent database:\n"
       msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
     end
     error msg
