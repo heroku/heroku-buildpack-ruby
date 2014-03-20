@@ -1,5 +1,13 @@
 ## Master
 
+## v110 (3/20/2014)
+
+Features:
+
+* Better message when running `assets:precompile` without a database
+
+Bugfixes:
+
 ## v108 (2/27/2014)
 
 Features:
