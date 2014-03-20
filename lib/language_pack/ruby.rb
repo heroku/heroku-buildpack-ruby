@@ -704,13 +704,12 @@ params = CGI.parse(uri.query || "")
 
   def precompile_fail(output)
     log "assets_precompile", :status => "failure"
+    msg = "Precompiling assets failed.\n"
     if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
-      puts ""
-      puts "Attempted to access a non existant database:"
-      puts "https://devcenter.heroku.com/articles/pre-provision-database"
-      puts ""
+      msg << "Attempted to access a non existant database:\n"
+      msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
     end
-    error "Precompiling assets failed."
+    error msg
   end
 
   def bundler_cache
