@@ -697,10 +697,20 @@ params = CGI.parse(uri.query || "")
       if precompile.success?
         puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
       else
-        log "assets_precompile", :status => "failure"
-        error "Precompiling assets failed."
+        precompile_fail(precompile.output)
       end
     end
+  end
+
+  def precompile_fail(output)
+    log "assets_precompile", :status => "failure"
+    if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
+      puts ""
+      puts "Attempted to access a non existant database:"
+      puts "https://devcenter.heroku.com/articles/pre-provision-database"
+      puts ""
+    end
+    error "Precompiling assets failed."
   end
 
   def bundler_cache
