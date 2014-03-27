@@ -1,5 +1,56 @@
 ## Master
 
+## v111 (3/20/2014)
+
+Features:
+
+
+Bugfixes:
+
+* spelling
+
+
+## v110 (3/20/2014)
+
+Features:
+
+* Better message when running `assets:precompile` without a database
+
+Bugfixes:
+
+## v108 (2/27/2014)
+
+Features:
+
+* parse Bundler patchlevel option
+
+Bugfixes:
+
+* don't let users step on themselves by replacing `env` in `$PATH`
+
+## v107 (2/26/2014)
+
+Features:
+
+Bugfixes:
+
+* more shellescaping bug fixes
+
+
+## v105
+
+Rollbacked to v103
+
+
+## v104 (2/26/2014)
+
+Features:
+
+Bugfixes:
+
+* fix bugs in shellescaping (#231)
+
+
 ## v103 (2/18/2014)
 
 Features:

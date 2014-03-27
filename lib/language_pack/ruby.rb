@@ -510,19 +510,19 @@ WARNING
           install_libyaml(libyaml_dir)
 
           # need to setup compile environment for the psych gem
-          yaml_include   = File.expand_path("#{libyaml_dir}/include")
-          yaml_lib       = File.expand_path("#{libyaml_dir}/lib")
-          pwd            = run("pwd").chomp
+          yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
+          yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
+          pwd            = Dir.pwd
           bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
           env_vars       = {
             "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
             "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
-            "CPATH"                         => "#{yaml_include}:$CPATH",
-            "CPPATH"                        => "#{yaml_include}:$CPPATH",
-            "LIBRARY_PATH"                  => "#{yaml_lib}:$LIBRARY_PATH",
-            "RUBYOPT"                       => "\"#{syck_hack}\"",
+            "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
+            "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
+            "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
+            "RUBYOPT"                       => syck_hack,
             "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
           }
           env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
@@ -751,10 +751,19 @@ params = CGI.parse(uri.query || "")
       if precompile.success?
         puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
       else
-        log "assets_precompile", :status => "failure"
-        error "Precompiling assets failed."
+        precompile_fail(precompile.output)
       end
     end
+  end
+
+  def precompile_fail(output)
+    log "assets_precompile", :status => "failure"
+    msg = "Precompiling assets failed.\n"
+    if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
+      msg << "Attempted to access a nonexistent database:\n"
+      msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
+    end
+    error msg
   end
 
   def bundler_cache

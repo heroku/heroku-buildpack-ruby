@@ -4,6 +4,7 @@
     "sharpstone/asset_precompile_pass",
     "sharpstone/asset_precompile_not_found",
     "sharpstone/database_url_expected_in_rakefile",
+    "sharpstone/connect_to_database_on_first_push",
     "sharpstone/no_rakefile",
     "sharpstone/bad_rakefile",
     "sharpstone/mri_187_no_rake",

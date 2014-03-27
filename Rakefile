@@ -246,7 +246,6 @@ FILE
     }
   end
 
-  desc "publish buildpack"
   task :publish do
     buildpack_name = "heroku/ruby"
     puts "Publishing #{buildpack_name} buildpack"
