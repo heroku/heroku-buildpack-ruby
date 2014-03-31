@@ -1,6 +1,8 @@
 source "https://rubygems.org"
 
 group :development, :test do
+  gem 'pry'
+  gem 'rubyzip'
   gem "heroku_hatchet"
   gem "rspec-core"
   gem "rspec-expectations"
