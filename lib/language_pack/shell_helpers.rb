@@ -50,6 +50,7 @@ module LanguagePack
     end
 
     def run!(command, options = {})
+      puts "CMD: " + command if (ENV['SHOW_COMMANDS'])
       result = run(command, options)
       error("Command: '#{command}' failed unexpectedly:\n#{result}") unless $?.success?
       return result
