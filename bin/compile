@@ -7,6 +7,8 @@ $:.unshift File.expand_path("../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
 
+require 'cloud_foundry/language_pack/fetcher'
+
 LanguagePack::Instrument.trace 'compile', 'app.compile' do
   if pack = LanguagePack.detect(ARGV[0], ARGV[1])
     LanguagePack::ShellHelpers.initialize_env(ARGV[2])
