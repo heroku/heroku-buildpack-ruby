@@ -692,7 +692,7 @@ params = CGI.parse(uri.query || "")
       precompile = rake.task("assets:precompile")
       return true unless precompile.is_defined?
 
-      topic "Running: rake assets:precompile"
+      topic "Precompiling assets"
       precompile.invoke(env: rake_env)
       if precompile.success?
         puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
