@@ -258,6 +258,8 @@ ERROR
       topic "Using Ruby version: #{ruby_version.version}"
 
 
+      FileUtils.mkdir_p(slug_vendor_ruby)
+
       if ruby_version.changed?
         puts "Preparing binaries ..."
 
@@ -271,7 +273,6 @@ ERROR
           error invalid_ruby_version_message unless $?.success?
         end
 
-        FileUtils.mkdir_p(slug_vendor_ruby)
         Dir.chdir(slug_vendor_ruby) do
           instrument "ruby.fetch_ruby" do
             if ruby_version.rbx?
@@ -300,9 +301,11 @@ ERROR
           end
         end
         error invalid_ruby_version_message unless $?.success?
+
+        cache.store(slug_vendor_ruby)
       else
         puts "Using cached binaries ..."
-        return false
+        cache.load(slug_vendor_ruby)
       end
 
       app_bin_dir = "bin"
