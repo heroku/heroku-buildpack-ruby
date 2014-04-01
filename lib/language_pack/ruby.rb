@@ -308,6 +308,7 @@ ERROR
       app_bin_dir = "bin"
       FileUtils.mkdir_p app_bin_dir
 
+      puts("ln -s ruby #{slug_vendor_ruby}/bin/ruby.exe")
       run("ln -s ruby #{slug_vendor_ruby}/bin/ruby.exe")
 
       Dir["#{slug_vendor_ruby}/bin/*"].each do |vendor_bin|
