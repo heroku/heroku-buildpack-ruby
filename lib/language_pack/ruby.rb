@@ -255,8 +255,11 @@ private
 Invalid RUBY_VERSION specified: #{ruby_version.version}
 Valid versions: #{ruby_versions.join(", ")}
 ERROR
+      topic "Using Ruby version: #{ruby_version.version}"
+
 
       if ruby_version.changed?
+        puts "Preparing binaries ..."
 
         if ruby_version.build?
           FileUtils.mkdir_p(build_ruby_path)
@@ -298,7 +301,7 @@ ERROR
         end
         error invalid_ruby_version_message unless $?.success?
       else
-        topic "Using Ruby version: #{ruby_version.version} (from cache)"
+        puts "Using cached binaries ..."
         return false
       end
 
@@ -313,7 +316,6 @@ ERROR
 
       @metadata.write("buildpack_ruby_version", ruby_version.version)
 
-      topic "Using Ruby version: #{ruby_version.version}"
       if !ruby_version.set
         warn(<<WARNING)
 You have not declared a Ruby version in your Gemfile.
