@@ -77,7 +77,13 @@ module LanguagePack
       end
     end
 
+    def to_buildpack_version
+      version.sub(engine, "#{engine}-build")
+    end
+
+
     private
+
     def gemfile
       ruby_version = @bundler.ruby_version
       return "" unless ruby_version
