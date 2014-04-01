@@ -251,7 +251,7 @@ private
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
   def install_ruby
     instrument 'ruby.install_ruby' do
-      return false unless ruby_version
+      return false unless ruby_version.changed?
 
       invalid_ruby_version_message = <<ERROR
 Invalid RUBY_VERSION specified: #{ruby_version.version}
