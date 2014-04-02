@@ -1,5 +1,14 @@
 ## Master
 
+## v112 (3/27/2014)
+
+Features:
+
+
+Bugfixes:
+
+* compile psych with libyaml 0.1.6 for CVE-2014-2525
+
 ## v111 (3/20/2014)
 
 Features:
