@@ -21,7 +21,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   LEGACY_JVM_VERSION   = "openjdk1.7.0_25"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
-  BOWER_VERSION        = user_env_hash['BOWER_VERSION'] || "1.3.1-patched"
+  BOWER_VERSION        = "1.3.1-patched"
   BOWER_BASE_URL       = "http://heroku-buildpack-ruby-bower.s3.amazonaws.com"
   NODE_JS_VERSION      = "0.10.21"
   NODE_JS_BASE_URL     = "http://heroku-buildpack-nodejs.s3.amazonaws.com"
@@ -587,9 +587,9 @@ ERROR
   # install bower as npm module
   def install_bower
     log("bower") do
-      run("curl #{BOWER_BASE_URL}/bower-#{BOWER_VERSION}/node_modules.tar.gz -s -o - | tar xzf -")
+      run("curl #{BOWER_BASE_URL}/bower-#{bower_version}/node_modules.tar.gz -s -o - | tar xzf -")
       unless $?.success?
-        error "Can't install Bower #{BOWER_VERSION}. You can specify the version listed on http://heroku-buildpack-ruby-bower.s3-website-us-east-1.amazonaws.com/"
+        error "Can't install Bower #{bower_version}. You can specify the version listed on http://heroku-buildpack-ruby-bower.s3-website-us-east-1.amazonaws.com/"
       end
     end
   end
@@ -608,13 +608,17 @@ Check these points:
 ERROR
 
     log("bower") do
-      topic("Installing JavaScript dependencies using Bower #{BOWER_VERSION}")
+      topic("Installing JavaScript dependencies using Bower #{bower_version}")
 
       pipe("./node_modules/bower/bin/bower install --production")
       unless $?.success?
         error error_message
       end
     end
+  end
+
+  def bower_version
+    env('BOWER_VERSION') || BOWER_VERSION
   end
 
   # RUBYOPT line that requires syck_hack file
