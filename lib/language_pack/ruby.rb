@@ -255,7 +255,7 @@ private
 
       FileUtils.mkdir_p(slug_vendor_ruby)
 
-      if ruby_version.changed?
+      if ruby_version.changed? or not(cache.exist? slug_vendor_ruby)
         puts "Preparing binaries ..."
         fetch_ruby
         cache.store(slug_vendor_ruby)
