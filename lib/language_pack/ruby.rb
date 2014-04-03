@@ -251,57 +251,23 @@ private
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
   def install_ruby
     instrument 'ruby.install_ruby' do
-      return false unless ruby_version
-
-      invalid_ruby_version_message = <<ERROR
-Invalid RUBY_VERSION specified: #{ruby_version.version}
-Valid versions: #{ruby_versions.join(", ")}
-ERROR
-
-      if ruby_version.build?
-        FileUtils.mkdir_p(build_ruby_path)
-        Dir.chdir(build_ruby_path) do
-          ruby_vm = "ruby"
-          instrument "ruby.fetch_build_ruby" do
-            @fetchers[:buildpack].fetch_untar("#{ruby_version.version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz")
-          end
-        end
-        error invalid_ruby_version_message unless $?.success?
-      end
+      topic "Using Ruby version: #{ruby_version.version}"
 
       FileUtils.mkdir_p(slug_vendor_ruby)
-      Dir.chdir(slug_vendor_ruby) do
-        instrument "ruby.fetch_ruby" do
-          if ruby_version.rbx?
-            file     = "#{ruby_version.version}.tar.bz2"
-            sha_file = "#{file}.sha1"
-            @fetchers[:rbx].fetch(file)
-            @fetchers[:rbx].fetch(sha_file)
 
-            expected_checksum = File.read(sha_file).chomp
-            actual_checksum   = Digest::SHA1.file(file).hexdigest
-
-            error <<-ERROR_MSG unless expected_checksum == actual_checksum
-RBX Checksum for #{file} does not match.
-Expected #{expected_checksum} but got #{actual_checksum}.
-Please try pushing again in a few minutes.
-ERROR_MSG
-
-            run("tar jxf #{file}")
-            FileUtils.mv(Dir.glob("app/#{slug_vendor_ruby}/*"), ".")
-            FileUtils.rm_rf("app")
-            FileUtils.rm(file)
-            FileUtils.rm(sha_file)
-          else
-            @fetchers[:buildpack].fetch_untar("#{ruby_version.version}.tgz")
-          end
-        end
+      if ruby_version.changed? or not(cache.exist? slug_vendor_ruby)
+        puts "Preparing binaries ..."
+        fetch_ruby
+        cache.store(slug_vendor_ruby)
+      else
+        puts "Using cached binaries ..."
+        cache.load(slug_vendor_ruby)
       end
-      error invalid_ruby_version_message unless $?.success?
 
       app_bin_dir = "bin"
       FileUtils.mkdir_p app_bin_dir
 
+      puts("ln -s ruby #{slug_vendor_ruby}/bin/ruby.exe")
       run("ln -s ruby #{slug_vendor_ruby}/bin/ruby.exe")
 
       Dir["#{slug_vendor_ruby}/bin/*"].each do |vendor_bin|
@@ -310,9 +276,8 @@ ERROR_MSG
 
       @metadata.write("buildpack_ruby_version", ruby_version.version)
 
-      topic "Using Ruby version: #{ruby_version.version}"
       if !ruby_version.set
-        warn(<<WARNING)
+        warn(<<-WARNING)
 You have not declared a Ruby version in your Gemfile.
 To set your Ruby version add this line to your Gemfile:
 #{ruby_version.to_gemfile}
@@ -322,6 +287,53 @@ WARNING
     end
 
     true
+  end
+
+  # fetches the ruby specified by ruby_version
+  def fetch_ruby
+    invalid_ruby_version_message = <<ERROR
+Invalid RUBY_VERSION specified: #{ruby_version.version}
+Valid versions: #{ruby_versions.join(", ")}
+ERROR
+
+    if ruby_version.build?
+      FileUtils.mkdir_p(build_ruby_path)
+      Dir.chdir(build_ruby_path) do
+        instrument "ruby.fetch_build_ruby" do
+          @fetchers[:buildpack].fetch_untar("#{ruby_version.to_buildpack_version}.tgz")
+        end
+      end
+      error invalid_ruby_version_message unless $?.success?
+    end
+
+    Dir.chdir(slug_vendor_ruby) do
+      instrument "ruby.fetch_ruby" do
+        if ruby_version.rbx?
+          file     = "#{ruby_version.version}.tar.bz2"
+          sha_file = "#{file}.sha1"
+          @fetchers[:rbx].fetch(file)
+          @fetchers[:rbx].fetch(sha_file)
+
+          expected_checksum = File.read(sha_file).chomp
+          actual_checksum   = Digest::SHA1.file(file).hexdigest
+
+          error <<-ERROR_MSG unless expected_checksum == actual_checksum
+RBX Checksum for #{file} does not match.
+Expected #{expected_checksum} but got #{actual_checksum}.
+Please try pushing again in a few minutes.
+ERROR_MSG
+
+          run("tar jxf #{file}")
+          FileUtils.mv(Dir.glob("app/#{slug_vendor_ruby}/*"), ".")
+          FileUtils.rm_rf("app")
+          FileUtils.rm(file)
+          FileUtils.rm(sha_file)
+        else
+          @fetchers[:buildpack].fetch_untar("#{ruby_version.version}.tgz")
+        end
+      end
+    end
+    error invalid_ruby_version_message unless $?.success?
   end
 
   def new_app?
