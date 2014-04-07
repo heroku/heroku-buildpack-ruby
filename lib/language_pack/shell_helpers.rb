@@ -1,4 +1,5 @@
 require "shellwords"
+require "pathname"
 
 class NoShellEscape < String
   def shellescape
