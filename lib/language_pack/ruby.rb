@@ -610,8 +610,15 @@ ERROR
     log("bower") do
       topic("Installing JavaScript dependencies using Bower #{bower_version}")
 
-      pipe("./node_modules/bower/bin/bower install --production")
-      unless $?.success?
+      load_bower_cache
+
+      pipe("./node_modules/bower/bin/bower install --config.storage.packages=vendor/bower/packages --config.storage.registry=vendor/bower/registry --config.tmp=vendor/bower/tmp 2>&1")
+      if $?.success?
+        log "bower", :status => "success"
+        puts "Cleaning up the bower tmp."
+        FileUtils.rm_rf("vendor/bower/tmp")
+        cache.store "vendor/bower"
+      else
         error error_message
       end
     end
