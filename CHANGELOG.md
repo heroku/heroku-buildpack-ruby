@@ -1,5 +1,17 @@
 ## Master
 
+## v113 (4/8/2014)
+
+Features:
+
+* use heroku-buildpack-nodejs's node binary
+* `CURL_CONNECT_TIMEOUT` and `CURL_TIMEOUT` are configurable as ENV vars
+
+Bugfixes:
+
+* Don't double print "Running: rake assets:precompile" on Ruby apps
+
+
 ## v112 (3/27/2014)
 
 Features:
