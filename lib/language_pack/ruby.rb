@@ -423,6 +423,7 @@ WARNING
   end
 
   def load_default_cache?
+    return false # CloudFoundry cannot use the precompiled heroku gems.
     new_app? && ruby_version.default?
   end
 
