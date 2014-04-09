@@ -5,7 +5,6 @@ module CloudFoundry
     DEPENDENCIES = [
         'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/node-0.4.7.tgz',
         'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.6.tgz',
-        'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.5.tgz',
         'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/bundler-1.5.2.tgz',
         'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby_versions.yml',
         'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-2.1.1.tgz',
