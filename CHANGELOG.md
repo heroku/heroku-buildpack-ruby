@@ -1,5 +1,11 @@
 ## CloudFoundry
 
+## cf-v2 (4-9-2014)
+
+Bugfixes:
+
+* remove libyaml 0.1.5. It's not used and has a security flaw.
+
 ## cf-v1 (4-9-2014)
 
 Features:
