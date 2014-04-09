@@ -26,8 +26,8 @@ Either approach produces _'ruby_buildpack.zip'_, which is a CloudFoundry compati
 
 This software is maintained by the Cloud Foundry Buildpack Team.
 
-Please report issues and suggest features using our
-[Pivotal Tracker Project](https://www.pivotaltracker.com/s/projects/1042066).
+You can [file issues and suggestions at Github](https://github.com/pivotal-cf-experimental/heroku-buildpack-ruby/issues)
+and [view our backlog here](https://www.pivotaltracker.com/s/projects/1042066).
 
 Heroku upstream documentation
 =============================
