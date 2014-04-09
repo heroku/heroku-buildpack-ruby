@@ -21,6 +21,7 @@ describe "Rails 4.0.x" do
   it "upgraded from 3 to 4 missing ./bin still works" do
     Hatchet::Runner.new("rails3-to-4-no-bin").deploy do |app, heroku|
       expect(app.output).to include("Asset precompilation completed")
+      expect(app.output).to include("No JS runtime detected, installing node version:")
       add_database(app, heroku)
 
       expect(app.output).to match("WARNINGS")

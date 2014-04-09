@@ -14,8 +14,8 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.6.1"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
-  NODE_VERSION         = "0.4.7"
-  NODE_JS_BINARY_PATH  = "node-#{NODE_VERSION}"
+  LEGACY_NODE_VERSION  = "0.4.7"
+  NODE_BASE_URL        = "http://heroku-buildpack-nodejs.s3.amazonaws.com"
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
   LATEST_JVM_VERSION   = "openjdk7-latest"
   LEGACY_JVM_VERSION   = "openjdk1.7.0_25"
@@ -41,8 +41,9 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def initialize(build_path, cache_path=nil)
     super(build_path, cache_path)
-    @fetchers[:jvm] = LanguagePack::Fetcher.new(JVM_BASE_URL)
-    @fetchers[:rbx] = LanguagePack::Fetcher.new(RBX_BASE_URL)
+    @fetchers[:jvm]  = LanguagePack::Fetcher.new(JVM_BASE_URL)
+    @fetchers[:rbx]  = LanguagePack::Fetcher.new(RBX_BASE_URL)
+    @fetchers[:node] = LanguagePack::Fetcher.new(NODE_BASE_URL)
   end
 
   def name
@@ -93,6 +94,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         build_bundler
         create_database_yml
         install_binaries
+        install_node
         run_assets_precompile_rake_task
       end
       super
@@ -391,10 +393,48 @@ WARNING
     end
   end
 
+  # Installs node if execjs is found in the Gemfile. For new
+  # applications this will use the latest version of nodejs
+  # listed in the heroku-buildpack-nodejs's manifest file.
+  # Otherwise, it will use the LEGACY_NODE_VERSION ('0.4.7').
+  def install_node
+    return [] unless gem_is_bundled?('execjs')
+    return [] unless `which node`.empty?
+
+    instrument 'ruby.install_node' do
+      puts "No JS runtime detected, installing node version: #{node_version}"
+      @fetchers[:node].fetch_untar("node-#{node_version}.tgz")
+
+      FileUtils.cp "node-#{node_version}/bin/node","bin/node"
+      run("chmod +x bin/node")
+    end
+  end
+
+  def cache_node_version
+    @metadata.write("buildpack_node_version", latest_node_version)
+  end
+
+  def node_version
+    if new_app?
+      latest_node_version
+    elsif @metadata.exists?('buildpack_node_version')
+      @metadata.read('buildpack_node_version')
+    else
+      LEGACY_NODE_VERSION
+    end
+  end
+
+  def latest_node_version
+    @latest_node_version ||= begin
+                               @fetcher[:node].fetch('manifest.nodejs')
+                               File.read('manifest.nodejs').split("\n").first
+                             end
+  end
+
   # default set of binaries to install
   # @return [Array] resulting list
   def binaries
-    add_node_js_binary
+    []
   end
 
   # vendors binaries into the slug
