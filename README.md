@@ -1,5 +1,36 @@
-Heroku buildpack: Ruby
-======================
+CloudFoundry build pack: Ruby
+=============================
+
+This is a managed fork of the [Heroku Ruby build pack](https://github.com/heroku/heroku-buildpack-ruby).
+
+### Significant differences
+
+* Support on-premises deploys that have limited access to the internet.
+* Remove binary incompatible pre-cached gems
+
+### Packager
+
+Package for on-premises distributions:
+
+    $ bundle install
+    $ bundle exec rake package
+
+Package for internet-connected distributions:
+
+    $ bundle install
+    $ ONLINE=1 bundle exec package
+
+Either approach produces _'ruby_buildpack.zip'_, which is a CloudFoundry compatible admin build pack.
+
+### Issues support
+
+This software is maintained by the Cloud Foundry Buildpack Team.
+
+Please report issues and suggest features using our
+[Pivotal Tracker Project](https://www.pivotaltracker.com/s/projects/1042066).
+
+Heroku upstream documentation
+=============================
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for Ruby, Rack, and Rails apps. It uses [Bundler](http://gembundler.com) for dependency management.
 
