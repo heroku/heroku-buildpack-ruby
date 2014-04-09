@@ -90,11 +90,19 @@ class LanguagePack::Base
   def write_release_yaml
     release = {}
     release["addons"]                = default_addons
-    release["default_process_types"] = default_process_types
     release["config_vars"]           = default_config_vars
     FileUtils.mkdir("tmp") unless File.exists?("tmp")
     File.open("tmp/heroku-buildpack-release-step.yml", 'w') do |f|
       f.write(release.to_yaml)
+    end
+
+    procfile = Pathname.new("Procfile")
+
+    unless procfile.exist?
+      msg =  "No Procfile detected, using the default web server (webrick)\n"
+      msg << "https://devcenter.heroku.com/articles/ruby-default-web-server"
+      warn msg
+      procfile.open('w') {|f| f.write(default_process_types.to_yaml) }
     end
   end
 
