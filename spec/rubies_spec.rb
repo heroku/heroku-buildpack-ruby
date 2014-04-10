@@ -38,6 +38,8 @@ describe "Ruby Versions" do
       version = '2.0.0'
       expect(app.output).to match(version)
       expect(app.run('ruby -v')).to match(version)
+
+      expect(app.output).to match("devcenter.heroku.com/articles/ruby-default-web-server")
     end
   end
 

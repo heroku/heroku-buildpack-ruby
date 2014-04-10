@@ -25,6 +25,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   BOWER_BASE_URL       = "http://heroku-buildpack-ruby-bower.s3.amazonaws.com"
   NODE_JS_VERSION      = "0.10.21"
   NODE_JS_BASE_URL     = "http://heroku-buildpack-nodejs.s3.amazonaws.com"
+  NODE_BP_PATH         = "vendor/node/bin"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -226,6 +227,7 @@ private
   def setup_language_pack_environment
     instrument 'ruby.setup_language_pack_environment' do
       setup_ruby_install_env
+      ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
 
       # TODO when buildpack-env-args rolls out, we can get rid of
       # ||= and the manual setting below
@@ -748,7 +750,15 @@ params = CGI.parse(uri.query || "")
   # @note execjs will blow up if no JS RUNTIME is detected and is loaded.
   # @return [Array] the node.js binary path if we need it or an empty Array
   def add_node_js_binary
-    bundler.has_gem?('execjs') ? [NODE_JS_BINARY_PATH] : []
+    bundler.has_gem?('execjs') && !node_js_installed? ? [NODE_JS_BINARY_PATH] : []
+  end
+
+  def node_bp_bin_path
+    "#{Dir.pwd}/#{NODE_BP_PATH}"
+  end
+
+  def node_js_installed?
+    @node_js_installed ||= run("node -v", env: {"PATH" => "#{node_bp_bin_path}:#{ENV["PATH"]}" }) && $?.success?
   end
 
   def run_assets_precompile_rake_task
