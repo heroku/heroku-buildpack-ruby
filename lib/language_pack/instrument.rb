@@ -59,7 +59,7 @@ module LanguagePack
     end
 
     def self.buildpack_version
-      LanguagePack::Ruby::BUILDPACK_VERSION
+      LanguagePack::Ruby::CF_BUILDPACK_VERSION
     end
 
     def self.buildpack_name
