@@ -1,5 +1,15 @@
 ## Master
 
+## v116 (4/10/2014)
+
+Features:
+
+
+Bugfixes:
+
+* Revert back to Bundler 1.5.2
+
+
 ## v115 (4/9/2014)
 
 Features:
