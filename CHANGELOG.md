@@ -1,5 +1,15 @@
 ## Master
 
+## v114 (4/9/2014)
+
+Features:
+
+* Bundler 1.6.1
+* When when not using a Procfile (looking at you webrick)
+
+Bugfixes:
+
+
 ## v113 (4/8/2014)
 
 Features:
