@@ -693,7 +693,7 @@ params = CGI.parse(uri.query || "")
   end
 
   def node_js_installed?
-    @node_js_installed ||= run("node -v", env: {"PATH" => "#{node_bp_bin_path}:#{ENV["PATH"]}" }) && $?.success?
+    @node_js_installed ||= run("#{node_bp_bin_path}/node -v") && $?.success?
   end
 
   def run_assets_precompile_rake_task
