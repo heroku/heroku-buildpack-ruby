@@ -17,6 +17,10 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
 
   def create_database_yml
     instrument 'ruby.create_database_yml' do
+      if File.exist?("config/database.yml")
+        warn "You have your database.yml file checked into git.\nBest practice is to remove it from version control."
+        super
+      end
     end
   end
 
