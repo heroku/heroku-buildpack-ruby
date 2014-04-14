@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe "Ruby Versions", :anvil do
+describe "Ruby Versions" do
   it "should deploy ruby 1.8.7 properly" do
     Hatchet::AnvilApp.new("mri_187").deploy do |app|
       version = '1.8.7'

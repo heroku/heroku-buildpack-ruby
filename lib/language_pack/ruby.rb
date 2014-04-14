@@ -3,12 +3,9 @@ require "rubygems"
 require "language_pack"
 require "language_pack/base"
 require "language_pack/bundler_lockfile"
-require "language_pack/package_fetcher"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
-  include LanguagePack::PackageFetcher
-  extend LanguagePack::PackageFetcher
   include LanguagePack::BundlerLockfile
   extend LanguagePack::BundlerLockfile::ClassMethods
 
@@ -21,7 +18,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   NODE_JS_BINARY_PATH  = "node-#{NODE_VERSION}"
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION          = "openjdk7-latest"
-  DEFAULT_RUBY_VERSION = "ruby-1.9.3"
+  DEFAULT_RUBY_VERSION = "ruby-2.0.0"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -65,7 +62,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def compile
-    staging_environment_path # Save current environment path first
     Dir.chdir(build_path)
     remove_vendor_bundle
     install_ruby
@@ -88,10 +84,6 @@ private
   # @return [String] the resulting PATH
   def default_path
     "bin:#{bundler_binstubs_path}:/usr/local/bin:/usr/bin:/bin"
-  end
-
-  def staging_environment_path
-    @staging_environment_path ||= ENV["PATH"]
   end
 
   # the relative path to the bundler directory of gems
@@ -195,7 +187,7 @@ private
 
     Dir.mktmpdir("ruby_versions-") do |tmpdir|
       Dir.chdir(tmpdir) do
-        fetch_package("ruby_versions.yml")
+        run("curl -O #{VENDOR_URL}/ruby_versions.yml")
         @ruby_versions = YAML::load_file("ruby_versions.yml")
       end
     end
@@ -211,7 +203,6 @@ private
       ENV[key] ||= value
     end
     ENV["GEM_HOME"] = slug_vendor_base
-    ENV["GEM_PATH"] = slug_vendor_base
     ENV["PATH"]     = "#{ruby_install_binstub_path}:#{slug_vendor_base}/bin:#{config_vars["PATH"]}"
   end
 
@@ -219,7 +210,7 @@ private
   def setup_profiled
     set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
     set_env_default  "LANG",     "en_US.UTF-8"
-    set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:#{staging_environment_path}:$PATH"
+    set_env_override "PATH",     "$HOME/bin:$HOME/#{slug_vendor_base}/bin:$PATH"
 
     if ruby_version_jruby?
       set_env_default "JAVA_OPTS", default_java_opts
@@ -248,17 +239,14 @@ ERROR
       FileUtils.mkdir_p(build_ruby_path)
       Dir.chdir(build_ruby_path) do
         ruby_vm = ruby_version_rbx? ? "rbx" : "ruby"
-        ruby_name = ruby_version.sub(ruby_vm, "#{ruby_vm}-build")
-        ruby_filename = "#{ruby_name}.tgz"
-        fetch_package_and_untar(ruby_filename)
+        run("curl #{VENDOR_URL}/#{ruby_version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz -s -o - | tar zxf -")
       end
       error invalid_ruby_version_message unless $?.success?
     end
 
     FileUtils.mkdir_p(slug_vendor_ruby)
     Dir.chdir(slug_vendor_ruby) do
-      ruby_filename = "#{ruby_version}.tgz"
-      fetch_package_and_untar(ruby_filename)
+      run("curl #{VENDOR_URL}/#{ruby_version}.tgz -s -o - | tar zxf -")
     end
     error invalid_ruby_version_message unless $?.success?
 
@@ -302,7 +290,7 @@ WARNING
 
       FileUtils.mkdir_p(slug_vendor_jvm)
       Dir.chdir(slug_vendor_jvm) do
-        fetch_package_and_untar("#{JVM_VERSION}.tar.gz", JVM_BASE_URL)
+        run("curl #{JVM_BASE_URL}/#{JVM_VERSION}.tar.gz -s -o - | tar xzf -")
       end
 
       bin_dir = "bin"
@@ -328,7 +316,7 @@ WARNING
 
   # setup the environment so we can use the vendored ruby
   def setup_ruby_install_env
-    ENV["PATH"] = "#{ruby_install_binstub_path}:#{Dir.pwd}/#{slug_vendor_base}/bin:#{ENV["PATH"]}"
+    ENV["PATH"] = "#{ruby_install_binstub_path}:#{ENV["PATH"]}"
 
     if ruby_version_jruby?
       ENV['JAVA_OPTS']  = default_java_opts
@@ -346,7 +334,7 @@ WARNING
     FileUtils.mkdir_p(slug_vendor_base)
     Dir.chdir(slug_vendor_base) do |dir|
       gems.each do |gem|
-        fetch_package_and_untar("#{gem}.tgz")
+        run("curl #{VENDOR_URL}/#{gem}.tgz -s -o - | tar xzf -")
       end
       Dir["bin/*"].each {|path| run("chmod 755 #{path}") }
     end
@@ -371,7 +359,7 @@ WARNING
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
     Dir.chdir(bin_dir) do |dir|
-      fetch_package_and_untar("#{name}.tgz")
+      run("curl #{VENDOR_URL}/#{name}.tgz -s -o - | tar xzf -")
     end
   end
 
@@ -386,7 +374,7 @@ WARNING
   def install_libyaml(dir)
     FileUtils.mkdir_p dir
     Dir.chdir(dir) do |dir|
-      fetch_package_and_untar("#{LIBYAML_PATH}.tgz")
+      run("curl #{VENDOR_URL}/#{LIBYAML_PATH}.tgz -s -o - | tar xzf -")
     end
   end
 

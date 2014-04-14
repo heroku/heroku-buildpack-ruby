@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe "Rails 3.x", :anvil do
+describe "Rails 3.x" do
   it "should deploy on ruby 1.9.3" do
     Hatchet::AnvilApp.new("rails3_mri_193").deploy do |app, heroku|
       add_database(app, heroku)

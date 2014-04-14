@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/cloudfoundry/heroku-buildpack-ruby.png?branch=master)](https://travis-ci.org/cloudfoundry/heroku-buildpack-ruby)
-
 Heroku buildpack: Ruby
 ======================
 

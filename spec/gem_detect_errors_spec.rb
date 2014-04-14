@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Raise errors on specific gems", :anvil do
+describe "Raise errors on specific gems" do
   it "should should raise on sqlite3" do
     Hatchet::AnvilApp.new("sqlite3_gemfile", allow_failure: true).deploy do |app|
       expect(app).not_to be_deployed

@@ -54,31 +54,21 @@ def install_gem(gem, version)
   end
 end
 
-def build_ruby_command(name, output, prefix, usr_dir, tmpdir, rubygems = nil, enable_load_relative=true)
-  configure_flags = []
-  configure_flags << "--enable-load-relative" if enable_load_relative
-  configure_flags << "--disable-install-doc"
-  configure_flags << "--prefix #{prefix}"
-
+def build_ruby_command(name, output, prefix, usr_dir, tmpdir, rubygems = nil)
+  vulcan_prefix = "/app/vendor/#{output}"
   build_command = [
-    "cd #{name}",
     # need to move libyaml/libffi to dirs we can see
-    "if [ -d #{usr_dir} ]; then mv #{usr_dir} /tmp; fi",
-    "./configure #{configure_flags.join(" ")}",
+    "mv #{usr_dir} /tmp",
+    "./configure --enable-load-relative --disable-install-doc --prefix #{prefix}",
     "env CPATH=/tmp/#{usr_dir}/include:\\$CPATH CPPATH=/tmp/#{usr_dir}/include:\\$CPPATH LIBRARY_PATH=/tmp/#{usr_dir}/lib:\\$LIBRARY_PATH make",
     "make install"
   ]
   build_command << "#{prefix}/bin/ruby /tmp/#{usr_dir}/rubygems-#{rubygems}/setup.rb" if rubygems
   build_command << "mv #{prefix} /app/vendor/#{output}" if prefix != "/app/vendor/#{output}"
-  build_command << "tar -czvf /tmp/#{output}.tgz -C /app/vendor/#{output} ."
   build_command = build_command.join(" && ")
 
-  puts "Running #{build_command}"
-
-  sh build_command
-  
-  puts "File was created in /tmp/#{output}.tgz"
-  # TODO implement automatic upload to cf blobstore
+  sh "vulcan build -v -o #{output}.tgz --prefix #{vulcan_prefix} --source #{name} --command=\"#{build_command}\""
+  s3_upload(tmpdir, output)
 end
 
 def build_rbx_command(name, output, prefix, usr_dir, tmpdir, ruby_version)
@@ -161,7 +151,7 @@ task "node:install", :version do |t, args|
   end
 end
 
-desc "install ruby (don't use bundle exec)"
+desc "install ruby"
 task "ruby:install", :version do |t, args|
   full_version   = args[:version]
   full_name      = "ruby-#{full_version}"
@@ -169,7 +159,6 @@ task "ruby:install", :version do |t, args|
   name           = "ruby-#{version}"
   usr_dir        = "usr"
   rubygems       = nil
-  load_relative = true
   Dir.mktmpdir("ruby-") do |tmpdir|
     Dir.chdir(tmpdir) do |dir|
       FileUtils.rm_rf("#{tmpdir}/*")
@@ -179,25 +168,22 @@ task "ruby:install", :version do |t, args|
       sh "curl http://ftp.ruby-lang.org/pub/ruby/#{major_ruby}/#{full_name}.tar.gz -s -o - | tar zxf -"
       FileUtils.mkdir_p("#{full_name}/#{usr_dir}")
       Dir.chdir("#{full_name}/#{usr_dir}") do
-        # TODO install libyaml and libffi from cf blobstore
-        #sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar zxf -"
-        #sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar zxf -"
+        sh "curl #{VENDOR_URL}/libyaml-0.1.4.tgz -s -o - | tar zxf -"
+        sh "curl #{VENDOR_URL}/libffi-3.0.10.tgz -s -o - | tar zxf -"
         sh "curl http://production.cf.rubygems.org/rubygems/rubygems-#{rubygems}.tgz -s -o - | tar xzf -" if major_ruby == "1.8"
-      end
-
-      # build ruby
-      if major_ruby == "1.8" || version == "1.9.2"
-        output  = "ruby-build-#{version}"
-        prefix  = "/tmp/ruby-#{version}"
-        build_ruby_command(full_name, output, prefix, usr_dir, tmpdir, rubygems, false)
-        # load_relative only seems to work with 1.9.3 and higher
-        load_relative = false
       end
 
       # runtime ruby
       prefix  = "/app/vendor/#{name}"
-      build_ruby_command(full_name, name, prefix, usr_dir, tmpdir, rubygems, load_relative)
-  end
+      build_ruby_command(full_name, name, prefix, usr_dir, tmpdir, rubygems)
+
+      # build ruby
+      if major_ruby == "1.8"
+        output  = "ruby-build-#{version}"
+        prefix  = "/tmp/ruby-#{version}"
+        build_ruby_command(full_name, output, prefix, usr_dir, tmpdir, rubygems)
+      end
+    end
   end
 end
 

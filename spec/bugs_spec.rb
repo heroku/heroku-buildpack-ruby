@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe "Bugs", :anvil do
+describe "Bugs" do
   context "MRI 1.8.7" do
     it "should install nokogiri" do
       Hatchet::AnvilApp.new("mri_187_nokogiri").deploy do |app|
