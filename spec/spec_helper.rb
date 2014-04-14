@@ -45,3 +45,11 @@ def create_file_with_size_in(size, dir)
   File.open(name, 'w') {|f| f.print([ 1 ].pack("C") * size) }
   Pathname.new name
 end
+
+
+ReplRunner.register_commands(:console)  do |config|
+  config.terminate_command "exit"          # the command you use to end the 'rails console'
+  config.startup_timeout 60                # seconds to boot
+  config.return_char "\n"                  # the character that submits the command
+  config.sync_stdout "STDOUT.sync = true"  # force REPL to not buffer standard out
+end
