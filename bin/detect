@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 
-$:.unshift File.expand_path("../../lib", __FILE__)
-require "language_pack"
+require 'pathname'
 
-if pack = LanguagePack.detect(ARGV.first)
-  puts pack.name
+if Pathname.new(ARGV.first).join("Gemfile").exist?
+  puts "Ruby"
   exit 0
 else
   puts "no"

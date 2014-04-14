@@ -5,6 +5,8 @@ require "digest/sha1"
 require "language_pack/shell_helpers"
 require "language_pack/cache"
 require "language_pack/metadata"
+require "language_pack/fetcher"
+require "language_pack/instrument"
 
 Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 
@@ -12,7 +14,7 @@ Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 class LanguagePack::Base
   include LanguagePack::ShellHelpers
 
-  VENDOR_URL = "https://s3.amazonaws.com/heroku-buildpack-ruby"
+  VENDOR_URL = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
 
   attr_reader :build_path, :cache
 
@@ -20,13 +22,25 @@ class LanguagePack::Base
   # @param [String] the path of the build dir
   # @param [String] the path of the cache dir this is nil during detect and release
   def initialize(build_path, cache_path=nil)
-    @build_path = build_path
-    @cache      = LanguagePack::Cache.new(cache_path) if cache_path
-    @metadata   = LanguagePack::Metadata.new(@cache)
-    @id         = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
-    @warnings   = []
+     self.class.instrument "base.initialize" do
+      @build_path   = build_path
+      @cache        = LanguagePack::Cache.new(cache_path) if cache_path
+      @metadata     = LanguagePack::Metadata.new(@cache)
+      @id           = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
+      @warnings     = []
+      @deprecations = []
+      @fetchers     = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
 
-    Dir.chdir build_path
+      Dir.chdir build_path
+    end
+  end
+
+  def instrument(*args, &block)
+    self.class.instrument(*args, &block)
+  end
+
+  def self.instrument(*args, &block)
+    LanguagePack::Instrument.instrument(*args, &block)
   end
 
   def self.===(build_path)
@@ -60,21 +74,34 @@ class LanguagePack::Base
 
   # this is called to build the slug
   def compile
-    if @warnings.any?
-      topic "WARNINGS:"
-      puts @warnings.join("--\n")
+    write_release_yaml
+    instrument 'base.compile' do
+      if @warnings.any?
+        topic "WARNINGS:"
+        puts @warnings.join("\n")
+      end
+      if @deprecations.any?
+        topic "DEPRECATIONS:"
+        puts @deprecations.join("\n")
+      end
     end
   end
 
-  # collection of values passed for a release
-  # @return [String] in YAML format of the result
-  def release
-    setup_language_pack_environment
+  def write_release_yaml
+    release = {}
+    release["addons"]                = default_addons
+    release["config_vars"]           = default_config_vars
+    release["default_process_types"] = default_process_types
+    FileUtils.mkdir("tmp") unless File.exists?("tmp")
+    File.open("tmp/heroku-buildpack-release-step.yml", 'w') do |f|
+      f.write(release.to_yaml)
+    end
 
-    {
-      "addons" => default_addons,
-      "default_process_types" => default_process_types
-    }.to_yaml
+    unless File.exist?("Procfile")
+      msg =  "No Procfile detected, using the default web server (webrick)\n"
+      msg << "https://devcenter.heroku.com/articles/ruby-default-web-server"
+      warn msg
+    end
   end
 
   # log output
