@@ -6,7 +6,7 @@ This is a managed fork of the [Heroku Ruby build pack](https://github.com/heroku
 ### Significant differences
 
 * Support on-premises deploys that have limited access to the internet.
-* Remove binary incompatible pre-cached gems
+* Does not use Heroku pre-cached gems. This avoids an issue with the Postgres gem's binary compatibility with ElephantSQL.
 
 ### Packager
 
