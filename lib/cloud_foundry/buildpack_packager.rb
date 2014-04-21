@@ -13,6 +13,7 @@ module CloudFoundry
         'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.9.3.tgz',
         'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.9.2.tgz',
         'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.8.7.tgz',
+        'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-build-1.8.7.tgz',
     ]
 
     EXCLUDE_FROM_BUILDPACK = [
