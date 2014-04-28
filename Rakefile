@@ -1,6 +1,5 @@
 require "fileutils"
 require "tmpdir"
-require 'hatchet/tasks'
 
 $: << File.expand_path('../lib', __FILE__)
 
