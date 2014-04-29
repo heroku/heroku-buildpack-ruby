@@ -95,7 +95,6 @@ namespace :buildpack do
   require 'json'
   require 'time'
   require 'cgi'
-  require 'git'
   require 'fileutils'
   require 'digest/md5'
   require 'securerandom'
