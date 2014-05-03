@@ -8,6 +8,7 @@ require 'language_pack'
 require 'language_pack'
 
 ENV['RACK_ENV'] = 'test'
+ENV['RUBYOPT'] = ENV['RUBYOPT'].sub('-rbundler/setup', '') if ENV['RUBYOPT']
 
 RSpec.configure do |config|
   config.filter_run focused: true unless ENV['IS_RUNNING_ON_TRAVIS']
