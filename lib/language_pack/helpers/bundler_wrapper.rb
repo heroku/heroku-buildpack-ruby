@@ -78,8 +78,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def ruby_version
     instrument 'detect_ruby_version' do
-      old_system_path = "/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
-      env = { "PATH"     => "#{bundler_path}/bin:#{old_system_path}",
+      env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
               "RUBYLIB"  => File.join(bundler_path, "gems", BUNDLER_DIR_NAME, "lib"),
               "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}"
             }
