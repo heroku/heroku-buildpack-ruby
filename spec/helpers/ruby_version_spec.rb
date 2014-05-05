@@ -2,10 +2,17 @@ require 'spec_helper'
 
 describe "RubyVersion" do
   before(:each) do
+    if ENV['RUBYOPT']
+      @original_rubyopt = ENV['RUBYOPT']
+      ENV['RUBYOPT'] = ENV['RUBYOPT'].sub('-rbundler/setup', '')
+    end
     @bundler = LanguagePack::Helpers::BundlerWrapper.new
   end
 
   after(:each) do
+    if ENV['RUBYOPT']
+      ENV['RUBYOPT'] = @original_rubyopt
+    end
     @bundler.clean
   end
 
