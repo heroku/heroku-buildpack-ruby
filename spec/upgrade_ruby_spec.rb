@@ -8,7 +8,7 @@ describe "Upgrading ruby apps" do
       `echo "" > Gemfile; rm Gemfile.lock`
       `env BUNDLE_GEMFILE=./Gemfile bundle install`
       `echo "ruby '2.1.0'" > Gemfile`
-      `git add . ; git commit -m update-ruby`
+      `git add . -A; git commit -m update-ruby`
       app.push!
       expect(app.output).to match("2.1.0")
       expect(app.run("ruby -v")).to match("2.1.0")
