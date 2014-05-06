@@ -1,5 +1,9 @@
 ## Master
 
+## v118 (4/6/2014)
+
+* Ruby version detection now loads user environment variables
+
 ## v117 (4/14/2014)
 
 Features:
