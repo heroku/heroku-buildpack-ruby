@@ -16,6 +16,18 @@ describe "RubyVersion" do
     @bundler.clean
   end
 
+  it "correctly handles patch levels" do
+    Hatchet::App.new("mri_193_p484").in_directory do |dir|
+      ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: true)
+      version_number = "1.9.3"
+      version        = "ruby-#{version_number}"
+      expect(ruby_version.version_without_patchlevel).to eq(version)
+      expect(ruby_version.patchlevel).to                 eq("p484")
+      expect(ruby_version.engine_version).to             eq(version_number)
+      expect(ruby_version.engine).to                     eq(:ruby)
+    end
+  end
+
   it "correctly sets ruby version for bundler specified versions" do
     Hatchet::App.new("mri_193").in_directory do |dir|
       ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: true)
