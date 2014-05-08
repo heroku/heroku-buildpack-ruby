@@ -3,8 +3,6 @@ require "tmpdir"
 
 $: << File.expand_path('../lib', __FILE__)
 
-load 'tasks/package.rake'
-
 S3_BUCKET_NAME  = "heroku-buildpack-ruby"
 VENDOR_URL      = "https://s3.amazonaws.com/#{S3_BUCKET_NAME}"
 
