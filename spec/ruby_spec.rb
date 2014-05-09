@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 describe "Ruby apps" do
   describe "Rake detection" do
     context "default" do
-      fit "adds default process types" do
+      it "adds default process types" do
         Hatchet::Runner.new('empty-procfile').deploy do |app|
           app.run("console") do |console|
             console.run("'hello' + 'world'") {|result| expect(result).to match('helloworld')}
