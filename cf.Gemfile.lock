@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/pivotal-cf-experimental/cf-buildpack-integration-tests.git
-  revision: 99e1c20e9be31604e372a126fb06dd72e2f10fa1
-  ref: 99e1c20
+  revision: 21e332fa4570428623d59cc70439b96b27b1a6ce
+  ref: 21e332fa4570428623d59cc70439b96b27b1a6ce
   specs:
     machete (0.0.1)
       httparty
