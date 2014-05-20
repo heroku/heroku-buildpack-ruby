@@ -64,6 +64,12 @@ module LanguagePack
       engine == :ruby && %w(1.8.7 1.9.2).include?(ruby_version)
     end
 
+    # determines if the ruby has had support ended
+    # @return [Boolean] true if the support has ended
+    def unsupported?
+      engine == :ruby && %w(1.8.7 1.9.2).include?(ruby_version)
+    end
+
     # convert to a Gemfile ruby DSL incantation
     # @return [String] the string representation of the Gemfile ruby DSL
     def to_gemfile

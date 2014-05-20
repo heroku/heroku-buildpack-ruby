@@ -17,6 +17,7 @@ class LanguagePack::Base
 
   VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
   DEFAULT_LEGACY_STACK = "cedar"
+  UNSUPPORTED_URL      = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/unsupported"
 
   attr_reader :build_path, :cache
 
@@ -33,7 +34,10 @@ class LanguagePack::Base
       @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
       @warnings      = []
       @deprecations  = []
-      @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
+      @fetchers      = {
+        :buildpack   => LanguagePack::Fetcher.new(VENDOR_URL),
+        :unsupported => LanguagePack::Fetcher.new(UNSUPPORTED_URL, @stack)
+      }
 
       Dir.chdir build_path
     end

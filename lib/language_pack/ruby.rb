@@ -257,7 +257,12 @@ ERROR_MSG
         Dir.chdir(build_ruby_path) do
           ruby_vm = "ruby"
           instrument "ruby.fetch_build_ruby" do
-            @fetchers[:mri].fetch_untar("#{ruby_version.version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz")
+            fetch_string = "#{ruby_version.version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz"
+            if ruby_version.unsupported?
+              @fetchers[:unsupported].fetch_untar(fetch_string)
+            else
+              @fetchers[:mri].fetch_untar(fetch_string)
+            end
           end
         end
       end
@@ -285,6 +290,8 @@ ERROR_MSG
             FileUtils.rm_rf("app")
             FileUtils.rm(file)
             FileUtils.rm(sha_file)
+          elsif ruby_version.unsupported?
+            @fetchers[:unsupported].fetch_untar("#{ruby_version.version}.tgz")
           else
             @fetchers[:mri].fetch_untar("#{ruby_version.version}.tgz")
           end
