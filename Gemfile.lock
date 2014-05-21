@@ -5,6 +5,14 @@ GIT
   specs:
     git (1.2.6)
 
+GIT
+  remote: https://github.com/cf-buildpacks/base_packager.git
+  revision: 3b54ae2303cf899357a4bf28f4e765844ad441af
+  ref: 3b54ae2
+  specs:
+    base_packager (0.0.1)
+      rubyzip
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -19,7 +27,6 @@ GEM
       rest-client (~> 1.6.7)
       thor (~> 0.15.2)
     atomic (1.1.14)
-    coderay (1.1.0)
     diff-lcs (1.1.3)
     excon (0.31.0)
     heroku-api (0.3.17)
@@ -35,7 +42,6 @@ GEM
       thor (~> 0)
       threaded (~> 0)
     i18n (0.6.9)
-    method_source (0.8.2)
     mime-types (2.1)
     minitest (4.7.5)
     multi_json (1.8.4)
@@ -44,10 +50,6 @@ GEM
     parallel_tests (0.13.1)
       parallel
     progress (2.4.0)
-    pry (0.9.12.6)
-      coderay (~> 1.0)
-      method_source (~> 0.8)
-      slop (~> 3.4)
     rake (10.0.4)
     repl_runner (0.0.3)
       activesupport
@@ -64,8 +66,7 @@ GEM
     rspec-mocks (2.13.1)
     rspec-retry (0.2.1)
       rspec
-    rubyzip (1.1.2)
-    slop (3.5.0)
+    rubyzip (1.1.3)
     thor (0.15.4)
     thread_safe (0.1.3)
       atomic
@@ -76,14 +77,13 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  base_packager!
   excon
   git!
   heroku_hatchet
   netrc
   parallel_tests
-  pry
   rake
   rspec-core
   rspec-expectations
   rspec-retry
-  rubyzip
