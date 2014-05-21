@@ -50,7 +50,10 @@ class BuildpackPackager < BasePackager
   def excluded_files
     [
       /\.git/,
-      /repos/
+      /repos/,
+      /spec/,
+      /cf_spec/,
+      /cf.Gemfile*/
     ]
   end
 end
