@@ -7,8 +7,8 @@ GIT
 
 GIT
   remote: https://github.com/cf-buildpacks/base_packager.git
-  revision: 3b54ae2303cf899357a4bf28f4e765844ad441af
-  ref: 3b54ae2
+  revision: 4e5e74d4846c4972783099eb8fcc5dc0ba6a7365
+  ref: 4e5e74d
   specs:
     base_packager (0.0.1)
       rubyzip
