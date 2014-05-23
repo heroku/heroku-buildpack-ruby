@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ANewHope</title>
+  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<h1>The Kessel Run</h1>
+
+<ul>
+  <li>
+    <%= link_to 'Browse File System', :browse %>
+  </li>
+  <li>
+    <%= link_to 'View Environment', :env %>
+  </li>
+  <li>
+    <%= link_to 'Notes', :notes %>
+  </li>
+</ul>
+
+
+<%= yield %>
+
+</body>
+</html>

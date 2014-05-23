@@ -1,0 +1,8 @@
+<ul>
+  <% @dir.sort.each do |node| %>
+    <% file = File.join(@dir,node) %>
+    <li>
+      <%= link_to node, "/browse#{File.absolute_path(file)}" %>
+    </li>
+  <% end %>
+</ul>
