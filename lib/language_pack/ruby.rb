@@ -252,6 +252,11 @@ ERROR_MSG
     instrument 'ruby.install_ruby' do
       return false unless ruby_version
 
+      unsupported_message = <<MESSAGE
+#{ruby_version.version} is unsupported. We recommend upgrading to a supported ruby version.
+See https://devcenter.heroku.com/articles/ruby-support#ruby-versions or more info.
+MESSAGE
+
       if ruby_version.build?
         FileUtils.mkdir_p(build_ruby_path)
         Dir.chdir(build_ruby_path) do
@@ -292,6 +297,7 @@ ERROR_MSG
             FileUtils.rm(sha_file)
           elsif ruby_version.unsupported?
             @fetchers[:unsupported].fetch_untar("#{ruby_version.version}.tgz")
+            warn unsupported_message
           else
             @fetchers[:mri].fetch_untar("#{ruby_version.version}.tgz")
           end
