@@ -10,7 +10,7 @@ describe 'deploying a rails 4 application', :ruby_buildpack do
   end
 
   it "deploys apps without vendored dependencies", if: Machete::BuildpackMode.online? do
-    app_name = "rails4_web_app_no_dependencies"
+    app_name = "rails4_web_app_without_vendored_dependencies"
 
     Dir.exists?("cf_spec/fixtures/#{app_name}/vendor").should be_false
     Machete.deploy_app(app_name, :ruby, with_pg: true) do |app|
