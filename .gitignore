@@ -5,7 +5,6 @@
 .env
 .idea
 .ruby-version
-bin/
 buildpacks/*
 log
 machete.log
