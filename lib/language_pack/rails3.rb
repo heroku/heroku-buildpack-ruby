@@ -91,7 +91,7 @@ private
     else
       default_env = {
         "RAILS_GROUPS" => "assets",
-        "RAILS_ENV"    => "production",
+        "RAILS_ENV"    => ENV["RAILS_ENV"] || "production",
         "DATABASE_URL" => database_url
       }
     end
