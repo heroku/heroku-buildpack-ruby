@@ -41,6 +41,8 @@ class BuildpackPackager < BasePackager
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.8.7-jruby-1.7.11.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.9.3-jruby-1.7.11.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-2.0.0-jruby-1.7.11.tgz',
+      'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/rails_log_stdout.tgz',
+      'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/rails3_serve_static_assets.tgz',
       'http://heroku-jdk.s3.amazonaws.com/openjdk1.7.0_25.tar.gz',
       'http://heroku-jdk.s3.amazonaws.com/openjdk1.7.0_45.tar.gz',
       'http://heroku-jdk.s3.amazonaws.com/openjdk7-latest.tar.gz'
