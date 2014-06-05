@@ -57,10 +57,11 @@ class LanguagePack::Helpers::RakeRunner
     end
   end
 
-  def initialize(has_rake_gem = true)
-    @has_rake = has_rake_gem && has_rakefile?
+  def initialize(has_rake_gem = true, error_if_cannot_load = false)
+    @has_rake             = has_rake_gem && has_rakefile?
+    @error_if_cannot_load = error_if_cannot_load
     if !@has_rake
-      @rake_tasks    = ""
+      @rake_tasks        = ""
       @rakefile_can_load = false
     end
   end
@@ -93,9 +94,13 @@ class LanguagePack::Helpers::RakeRunner
     msg << "This may be intentional, if you expected rake tasks to be run\n"
     msg << "cancel the build (CTRL+C) and fix the error then commit the fix:\n"
     msg << out
-    puts msg if cannot_load_rakefile?
+    if cannot_load_rakefile?
+      error(msg) if @error_if_cannot_load
+      puts msg
+    end
     return self
   end
+
 
   def task_defined?(task)
     return false if cannot_load_rakefile?
@@ -121,6 +126,6 @@ class LanguagePack::Helpers::RakeRunner
 private
 
   def has_rakefile?
-    %W{ Rakefile rakefile  rakefile.rb Rakefile.rb}.detect {|file| File.exist?(file) }
+    %W{ Rakefile rakefile  rakefile.rb Rakefile.rb }.detect {|file| File.exist?(file) }
   end
 end

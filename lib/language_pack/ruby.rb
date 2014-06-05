@@ -650,7 +650,8 @@ params = CGI.parse(uri.query || "")
   def rake
     @rake ||= begin
       LanguagePack::Helpers::RakeRunner.new(
-                bundler.has_gem?("rake") || ruby_version.rake_is_vendored?
+                bundler.has_gem?("rake") || ruby_version.rake_is_vendored?,
+                error_if_rake_cannot_load
               ).load_rake_tasks!(env: rake_env)
     end
   end
@@ -712,6 +713,10 @@ params = CGI.parse(uri.query || "")
         precompile_fail(precompile.output)
       end
     end
+  end
+
+  def error_if_rake_cannot_load
+    false
   end
 
   def precompile_fail(output)
