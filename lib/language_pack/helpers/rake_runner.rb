@@ -95,8 +95,8 @@ class LanguagePack::Helpers::RakeRunner
     msg << "cancel the build (CTRL+C) and fix the error then commit the fix:\n"
     msg << out
     if cannot_load_rakefile?
-      error(msg) if @error_if_cannot_load
       puts msg
+      error("Could not detect rake tasks") if @error_if_cannot_load
     end
     return self
   end

@@ -50,7 +50,8 @@ describe "Rake Runner" do
 
   it "fails if cannot load Rails 4 rakefile" do
     Hatchet::Runner.new('bad_rakefile_rails_4', allow_failure: true).deploy do |app|
-      expect(app.output).to match("ERROR: Could not detect rake tasks")
+      expect(app.output).to match("Could not detect rake tasks")
+      expect(app.deployed?).to eq(false)
     end
   end
 end

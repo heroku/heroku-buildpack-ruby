@@ -104,29 +104,6 @@ class LanguagePack::Base
     end
   end
 
-  # log output
-  # Ex. log "some_message", "here", :someattr="value"
-  def log(*args)
-    args.concat [:id => @id]
-    args.concat [:framework => self.class.to_s.split("::").last.downcase]
-
-    start = Time.now.to_f
-    log_internal args, :start => start
-
-    if block_given?
-      begin
-        ret = yield
-        finish = Time.now.to_f
-        log_internal args, :status => "complete", :finish => finish, :elapsed => (finish - start)
-        return ret
-      rescue StandardError => ex
-        finish = Time.now.to_f
-        log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => ex.message
-        raise ex
-      end
-    end
-  end
-
 private ##################################
 
   # sets up the environment variables for the build process
@@ -146,22 +123,6 @@ private ##################################
 
   def set_env_override(key, val)
     add_to_profiled %{export #{key}="#{val.gsub('"','\"')}"}
-  end
-
-  def log_internal(*args)
-    message = build_log_message(args)
-    %x{ logger -p user.notice -t "slugc[$$]" "buildpack-ruby #{message}" }
-  end
-
-  def build_log_message(args)
-    args.map do |arg|
-      case arg
-        when Float then "%0.2f" % arg
-        when Array then build_log_message(arg)
-        when Hash  then arg.map { |k,v| "#{k}=#{build_log_message([v])}" }.join(" ")
-        else arg
-      end
-    end.join(" ")
   end
 end
 
