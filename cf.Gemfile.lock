@@ -1,29 +1,22 @@
 GIT
-  remote: https://github.com/pivotal-cf-experimental/cf-buildpack-integration-tests.git
-  revision: 70919bfc91a11f6bcb3c2d69614d316620c7ab63
-  ref: 70919bf
+  remote: https://github.com/cf-buildpacks/machete.git
+  revision: 57b73e7031a8b29cf85b1afc44e4c28706966c78
+  ref: 57b73e7031a8b29cf85b1afc44e4c28706966c78
   specs:
     machete (0.0.1)
       httparty
-      pry
       rake
       rspec
 
 GEM
   remote: https://rubygems.org/
   specs:
-    coderay (1.1.0)
     diff-lcs (1.2.5)
     httparty (0.13.1)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     json (1.8.1)
-    method_source (0.8.2)
     multi_xml (0.5.5)
-    pry (0.9.12.6)
-      coderay (~> 1.0)
-      method_source (~> 0.8)
-      slop (~> 3.4)
     rake (10.3.2)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
@@ -37,7 +30,6 @@ GEM
     rspec-mocks (3.0.0)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.0)
-    slop (3.5.0)
 
 PLATFORMS
   ruby
