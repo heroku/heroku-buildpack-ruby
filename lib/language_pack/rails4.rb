@@ -74,7 +74,7 @@ WARNING
           return true
         end
 
-        if ENV['RAILS_NO_ASSETS']
+        if env('RAILS_NO_ASSETS')
           puts "RAILS_NO_ASSETS is set, not compiling assets"
           return true
         end
