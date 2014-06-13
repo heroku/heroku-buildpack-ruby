@@ -64,6 +64,11 @@ private
           return true
         end
 
+        if ENV['RAILS_NO_ASSETS']
+          puts "RAILS_NO_ASSETS is set, not compiling assets"
+          return true
+        end
+
         precompile = rake.task("assets:precompile")
         return true unless precompile.is_defined?
 
