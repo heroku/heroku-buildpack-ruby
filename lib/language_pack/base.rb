@@ -17,7 +17,7 @@ class LanguagePack::Base
   include LanguagePack::ShellHelpers
 
   def self.vendor_url
-    ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
+    env('BUILDPACK_VENDOR_URL') || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
   end
 
   attr_reader :build_path, :cache
