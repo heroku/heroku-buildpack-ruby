@@ -1,5 +1,7 @@
 ## Master
 
+* Bump bundler to 1.6.3 which includes improved dependency resolver
+
 ## v119 (5/9/2014)
 
 * Temporarily disable default ruby cache
