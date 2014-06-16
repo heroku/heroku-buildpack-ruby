@@ -4,6 +4,6 @@ require "language_pack/base"
 module LanguagePack
   class LanguagePack::Base
     CF_BUILDPACK_VERSION = "cf-v2"
-    BUILDPACK_VERSION = "v119"
+    BUILDPACK_VERSION = "v120"
   end
 end
