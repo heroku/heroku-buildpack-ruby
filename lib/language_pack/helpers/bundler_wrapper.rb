@@ -9,7 +9,7 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  VENDOR_URL         = LanguagePack::Base::VENDOR_URL                # coupling
+  VENDOR_URL         = LanguagePack::Base::vendor_url                # coupling
   DEFAULT_FETCHER    = LanguagePack::Fetcher.new(VENDOR_URL)         # coupling
   BUNDLER_DIR_NAME   = LanguagePack::Ruby::BUNDLER_GEM_PATH          # coupling
   BUNDLER_PATH       = File.expand_path("../../../../tmp/#{BUNDLER_DIR_NAME}", __FILE__)
