@@ -12,6 +12,8 @@ Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
+  extend LanguagePack::ShellHelpers
+
   include LanguagePack::ShellHelpers
 
   def self.vendor_url
