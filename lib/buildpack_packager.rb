@@ -6,7 +6,7 @@ class BuildpackPackager < BasePackager
     [
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/node-0.4.7.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.6.tgz',
-      'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/bundler-1.5.2.tgz',
+      'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/bundler-1.6.3.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby_versions.yml',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-2.1.1.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-2.1.0.tgz',
@@ -16,7 +16,7 @@ class BuildpackPackager < BasePackager
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.8.7.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-build-1.8.7.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.8.7-jruby-1.7.1.tgz',
-      'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.9.3-jruby-1.7.1.tgz',
+      'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/foo/ruby-1.9.3-jruby-1.7.1.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.8.7-jruby-1.7.2.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.9.3-jruby-1.7.2.tgz',
       'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-1.8.7-jruby-1.7.3.tgz',
