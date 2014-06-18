@@ -1,7 +1,7 @@
 GIT
-  remote: https://github.com/cf-buildpacks/machete.git
-  revision: 57b73e7031a8b29cf85b1afc44e4c28706966c78
-  ref: 57b73e7031a8b29cf85b1afc44e4c28706966c78
+  remote: git://github.com/cf-buildpacks/machete.git
+  revision: 3a2d634368ad6212fae78764b0ee97faaaf89e52
+  branch: master
   specs:
     machete (0.0.1)
       httparty
@@ -22,12 +22,12 @@ GEM
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
       rspec-mocks (~> 3.0.0)
-    rspec-core (3.0.0)
+    rspec-core (3.0.1)
       rspec-support (~> 3.0.0)
-    rspec-expectations (3.0.0)
+    rspec-expectations (3.0.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.0.0)
-    rspec-mocks (3.0.0)
+    rspec-mocks (3.0.1)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.0)
 

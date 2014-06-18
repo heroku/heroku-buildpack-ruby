@@ -1,22 +1,38 @@
 $: << 'cf_spec'
-require "cf_spec_helper"
+require 'cf_spec_helper'
 
-describe 'deploying a rails 4 application', :ruby_buildpack do
-  it 'make the homepage available' do
-    Machete.deploy_app("rails4_web_app", with_pg: true) do |app|
+describe 'Rails 4 App' do
+  subject(:app) { Machete.deploy_app(app_name, with_pg: true) }
+
+  context 'in an offline environment', if: Machete::BuildpackMode.offline? do
+    let(:app_name) { 'rails4_web_app' }
+
+    specify do
       expect(app).to be_staged
-      expect(app.homepage_html).to include('The Kessel Run')
+      expect(app.homepage_html).to include 'The Kessel Run'
+      expect(app).to have_no_internet_traffic
     end
+
   end
 
-  it "deploys apps without vendored dependencies", if: Machete::BuildpackMode.online? do
-    app_name = "rails4_web_app_without_vendored_dependencies"
+  context 'in an online environment', if: Machete::BuildpackMode.online? do
+    context 'app has dependencies' do
+      let(:app_name) { 'rails4_web_app' }
 
-    expect(Dir.exists?("cf_spec/fixtures/#{app_name}/vendor")).to eql(false)
+      specify do
+        expect(app).to be_staged
+        expect(app.homepage_html).to include 'The Kessel Run'
+      end
+    end
 
-    Machete.deploy_app(app_name, with_pg: true) do |app|
-      expect(app).to be_staged
-      expect(app.homepage_html).to include('The Kessel Run')
+    context 'app has no dependencies' do
+      let(:app_name) { 'rails4_web_app_without_vendored_dependencies' }
+
+      specify do
+        expect(Dir.exists?("cf_spec/fixtures/#{app_name}/vendor")).to eql(false)
+        expect(app).to be_staged
+        expect(app.homepage_html).to include 'The Kessel Run'
+      end
     end
   end
 end
