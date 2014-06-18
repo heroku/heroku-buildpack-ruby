@@ -19,7 +19,7 @@ class LanguagePack::Rack < LanguagePack::Ruby
   def default_config_vars
     instrument "rack.default_config_vars" do
       super.merge({
-        "RACK_ENV" => "production"
+        "RACK_ENV" => env("RACK_ENV") || "production"
       })
     end
   end
