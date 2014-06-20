@@ -8,7 +8,7 @@ describe 'Rails 4 App' do
     let(:app_name) { 'rails4_web_app' }
 
     specify do
-      expect(app).to be_staged
+      expect(app).to be_running
       expect(app.homepage_html).to include 'The Kessel Run'
       expect(app).to have_no_internet_traffic
     end
@@ -20,7 +20,7 @@ describe 'Rails 4 App' do
       let(:app_name) { 'rails4_web_app' }
 
       specify do
-        expect(app).to be_staged
+        expect(app).to be_running
         expect(app.homepage_html).to include 'The Kessel Run'
       end
     end
@@ -30,7 +30,7 @@ describe 'Rails 4 App' do
 
       specify do
         expect(Dir.exists?("cf_spec/fixtures/#{app_name}/vendor")).to eql(false)
-        expect(app).to be_staged
+        expect(app).to be_running
         expect(app.homepage_html).to include 'The Kessel Run'
       end
     end
