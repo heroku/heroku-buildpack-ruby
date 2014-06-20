@@ -513,7 +513,7 @@ WARNING
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
           env_vars       = {
-            "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
+            "BUNDLE_GEMFILE"                => "#{pwd}/#{ENV['BUNDLE_GEMFILE']}",
             "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
             "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
             "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),

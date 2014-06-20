@@ -20,7 +20,7 @@ class LanguagePack::Helpers::BundlerWrapper
   def initialize(options = {})
     @fetcher              = options[:fetcher]      || DEFAULT_FETCHER
     @bundler_path         = options[:bundler_path] || File.join(Dir.mktmpdir, "#{BUNDLER_DIR_NAME}")
-    @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
+    @gemfile_path         = options[:gemfile_path] || ENV['BUNDLE_GEMFILE'] || GEMFILE_PATH
     @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
     @gemfile_lock_path    = "#{@gemfile_path}.lock"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
