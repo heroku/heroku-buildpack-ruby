@@ -12,8 +12,8 @@ describe 'CF Ruby Buildpack' do
 
     specify do
       expect(app).to be_running
-      expect(app.logs).not_to include 'cannot load such file -- sinatra'
-      expect(app.homepage_html).to include 'Hello world!'
+      expect(app).not_to have_logged 'cannot load such file -- sinatra'
+      expect(app.homepage_body).to include 'Hello world!'
     end
   end
 end
