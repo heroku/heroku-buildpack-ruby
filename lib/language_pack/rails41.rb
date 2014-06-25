@@ -29,7 +29,7 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
 
   def default_config_vars
     super.merge({
-      "SECRET_KEY_BASE" => app_secret
+      "SECRET_KEY_BASE" => env("SECRET_KEY_BASE") || app_secret
     })
   end
 

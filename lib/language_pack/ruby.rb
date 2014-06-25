@@ -58,7 +58,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   def default_config_vars
     instrument "ruby.default_config_vars" do
       vars = {
-        "LANG"     => "en_US.UTF-8",
+        "LANG" => env("LANG") || "en_US.UTF-8"
       }
 
       ruby_version.jruby? ? vars.merge({
