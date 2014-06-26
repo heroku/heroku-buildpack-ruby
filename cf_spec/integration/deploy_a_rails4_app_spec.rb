@@ -10,7 +10,7 @@ describe 'Rails 4 App' do
     specify do
       expect(app).to be_running
       expect(app.homepage_body).to include 'The Kessel Run'
-      expect(app).not_to have_internet_traffic
+      expect(app.host).not_to have_internet_traffic
     end
 
   end

@@ -11,7 +11,7 @@ describe 'JRuby 1.7.3 App' do
       expect(app).to have_logged 'Installing JVM'
       expect(app).to have_logged 'ruby-1.8.7-jruby-1.7.8'
       expect(app).not_to have_logged 'OpenJDK 64-Bit Server VM warning'
-      expect(app).not_to have_internet_traffic
+      expect(app.host).not_to have_internet_traffic
     end
   end
 

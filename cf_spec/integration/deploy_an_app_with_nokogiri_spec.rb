@@ -9,7 +9,7 @@ describe 'Installing Nokogiri' do
     specify do
       expect(app).to be_running
       expect(app).to have_logged 'Installing nokogiri'
-      expect(app).not_to have_internet_traffic
+      expect(app.host).not_to have_internet_traffic
     end
   end
 

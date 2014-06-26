@@ -10,7 +10,7 @@ describe 'Rails 3 App' do
       expect(app).to be_running
       expect(app.homepage_body).to include('hello')
       expect(app).to have_file('app/vendor/plugins/rails3_serve_static_assets/init.rb')
-      expect(app).not_to have_internet_traffic
+      expect(app.host).not_to have_internet_traffic
     end
   end
 
