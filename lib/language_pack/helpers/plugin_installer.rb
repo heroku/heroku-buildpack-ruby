@@ -8,7 +8,7 @@ module LanguagePack
       attr_accessor :plugins, :vendor_url
       include LanguagePack::ShellHelpers
 
-      def initialize(plugins, vendor_url = LanguagePack::Base::VENDOR_URL)
+      def initialize(plugins, vendor_url = LanguagePack::Base::vendor_url)
         @plugins    = plugins || []
         @vendor_url = vendor_url
       end

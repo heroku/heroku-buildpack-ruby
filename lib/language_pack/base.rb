@@ -12,9 +12,13 @@ Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
+  extend LanguagePack::ShellHelpers
+
   include LanguagePack::ShellHelpers
 
-  VENDOR_URL = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
+  def self.vendor_url
+    env('BUILDPACK_VENDOR_URL') || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
+  end
 
   attr_reader :build_path, :cache
 
@@ -29,7 +33,7 @@ class LanguagePack::Base
       @id           = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
       @warnings     = []
       @deprecations = []
-      @fetchers     = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
+      @fetchers     = {:buildpack => LanguagePack::Fetcher.new(LanguagePack::Base.vendor_url) }
 
       Dir.chdir build_path
     end
