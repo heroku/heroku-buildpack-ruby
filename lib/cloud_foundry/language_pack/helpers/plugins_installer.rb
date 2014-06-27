@@ -11,7 +11,8 @@ if Dir.exist?(DEPENDENCIES_PATH)
           return true if directory.exist?
           directory.mkpath
           Dir.chdir(directory) do |dir|
-            full_path = File.join(DEPENDENCIES_PATH, "#{name}.tgz")
+            dependency_filename = Extensions.translate(vendor_url, name)
+            full_path = File.join(DEPENDENCIES_PATH, "#{dependency_filename}.tgz")
             run!("tar zxf #{full_path}")
           end
         end
