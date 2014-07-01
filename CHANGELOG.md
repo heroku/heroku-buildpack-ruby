@@ -1,5 +1,10 @@
 ## Master
 
+## v121 (6/30/2014)
+
+* on new apps, source default envs instead of replacing them
+* support different stacks for new apps
+
 ## v120 (6/16/2014)
 
 * Bump bundler to 1.6.3 which includes improved dependency resolver
