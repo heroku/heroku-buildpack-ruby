@@ -9,7 +9,7 @@ describe 'Rails 4 App' do
 
     specify do
       expect(app).to be_running
-      expect(app.homepage_body).to include 'The Kessel Run'
+      expect(app).to have_page_body('The Kessel Run')
       expect(app.host).not_to have_internet_traffic
     end
 
@@ -21,7 +21,7 @@ describe 'Rails 4 App' do
 
       specify do
         expect(app).to be_running
-        expect(app.homepage_body).to include 'The Kessel Run'
+        expect(app).to have_page_body('The Kessel Run')
       end
     end
 
@@ -31,7 +31,7 @@ describe 'Rails 4 App' do
       specify do
         expect(Dir.exists?("cf_spec/fixtures/#{app_name}/vendor")).to eql(false)
         expect(app).to be_running
-        expect(app.homepage_body).to include 'The Kessel Run'
+        expect(app).to have_page_body('The Kessel Run')
       end
     end
   end
