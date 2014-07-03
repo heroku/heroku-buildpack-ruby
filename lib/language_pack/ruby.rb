@@ -10,12 +10,13 @@ class LanguagePack::Ruby < LanguagePack::Base
   extend LanguagePack::BundlerLockfile
 
   BUILDPACK_VERSION   = "v61"
-  LIBSODIUM_VERSION   = "0.4.1"
-  LIBYAML_VERSION     = "0.1.4"
+  LIBSODIUM_VERSION   = "0.4.5"
+  DNSCRYPT_VERSION    = "1.4.0"
+  LIBYAML_VERSION     = "0.1.6"
   LIBYAML_PATH        = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION     = "1.3.2"
+  BUNDLER_VERSION     = "1.6.3"
   BUNDLER_GEM_PATH    = "bundler-#{BUNDLER_VERSION}"
-  NODE_VERSION        = "0.10.6"
+  NODE_VERSION        = "0.10.12"
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
   JVM_BASE_URL        = "http://heroku-jdk.s3.amazonaws.com"
   JVM_VERSION         = "openjdk7-latest"
@@ -77,6 +78,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     install_ruby
     install_jvm
     install_libsodium
+    install_dnscrypt
     setup_language_pack_environment
     setup_profiled
     allow_git do
@@ -378,6 +380,17 @@ ERROR
       run("tar xzvf libsodium-#{LIBSODIUM_VERSION}.tar.gz")
     end
     Dir.chdir("vendor/libsodium-#{LIBSODIUM_VERSION}") do |dir|
+      run("./configure --prefix=#{Dir.getwd}")
+      run("make && make check && make install")
+    end
+  end
+
+  def install_dnscrypt
+    Dir.chdir("vendor") do |dir|
+      run("curl http://download.dnscrypt.org/dnscrypt-proxy/dnscrypt-proxy-#{DNSCRYPT_VERSION}.tar.gz -s -O")
+      run("tar xzvf dnscrypt-proxy-#{DNSCRYPT_VERSION}.tar.gz")
+    end
+    Dir.chdir("vendor/dnscrypt-proxy-#{DNSCRYPT_VERSION}") do |dir|
       run("./configure --prefix=#{Dir.getwd}")
       run("make && make check && make install")
     end
