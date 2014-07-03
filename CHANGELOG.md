@@ -1,5 +1,18 @@
 ## Master
 
+## v121 (6/30/2014)
+
+* on new apps, source default envs instead of replacing them
+* support different stacks for new apps
+
+## v120 (6/16/2014)
+
+* Bump bundler to 1.6.3 which includes improved dependency resolver
+
+## v119 (5/9/2014)
+
+* Temporarily disable default ruby cache
+
 ## v118 (5/6/2014)
 
 * Ruby version detection now loads user environment variables

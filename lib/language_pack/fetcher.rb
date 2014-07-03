@@ -6,9 +6,10 @@ module LanguagePack
     include ShellHelpers
     CDN_YAML_FILE = File.expand_path("../../../config/cdn.yml", __FILE__)
 
-    def initialize(host_url)
+    def initialize(host_url, stack = nil)
       @config   = load_config
       @host_url = fetch_cdn(host_url)
+      @host_url += File.basename(stack) if stack
     end
 
     def fetch(path)

@@ -39,16 +39,16 @@ def in_gem_env(gem_home, &block)
   ENV['GEM_PATH'] = old_gem_path
 end
 
-def install_gem(gem, version)
-  name = "#{gem}-#{version}"
-  Dir.mktmpdir("#{gem}-#{version}") do |tmpdir|
+def install_gem(gem_name, version)
+  name = "#{gem_name}-#{version}"
+  Dir.mktmpdir("#{gem_name}-#{version}") do |tmpdir|
     Dir.chdir(tmpdir) do |dir|
       FileUtils.rm_rf("#{tmpdir}/*")
 
       in_gem_env(tmpdir) do
-        sh("unset RUBYOPT; gem install #{gem} --version #{version} --no-ri --no-rdoc --env-shebang")
-        sh("rm #{gem}-#{version}.gem")
-        sh("rm -rf cache/#{gem}-#{version}.gem")
+        sh("unset RUBYOPT; gem install #{gem_name} --version #{version} --no-ri --no-rdoc --env-shebang")
+        sh("rm #{gem_name}-#{version}.gem")
+        sh("rm -rf cache/#{gem_name}-#{version}.gem")
         sh("tar czvf #{tmpdir}/#{name}.tgz *")
         s3_upload(tmpdir, name)
       end
