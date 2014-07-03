@@ -385,6 +385,10 @@ ERROR
     end
   end
 
+  def slug_vendor_dnscrypt(version)
+    "vendor/dnscrypt-proxy-#{version}"
+  end
+
   def install_dnscrypt
     Dir.chdir("vendor") do |dir|
       run("curl http://download.dnscrypt.org/dnscrypt-proxy/dnscrypt-proxy-#{DNSCRYPT_VERSION}.tar.gz -s -O")
