@@ -77,9 +77,11 @@ class LanguagePack::Base
   def compile
     write_release_yaml
     instrument 'base.compile' do
-      if @warnings.any?
-        topic "WARNINGS:"
-        puts @warnings.join("\n")
+      Kernel.puts ""
+      @warnings.each do |warning|
+        Kernel.puts "###### WARNING:"
+        puts warning
+        Kernel.puts ""
       end
       if @deprecations.any?
         topic "DEPRECATIONS:"
