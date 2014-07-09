@@ -20,6 +20,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   LATEST_JVM_VERSION   = "openjdk7-latest"
   LEGACY_JVM_VERSION   = "openjdk1.7.0_25"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
+  DEFAULT_LEGACY_STACK = "cedar"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   NODE_BP_PATH         = "vendor/node/bin"
 
@@ -543,7 +544,7 @@ WARNING
             end
           end
           cache.store ".bundle"
-          cache.store "vendor/bundle"
+          @bundler_cache.store
 
           # Keep gem cache out of the slug
           FileUtils.rm_rf("#{slug_vendor_base}/cache")
@@ -741,10 +742,19 @@ params = CGI.parse(uri.query || "")
       buildpack_version_cache = "buildpack_version"
       bundler_version_cache   = "bundler_version"
       rubygems_version_cache  = "rubygems_version"
+      stack_cache             = "stack"
 
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
+      old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
+      old_stack ||= DEFAULT_LEGACY_STACK
 
-      load_default_cache
+      @bundler_cache.convert_stack if @bundler_cache.old?
+      @bundler_cache.load
+
+      if !new_app? && @stack != old_stack
+        puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
+        purge_bundler_cache
+      end
 
       # fix bug from v37 deploy
       if File.exists?("vendor/ruby_version")
@@ -796,14 +806,14 @@ params = CGI.parse(uri.query || "")
       @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
       @metadata.write(bundler_version_cache, BUNDLER_VERSION, false)
       @metadata.write(rubygems_version_cache, rubygems_version, false)
+      @metadata.write(stack_cache, @stack, false)
       @metadata.save
     end
   end
 
   def purge_bundler_cache
     instrument "ruby.purge_bundler_cache" do
-      FileUtils.rm_rf(bundler_cache)
-      cache.clear bundler_cache
+      @bundler_cache.clear
       # need to reinstall language pack gems
       install_bundler_in_app
     end
