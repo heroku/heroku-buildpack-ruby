@@ -1,12 +1,14 @@
 require "pathname"
 require "language_pack"
 
+# Manipulates/handles contents of the cache directory
 class LanguagePack::Cache
+  # @param [String] path to the cache store
   def initialize(cache_path)
     @cache_base = Pathname.new(cache_path)
   end
 
-  # removes the the specified
+  # removes the the specified path from the cache
   # @param [String] relative path from the cache_base
   def clear(path)
     target = (@cache_base + path)
