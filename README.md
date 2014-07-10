@@ -6,15 +6,11 @@ This is based on the [Heroku buildpack] (https://github.com/heroku/heroku-buildp
 
 ## Usage
 
-### Ruby
-
-Example Usage:
+This buildpack will be used if your app has a `Gemfile` and `Gemfile.lock` in the root directory. It will then use Bundler to install your dependencies. 
 
 ```bash
 cf push my_app -b https://github.com/cloudfoundry/buildpack-ruby.git
 ```
-
-This buildpack will be used if your app has a `Gemfile` and `Gemfile.lock` in the root directory. It will then use Bundler to install your dependencies. 
 
 ## Cloud Foundry Extensions - Offline Mode
 
