@@ -122,8 +122,9 @@ module LanguagePack
 
     def warn(message, options = {})
       if options.key?(:inline) ? options[:inline] : false
-        topic "Warning:"
+        Kernel.puts "###### WARNING:"
         puts message
+        Kernel.puts ""
       end
       @warnings ||= []
       @warnings << message

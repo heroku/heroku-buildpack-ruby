@@ -6,7 +6,7 @@ describe "Rails 3.x" do
       expect(app.output).to include("Asset precompilation completed")
       add_database(app, heroku)
 
-      expect(app.output).to match("WARNINGS")
+      expect(app.output).to match("WARNING")
       expect(app.output).to match("Add 'rails_12factor' gem to your Gemfile to skip plugin injection")
 
       ls = app.run("ls vendor/plugins")
