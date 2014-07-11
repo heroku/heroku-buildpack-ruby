@@ -4,6 +4,8 @@ A Cloud Foundry [buildpack](http://docs.cloudfoundry.org/buildpacks/) for Ruby b
 
 This is based on the [Heroku buildpack] (https://github.com/heroku/heroku-buildpack-ruby).
 
+Additional information can be found at [CloudFoundry.org](http://docs.cloudfoundry.org/buildpacks/).
+
 ## Usage
 
 This buildpack will be used if your app has a `Gemfile` and `Gemfile.lock` in the root directory. It will then use Bundler to install your dependencies. 
