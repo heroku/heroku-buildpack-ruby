@@ -543,7 +543,7 @@ WARNING
             end
           end
           cache.store ".bundle"
-          cache.store "vendor/bundle"
+          @bundler_cache.store
 
           # Keep gem cache out of the slug
           FileUtils.rm_rf("#{slug_vendor_base}/cache")
@@ -744,7 +744,15 @@ params = CGI.parse(uri.query || "")
 
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
 
-      load_default_cache
+      if !new_app? && old_cache_dirs = Dir.glob(@cache.base.join('*')).reject {|dir| dir[@stack_dir] }
+        puts "Purging Cache. Changing stack to #{@stack}"
+        old_cache_dirs.each do |dir|
+          @cache.clear(dir)
+        end
+        purge_bundler_cache unless @cache.exists?(@stack_dir)
+      end
+
+      @bundler_cache.load
 
       # fix bug from v37 deploy
       if File.exists?("vendor/ruby_version")
@@ -802,8 +810,7 @@ params = CGI.parse(uri.query || "")
 
   def purge_bundler_cache
     instrument "ruby.purge_bundler_cache" do
-      FileUtils.rm_rf(bundler_cache)
-      cache.clear bundler_cache
+      @bundler_cache.clear
       # need to reinstall language pack gems
       install_bundler_in_app
     end
