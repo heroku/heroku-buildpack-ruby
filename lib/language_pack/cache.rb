@@ -9,18 +9,18 @@ class LanguagePack::Cache
   end
 
   # removes the the specified path from the cache
-  # @param [String] relative path from the cache_base
+  # @param [String] relative path from the base
   def clear(path)
-    target = (@cache_base + path)
+    target = base.join(path)
     target.exist? && target.rmtree
   end
 
   # write cache contents
-  # @param [String] path of contents to store. it will be stored using this a relative path from the cache_base.
+  # @param [String] path of contents to store. it will be stored using this a relative path from the base.
   # @param [String] relative path to store the cache contents, if nil it will assume the from path
   def store(from, path = nil)
     path ||= from
-    copy from, (@cache_base + path)
+    copy from, base.join(path)
   end
 
   # load cache contents
@@ -28,7 +28,7 @@ class LanguagePack::Cache
   # @param [String] path of where to store it locally, if nil, assume same relative path as the cache contents
   def load(path, dest = nil)
     dest ||= path
-    copy (@cache_base + path), dest
+    copy base.join(path), dest
   end
 
   # copy cache contents
@@ -44,13 +44,18 @@ class LanguagePack::Cache
   # @param [String] source cache directory
   # @param [String] destination directory
   def cache_copy(from,to)
-    copy(@cache_base + from, @cache_base + to)
+    copy(base + from, base + to)
   end
 
   # check if the cache content exists
   # @param [String] relative path of the cache contents
   # @param [Boolean] true if the path exists in the cache and false if otherwise
   def exists?(path)
-    File.exists?(@cache_base + path)
+    base.join(path).exist?
+  end
+  alias :exist? :exists?
+
+  def base
+    @cache_base
   end
 end

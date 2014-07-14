@@ -15,8 +15,8 @@ Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 class LanguagePack::Base
   include LanguagePack::ShellHelpers
 
-  VENDOR_URL = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
-
+  VENDOR_URL   = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
+  LEGACY_STACK = "cedar"
   attr_reader :build_path, :cache
 
   # changes directory to the build_path
@@ -28,7 +28,8 @@ class LanguagePack::Base
       @stack         = ENV["STACK"]
       @cache         = LanguagePack::Cache.new(cache_path) if cache_path
       @metadata      = LanguagePack::Metadata.new(@cache)
-      @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
+      @stack_dir     = @stack == LEGACY_STACK ? "" : @stack
+      @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack_dir)
       @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
       @warnings      = []
       @deprecations  = []
