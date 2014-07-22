@@ -1,0 +1,11 @@
+v1.0.0 Jun 17, 2014
+===================
+
+* Remove libyaml 0.1.5. It's not used and has a security flaw.
+
+* Modify [the Heroku Ruby buildpack](https://github.com/heroku/heroku-buildpack-ruby) to
+  support offline mode.
+
+* Do not download Heroku's pre-cached gems. They are not binary compatible
+  with the Cloud Foundry environment.
+
