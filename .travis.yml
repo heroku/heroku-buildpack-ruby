@@ -16,6 +16,7 @@ env:
   - HATCHET_RETRIES=3
   - IS_RUNNING_ON_TRAVIS=true
   - HATCHET_DEPLOY_STRATEGY=git
+  - HATCHET_APP_LIMIT=80
   # sets the HEROKU_API_KEY to a dummy user for Heroku deploys
   - secure: |-
       ccqb7fKumq2+VEkSrkCqmLjALj5R/ZDgAQGZULSFYeD0O0man3hezUEbMB53
