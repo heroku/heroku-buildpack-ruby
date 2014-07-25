@@ -1,5 +1,9 @@
 ## Master
 
+## v122 (7/25/2014)
+
+* handle bundler cache for stack changes on existing apps
+
 ## v121 (6/30/2014)
 
 * on new apps, source default envs instead of replacing them
