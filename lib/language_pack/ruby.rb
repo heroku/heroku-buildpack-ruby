@@ -747,12 +747,13 @@ params = CGI.parse(uri.query || "")
       old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
       old_stack ||= DEFAULT_LEGACY_STACK
 
-      stack_change = old_stack != @stack
-      @bundler_cache.convert_stack(stack_change) if @bundler_cache.old?
+      stack_change  = old_stack != @stack
+      convert_stack = @bundler_cache.old?
+      @bundler_cache.convert_stack(stack_change) if convert_stack
       if !new_app? && stack_change
         puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
         purge_bundler_cache(old_stack)
-      elsif !new_app?
+      elsif !new_app? && !convert_stack
         @bundler_cache.load
       end
 
