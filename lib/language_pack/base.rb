@@ -4,6 +4,7 @@ require "yaml"
 require "digest/sha1"
 require "language_pack/shell_helpers"
 require "language_pack/cache"
+require "language_pack/helpers/bundler_cache"
 require "language_pack/metadata"
 require "language_pack/fetcher"
 require "language_pack/instrument"
@@ -14,7 +15,8 @@ Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 class LanguagePack::Base
   include LanguagePack::ShellHelpers
 
-  VENDOR_URL = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
+  VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
+  DEFAULT_LEGACY_STACK = "cedar"
 
   attr_reader :build_path, :cache
 
@@ -23,14 +25,15 @@ class LanguagePack::Base
   # @param [String] the path of the cache dir this is nil during detect and release
   def initialize(build_path, cache_path=nil)
      self.class.instrument "base.initialize" do
-      @build_path   = build_path
-      @cache        = LanguagePack::Cache.new(cache_path) if cache_path
-      @metadata     = LanguagePack::Metadata.new(@cache)
-      @id           = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
-      @warnings     = []
-      @deprecations = []
-      @stack        = ENV["STACK"]
-      @fetchers     = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
+      @build_path    = build_path
+      @stack         = ENV["STACK"]
+      @cache         = LanguagePack::Cache.new(cache_path) if cache_path
+      @metadata      = LanguagePack::Metadata.new(@cache)
+      @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
+      @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
+      @warnings      = []
+      @deprecations  = []
+      @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
 
       Dir.chdir build_path
     end
@@ -77,9 +80,11 @@ class LanguagePack::Base
   def compile
     write_release_yaml
     instrument 'base.compile' do
-      if @warnings.any?
-        topic "WARNINGS:"
-        puts @warnings.join("\n")
+      Kernel.puts ""
+      @warnings.each do |warning|
+        Kernel.puts "###### WARNING:"
+        puts warning
+        Kernel.puts ""
       end
       if @deprecations.any?
         topic "DEPRECATIONS:"

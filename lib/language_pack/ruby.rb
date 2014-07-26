@@ -227,6 +227,7 @@ private
   # sets up the environment variables for the build process
   def setup_language_pack_environment
     instrument 'ruby.setup_language_pack_environment' do
+      ENV["PATH"] += ":bin" if ruby_version.jruby?
       setup_ruby_install_env
       ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
 
@@ -550,7 +551,7 @@ WARNING
             end
           end
           cache.store ".bundle"
-          cache.store "vendor/bundle"
+          @bundler_cache.store
 
           # Keep gem cache out of the slug
           FileUtils.rm_rf("#{slug_vendor_base}/cache")
@@ -812,10 +813,21 @@ params = CGI.parse(uri.query || "")
       buildpack_version_cache = "buildpack_version"
       bundler_version_cache   = "bundler_version"
       rubygems_version_cache  = "rubygems_version"
+      stack_cache             = "stack"
 
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
+      old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
+      old_stack ||= DEFAULT_LEGACY_STACK
 
-      load_default_cache
+      stack_change  = old_stack != @stack
+      convert_stack = @bundler_cache.old?
+      @bundler_cache.convert_stack(stack_change) if convert_stack
+      if !new_app? && stack_change
+        puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
+        purge_bundler_cache(old_stack)
+      elsif !new_app? && !convert_stack
+        @bundler_cache.load
+      end
 
       # fix bug from v37 deploy
       if File.exists?("vendor/ruby_version")
@@ -867,14 +879,14 @@ params = CGI.parse(uri.query || "")
       @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
       @metadata.write(bundler_version_cache, BUNDLER_VERSION, false)
       @metadata.write(rubygems_version_cache, rubygems_version, false)
+      @metadata.write(stack_cache, @stack, false)
       @metadata.save
     end
   end
 
-  def purge_bundler_cache
+  def purge_bundler_cache(stack = nil)
     instrument "ruby.purge_bundler_cache" do
-      FileUtils.rm_rf(bundler_cache)
-      cache.clear bundler_cache
+      @bundler_cache.clear(stack)
       # need to reinstall language pack gems
       install_bundler_in_app
     end
