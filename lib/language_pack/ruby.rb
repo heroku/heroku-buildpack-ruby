@@ -14,8 +14,9 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.6.3"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
-  NODE_VERSION         = "0.4.7"
-  NODE_JS_BINARY_PATH  = "node-#{NODE_VERSION}"
+  NODE_VERSION         = "0.10.29"
+  NODE_JS_BINARY_PATH  = "node-v#{NODE_VERSION}-linux-x64"
+  NODEJS_BASE_URL      = "http://nodejs.org/dist/v#{NODE_VERSION}/"
   JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
   LATEST_JVM_VERSION   = "openjdk7-latest"
   LEGACY_JVM_VERSION   = "openjdk1.7.0_25"
@@ -44,6 +45,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     @fetchers[:mri] = LanguagePack::Fetcher.new(VENDOR_URL, @stack)
     @fetchers[:jvm] = LanguagePack::Fetcher.new(JVM_BASE_URL)
     @fetchers[:rbx] = LanguagePack::Fetcher.new(RBX_BASE_URL)
+    @fetchers[:nodejs] = LanguagePack::Fetcher.new(NODEJS_BASE_URL)
   end
 
   def name
@@ -414,7 +416,14 @@ WARNING
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
     Dir.chdir(bin_dir) do |dir|
-      @fetchers[:buildpack].fetch_untar("#{name}.tgz")
+      if name == NODE_JS_BINARY_PATH
+        node_bin = "#{name}/bin/node"
+        @fetchers[:nodejs].fetch_untar("#{name}.tar.gz", "#{name}/bin/node")
+        FileUtils.mv(node_bin, ".")
+        FileUtils.rm_rf(name)
+      else
+        @fetchers[:buildpack].fetch_untar("#{name}.tgz")
+      end
     end
   end
 
