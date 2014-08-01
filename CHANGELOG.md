@@ -1,5 +1,9 @@
 ## Master
 
+## v125 (8/1/2014)
+
+* bump to node 0.10.30 on cedar-14
+
 ## v124 (8/1/2014)
 
 * use node 0.10.29 on cedar-14
