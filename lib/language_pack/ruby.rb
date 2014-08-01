@@ -43,8 +43,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     @fetchers[:mri]    = LanguagePack::Fetcher.new(VENDOR_URL, @stack)
     @fetchers[:jvm]    = LanguagePack::Fetcher.new(JVM_BASE_URL)
     @fetchers[:rbx]    = LanguagePack::Fetcher.new(RBX_BASE_URL)
-    @fetchers[:nodejs] = LanguagePack::Fetcher.new(LanguagePack::NodeInstaller::NODEJS_BASE_URL)
-    @node_installer    = LanguagePack::NodeInstaller.new(@fetchers, @stack)
+    @node_installer    = LanguagePack::NodeInstaller.new(@stack)
   end
 
   def name
