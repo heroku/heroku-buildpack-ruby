@@ -1,5 +1,10 @@
 ## Master
 
+## v124 (8/1/2014)
+
+* use node 0.10.29 on cedar-14
+* properly use vendored jvm, so not to be dependent on java on the stack image
+
 ## v123 (7/25/2014)
 
 * fix permission denied edge cases when copying the bundler cache with minitest
