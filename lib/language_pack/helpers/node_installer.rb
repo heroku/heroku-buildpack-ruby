@@ -1,5 +1,5 @@
 class LanguagePack::NodeInstaller
-  MODERN_NODE_VERSION = "0.10.29"
+  MODERN_NODE_VERSION = "0.10.30"
   MODERN_BINARY_PATH  = "node-v#{MODERN_NODE_VERSION}-linux-x64"
 
   LEGACY_NODE_VERSION = "0.4.7"
