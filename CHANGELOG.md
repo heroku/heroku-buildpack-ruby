@@ -1,5 +1,10 @@
 ## Master
 
+## v126 (8/4/2014)
+
+* fix bundler cache clearing on ruby version change
+* vendor the jvm when yui-compressor is detected
+
 ## v125 (8/1/2014)
 
 * bump to node 0.10.30 on cedar-14
