@@ -92,6 +92,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       allow_git do
         install_bundler_in_app
         build_bundler
+        post_bundler
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
@@ -333,11 +334,11 @@ WARNING
   end
 
   # vendors JVM into the slug for JRuby
-  def install_jvm
+  def install_jvm(forced = false)
     instrument 'ruby.install_jvm' do
-      if ruby_version.jruby?
+      if ruby_version.jruby? || forced
         jvm_version =
-          if Gem::Version.new(ruby_version.engine_version) >= Gem::Version.new("1.7.4")
+          if forced || Gem::Version.new(ruby_version.engine_version) >= Gem::Version.new("1.7.4")
             LATEST_JVM_VERSION
           else
             LEGACY_JVM_VERSION
@@ -568,6 +569,13 @@ ERROR
           error error_message
         end
       end
+    end
+  end
+
+  def post_bundler
+    if bundler.has_gem?('yui-compressor') && !ruby_version.jruby?
+      install_jvm(true)
+      ENV["PATH"] += ":bin"
     end
   end
 
