@@ -35,6 +35,10 @@ class LanguagePack::BundlerCache
     @cache.exists?(@bundler_dir)
   end
 
+  def exists?
+    @cache.exists?(@stack_dir)
+  end
+
   # writes cache contents to cache store
   def store
     @cache.clear(@stack_dir)

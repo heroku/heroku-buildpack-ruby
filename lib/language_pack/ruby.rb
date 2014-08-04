@@ -780,7 +780,7 @@ params = CGI.parse(uri.query || "")
       elsif !@metadata.exists?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
         puts "Broken cache detected. Purging build cache."
         purge_bundler_cache
-      elsif cache.exists?(bundler_cache) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
+      elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
         puts "Ruby version change detected. Clearing bundler cache."
         puts "Old: #{@metadata.read(ruby_version_cache).chomp}"
         puts "New: #{full_ruby_version}"

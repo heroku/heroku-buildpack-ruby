@@ -12,6 +12,7 @@ describe "Upgrading ruby apps" do
       app.push!
       expect(app.output).to match("2.1.0")
       expect(app.run("ruby -v")).to match("2.1.0")
+      expect(app.output).to match("Ruby version change detected")
     end
   end
 end
