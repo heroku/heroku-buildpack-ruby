@@ -579,7 +579,6 @@ ERROR
     end
   end
 
-<<<<<<< HEAD
   def install_node
     log("node") do
       bin_dir = "bin"
