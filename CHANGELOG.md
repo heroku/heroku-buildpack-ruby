@@ -1,5 +1,19 @@
 ## Master
 
+## v126 (8/4/2014)
+
+* fix bundler cache clearing on ruby version change
+* vendor the jvm when yui-compressor is detected
+
+## v125 (8/1/2014)
+
+* bump to node 0.10.30 on cedar-14
+
+## v124 (8/1/2014)
+
+* use node 0.10.29 on cedar-14
+* properly use vendored jvm, so not to be dependent on java on the stack image
+
 ## v123 (7/25/2014)
 
 * fix permission denied edge cases when copying the bundler cache with minitest
