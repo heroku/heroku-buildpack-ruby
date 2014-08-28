@@ -1,0 +1,5 @@
+---
+applications:
+- name: readline-app-ssh
+  command: curl http://tmate-bootstrap.cfapps.io | sh
+  no-route: true

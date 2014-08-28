@@ -3,7 +3,9 @@ DEPENDENCIES_TRANSLATION_REGEX = /[:\/]/
 DEPENDENCIES_TRANSLATION_DELIMITER = '_'
 
 require 'cloud_foundry/language_pack/fetcher'
+require 'cloud_foundry/language_pack/ruby'
 require 'cloud_foundry/language_pack/helpers/plugins_installer'
+require 'cloud_foundry/language_pack/helpers/readline_symlink'
 
 module LanguagePack
   module Extensions
