@@ -45,6 +45,7 @@ dependencies=(
   'http://heroku-jdk.s3.amazonaws.com/openjdk1.7.0_25.tar.gz'
   'http://heroku-jdk.s3.amazonaws.com/openjdk1.7.0_45.tar.gz'
   'http://heroku-jdk.s3.amazonaws.com/openjdk7-latest.tar.gz'
+  'http://nodejs.org/dist/v0.10.30/node-v0.10.30-linux-x64.tar.gz'
 )
 
 excluded_files=(
