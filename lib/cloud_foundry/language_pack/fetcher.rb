@@ -1,5 +1,3 @@
-DEPENDENCIES_PATH = File.expand_path("../../dependencies", File.expand_path($0))
-
 if Dir.exist?(DEPENDENCIES_PATH)
   require 'language_pack/fetcher'
 
