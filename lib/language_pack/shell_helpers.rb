@@ -115,7 +115,7 @@ module LanguagePack
     # (indented by 6 spaces)
     # @param [String] message to be displayed
     def puts(message)
-      message.split("\n").each do |line|
+      message.to_s.split("\n").each do |line|
         super "       #{line.strip}"
       end
       $stdout.flush
@@ -123,8 +123,9 @@ module LanguagePack
 
     def warn(message, options = {})
       if options.key?(:inline) ? options[:inline] : false
-        topic "Warning:"
+        Kernel.puts "###### WARNING:"
         puts message
+        Kernel.puts ""
       end
       @warnings ||= []
       @warnings << message

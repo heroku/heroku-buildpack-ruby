@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Default Cache" do
-  fit "gets loaded successfully" do
+  it "gets loaded successfully" do
     pending("needs dep-tracker work")
     Hatchet::Runner.new("default_ruby").deploy do |app|
       expect(app.output).to match("loading default bundler cache")
