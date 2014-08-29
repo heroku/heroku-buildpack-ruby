@@ -1,3 +1,16 @@
+v1.1.0 Aug 29, 2014
+====================
+
+* Fixed libreadline issue.
+  (https://www.pivotaltracker.com/story/show/75199948)
+
+* Removes spurious warning "already initialized constant" warning
+  (https://www.pivotaltracker.com/story/show/76163642)
+
+* Merges Heroku upstream changes up to [v126](https://github.com/heroku/heroku-buildpack-ruby/releases/tag/v126). Important changes:
+  * NodeJS is now a dependency
+  * Bundler updated to 1.6.3
+
 v1.0.1 Jul 22, 2014
 ====================
 
