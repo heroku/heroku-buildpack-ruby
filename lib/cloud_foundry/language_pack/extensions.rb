@@ -11,7 +11,9 @@ module LanguagePack
   module Extensions
     def self.translate(host_url, original_filename)
       prefix = host_url.to_s.gsub(DEPENDENCIES_TRANSLATION_REGEX, DEPENDENCIES_TRANSLATION_DELIMITER)
-      "#{prefix}#{DEPENDENCIES_TRANSLATION_DELIMITER}#{original_filename}"
+      # WIP
+      delimiter = (prefix.end_with? '_') ? '' : DEPENDENCIES_TRANSLATION_DELIMITER
+      "#{prefix}#{delimiter}#{original_filename}"
     end
   end
 end
