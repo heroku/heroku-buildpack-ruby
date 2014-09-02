@@ -27,6 +27,8 @@ GEM
       rspec-support (~> 3.0.0)
     rspec-mocks (3.0.4)
       rspec-support (~> 3.0.0)
+    rspec-retry (0.3.0)
+      rspec
     rspec-support (3.0.4)
 
 PLATFORMS
@@ -34,3 +36,4 @@ PLATFORMS
 
 DEPENDENCIES
   machete!
+  rspec-retry (~> 0.3.0)
