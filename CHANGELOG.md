@@ -1,5 +1,9 @@
 ## Master
 
+## v127 (9/18/2014)
+
+* rbx is now stack aware
+
 ## v126 (8/4/2014)
 
 * fix bundler cache clearing on ruby version change
