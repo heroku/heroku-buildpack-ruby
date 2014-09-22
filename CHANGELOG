@@ -1,3 +1,12 @@
+v1.1.1 Sep 22, 2014
+====================
+
+* Update buildpack-packager
+  (https://www.pivotaltracker.com/story/show/79126294)
+
+* Merge Heroku upstream changes up to [v127](https://github.com/heroku/heroku-buildpack-ruby/releases/tag/v127). Important changes:
+  * Improve RBX support
+
 v1.1.0 Aug 29, 2014
 ====================
 
