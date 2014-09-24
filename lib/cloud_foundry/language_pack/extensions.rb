@@ -1,3 +1,5 @@
+puts "-------> Buildpack version #{`cat #{File.dirname(__FILE__)}/../../../VERSION`}"
+
 DEPENDENCIES_PATH = File.expand_path("../../dependencies", File.expand_path($0))
 DEPENDENCIES_TRANSLATION_REGEX = /[:\/]/
 DEPENDENCIES_TRANSLATION_DELIMITER = '_'
