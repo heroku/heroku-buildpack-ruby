@@ -63,9 +63,27 @@ describe "Ruby Versions" do
     end
   end
 
-  it "should deploy jruby 1.7.6 (latest jdk) properly" do
+  it "should deploy jruby 1.7.6 (jdk 7) properly" do
     Hatchet::AnvilApp.new("ruby_193_jruby_176").deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk1.7-latest")
+      expect(app.output).to match("ruby-1.9.3-jruby-1.7.6")
+      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
+      expect(app.run('ruby -v')).to match("jruby 1.7.6")
+    end
+  end
+
+  it "should deploy jruby 1.7.16 (jdk 8) properly" do
+    app = Hatchet::AnvilApp.new("ruby_193_jruby_176")
+
+    Dir.chdir(app.directory) do
+      File.open('system.properties', 'w') do |f|
+        f.puts "java.runtime.version=1.8"
+      end
+      `git commit -am "setting jdk version"`
+    end
+
+    app.deploy do |app|
+      expect(app.output).to match("Installing JVM: openjdk1.8-latest")
       expect(app.output).to match("ruby-1.9.3-jruby-1.7.6")
       expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
       expect(app.run('ruby -v')).to match("jruby 1.7.6")
