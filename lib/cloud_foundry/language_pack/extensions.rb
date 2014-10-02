@@ -9,6 +9,8 @@ require 'cloud_foundry/language_pack/ruby'
 require 'cloud_foundry/language_pack/helpers/plugins_installer'
 require 'cloud_foundry/language_pack/helpers/readline_symlink'
 
+ENV['STACK'] ||= ''
+
 module LanguagePack
   module Extensions
     def self.translate(host_url, original_filename)
