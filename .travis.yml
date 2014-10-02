@@ -9,7 +9,7 @@ before_script: bundle exec rake hatchet:setup_travis
 script: bundle exec parallel_rspec -n 11 spec/
 
 after_script:
-  - heroku keys:remove ~/.ssh/id_rsa
+  - heroku keys:remove $USER@`hostname`
 
 env:
   global:
