@@ -65,7 +65,7 @@ describe "Ruby Versions" do
 
   it "should deploy jruby 1.7.6 (latest jdk) properly" do
     Hatchet::AnvilApp.new("ruby_193_jruby_176").deploy do |app|
-      expect(app.output).to match("Installing JVM: openjdk7-latest")
+      expect(app.output).to match("Installing JVM: openjdk1.7-latest")
       expect(app.output).to match("ruby-1.9.3-jruby-1.7.6")
       expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
       expect(app.run('ruby -v')).to match("jruby 1.7.6")
