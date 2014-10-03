@@ -7,8 +7,7 @@ describe 'Version output' do
 
   context 'in an online environment', if: Machete::BuildpackMode.online? do
     specify do
-      expect(app).to have_logged "-------> Buildpack version"
-      expect(app).to have_logged "." # version dots
+      expect(app).to have_logged "-------> Buildpack version "
     end
   end
 end
