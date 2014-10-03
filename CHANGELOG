@@ -1,3 +1,13 @@
+v1.1.2 Oct 03, 2014
+====================
+
+* Introduce fix for errors arising from unset STACK variable.
+  (https://www.pivotaltracker.com/story/show/78677868)
+  (https://www.pivotaltracker.com/n/projects/1042066/stories/78290072)
+
+* Show buildpack version number during staging
+  (https://www.pivotaltracker.com/story/show/78505368)
+
 v1.1.1 Sep 22, 2014
 ====================
 
