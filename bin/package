@@ -7,6 +7,7 @@ dependencies=(
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.6.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/bundler-1.6.3.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby_versions.yml'
+  'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-2.1.2.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-2.1.1.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-2.1.0.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby-2.0.0.tgz'
