@@ -36,6 +36,7 @@ class LanguagePack::Cache
   # @param [String] destination directory
   def copy(from, to)
     return false unless File.exist?(from)
+    return true if File.expand_path(from) == File.expand_path(to) # see story 80029582
     FileUtils.mkdir_p File.dirname(to)
     system("cp -a #{from}/. #{to}")
   end
