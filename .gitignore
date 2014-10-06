@@ -6,6 +6,7 @@
 .env
 .idea
 .ruby-version
+*.zip
 buildpacks/*
 log
 machete.log
