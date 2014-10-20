@@ -202,22 +202,6 @@ private
     "-Djava.rmi.server.useCodebaseOnly=true"
   end
 
-  # list the available valid ruby versions
-  # @note the value is memoized
-  # @return [Array] list of Strings of the ruby versions available
-  def ruby_versions
-    return @ruby_versions if @ruby_versions
-
-    Dir.mktmpdir("ruby_versions-") do |tmpdir|
-      Dir.chdir(tmpdir) do
-        @fetchers[:buildpack].fetch("ruby_versions.yml")
-        @ruby_versions = YAML::load_file("ruby_versions.yml")
-      end
-    end
-
-    @ruby_versions
-  end
-
   # sets up the environment variables for the build process
   def setup_language_pack_environment
     instrument 'ruby.setup_language_pack_environment' do
@@ -260,7 +244,7 @@ private
 
       invalid_ruby_version_message = <<ERROR
 Invalid RUBY_VERSION specified: #{ruby_version.version}
-Valid versions: #{ruby_versions.join(", ")}
+https://devcenter.heroku.com/articles/ruby-support#ruby-versions
 ERROR
 
       if ruby_version.build?
