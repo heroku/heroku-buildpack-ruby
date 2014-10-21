@@ -11,6 +11,6 @@ class LanguagePack::NoLockfile < LanguagePack::Base
   end
 
   def compile
-    error "Gemfile.lock required. Please check it in."
+    raise LanguagePack::BuildpackError, "Gemfile.lock required. Please check it in."
   end
 end

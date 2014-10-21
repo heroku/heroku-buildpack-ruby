@@ -26,9 +26,10 @@ class LanguagePack::Helpers::RakeRunner
       @status && @status != :nil
     end
 
+    # Is set by RakeTask#invoke to one of the ALLOWED verbs
     def status
-      raise "Status not set for #{self.inspect}" if @status == :nil
-      raise "Not allowed status: #{@status} for #{self.inspect}" unless ALLOWED.include?(@status)
+      raise LanguagePack::BuildpackError, "Status not set for #{self.inspect}" if @status == :nil
+      raise LanguagePack::BuildpackError, "Not allowed status: #{@status} for #{self.inspect}" unless ALLOWED.include?(@status)
       @status
     end
 

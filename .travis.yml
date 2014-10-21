@@ -1,21 +1,14 @@
----
 language: ruby
 rvm:
 - 2.0.0
-
 before_script: bundle exec rake hatchet:setup_travis
-
-# Run tests in parallel
 script: bundle exec parallel_rspec -n 11 spec/
-
 after_script:
-  - heroku keys:remove $USER@`hostname`
-
+- heroku keys:remove $USER@`hostname`
 env:
   global:
   - HATCHET_RETRIES=3
   - IS_RUNNING_ON_TRAVIS=true
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_APP_LIMIT=80
-  # sets the HEROKU_API_KEY to a dummy user for Heroku deploys
-  - secure: QvDqQQV/Gtk1Og5s8879i+mYLdK6WtVkZMKlCWvJrztYwcRMOGsVVbXjq5EkEJCfxs4GWv7KqXfPPPLDS5Wumzkt4zXVh3ZS+rzQZ2IYC0XbKZYt2e14ZpSTgDUY20J0Ex/GG5dTulJaG9FBe452UDiqYrianE4p8h8w18JBfCs=
+  - secure: Xibg2pOnw+R+RRcdHsvKQA7ACS+obPw3Hq/wOEiyFzu86aLk7pOoj1163CitsQsNaG1Tj/AtKFXK1jb3aM6XI6GFLnwp44wO1y/j13x94mAZ/uh1ImvF78FHqwc/UD0mvFuKwI2C/bhJAQcOVquE+ZRKdEGQLHxwUWYbxSKvPN4=
