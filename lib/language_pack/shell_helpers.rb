@@ -45,8 +45,31 @@ module LanguagePack
         Kernel.puts " !     #{line.strip}"
       end
       Kernel.puts " !"
-      log "exit", :error => message if respond_to?(:log)
+      log "exit", :error => message
       exit 1
+    end
+
+    # log output
+    # Ex. log "some_message", "here", :someattr="value"
+    def log(*args)
+      args.concat [:id => @id]
+      args.concat [:framework => self.class.to_s.split("::").last.downcase]
+
+      start = Time.now.to_f
+      log_internal args, :start => start
+
+      if block_given?
+        begin
+          ret = yield
+          finish = Time.now.to_f
+          log_internal args, :status => "complete", :finish => finish, :elapsed => (finish - start)
+          return ret
+        rescue StandardError => ex
+          finish = Time.now.to_f
+          log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => ex.message
+          raise ex
+        end
+      end
     end
 
     def run!(command, options = {})
@@ -137,6 +160,23 @@ module LanguagePack
 
     def noshellescape(string)
       NoShellEscape.new(string)
+    end
+
+  private
+    def log_internal(*args)
+      message = build_log_message(args)
+      %x{ logger -p user.notice -t "slugc[$$]" "buildpack-ruby #{message}" }
+    end
+
+    def build_log_message(args)
+      args.map do |arg|
+        case arg
+          when Float then "%0.2f" % arg
+          when Array then build_log_message(arg)
+          when Hash  then arg.map { |k,v| "#{k}=#{build_log_message([v])}" }.join(" ")
+          else arg
+        end
+      end.join(" ")
     end
   end
 end

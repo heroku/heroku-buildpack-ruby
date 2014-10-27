@@ -41,6 +41,10 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 
 private
 
+  def error_if_rake_cannot_load
+    true
+  end
+
   def install_plugins
     instrument "rails3.install_plugins" do
       return false if bundler.has_gem?('rails_12factor')
