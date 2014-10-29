@@ -554,6 +554,7 @@ WARNING
 
           # Keep gem cache out of the slug
           FileUtils.rm_rf("#{slug_vendor_base}/cache")
+          Dir["#{slug_vendor_base}/bundler/gems/*/.git"].each{|d| FileUtils.rm_rf d}
         else
           log "bundle", :status => "failure"
           error_message = "Failed to install gems via Bundler."
