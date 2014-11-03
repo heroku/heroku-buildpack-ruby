@@ -2,7 +2,7 @@ require "language_pack/shell_helpers"
 
 module LanguagePack
   class RubyVersion
-    class BadVersionError < LanguagePack::BuildpackError
+    class BadVersionError < BuildpackError
       def initialize(output = "")
         msg = ""
         msg << output

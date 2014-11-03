@@ -23,7 +23,7 @@ rescue Exception => e
     Kernel.puts " !     #{line.strip}"
   end
   Kernel.puts " !"
-  if e.is_a?(LanguagePack::BuildpackError)
+  if e.is_a?(BuildpackError)
     exit 1
   else
     raise e

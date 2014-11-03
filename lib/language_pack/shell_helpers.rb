@@ -1,5 +1,9 @@
 require "shellwords"
 
+
+class BuildpackError < StandardError
+end
+
 class NoShellEscape < String
   def shellescape
     self
@@ -120,6 +124,10 @@ module LanguagePack
       end
       @warnings ||= []
       @warnings << message
+    end
+
+    def error(message)
+      raise BuildpackError, message
     end
 
     def deprecate(message)

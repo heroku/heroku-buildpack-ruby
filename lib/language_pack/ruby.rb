@@ -143,7 +143,7 @@ private
         @slug_vendor_base = "vendor/bundle/1.8"
       else
         @slug_vendor_base = run_no_pipe(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
-        raise LanguagePack::BuildpackError, "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
+        error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
         @slug_vendor_base
       end
     end
@@ -264,7 +264,7 @@ private
             expected_checksum = File.read(sha_file).chomp
             actual_checksum   = Digest::SHA1.file(file).hexdigest
 
-            raise LanguagePack::BuildpackError, <<-ERROR_MSG unless expected_checksum == actual_checksum
+            error <<-ERROR_MSG unless expected_checksum == actual_checksum
 RBX Checksum for #{file} does not match.
 Expected #{expected_checksum} but got #{actual_checksum}.
 Please try pushing again in a few minutes.
@@ -309,8 +309,9 @@ WARNING
 An error occurred while installing Ruby #{ruby_version.version}
 For supported Ruby versions see https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
 Note: Only the most recent version of Ruby 2.1 is supported on Cedar-14
+#{error.message}
 ERROR
-    raise LanguagePack::BuildpackError, message + error.message
+    error message
   end
 
   def new_app?
@@ -550,7 +551,7 @@ https://devcenter.heroku.com/articles/sqlite3
 ERROR
           end
 
-          raise LanguagePack::BuildpackError, error_message
+          error error_message
         end
       end
     end
@@ -719,7 +720,7 @@ params = CGI.parse(uri.query || "")
       msg << "Attempted to access a nonexistent database:\n"
       msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
     end
-    raise LanguagePack::BuildpackError, msg
+    error msg
   end
 
   def bundler_cache
