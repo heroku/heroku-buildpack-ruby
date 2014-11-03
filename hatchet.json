@@ -24,7 +24,8 @@
     "sharpstone/mri_193_p484",
     "sharpstone/ruby_193_jruby_173",
     "sharpstone/ruby_193_jruby_176",
-    "sharpstone/empty-procfile"
+    "sharpstone/empty-procfile",
+    "sharpstone/bad_ruby_version"
   ],
   "rack": [
     "sharpstone/default_ruby",

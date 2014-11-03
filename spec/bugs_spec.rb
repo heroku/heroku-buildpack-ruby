@@ -24,4 +24,12 @@ describe "Bugs" do
       end
     end
   end
+
+  context "bad versions" do
+    it "fails with better error message" do
+      Hatchet::Runner.new("bad_ruby_version", allow_failure: true).deploy do |app|
+        expect(app.output).to match("devcenter.heroku.com/articles/ruby-support")
+      end
+    end
+  end
 end

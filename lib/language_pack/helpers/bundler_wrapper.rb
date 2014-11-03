@@ -1,7 +1,7 @@
 class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
-  class GemfileParseError < StandardError
+  class GemfileParseError < BuildpackError
     def initialize(error)
       msg = "There was an error parsing your Gemfile, we cannot continue\n"
       msg << error
