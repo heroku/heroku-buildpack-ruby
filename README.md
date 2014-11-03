@@ -1,6 +1,12 @@
 # Heroku buildpack: Ruby: tpope edition
 
-This is my fork of the [official Heroku Ruby
+*Note* This fork only exists because Tim Pope's existing fork of the buildpack
+stopped working when Ruby 2.1.3 became available on the Heroku platform. Changes
+from his fork only exist to make Rubies later than 2.1.2 work with the
+buildpack. Tim's fork doesn't accept issues, so this is meant to be a
+temporary location for updates pending an update to his fork.
+
+This is an update to @tpope's fork of the [official Heroku Ruby
 buildpack](https://github.com/heroku/heroku-buildpack-ruby).  Use it when
 creating a new app:
 
