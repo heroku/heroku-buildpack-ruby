@@ -533,7 +533,6 @@ WARNING
               pipe("#{bundle_bin} clean", out: "2> /dev/null")
             end
           end
-          cache.store ".bundle"
           @bundler_cache.store
 
           # Keep gem cache out of the slug
