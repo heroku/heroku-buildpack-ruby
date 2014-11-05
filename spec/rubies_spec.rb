@@ -2,16 +2,18 @@ require_relative 'spec_helper'
 
 describe "Ruby Versions" do
   it "should allow patchlevels" do
-    Hatchet::Runner.new("mri_193_p484").deploy do |app|
-      version = '1.9.3p484'
-      expect(app.output).to match("ruby-1.9.3-p484")
+    Hatchet::Runner.new("mri_193_p547").deploy do |app|
+      version = '1.9.3p547'
+      expect(app.output).to match("ruby-1.9.3-p547")
       expect(app.run('ruby -v')).to match(version)
     end
   end
 
 
-  it "should deploy ruby 1.8.7 properly" do
-    Hatchet::Runner.new("mri_187").deploy do |app|
+  it "should deploy ruby 1.8.7 properly on cedar" do
+    app = Hatchet::Runner.new('mri_187').setup!
+    app.heroku.put_stack(app.name, "cedar")
+    app.deploy do |app|
       version = '1.8.7'
       expect(app.output).to match(version)
       expect(app.run('ruby -v')).to match(version)

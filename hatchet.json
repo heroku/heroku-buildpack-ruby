@@ -21,7 +21,7 @@
   ],
   "ruby": [
     "sharpstone/mri_187",
-    "sharpstone/mri_193_p484",
+    "sharpstone/mri_193_p547",
     "sharpstone/ruby_193_jruby_173",
     "sharpstone/ruby_193_jruby_176",
     "sharpstone/empty-procfile",
@@ -33,7 +33,7 @@
     "sharpstone/mri_192",
     "sharpstone/mri_193",
     "sharpstone/mri_200",
-    "sharpstone/mri_210"
+    "sharpstone/mri_214"
   ],
   "rails2": [
     "sharpstone/rails23_mri_187"
