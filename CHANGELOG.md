@@ -1,5 +1,9 @@
 ## Master
 
+## v129 (11/6/2014)
+
+* Fix asset caching bug (#300)
+
 ## v128 (11/4/2014)
 
 * Better cedar14 Ruby install error message
