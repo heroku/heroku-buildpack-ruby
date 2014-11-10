@@ -10,7 +10,8 @@
     "sharpstone/mri_187_no_rake",
     "sharpstone/mri_187_rake",
     "sharpstone/mri_200_no_rake",
-    "sharpstone/mri_200_rake"
+    "sharpstone/mri_200_rake",
+    "billywatson/heroku_buildpack_fail_application_setup"
   ],
   "bundler": [
     "sharpstone/bad_gemfile_on_platform",

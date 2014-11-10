@@ -95,6 +95,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         post_bundler
         create_database_yml
         install_binaries
+        run_application_setup_rake_task
       end
       super
     end
@@ -695,7 +696,22 @@ params = CGI.parse(uri.query || "")
     @node_js_installed ||= run("#{node_bp_bin_path}/node -v") && $?.success?
   end
 
+  def run_application_setup_rake_task
+    instrument 'ruby.run_application_setup_rake_task' do
+      setup = rake.task("application:setup")
+      return true unless setup.is_defined?
 
+      topic "Setting up application"
+      setup.invoke(env: rake_env)
+      if setup.success?
+        puts "Application setup completed (#{"%.2f" % setup.time}s)"
+      else
+        log "application_setup", :status => "failure"
+        msg = "Setting up application failed.\n"
+        error msg
+      end
+    end
+  end
 
   def bundler_cache
     "vendor/bundle"
