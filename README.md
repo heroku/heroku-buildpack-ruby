@@ -131,6 +131,12 @@ The buildpack will detect your apps as a Rails 3 app if it has an `application.r
 
 To enable static assets being served on the dyno, [rails3_serve_static_assets](http://github.com/pedro/rails3_serve_static_assets) is installed by default. If the [execjs gem](http://github.com/sstephenson/execjs) is detected then [node.js](http://github.com/joyent/node) will be vendored. The `assets:precompile` rake task will get run if no `public/manifest.yml` is detected.  See [this article](http://devcenter.heroku.com/articles/rails31_heroku_cedar) on how rails 3.1 works on cedar.
 
+This task is no longer supported for non-Rails applications. For additional setup using rake see [Application Setup][#application-setup]
+
+#### <a name="application-setup"></a> Application Setup
+
+If there is additional setup that you need accomplished after the rest of your build has occurred, you can fill in the `application:setup` rake task. If the task is present, Heroku will call it and you can finish setting up your application. If it is not present, it will be skipped harmlessly.
+
 Hacking
 -------
 
@@ -170,7 +176,7 @@ Ruby (Gemfile and Gemfile.lock is detected)
 * runs Bundler
 * installs binaries
   * installs node if the gem execjs is detected
-* runs `rake assets:precompile` if the rake task is detected
+* runs `rake application:setup` if the rake task is detected
 
 Rack (config.ru is detected)
 
@@ -183,10 +189,11 @@ Rails 2 (config/environment.rb is detected)
 * sets RAILS_ENV=production
 * install rails 2 plugins
   * [rails_log_stdout](http://github.com/ddollar/rails_log_stdout)
+* runs `rake assets:precompile` if the rake task is detected
 
 Rails 3 (config/application.rb is detected)
 
 * everything from Rails 2
 * install rails 3 plugins
   * [rails3_server_static_assets](https://github.com/pedro/rails3_serve_static_assets)
-
+* runs `rake assets:precompile` if the rake task is detected
