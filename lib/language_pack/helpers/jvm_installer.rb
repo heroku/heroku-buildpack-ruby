@@ -10,9 +10,9 @@ class LanguagePack::JvmInstaller
   JVM_1_7_25_PATH = "openjdk1.7.0_25"
   JVM_1_6_PATH    = "openjdk1.6-latest"
 
-  def initialize(slug_vendor_jvm)
+  def initialize(slug_vendor_jvm, stack)
     @vendor_dir = slug_vendor_jvm
-    @fetcher = LanguagePack::Fetcher.new(JVM_BASE_URL)
+    @fetcher = LanguagePack::Fetcher.new(JVM_BASE_URL, stack)
   end
 
   def system_properties
@@ -36,6 +36,7 @@ class LanguagePack::JvmInstaller
         if forced || Gem::Version.new(jruby_version) >= Gem::Version.new("1.7.4")
           JVM_1_7_PATH
         else
+          # do we need to support this on cedar-14?
           JVM_1_7_25_PATH
         end
       end
