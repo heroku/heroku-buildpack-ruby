@@ -12,6 +12,7 @@ class LanguagePack::JvmInstaller
 
   def initialize(slug_vendor_jvm, stack)
     @vendor_dir = slug_vendor_jvm
+    @stack = stack
     @fetcher = LanguagePack::Fetcher.new(JVM_BASE_URL, stack)
   end
 
@@ -30,14 +31,19 @@ class LanguagePack::JvmInstaller
       case system_properties['java.runtime.version']
       when "1.8"
         JVM_1_8_PATH
+      when "1.7"
+        JVM_1_7_PATH
       when "1.6"
         JVM_1_6_PATH
       else
-        if forced || Gem::Version.new(jruby_version) >= Gem::Version.new("1.7.4")
-          JVM_1_7_PATH
+        if @stack == "cedar"
+          if forced || Gem::Version.new(jruby_version) >= Gem::Version.new("1.7.4")
+            JVM_1_7_PATH
+          else
+            JVM_1_7_25_PATH
+          end
         else
-          # do we need to support this on cedar-14?
-          JVM_1_7_25_PATH
+          JVM_1_8_PATH
         end
       end
 
