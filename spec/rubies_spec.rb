@@ -89,4 +89,26 @@ describe "Ruby Versions" do
       expect(app.run('ruby -v')).to match("jruby 1.7.6")
     end
   end
+
+  it "should deploy jdk 8 on cedar-14 by default" do
+    app = Hatchet::GitApp.new("ruby_193_jruby_17161")
+    app.setup!
+    app.heroku.put_stack(app.name, 'cedar-14')
+
+    app.deploy do |app|
+      expect(app.output).to match("Installing JVM: openjdk1.8-latest")
+      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
+    end
+  end
+
+  it "should deploy jdk 7 on cedar by default" do
+    app = Hatchet::GitApp.new("ruby_193_jruby_17161")
+    app.setup!
+    app.heroku.put_stack(app.name, 'cedar')
+
+    app.deploy do |app|
+      expect(app.output).to match("Installing JVM: openjdk1.7-latest")
+      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
+    end
+  end
 end
