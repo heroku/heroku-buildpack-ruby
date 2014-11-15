@@ -54,8 +54,12 @@ describe "Ruby Versions" do
     end
   end
 
-  it "should deploy jruby 1.7.3 (legacy jdk) properly" do
-    Hatchet::AnvilApp.new("ruby_193_jruby_173").deploy do |app|
+  it "should deploy jruby 1.7.3 (legacy jdk) properly on cedar", stack: :cedar do
+    app = Hatchet::Runner.new("ruby_193_jruby_173")
+    app.setup!
+    app.heroku.put_stack(app.name, "cedar")
+
+    app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk1.7.0_25")
       expect(app.output).to match("ruby-1.9.3-jruby-1.7.3")
       expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
@@ -63,24 +67,10 @@ describe "Ruby Versions" do
     end
   end
 
-  it "should deploy jruby 1.7.6 (jdk 8) properly" do
-    Hatchet::AnvilApp.new("ruby_193_jruby_176").deploy do |app|
-      expect(app.output).to match("Installing JVM: openjdk1.8-latest")
-      expect(app.output).to match("ruby-1.9.3-jruby-1.7.6")
-      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
-      expect(app.run('ruby -v')).to match("jruby 1.7.6")
-    end
-  end
-
-  it "should deploy jruby 1.7.6 (jdk 7) properly" do
-    app = Hatchet::AnvilApp.new("ruby_193_jruby_176")
-
-    Dir.chdir(app.directory) do
-      File.open('system.properties', 'w') do |f|
-        f.puts "java.runtime.version=1.7"
-      end
-      `git commit -am "setting jdk version"`
-    end
+  it "should deploy jruby 1.7.6 (jdk 7) latest properly on cedar", stack: :cedar do
+    app = Hatchet::Runner.new("ruby_193_jruby_176")
+    app.setup!
+    app.heroku.put_stack(app.name, 'cedar')
 
     app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk1.7-latest")
@@ -91,7 +81,7 @@ describe "Ruby Versions" do
   end
 
   it "should deploy jdk 8 on cedar-14 by default" do
-    app = Hatchet::GitApp.new("ruby_193_jruby_17161")
+    app = Hatchet::Runner.new("ruby_193_jruby_17161")
     app.setup!
     app.heroku.put_stack(app.name, 'cedar-14')
 
@@ -101,14 +91,24 @@ describe "Ruby Versions" do
     end
   end
 
-  it "should deploy jdk 7 on cedar by default" do
-    app = Hatchet::GitApp.new("ruby_193_jruby_17161")
+  it "should deploy jruby 1.7.16.1 (jdk 7) properly on cedar-14 with sys props file" do
+    app = Hatchet::Runner.new("ruby_193_jruby_17161_jdk7")
     app.setup!
-    app.heroku.put_stack(app.name, 'cedar')
+    app.heroku.put_stack(app.name, 'cedar-14')
 
     app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk1.7-latest")
       expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
+    end
+  end
+
+  it "should deploy jruby 1.7.16.1 (jdk 8) properly on cedar with sys props file" do
+    app = Hatchet::Runner.new("ruby_193_jruby_17161_jdk8")
+    app.setup!
+    app.heroku.put_stack(app.name, 'cedar')
+
+    app.deploy do |app|
+      expect(app.output).to match("Installing JVM: openjdk1.8-latest")
     end
   end
 end
