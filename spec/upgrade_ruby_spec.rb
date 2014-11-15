@@ -1,8 +1,12 @@
 require 'spec_helper'
 
 describe "Upgrading ruby apps" do
-  it "upgrades from 2.0.0 to 2.1.0" do
-    Hatchet::Runner.new("mri_200").deploy do |app|
+  it "upgrades from 2.0.0 to 2.1.0", stack: :cedar do
+    app = Hatchet::Runner.new("mri_200")
+    app.setup!
+    app.heroku.put_stack(app.name, "cedar")
+
+    app.deploy do |app|
       expect(app.run("ruby -v")).to match("2.0.0")
 
       `echo "" > Gemfile; echo "" > Gemfile.lock`
