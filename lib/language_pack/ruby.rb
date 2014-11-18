@@ -88,6 +88,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       install_ruby
       install_jvm
       setup_language_pack_environment
+      setup_export
       setup_profiled
       allow_git do
         install_bundler_in_app
@@ -218,6 +219,16 @@ private
       ENV["GEM_PATH"] = slug_vendor_base
       ENV["GEM_HOME"] = slug_vendor_base
       ENV["PATH"]     = default_path
+    end
+  end
+
+  # sets up the environment variables for subsequent processes
+  def setup_export
+    instrument 'ruby.setup_export' do
+      paths = ENV["PATH"].split(":")
+      set_export_override "GEM_PATH", "#{build_path}/#{slug_vendor_base}:$GEM_PATH"
+      set_export_default  "LANG",     "en_US.UTF-8"
+      set_export_override "PATH",     paths.map {|path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path}.join(":")
     end
   end
 
