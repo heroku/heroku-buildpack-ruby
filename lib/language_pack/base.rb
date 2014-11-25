@@ -154,6 +154,21 @@ private ##################################
     add_to_profiled %{export #{key}="#{val.gsub('"','\"')}"}
   end
 
+  def add_to_export(string)
+    export = File.expand_path("../../../export", __FILE__)
+    File.open(export, "a") do |file|
+      file.puts string
+    end
+  end
+
+  def set_export_default(key, val)
+    add_to_export "export #{key}=${#{key}:-#{val}}"
+  end
+
+  def set_export_override(key, val)
+    add_to_export %{export #{key}="#{val.gsub('"','\"')}"}
+  end
+
   def log_internal(*args)
     message = build_log_message(args)
     %x{ logger -p user.notice -t "slugc[$$]" "buildpack-ruby #{message}" }
@@ -170,4 +185,3 @@ private ##################################
     end.join(" ")
   end
 end
-
