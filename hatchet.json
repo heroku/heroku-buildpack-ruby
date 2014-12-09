@@ -38,6 +38,9 @@
     "sharpstone/mri_200",
     "sharpstone/mri_214"
   ],
+  "rails2": [
+    "sharpstone/rails23_mri_187"
+  ],
   "rails3": [
     "sharpstone/rails3_mri_193",
     "sharpstone/railties3_mri_193",
