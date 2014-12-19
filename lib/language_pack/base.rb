@@ -17,6 +17,7 @@ class LanguagePack::Base
 
   VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
   DEFAULT_LEGACY_STACK = "cedar"
+  ROOT_DIR             = File.expand_path("../../..", __FILE__)
 
   attr_reader :build_path, :cache
 
@@ -155,7 +156,7 @@ private ##################################
   end
 
   def add_to_export(string)
-    export = File.expand_path("../../../export", __FILE__)
+    export = File.join(ROOT_DIR, "export")
     File.open(export, "a") do |file|
       file.puts string
     end

@@ -222,25 +222,32 @@ private
     end
   end
 
-  # sets up the environment variables for subsequent processes
+  # Sets up the environment variables for subsequent processes run by
+  # muiltibuildpack. We can't use profile.d because $HOME isn't set up
   def setup_export
     instrument 'ruby.setup_export' do
       paths = ENV["PATH"].split(":")
       set_export_override "GEM_PATH", "#{build_path}/#{slug_vendor_base}:$GEM_PATH"
       set_export_default  "LANG",     "en_US.UTF-8"
-      set_export_override "PATH",     paths.map {|path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path}.join(":")
+      set_export_override "PATH",     paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":")
+
+      if ruby_version.jruby?
+        set_env_default "JAVA_OPTS",  default_java_opts
+        set_env_default "JRUBY_OPTS", default_jruby_opts
+        set_env_default "JAVA_TOOL_OPTIONS", default_java_tool_options
+      end
     end
   end
 
   # sets up the profile.d script for this buildpack
   def setup_profiled
     instrument 'setup_profiled' do
-      set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_default  "LANG",     "en_US.UTF-8"
+      set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
 
       if ruby_version.jruby?
-        set_env_default "JAVA_OPTS", default_java_opts
+        set_env_default "JAVA_OPTS",  default_java_opts
         set_env_default "JRUBY_OPTS", default_jruby_opts
         set_env_default "JAVA_TOOL_OPTIONS", default_java_tool_options
       end

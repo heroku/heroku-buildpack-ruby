@@ -1,5 +1,7 @@
 ## Master
 
+* Support multibuildpack export file (#319)
+
 ## v129 (11/6/2014)
 
 * Fix asset caching bug (#300)
