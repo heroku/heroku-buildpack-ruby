@@ -224,8 +224,8 @@ private
   # sets up the profile.d script for this buildpack
   def setup_profiled
     instrument 'setup_profiled' do
-      set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_default  "LANG",     "en_US.UTF-8"
+      set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
 
       if ruby_version.jruby?
