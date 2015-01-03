@@ -28,6 +28,7 @@
     "sharpstone/bad_ruby_version"
   ],
   "rack": [
+    "sharpstone/finish_deploy",
     "sharpstone/default_ruby",
     "sharpstone/mri_187_nokogiri",
     "sharpstone/mri_192",
@@ -54,6 +55,9 @@
   ],
   "rails41": [
     "sharpstone/rails41_scaffold"
+  ],
+  "rails42": [
+    "sharpstone/rails42_finish_deploy"
   ],
   "multibuildpack": [
     "sharpstone/node_multi"

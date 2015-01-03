@@ -12,4 +12,10 @@ describe "Rack" do
       expect(app.run("env")).to match(custom_env)
     end
   end
+
+  it "should trigger custom rake tasks" do
+    Hatchet::Runner.new("finish_deploy").deploy do |app|
+      expect(app.output).to include("Hello from a custom rake task")
+    end
+  end
 end

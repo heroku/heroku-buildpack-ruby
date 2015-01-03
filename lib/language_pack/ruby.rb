@@ -97,11 +97,22 @@ class LanguagePack::Ruby < LanguagePack::Base
         install_binaries
         run_assets_precompile_rake_task
       end
+      finish_deploy
       super
     end
   end
 
 private
+
+  def finish_deploy
+    task = rake.task("finish:deploy")
+    if task.is_defined?
+      task.invoke(env: rake_env)
+      raise BuildpackError, "Expected `rake finish:deploy` to return non-zero exit code" unless task.success?
+    else
+      topic("Skipping finish:deploy rake task, not found")
+    end
+  end
 
   # the base PATH environment variable to be used
   # @return [String] the resulting PATH
