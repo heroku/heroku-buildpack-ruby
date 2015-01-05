@@ -76,6 +76,21 @@ class LanguagePack::Base
     raise "must subclass"
   end
 
+  def procfile_process_types
+    if File.exist?("Procfile")
+      File.readlines("Procfile").each_with_object(Hash.new) do |line, hash|
+        matched = /\A(.+):(.+)\z/.match line.strip
+        next unless matched
+
+        proc_type, proc_cmd = matched[1..2].map &:strip
+
+        hash[proc_type] = proc_cmd if proc_type && proc_cmd
+      end
+    else
+      {}
+    end
+  end
+
   # this is called to build the slug
   def compile
     write_release_yaml
@@ -97,7 +112,8 @@ class LanguagePack::Base
     release = {}
     release["addons"]                = default_addons
     release["config_vars"]           = default_config_vars
-    release["default_process_types"] = default_process_types
+    release["default_process_types"] =
+      default_process_types.merge procfile_process_types
     FileUtils.mkdir("tmp") unless File.exists?("tmp")
     File.open("tmp/heroku-buildpack-release-step.yml", 'w') do |f|
       f.write(release.to_yaml)
@@ -170,4 +186,3 @@ private ##################################
     end.join(" ")
   end
 end
-
