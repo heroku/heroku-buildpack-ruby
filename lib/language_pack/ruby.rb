@@ -762,6 +762,8 @@ params = CGI.parse(uri.query || "")
       old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
       old_stack ||= DEFAULT_LEGACY_STACK
 
+      puts "Old stack: #{old_stack.inspect}"
+      puts "@stack: #{@stack.inspect}"
       stack_change  = old_stack != @stack
       convert_stack = @bundler_cache.old?
       @bundler_cache.convert_stack(stack_change) if convert_stack
