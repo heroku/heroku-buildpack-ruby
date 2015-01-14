@@ -219,7 +219,13 @@ EOF
   # sets up the environment variables for the build process
   def setup_language_pack_environment
     instrument 'ruby.setup_language_pack_environment' do
-      ENV["PATH"] += ":bin" if ruby_version.jruby?
+      if ruby_version.jruby?
+        ENV["PATH"] += ":bin"
+        ENV["JAVA_TOOL_OPTIONS"] = run(<<-SHELL).chomp
+#{set_jvm_max_heap}
+echo #{default_java_tool_options}
+SHELL
+      end
       setup_ruby_install_env
       ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
 
