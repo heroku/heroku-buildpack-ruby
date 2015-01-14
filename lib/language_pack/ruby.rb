@@ -230,9 +230,9 @@ private
       set_export_override "PATH",     paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":")
 
       if ruby_version.jruby?
-        set_env_default "JAVA_OPTS",  default_java_opts
-        set_env_default "JRUBY_OPTS", default_jruby_opts
-        set_env_default "JAVA_TOOL_OPTIONS", default_java_tool_options
+        set_export_default "JAVA_OPTS",  default_java_opts
+        set_export_default "JRUBY_OPTS", default_jruby_opts
+        set_export_default "JAVA_TOOL_OPTIONS", default_java_tool_options
       end
     end
   end
