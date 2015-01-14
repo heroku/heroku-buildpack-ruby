@@ -62,8 +62,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 
       ruby_version.jruby? ? vars.merge({
         "JAVA_OPTS" => default_java_opts,
-        "JRUBY_OPTS" => default_jruby_opts,
-        "JAVA_TOOL_OPTIONS" => default_java_tool_options
+        "JRUBY_OPTS" => default_jruby_opts
       }) : vars
     end
   end
@@ -186,7 +185,23 @@ private
   # default JAVA_OPTS
   # return [String] string of JAVA_OPTS
   def default_java_opts
-    "-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
+    "-Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
+  end
+
+  def set_jvm_max_heap
+    <<-EOF
+case $(ulimit -u) in
+256)   # 1X Dyno
+  JVM_MAX_HEAP=384
+  ;;
+512)   # 2X Dyno
+  JVM_MAX_HEAP=768
+  ;;
+32768) # PX Dyno
+  JVM_MAX_HEAP=6144
+  ;;
+esac
+EOF
   end
 
   # default JRUBY_OPTS
@@ -198,13 +213,19 @@ private
   # default JAVA_TOOL_OPTIONS
   # return [String] string of JAVA_TOOL_OPTIONS
   def default_java_tool_options
-    "-Djava.rmi.server.useCodebaseOnly=true"
+    "-Xmx${JVM_MAX_HEAP:-\"384\"}m -Djava.rmi.server.useCodebaseOnly=true"
   end
 
   # sets up the environment variables for the build process
   def setup_language_pack_environment
     instrument 'ruby.setup_language_pack_environment' do
-      ENV["PATH"] += ":bin" if ruby_version.jruby?
+      if ruby_version.jruby?
+        ENV["PATH"] += ":bin"
+        ENV["JAVA_TOOL_OPTIONS"] = run(<<-SHELL).chomp
+#{set_jvm_max_heap}
+echo #{default_java_tool_options}
+SHELL
+      end
       setup_ruby_install_env
       ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
 
@@ -230,6 +251,7 @@ private
       set_export_override "PATH",     paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":")
 
       if ruby_version.jruby?
+        add_to_export set_jvm_max_heap
         set_export_default "JAVA_OPTS",  default_java_opts
         set_export_default "JRUBY_OPTS", default_jruby_opts
         set_export_default "JAVA_TOOL_OPTIONS", default_java_tool_options
@@ -245,7 +267,8 @@ private
       set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
 
       if ruby_version.jruby?
-        set_env_default "JAVA_OPTS",  default_java_opts
+        add_to_profiled set_jvm_max_heap
+        set_env_default "JAVA_OPTS", default_java_opts
         set_env_default "JRUBY_OPTS", default_jruby_opts
         set_env_default "JAVA_TOOL_OPTIONS", default_java_tool_options
       end
