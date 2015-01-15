@@ -1,5 +1,6 @@
 ## Master
 
+* Auto set WEB_CONCURRENCY based on dyno size if not already set.
 * Support multibuildpack export file (#319)
 
 ## v129 (11/6/2014)

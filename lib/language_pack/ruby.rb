@@ -204,6 +204,27 @@ esac
 EOF
   end
 
+  def set_default_web_concurrency
+    <<-EOF
+case $(ulimit -u) in
+256)
+  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-512}
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+  ;;
+512)
+  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-1024}
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
+  ;;
+32768)
+  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-8192}
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-16}
+  ;;
+*)
+  ;;
+esac
+EOF
+  end
+
   # default JRUBY_OPTS
   # return [String] string of JRUBY_OPTS
   def default_jruby_opts
@@ -265,6 +286,8 @@ SHELL
       set_env_default  "LANG",     "en_US.UTF-8"
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
+
+      add_to_profiled set_default_web_concurrency
 
       if ruby_version.jruby?
         add_to_profiled set_jvm_max_heap
