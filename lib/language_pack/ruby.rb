@@ -6,6 +6,7 @@ require "language_pack"
 require "language_pack/base"
 require "language_pack/ruby_version"
 require "language_pack/helpers/node_installer"
+require "language_pack/helpers/jvm_installer"
 require "language_pack/version"
 
 # base Ruby Language Pack. This is for any base ruby app.
@@ -15,9 +16,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.6.3"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
-  JVM_BASE_URL         = "http://heroku-jdk.s3.amazonaws.com"
-  LATEST_JVM_VERSION   = "openjdk7-latest"
-  LEGACY_JVM_VERSION   = "openjdk1.7.0_25"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   BOWER_VERSION        = "1.3.12"
@@ -45,9 +43,9 @@ class LanguagePack::Ruby < LanguagePack::Base
   def initialize(build_path, cache_path=nil)
     super(build_path, cache_path)
     @fetchers[:mri]    = LanguagePack::Fetcher.new(VENDOR_URL, @stack)
-    @fetchers[:jvm]    = LanguagePack::Fetcher.new(JVM_BASE_URL)
     @fetchers[:rbx]    = LanguagePack::Fetcher.new(RBX_BASE_URL, @stack)
     @node_installer    = LanguagePack::NodeInstaller.new(@stack)
+    @jvm_installer     = LanguagePack::JvmInstaller.new(slug_vendor_jvm, @stack)
   end
 
   def name
@@ -68,8 +66,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 
       ruby_version.jruby? ? vars.merge({
         "JAVA_OPTS" => default_java_opts,
-        "JRUBY_OPTS" => default_jruby_opts,
-        "JAVA_TOOL_OPTIONS" => default_java_tool_options
+        "JRUBY_OPTS" => default_jruby_opts
       }) : vars
     end
   end
@@ -92,6 +89,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       install_ruby
       install_jvm
       setup_language_pack_environment
+      setup_export
       setup_profiled
       allow_git do
         install_bundler_in_app
@@ -194,7 +192,44 @@ private
   # default JAVA_OPTS
   # return [String] string of JAVA_OPTS
   def default_java_opts
-    "-Xmx384m -Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
+    "-Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
+  end
+
+  def set_jvm_max_heap
+    <<-EOF
+case $(ulimit -u) in
+256)   # 1X Dyno
+  JVM_MAX_HEAP=384
+  ;;
+512)   # 2X Dyno
+  JVM_MAX_HEAP=768
+  ;;
+32768) # PX Dyno
+  JVM_MAX_HEAP=6144
+  ;;
+esac
+EOF
+  end
+
+  def set_default_web_concurrency
+    <<-EOF
+case $(ulimit -u) in
+256)
+  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-512}
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+  ;;
+512)
+  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-1024}
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
+  ;;
+32768)
+  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-8192}
+  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-16}
+  ;;
+*)
+  ;;
+esac
+EOF
   end
 
   # default JRUBY_OPTS
@@ -206,29 +241,19 @@ private
   # default JAVA_TOOL_OPTIONS
   # return [String] string of JAVA_TOOL_OPTIONS
   def default_java_tool_options
-    "-Djava.rmi.server.useCodebaseOnly=true"
-  end
-
-  # list the available valid ruby versions
-  # @note the value is memoized
-  # @return [Array] list of Strings of the ruby versions available
-  def ruby_versions
-    return @ruby_versions if @ruby_versions
-
-    Dir.mktmpdir("ruby_versions-") do |tmpdir|
-      Dir.chdir(tmpdir) do
-        @fetchers[:buildpack].fetch("ruby_versions.yml")
-        @ruby_versions = YAML::load_file("ruby_versions.yml")
-      end
-    end
-
-    @ruby_versions
+    "-Xmx${JVM_MAX_HEAP:-\"384\"}m -Djava.rmi.server.useCodebaseOnly=true"
   end
 
   # sets up the environment variables for the build process
   def setup_language_pack_environment
     instrument 'ruby.setup_language_pack_environment' do
-      ENV["PATH"] += ":bin" if ruby_version.jruby?
+      if ruby_version.jruby?
+        ENV["PATH"] += ":bin"
+        ENV["JAVA_TOOL_OPTIONS"] = run(<<-SHELL).chomp
+#{set_jvm_max_heap}
+echo #{default_java_tool_options}
+SHELL
+      end
       setup_ruby_install_env
       ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
 
@@ -244,14 +269,35 @@ private
     end
   end
 
+  # Sets up the environment variables for subsequent processes run by
+  # muiltibuildpack. We can't use profile.d because $HOME isn't set up
+  def setup_export
+    instrument 'ruby.setup_export' do
+      paths = ENV["PATH"].split(":")
+      set_export_override "GEM_PATH", "#{build_path}/#{slug_vendor_base}:$GEM_PATH"
+      set_export_default  "LANG",     "en_US.UTF-8"
+      set_export_override "PATH",     paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":")
+
+      if ruby_version.jruby?
+        add_to_export set_jvm_max_heap
+        set_export_default "JAVA_OPTS",  default_java_opts
+        set_export_default "JRUBY_OPTS", default_jruby_opts
+        set_export_default "JAVA_TOOL_OPTIONS", default_java_tool_options
+      end
+    end
+  end
+
   # sets up the profile.d script for this buildpack
   def setup_profiled
     instrument 'setup_profiled' do
-      set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_default  "LANG",     "en_US.UTF-8"
+      set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
 
+      add_to_profiled set_default_web_concurrency
+
       if ruby_version.jruby?
+        add_to_profiled set_jvm_max_heap
         set_env_default "JAVA_OPTS", default_java_opts
         set_env_default "JRUBY_OPTS", default_jruby_opts
         set_env_default "JAVA_TOOL_OPTIONS", default_java_tool_options
@@ -265,11 +311,6 @@ private
     instrument 'ruby.install_ruby' do
       return false unless ruby_version
 
-      invalid_ruby_version_message = <<ERROR
-Invalid RUBY_VERSION specified: #{ruby_version.version}
-Valid versions: #{ruby_versions.join(", ")}
-ERROR
-
       if ruby_version.build?
         FileUtils.mkdir_p(build_ruby_path)
         Dir.chdir(build_ruby_path) do
@@ -278,7 +319,6 @@ ERROR
             @fetchers[:mri].fetch_untar("#{ruby_version.version.sub(ruby_vm, "#{ruby_vm}-build")}.tgz")
           end
         end
-        error invalid_ruby_version_message unless $?.success?
       end
 
       FileUtils.mkdir_p(slug_vendor_ruby)
@@ -309,7 +349,6 @@ ERROR_MSG
           end
         end
       end
-      error invalid_ruby_version_message unless $?.success?
 
       app_bin_dir = "bin"
       FileUtils.mkdir_p app_bin_dir
@@ -334,6 +373,14 @@ WARNING
     end
 
     true
+  rescue LanguagePack::Fetcher::FetchError => error
+    message = <<ERROR
+An error occurred while installing Ruby #{ruby_version.version}
+For supported Ruby versions see https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+Note: Only the most recent version of Ruby 2.1 is supported on Cedar-14
+#{error.message}
+ERROR
+    error message
   end
 
   def new_app?
@@ -344,25 +391,7 @@ WARNING
   def install_jvm(forced = false)
     instrument 'ruby.install_jvm' do
       if ruby_version.jruby? || forced
-        jvm_version =
-          if forced || Gem::Version.new(ruby_version.engine_version) >= Gem::Version.new("1.7.4")
-            LATEST_JVM_VERSION
-          else
-            LEGACY_JVM_VERSION
-          end
-
-        topic "Installing JVM: #{jvm_version}"
-
-        FileUtils.mkdir_p(slug_vendor_jvm)
-        Dir.chdir(slug_vendor_jvm) do
-          @fetchers[:jvm].fetch_untar("#{jvm_version}.tar.gz")
-        end
-
-        bin_dir = "bin"
-        FileUtils.mkdir_p bin_dir
-        Dir["#{slug_vendor_jvm}/bin/*"].each do |bin|
-          run("ln -s ../#{bin} #{bin_dir}")
-        end
+        @jvm_installer.install(ruby_version.engine_version, forced)
       end
     end
   end
@@ -555,7 +584,6 @@ WARNING
               pipe("#{bundle_bin} clean", out: "2> /dev/null")
             end
           end
-          cache.store ".bundle"
           @bundler_cache.store
 
           # Keep gem cache out of the slug
