@@ -3,6 +3,7 @@ require_relative 'spec_helper'
 describe "Ruby apps" do
   describe "default WEB_CONCURRENCY" do
     it "auto scales WEB_CONCURRENCY" do
+      pending("Launch of web scaling project")
       Hatchet::Runner.new('default_ruby').deploy do |app|
         expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "1X" } )).to match("value: 2")
         expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "2X" } )).to match("value: 4")
