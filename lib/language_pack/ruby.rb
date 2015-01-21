@@ -198,7 +198,7 @@ case $(ulimit -u) in
   JVM_MAX_HEAP=768
   ;;
 32768) # PX Dyno
-  JVM_MAX_HEAP=6144
+  JVM_MAX_HEAP=5120
   ;;
 esac
 EOF
