@@ -1,5 +1,14 @@
 ## Master
 
+* Support multibuildpack export file (#319)
+* Auto set the JVM MAX HEAP based on dyno size for JRuby (#323)
+* Use s3 based npmjs servers for node (#336)
+* Support system.properties file for specifying JDK in JRuby (#305)
+
+## v131 (1/15/2015)
+
+* Revert v130 due to lack of propper messaging around WEB_CONCURRENCY settings.
+
 ## v130 (1/15/2015)
 
 * Auto set WEB_CONCURRENCY based on dyno size if not already set.
