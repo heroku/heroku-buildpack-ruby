@@ -1,9 +1,12 @@
 ## Master
 
+## v132 (1/21/2015)
+
 * Support multibuildpack export file (#319)
 * Auto set the JVM MAX HEAP based on dyno size for JRuby (#323)
 * Use s3 based npmjs servers for node (#336)
 * Support system.properties file for specifying JDK in JRuby (#305)
+* Fix ruby version parsing to support JRuby 9.0.0.0.pre1 (#339)
 
 ## v131 (1/15/2015)
 
