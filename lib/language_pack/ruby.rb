@@ -601,10 +601,6 @@ ERROR
   end
 
   def post_bundler
-    if bundler.has_gem?('yui-compressor') && !ruby_version.jruby?
-      install_jvm(true)
-      ENV["PATH"] += ":bin"
-    end
   end
 
   # RUBYOPT line that requires syck_hack file
