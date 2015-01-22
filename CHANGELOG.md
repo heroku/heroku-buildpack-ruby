@@ -1,5 +1,9 @@
 ## Master
 
+## v133 (1/22/2015)
+
+* Bump bundler to 1.7.12 which includes multiple fixes and support for block source declaration (https://github.com/bundler/bundler/blob/1-7-stable/CHANGELOG.md).
+
 ## v132 (1/21/2015)
 
 * Support multibuildpack export file (#319)
