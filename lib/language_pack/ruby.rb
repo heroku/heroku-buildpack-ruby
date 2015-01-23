@@ -14,7 +14,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
   LIBYAML_VERSION      = "0.1.6"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION      = "1.6.3"
+  BUNDLER_VERSION      = "1.7.12"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
   DEFAULT_RUBY_VERSION = "ruby-2.0.0"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
@@ -205,7 +205,7 @@ case $(ulimit -u) in
   JVM_MAX_HEAP=768
   ;;
 32768) # PX Dyno
-  JVM_MAX_HEAP=6144
+  JVM_MAX_HEAP=5120
   ;;
 esac
 EOF
@@ -223,7 +223,7 @@ case $(ulimit -u) in
   export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
   ;;
 32768)
-  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-8192}
+  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-6144}
   export WEB_CONCURRENCY=${WEB_CONCURRENCY:-16}
   ;;
 *)
@@ -294,7 +294,7 @@ SHELL
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
 
-      add_to_profiled set_default_web_concurrency
+      # add_to_profiled set_default_web_concurrency
 
       if ruby_version.jruby?
         add_to_profiled set_jvm_max_heap
@@ -666,10 +666,6 @@ ERROR
   end
 
   def post_bundler
-    if bundler.has_gem?('yui-compressor') && !ruby_version.jruby?
-      install_jvm(true)
-      ENV["PATH"] += ":bin"
-    end
   end
 
   # RUBYOPT line that requires syck_hack file
