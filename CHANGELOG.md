@@ -1,6 +1,7 @@
 ## Master
 
 * JVM is now available on cedar-14, do not vendor in JVM based on individual gems. If customer needs a specific version they should use multibuildpack with java and ruby buildpacks.
+* Set a default value of WEB_CONCURRENCY based on dyno size when `DEFAULT_WEB_CONCURRENCY` environment variable is present.
 
 ## v133 (1/22/2015)
 
