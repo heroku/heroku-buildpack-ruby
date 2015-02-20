@@ -572,7 +572,7 @@ WARNING
           instrument "ruby.bundle_clean" do
             # Only show bundle clean output when not using default cache
             if load_default_cache?
-              run "bundle clean > /dev/null"
+              run "#{bundle_bin} clean > /dev/null"
             else
               pipe("#{bundle_bin} clean", out: "2> /dev/null")
             end
