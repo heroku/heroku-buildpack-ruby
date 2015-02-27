@@ -27,7 +27,7 @@ class LanguagePack::Base
   def initialize(build_path, cache_path=nil)
      self.class.instrument "base.initialize" do
       @build_path    = build_path
-      @stack         = ENV["STACK"]
+      @stack         = ENV.fetch("STACK")
       @cache         = LanguagePack::Cache.new(cache_path) if cache_path
       @metadata      = LanguagePack::Metadata.new(@cache)
       @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
