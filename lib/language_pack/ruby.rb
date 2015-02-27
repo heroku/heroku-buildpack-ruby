@@ -81,7 +81,6 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     instrument 'ruby.compile' do
-      check_stack
       # check for new app at the beginning of the compile
       new_app?
       Dir.chdir(build_path)
@@ -103,15 +102,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
 private
-
-  def check_stack
-    error <<-ERROR_MSG if @stack != "cedar"
-The legacy edition of this buildpack is only supported on the cedar stack.
-You can move to the cedar stack by running: heroku stack:set cedar
-Then deploy your app again: git push heroku master
-https://devcenter.heroku.com/articles/cedar-migration
-ERROR_MSG
-  end
 
   # the base PATH environment variable to be used
   # @return [String] the resulting PATH
