@@ -3,6 +3,11 @@
 # sync output
 $stdout.sync = true
 
+# allow config var override of BUILDPACK_VENDOR_URL
+env_var = 'BUILDPACK_VENDOR_URL'
+path = "#{ARGV[2]}/#{env_var}"
+ENV[env_var] = File.read(path) if File.exists?(path)
+
 $:.unshift File.expand_path("../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
