@@ -59,4 +59,13 @@ describe "Ruby apps" do
       end
     end
   end
+
+  describe 'application:setup' do
+    it "fails compile if application:setup fails" do
+      Hatchet::Runner.new('heroku_buildpack_fail_application_setup', allow_failure: true).deploy do |app, heroku|
+        expect(app.output).to include('raising on application:setup on purpose')
+        expect(app).not_to be_deployed
+      end
+    end
+  end
 end

@@ -47,7 +47,36 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     instrument "rails2.compile" do
       install_plugins
       super
+      allow_git do
+        run_assets_precompile_rake_task
+      end
     end
+  end
+
+  def run_assets_precompile_rake_task
+    instrument 'ruby.run_assets_precompile_rake_task' do
+
+      precompile = rake.task("assets:precompile")
+      return true unless precompile.is_defined?
+
+      topic "Precompiling assets"
+      precompile.invoke(env: rake_env)
+      if precompile.success?
+        puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
+      else
+        precompile_fail(precompile.output)
+      end
+    end
+  end
+
+  def precompile_fail(output)
+    log "assets_precompile", :status => "failure"
+    msg = "Precompiling assets failed.\n"
+    if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
+      msg << "Attempted to access a nonexistent database:\n"
+      msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
+    end
+    error msg
   end
 
 private

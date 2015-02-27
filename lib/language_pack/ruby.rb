@@ -93,7 +93,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         post_bundler
         create_database_yml
         install_binaries
-        run_assets_precompile_rake_task
+        run_application_setup_rake_task
       end
       super
     end
@@ -736,30 +736,21 @@ params = CGI.parse(uri.query || "")
     @node_js_installed ||= run("#{node_bp_bin_path}/node -v") && $?.success?
   end
 
-  def run_assets_precompile_rake_task
-    instrument 'ruby.run_assets_precompile_rake_task' do
+  def run_application_setup_rake_task
+    instrument 'ruby.run_application_setup_rake_task' do
+      setup = rake.task("application:setup")
+      return true unless setup.is_defined?
 
-      precompile = rake.task("assets:precompile")
-      return true unless precompile.is_defined?
-
-      topic "Precompiling assets"
-      precompile.invoke(env: rake_env)
-      if precompile.success?
-        puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
+      topic "Setting up application"
+      setup.invoke(env: rake_env)
+      if setup.success?
+        puts "Application setup completed (#{"%.2f" % setup.time}s)"
       else
-        precompile_fail(precompile.output)
+        log "application_setup", :status => "failure"
+        msg = "Setting up application failed.\n"
+        error msg
       end
     end
-  end
-
-  def precompile_fail(output)
-    log "assets_precompile", :status => "failure"
-    msg = "Precompiling assets failed.\n"
-    if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
-      msg << "Attempted to access a nonexistent database:\n"
-      msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
-    end
-    error msg
   end
 
   def bundler_cache
