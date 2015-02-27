@@ -287,7 +287,7 @@ SHELL
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
 
-      # add_to_profiled set_default_web_concurrency
+      add_to_profiled set_default_web_concurrency if env("DEFAULT_WEB_CONCURRENCY")
 
       if ruby_version.jruby?
         add_to_profiled set_jvm_max_heap
