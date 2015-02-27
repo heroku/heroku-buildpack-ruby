@@ -59,6 +59,12 @@
   "rails41": [
     "sharpstone/rails41_scaffold"
   ],
+  "rails42": [
+    "sharpstone/rails42_scaffold"
+  ],
+  "rails5": [
+    "sharpstone/rails5"
+  ],
   "multibuildpack": [
     "sharpstone/node_multi"
   ]
