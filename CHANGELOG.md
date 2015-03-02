@@ -1,5 +1,7 @@
 ## Master
 
+# v134 (3/1/2015)
+
 * JVM is now available on cedar-14, do not vendor in JVM based on individual gems. If customer needs a specific version they should use multibuildpack with java and ruby buildpacks.
 * Set a default value of WEB_CONCURRENCY based on dyno size when `SENSIBLE_DEFAULTS` environment variable is present.
 * Run `bundle clean` in the same context as `bundle install` heroku/heroku-buildpack-ruby#347
