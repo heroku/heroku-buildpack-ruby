@@ -5,7 +5,7 @@ describe "Ruby apps" do
     it "auto scales WEB_CONCURRENCY" do
       app = Hatchet::Runner.new("default_ruby")
       app.setup!
-      app.set_config("DEFAULT_WEB_CONCURRENCY" => "enabled")
+      app.set_config("SENSIBLE_DEFAULTS" => "enabled")
 
       app.deploy do |app|
         app.run('echo "loaded"')
