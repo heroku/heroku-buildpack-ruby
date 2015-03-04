@@ -27,7 +27,7 @@
     "sharpstone/ruby_193_jruby_17161",
     "sharpstone/ruby_193_jruby_17161_jdk7",
     "sharpstone/ruby_193_jruby_17161_jdk8",
-    "kissaten/jruby-minimal",
+    "sharpstone/jruby-minimal",
     "sharpstone/empty-procfile",
     "sharpstone/bad_ruby_version"
   ],
@@ -58,6 +58,12 @@
   ],
   "rails41": [
     "sharpstone/rails41_scaffold"
+  ],
+  "rails42": [
+    "sharpstone/rails42_scaffold"
+  ],
+  "rails5": [
+    "sharpstone/rails5"
   ],
   "multibuildpack": [
     "sharpstone/node_multi"
