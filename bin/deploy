@@ -113,11 +113,11 @@ excluded_files=(
   'test/'
   'cf.Gemfile'
   'cf.Gemfile.lock'
-  'bin/package'
-  'buildpack-packager/'
+  'bin/deploy'
+  'buildpack-deployer/'
 )
 
 BIN="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $BIN/../buildpack-packager/lib/packager
+source $BIN/../buildpack-deployer/lib/deployer
 
-package_buildpack $@
+deploy_buildpack $@
