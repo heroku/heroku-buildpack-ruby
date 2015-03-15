@@ -103,7 +103,7 @@ symlinks=(
 )
 
 excluded_files=(
-  '.git/'
+  '.git'
   '.gitignore'
   '.gitmodules'
   'repos/'
