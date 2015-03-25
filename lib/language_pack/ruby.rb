@@ -637,7 +637,7 @@ rescue URI::InvalidURIError
   raise "Invalid DATABASE_URL"
 end
 
-raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
+raise "No RAILS_ENV found" unless ENV["RAILS_ENV"]
 
 def attribute(name, value, force_string = false)
   if value
@@ -668,7 +668,7 @@ params = CGI.parse(uri.query || "")
 
 %>
 
-<%= ENV["RAILS_ENV"] || ENV["RACK_ENV"] %>:
+<%= ENV["RAILS_ENV"] %>:
   <%= attribute "adapter",  adapter %>
   <%= attribute "database", database %>
   <%= attribute "username", username %>

@@ -175,7 +175,7 @@ Ruby (Gemfile and Gemfile.lock is detected)
 Rack (config.ru is detected)
 
 * everything from Ruby
-* sets RACK_ENV=production
+* sets RACK_ENV=deployment
 
 Rails 2 (config/environment.rb is detected)
 
@@ -189,4 +189,3 @@ Rails 3 (config/application.rb is detected)
 * everything from Rails 2
 * install rails 3 plugins
   * [rails3_server_static_assets](https://github.com/pedro/rails3_serve_static_assets)
-
