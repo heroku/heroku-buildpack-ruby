@@ -598,6 +598,7 @@ ERROR
         end
       end
     end
+    p `gem env`
   end
 
   def post_bundler

@@ -2,5 +2,11 @@
 
 require 'pathname'
 
-release = Pathname.new(ARGV.first).join("tmp/heroku-buildpack-release-step.yml")
+def app_root
+  path_to_root = Pathname.new(ARGV[0] || "").join(".ruby_app_root")
+  $folder = File.exist?(path_to_root) ? File.read(path_to_root).delete!("\n") + "/": ""
+  File.join(ARGV[0], $folder)
+end
+
+release = Pathname.new(ARGV.first).join("#{app_root}/tmp/heroku-buildpack-release-step.yml")
 puts release.read if release.exist?
