@@ -6,3 +6,5 @@ vendor/bundle/*
 .ruby-version
 buildpacks/*
 .anvil/
+
+.idea

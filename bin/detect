@@ -5,6 +5,9 @@ require 'pathname'
 if Pathname.new(ARGV.first).join("Gemfile").exist?
   puts "Ruby"
   exit 0
+elsif Pathname.new(ARGV.first).join(".ruby_app_root").exist?
+  puts "Ruby (non-standard root folder)"
+  exit 0
 else
   puts "no"
   exit 1

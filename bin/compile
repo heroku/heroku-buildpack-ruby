@@ -9,7 +9,14 @@ require "language_pack/shell_helpers"
 
 begin
   LanguagePack::Instrument.trace 'compile', 'app.compile' do
-    if pack = LanguagePack.detect(ARGV[0], ARGV[1])
+    
+    def app_root
+      path_to_root = Pathname.new(ARGV[0] || "").join(".ruby_app_root")
+      $folder = File.exist?(path_to_root) ? File.read(path_to_root).delete!("\n") + "/": ""
+      File.join(ARGV[0], $folder)
+    end
+
+    if pack = LanguagePack.detect(app_root, ARGV[1])
       LanguagePack::ShellHelpers.initialize_env(ARGV[2])
       pack.topic("Compiling #{pack.name}")
       pack.log("compile") do

@@ -22,10 +22,16 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   end
 
   def default_process_types
+    prefixes = [
+        "GEM_PATH=/app/#{$folder}vendor/bundle/ruby/2.2.0",
+        "PATH=/app/#{$folder}bin:/app/#{$folder}vendor/node/bin:$PATH",
+        "BUNDLE_GEMFILE=./#{$folder}Gemfile"
+    ].join(" ")
+
     instrument "rails4.default_process_types" do
       super.merge({
-        "web"     => "bin/rails server -p $PORT -e $RAILS_ENV",
-        "console" => "bin/rails console"
+        "web"     => "#{prefixes} gem env && #{prefixes} rails server -p $PORT -e production",#for some reason I lost $RAILS_ENV value
+        "console" => " #{prefixes} rails console"
       })
     end
   end
