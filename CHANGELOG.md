@@ -1,5 +1,7 @@
 ## Master
 
+* Set `--dev` by default for JRuby builds (but not at runtime). This optimizes the JVM for short process and is ideal for `bundle install` and asset precompiles. 
+
 ## v134 (3/1/2015)
 
 * JVM is now available on cedar-14, do not vendor in JVM based on individual gems. If customer needs a specific version they should use multibuildpack with java and ruby buildpacks.
