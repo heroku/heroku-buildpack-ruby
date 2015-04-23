@@ -246,6 +246,11 @@ EOF
 #{set_jvm_max_heap}
 echo #{default_java_tool_options}
 SHELL
+        if Gem::Version.new(ruby_version.engine_version) >= Gem::Version.new("1.7.12")
+          ENV["JRUBY_OPTS"] = "--dev"
+        else
+          ENV["JRUBY_OPTS"] = "-Xcompile.invokedynamic=false -Xcompile.mode=OFF -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
+        end
       end
       setup_ruby_install_env
       ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
