@@ -18,6 +18,15 @@ describe "Rails 4.0.x" do
     end
   end
 
+  it "detects new manifest file (sprockets 3.x: .sprockets-manifest-<digest>.json)" do
+    Hatchet::Runner.new("rails42_sprockets3_manifest", buildpack_url: "https://github.com/fjg/heroku-buildpack-ruby.git").deploy do |app, heroku|
+      expect(LanguagePack::Rails42.use?).to eq(true)
+      add_database(app, heroku)
+      expect(app.output).to include("Detected manifest file, assuming assets were compiled locally")
+    end
+  end
+
+
   it "upgraded from 3 to 4 missing ./bin still works" do
     Hatchet::Runner.new("rails3-to-4-no-bin").deploy do |app, heroku|
       expect(app.output).to include("Asset precompilation completed")
