@@ -1,5 +1,7 @@
 ## Master
 
+* Get more information from `bundle install` by setting `heroku config:set BUNDLE_VERBOSE=1`
+
 ## v134 (3/1/2015)
 
 * JVM is now available on cedar-14, do not vendor in JVM based on individual gems. If customer needs a specific version they should use multibuildpack with java and ruby buildpacks.
