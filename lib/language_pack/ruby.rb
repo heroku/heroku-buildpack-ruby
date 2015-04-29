@@ -606,6 +606,9 @@ ERROR
   end
 
   def post_bundler
+    # Deletes .git directories across gems
+    puts "Deleting .git directories in gems installed from git sources"
+    FileUtils.rm_rf Dir.glob("#{slug_vendor_base}/gems/**/.git")
   end
 
   # RUBYOPT line that requires syck_hack file
