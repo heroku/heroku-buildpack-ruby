@@ -69,7 +69,7 @@ WARNING
   def run_assets_precompile_rake_task
     instrument "rails4.run_assets_precompile_rake_task" do
       log("assets_precompile") do
-        if Dir.glob('public/assets/manifest-*.json').any?
+        if Dir.glob("public/assets/{.sprockets-manifest-*.json,manifest-*.json}", File::FNM_DOTMATCH).any?
           puts "Detected manifest file, assuming assets were compiled locally"
           return true
         end
