@@ -606,6 +606,11 @@ ERROR
   end
 
   def post_bundler
+    instrument "ruby.post_bundler" do
+      Dir[File.join(slug_vendor_base, "**", ".git")].each do |dir|
+        FileUtils.rm_rf(dir)
+      end
+    end
   end
 
   # RUBYOPT line that requires syck_hack file
