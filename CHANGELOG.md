@@ -2,6 +2,7 @@
 
 * Support sprockets 3.0 manifest file naming convention (#367)
 * Set `--dev` by default for JRuby builds (but not at runtime). This optimizes the JVM for short process and is ideal for `bundle install` and asset precompiles.
+* Cleanup `.git` folders in the bundle directory after `bundle install`.
 
 ## v134 (3/1/2015)
 
