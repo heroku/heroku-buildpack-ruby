@@ -150,7 +150,7 @@ number of processes and running a different test file in each process,
 it does not parallelize tests within a test file. To run the tests: clone the repo, then `bundle install` then clone the test fixtures by running:
 
 ```sh
-$ hatchet install
+$ bundle exec hatchet install
 ```
 
 Now run the tests:
