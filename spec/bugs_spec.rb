@@ -7,7 +7,7 @@ describe "Bugs" do
       app.heroku.put_stack(app.name, "cedar")
       app.deploy do |app, heroku|
         expect(app.output).to match("Installing nokogiri")
-        expect(app.output).to match("Your bundle is complete!")
+        expect(app.output).to match("Bundle complete")
       end
     end
   end
