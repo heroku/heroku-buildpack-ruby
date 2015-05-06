@@ -253,6 +253,11 @@ EOF
 #{set_jvm_max_heap}
 echo #{default_java_tool_options}
 SHELL
+        if Gem::Version.new(ruby_version.engine_version) >= Gem::Version.new("1.7.12")
+          ENV["JRUBY_OPTS"] = "--dev"
+        else
+          ENV["JRUBY_OPTS"] = "-Xcompile.invokedynamic=false -Xcompile.mode=OFF -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
+        end
       end
       setup_ruby_install_env
       ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
@@ -666,6 +671,11 @@ ERROR
   end
 
   def post_bundler
+    instrument "ruby.post_bundler" do
+      Dir[File.join(slug_vendor_base, "**", ".git")].each do |dir|
+        FileUtils.rm_rf(dir)
+      end
+    end
   end
 
   # RUBYOPT line that requires syck_hack file
