@@ -1,5 +1,9 @@
 ## Master
 
+## v136 (5/6/2015)
+
+* JRUBY_BUILD_OPTS env var will override any build time jruby opts (#381)
+
 ## v135 (5/5/2015)
 
 * Support sprockets 3.0 manifest file naming convention (#367)
