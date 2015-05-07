@@ -84,6 +84,7 @@ describe "Ruby Versions" do
     app = Hatchet::Runner.new("ruby_193_jruby_17161")
     app.setup!
     app.heroku.put_stack(app.name, 'cedar-14')
+    app.set_config("JRUBY_BUILD_OPTS", "--dev")
 
     app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk1.8-latest")
