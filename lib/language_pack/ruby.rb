@@ -610,6 +610,7 @@ ERROR
       Dir[File.join(slug_vendor_base, "**", ".git")].each do |dir|
         FileUtils.rm_rf(dir)
       end
+      bundler.clean
     end
   end
 
