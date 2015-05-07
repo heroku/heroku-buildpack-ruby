@@ -27,7 +27,7 @@ module LanguagePack
     end
 
     def self.blacklist?(key)
-      %w(PATH GEM_PATH GEM_HOME GIT_DIR).include?(key)
+      %w(PATH GEM_PATH GEM_HOME GIT_DIR JRUBY_OPTS).include?(key)
     end
 
     def self.initialize_env(path)
