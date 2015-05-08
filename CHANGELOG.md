@@ -1,5 +1,10 @@
 ## Master
 
+## v137 (5/11/2015)
+
+* Blacklist `JRUBY_OPTS`, use `JRUBY_BUILD_OPTS` to override build `JRUBY_OPTS`.  (#384)
+* Revert `--dev` during JRuby build for now. (#384)
+
 ## v136 (5/6/2015)
 
 * JRUBY_BUILD_OPTS env var will override any build time jruby opts (#381)
