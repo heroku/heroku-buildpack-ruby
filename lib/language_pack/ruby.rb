@@ -29,7 +29,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def self.bundler
-    @bundler ||= LanguagePack::Helpers::BundlerWrapper.new.install
+    @@bundler ||= LanguagePack::Helpers::BundlerWrapper.new.install
   end
 
   def bundler
@@ -606,6 +606,7 @@ ERROR
       Dir[File.join(slug_vendor_base, "**", ".git")].each do |dir|
         FileUtils.rm_rf(dir)
       end
+      bundler.clean
     end
   end
 
