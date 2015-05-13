@@ -87,7 +87,13 @@ describe "Ruby Versions" do
 
     app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk1.8-latest")
+      expect(app.output).to match("JRUBY_OPTS is:  -Xcompile.invokedynamic=false")
       expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
+
+      `git commit -am "redeploy" --allow-empty`
+      app.set_config("JRUBY_BUILD_OPTS" => "--dev")
+      app.push!
+      expect(app.output).to match("JRUBY_OPTS is:  --dev")
     end
   end
 

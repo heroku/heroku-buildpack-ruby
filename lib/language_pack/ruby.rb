@@ -33,7 +33,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def self.bundler
-    @bundler ||= LanguagePack::Helpers::BundlerWrapper.new.install
+    @@bundler ||= LanguagePack::Helpers::BundlerWrapper.new.install
   end
 
   def bundler
@@ -253,11 +253,7 @@ EOF
 #{set_jvm_max_heap}
 echo #{default_java_tool_options}
 SHELL
-        if Gem::Version.new(ruby_version.engine_version) >= Gem::Version.new("1.7.12")
-          ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || "--dev"
-        else
-          ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || "-Xcompile.invokedynamic=false -Xcompile.mode=OFF -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1"
-        end
+        ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
       end
       setup_ruby_install_env
       ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
@@ -675,6 +671,7 @@ ERROR
       Dir[File.join(slug_vendor_base, "**", ".git")].each do |dir|
         FileUtils.rm_rf(dir)
       end
+      bundler.clean
     end
   end
 
