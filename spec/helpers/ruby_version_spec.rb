@@ -98,7 +98,7 @@ describe "RubyVersion" do
     error_klass      = LanguagePack::Helpers::BundlerWrapper::GemfileParseError
     Hatchet::App.new("bad_gemfile_on_platform").in_directory do |dir|
       @bundler       = LanguagePack::Helpers::BundlerWrapper.new().install
-      expect {LanguagePack::RubyVersion.new(@bundler.ruby_version)}.to raise_error(error_klass, /#{Regexp.escape(bundle_error_msg)}/)
+      expect { LanguagePack::RubyVersion.new(@bundler.ruby_version) }.to raise_error(error_klass, /#{Regexp.escape(bundle_error_msg)}/)
     end
   end
 end
