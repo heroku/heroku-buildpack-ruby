@@ -1,5 +1,7 @@
 ## Master
 
+* * Bump bundler to 1.9.7 [Bundler changelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md#196-2015-05-02) (#378)
+
 ## v137 (5/11/2015)
 
 * Blacklist `JRUBY_OPTS`, use `JRUBY_BUILD_OPTS` to override build `JRUBY_OPTS`.  (#384)
