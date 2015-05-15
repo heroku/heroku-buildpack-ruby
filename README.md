@@ -87,6 +87,7 @@ Example Usage:
     -----> Installing dependencies using Bundler version 1.1.rc
            Running: bundle install --without development:test --path vendor/bundle --deployment
            ...
+    -----> Creating config/*.yml files from config/*.yml.samples
     -----> Writing config/database.yml to read from DATABASE_URL
     -----> Preparing app for Rails asset pipeline
            Running: rake assets:precompile

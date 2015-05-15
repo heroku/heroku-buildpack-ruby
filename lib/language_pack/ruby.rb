@@ -91,6 +91,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         install_bundler_in_app
         build_bundler
         post_bundler
+        prepare_config_files
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
@@ -621,6 +622,23 @@ ERROR
         "-r#{syck_hack_file}"
       else
         ""
+      end
+    end
+  end
+
+  def prepare_config_files
+    instrument 'ruby.prepare_config_files' do
+      log('prepare_config.files') do
+        return unless File.directory?('config')
+        topic('Creating config/*.yml files from config/*.yml.samples')
+        Dir['config/*.yml.sample'].each do |src|
+          dest = src.gsub(/\.sample/, '')
+
+          unless File.exist?(dest)
+            puts "Creating #{dest} file from #{src}"
+            FileUtils.copy_file(src, dest)
+          end
+        end
       end
     end
   end
