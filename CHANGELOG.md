@@ -1,6 +1,8 @@
 ## Master
 
-* * Bump bundler to 1.9.7 [Bundler changelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md#196-2015-05-02) (#378)
+## v138 (5/19/2015)
+
+* Bump bundler to 1.9.7 [Bundler changelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md#196-2015-05-02) (#378)
 
 ## v137 (5/11/2015)
 
