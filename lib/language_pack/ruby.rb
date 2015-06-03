@@ -640,7 +640,7 @@ require 'cgi'
 require 'uri'
 
 begin
-  uri = URI.parse(env("DATABASE_URL"))
+  uri = URI.parse(ENV["DATABASE_URL"])
 rescue URI::InvalidURIError
   raise "Invalid DATABASE_URL"
 end
@@ -676,7 +676,7 @@ params = CGI.parse(uri.query || "")
 
 %>
 
-<%= ENV["RAILS_ENV"] || env["RACK_ENV"] %>:
+<%= ENV["RAILS_ENV"] || ENV["RACK_ENV"] %>:
   <%= attribute "adapter",  adapter %>
   <%= attribute "database", database %>
   <%= attribute "username", username %>
