@@ -640,12 +640,12 @@ require 'cgi'
 require 'uri'
 
 begin
-  uri = URI.parse(env["DATABASE_URL"])
+  uri = URI.parse(env("DATABASE_URL"))
 rescue URI::InvalidURIError
   raise "Invalid DATABASE_URL"
 end
 
-raise "No RACK_ENV or RAILS_ENV found" unless env["RAILS_ENV"] || env["RACK_ENV"]
+raise "No RACK_ENV or RAILS_ENV found" unless env("RAILS_ENV") || env("RACK_ENV")
 
 def attribute(name, value, force_string = false)
   if value
@@ -676,7 +676,7 @@ params = CGI.parse(uri.query || "")
 
 %>
 
-<%= env["RAILS_ENV"] || env["RACK_ENV"] %>:
+<%= env("RAILS_ENV") || env("RACK_ENV") %>:
   <%= attribute "adapter",  adapter %>
   <%= attribute "database", database %>
   <%= attribute "username", username %>
@@ -751,7 +751,7 @@ params = CGI.parse(uri.query || "")
       return true unless dbmigrate.is_defined?
 
       require 'benchmark'
-      if env['DATABASE_URL'].nil?
+      if env('DATABASE_URL').nil?
         puts "Skipping database migration since DATABASE_URL is not defined."
         return
       end
