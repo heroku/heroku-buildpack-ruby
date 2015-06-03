@@ -645,7 +645,7 @@ rescue URI::InvalidURIError
   raise "Invalid DATABASE_URL"
 end
 
-raise "No RACK_ENV or RAILS_ENV found" unless env("RAILS_ENV") || env("RACK_ENV")
+raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
 
 def attribute(name, value, force_string = false)
   if value
@@ -676,7 +676,7 @@ params = CGI.parse(uri.query || "")
 
 %>
 
-<%= env("RAILS_ENV") || env("RACK_ENV") %>:
+<%= ENV["RAILS_ENV"] || env["RACK_ENV"] %>:
   <%= attribute "adapter",  adapter %>
   <%= attribute "database", database %>
   <%= attribute "username", username %>
@@ -755,6 +755,9 @@ params = CGI.parse(uri.query || "")
         puts "Skipping database migration since DATABASE_URL is not defined."
         return
       end
+      ENV['DATABASE_URL'] = env('DATABASE_URL')
+      ENV['RAILS_ENV'] = env('RAILS_ENV')
+      ENV['RACK_ENV'] = env('RACK_ENV')
       topic "Running: rake db:migrate"
       time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake db:migrate 2>&1") }
       if $?.success?
