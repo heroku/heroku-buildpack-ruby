@@ -751,7 +751,7 @@ params = CGI.parse(uri.query || "")
       return true unless dbmigrate.is_defined?
 
       require 'benchmark'
-      if ENV['DATABASE_URL'].nil?
+      if user_env_hash['DATABASE_URL'].nil?
         puts "Skipping database migration since DATABASE_URL is not defined."
         return
       end
