@@ -32,8 +32,8 @@ dependencies=(
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar/ruby-2.0.0-jruby-1.7.20.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/rails_log_stdout.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/rails3_serve_static_assets.tgz'
-  'http://heroku-jdk.s3.amazonaws.com/openjdk1.7-latest.tar.gz'
-  'http://heroku-jdk.s3.amazonaws.com/openjdk1.8-latest.tar.gz'
+  'http://lang-jvm.s3.amazonaws.com/jdk/openjdk1.7-latest.tar.gz'
+  'http://lang-jvm.s3.amazonaws.com/jdk/openjdk1.8-latest.tar.gz'
   'http://s3pository.heroku.com/node/v0.10.30/node-v0.10.30-linux-x64.tar.gz'
 )
 
