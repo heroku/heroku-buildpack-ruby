@@ -26,6 +26,7 @@ class LanguagePack::Helpers::RakeRunner
       @status && @status != :nil
     end
 
+    # Is set by RakeTask#invoke to one of the ALLOWED verbs
     def status
       raise "Status not set for #{self.inspect}" if @status == :nil
       raise "Not allowed status: #{@status} for #{self.inspect}" unless ALLOWED.include?(@status)
@@ -90,8 +91,6 @@ class LanguagePack::Helpers::RakeRunner
     msg =  "Could not detect rake tasks\n"
     msg << "ensure you can run `$ bundle exec rake -P` against your app with no environment variables present\n"
     msg << "and using the production group of your Gemfile.\n"
-    msg << "This may be intentional, if you expected rake tasks to be run\n"
-    msg << "cancel the build (CTRL+C) and fix the error then commit the fix:\n"
     msg << out
     puts msg if cannot_load_rakefile?
     return self

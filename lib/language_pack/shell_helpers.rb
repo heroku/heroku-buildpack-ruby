@@ -1,5 +1,9 @@
 require "shellwords"
 
+
+class BuildpackError < StandardError
+end
+
 class NoShellEscape < String
   def shellescape
     self
@@ -23,7 +27,7 @@ module LanguagePack
     end
 
     def self.blacklist?(key)
-      %w(PATH GEM_PATH GEM_HOME GIT_DIR).include?(key)
+      %w(PATH GEM_PATH GEM_HOME GIT_DIR JRUBY_OPTS).include?(key)
     end
 
     def self.initialize_env(path)
@@ -37,22 +41,13 @@ module LanguagePack
       end
     end
 
-    # display error message and stop the build process
-    # @param [String] error message
-    def error(message)
-      Kernel.puts " !"
-      message.split("\n").each do |line|
-        Kernel.puts " !     #{line.strip}"
-      end
-      Kernel.puts " !"
-      log "exit", :error => message if respond_to?(:log)
-      exit 1
-    end
-
     def run!(command, options = {})
-      puts "CMD: " + command if (ENV['SHOW_COMMANDS'])
-      result = run(command, options)
-      error("Command: '#{command}' failed unexpectedly:\n#{result}") unless $?.success?
+      result      = run(command, options)
+      error_class = options.delete(:error_class) || StandardError
+      unless $?.success?
+        message = "Command: '#{command}' failed unexpectedly:\n#{result}"
+        raise error_class, message
+      end
       return result
     end
 
@@ -129,6 +124,10 @@ module LanguagePack
       end
       @warnings ||= []
       @warnings << message
+    end
+
+    def error(message)
+      raise BuildpackError, message
     end
 
     def deprecate(message)

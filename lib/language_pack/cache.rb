@@ -15,10 +15,21 @@ class LanguagePack::Cache
     target.exist? && target.rmtree
   end
 
-  # write cache contents
+  # Overwrite cache contents
+  # When called the cache destination will be cleared and the new contents coppied over
+  # This method is perferable as LanguagePack::Cache#add can cause accidental cache bloat.
+  #
   # @param [String] path of contents to store. it will be stored using this a relative path from the cache_base.
   # @param [String] relative path to store the cache contents, if nil it will assume the from path
   def store(from, path = nil)
+    path ||= from
+    clear path
+    copy from, (@cache_base + path)
+  end
+
+  # Adds file to cache without clearing the destination
+  # Use LanguagePack::Cache#store to avoid accidental cache bloat
+  def add(from, path = nil)
     path ||= from
     copy from, (@cache_base + path)
   end
