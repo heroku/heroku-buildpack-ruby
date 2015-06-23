@@ -361,7 +361,7 @@ ERROR_MSG
 You have not declared a Ruby version in your Gemfile.
 To set your Ruby version add this line to your Gemfile:
 #{ruby_version.to_gemfile}
-# See https://devcenter.heroku.com/articles/ruby-versions for more information.
+# See http://doc.scalingo.com/languages/ruby for more information.
 WARNING
       end
     end
@@ -370,8 +370,7 @@ WARNING
   rescue LanguagePack::Fetcher::FetchError => error
     message = <<ERROR
 An error occurred while installing Ruby #{ruby_version.version}
-For supported Ruby versions see https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
-Note: Only the most recent version of Ruby 2.1 is supported on Cedar-14
+For supported Ruby versions see http://doc.scalingo.com/languages/ruby
 #{error.message}
 ERROR
     error message
@@ -522,7 +521,7 @@ Removing `Gemfile.lock` because it was generated on Windows.
 Bundler will do a full resolve so native gems are handled properly.
 This may result in unexpected gem versions being used in your app.
 In rare occasions Bundler may not be able to resolve your dependencies at all.
-https://devcenter.heroku.com/articles/bundler-windows-gemfile
+http://doc.scalingo.com/languages/ruby/bundle-gemfile-on-windows
 WARNING
 
           log("bundle", "has_windows_gemfile_lock")
@@ -593,7 +592,7 @@ WARNING
 
 
 Detected sqlite3 gem which is not supported on Heroku.
-https://devcenter.heroku.com/articles/sqlite3
+http://doc.scalingo.com/databases/sqlite3
 ERROR
           end
 
@@ -766,7 +765,7 @@ params = CGI.parse(uri.query || "")
     msg = "Precompiling assets failed.\n"
     if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
       msg << "Attempted to access a nonexistent database:\n"
-      msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
+      msg << "Refer a database in your environment and redeploy\n"
     end
     error msg
   end

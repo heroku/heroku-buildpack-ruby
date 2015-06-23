@@ -7,7 +7,7 @@ module LanguagePack
         msg = ""
         msg << output
         msg << "Can not parse Ruby Version:\n"
-        msg << "Valid versions listed on: https://devcenter.heroku.com/articles/ruby-support\n"
+        msg << "Valid versions listed on: http://doc.scalingo.com/languages/ruby\n"
         super msg
       end
     end
