@@ -22,10 +22,11 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   end
 
   def default_process_types
+    subdir = app_subdir? ? File.join(@app_subdir, '/') : ''
     instrument "rails4.default_process_types" do
       super.merge({
-        "web"     => "bin/rails server -p $PORT -e $RAILS_ENV",
-        "console" => "bin/rails console"
+        "web"     => subdir + "bin/rails server -p $PORT -e $RAILS_ENV",
+        "console" => subdir + "bin/rails console"
       })
     end
   end
