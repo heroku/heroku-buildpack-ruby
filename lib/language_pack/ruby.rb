@@ -94,6 +94,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
+        create_base_path_symlinks if app_subdir?
       end
       super
     end
@@ -862,5 +863,23 @@ params = CGI.parse(uri.query || "")
       # need to reinstall language pack gems
       install_bundler_in_app
     end
+  end
+
+  def create_base_path_symlinks
+    Dir.chdir(@base_path) do
+      FileUtils.mkdir_p('vendor')
+      create_base_symlink('.profile.d')
+      create_base_symlink('bin')
+      create_base_symlink('tmp')
+      create_base_symlink('vendor/bundle')
+      create_base_symlink(slug_vendor_ruby)
+    end
+  end
+
+  def create_base_symlink(file_name)
+    target_path = File.join @app_subdir, file_name
+    file_name.count('/').times { target_path = File.join('..', target_path) }
+    puts "Symlinking #{file_name} to #{target_path}"
+    `ln -s -f #{target_path} #{file_name}`
   end
 end
