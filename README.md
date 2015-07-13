@@ -2,6 +2,19 @@
 
 This is a [Heroku Buildpack](http://devcenter.heroku.com/articles/buildpacks) for Ruby, Rack, and Rails apps. It uses [Bundler](http://gembundler.com) for dependency management.
 
+## The Subdirectory Feature
+
+The difference between this buildpack and heroku's standard Ruby buildpack is that you can **run an app in a project subdirectory**. In other words, your project doesn't need to be in the root directory; it could be in a subdirectory like `web/` or `rails/`.
+
+To make this work, you need to set two envoronment variables BEFORE pushing to a new heroku app: `APP_SUBDIR` and `BUNDLE_GEMFILE`.
+
+For example, if we're deploying a Rails app that lives in a subdirectory `web`, you would need to set:
+
+- `APP_SUBDIR=web` is the name of the subdirectory that your Rails app lives in
+- `BUNDLE_GEMFILE=web/Gemfile` is the location of the `Gemfile` of your Rails app
+
+**TODO:** One of these can be determined from the other; update the code to only require one environment variable.
+
 ## Usage
 
 ### Ruby
@@ -166,3 +179,8 @@ $ bundle exec rake spec
 ```
 
 Now go take a nap or something for a really long time.
+
+### Credits
+
+Special thanks to Heroku for originally creating this buildpack, and to
+[@mindeavor](https://github.com/mindeavor) for his work to [add the subdirectory feature](https://github.com/makersquare/heroku-buildpack-ruby).
