@@ -38,6 +38,9 @@ class LanguagePack::Base
       @deprecations  = []
       @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
 
+      # We don't need to use this for the build process
+      user_env_hash.delete('BUNDLE_GEMFILE')
+
       Dir.chdir build_path
     end
   end
