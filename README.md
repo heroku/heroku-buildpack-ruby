@@ -1,4 +1,5 @@
 # Heroku Buildpack for Ruby
+![ruby_buildpack](https://cloud.githubusercontent.com/assets/51578/8881228/3b244e32-320c-11e5-866c-4a5c4fac5e47.jpg)
 
 This is a [Heroku Buildpack](http://devcenter.heroku.com/articles/buildpacks) for Ruby, Rack, and Rails apps. It uses [Bundler](http://gembundler.com) for dependency management.
 
