@@ -29,7 +29,8 @@
     "sharpstone/ruby_193_jruby_17161_jdk8",
     "sharpstone/jruby-minimal",
     "sharpstone/empty-procfile",
-    "sharpstone/bad_ruby_version"
+    "sharpstone/bad_ruby_version",
+    "sharpstone/activerecord41_scaffold"
   ],
   "rack": [
     "sharpstone/default_ruby",
