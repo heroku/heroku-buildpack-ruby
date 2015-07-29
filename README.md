@@ -153,7 +153,7 @@ it does not parallelize tests within a test file. To run the tests: clone the re
 $ bundle exec hatchet install
 ```
 
-then go to [hatchet](https://github.com/heroku/hatchet) and follow the
+then go to [hatchet](https://github.com/heroku/hatchet) repo and follow the
 instructions to set it up.
 
 Now run the tests:
