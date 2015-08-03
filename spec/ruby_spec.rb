@@ -3,6 +3,7 @@ require_relative 'spec_helper'
 describe "Ruby apps" do
   describe "default WEB_CONCURRENCY" do
     it "auto scales WEB_CONCURRENCY" do
+      pending("https://github.com/heroku/api/issues/4426")
       app = Hatchet::Runner.new("default_ruby")
       app.setup!
       app.set_config("SENSIBLE_DEFAULTS" => "enabled")
