@@ -70,14 +70,6 @@ describe "Ruby apps" do
       end
     end
 
-    context "active record 4.0-" do
-      it "writes a heroku specific database.yml" do
-        Hatchet::Runner.new("rails4-manifest").deploy do |app, heroku|
-          expect(app.output).to include("Writing config/database.yml to read from DATABASE_URL")
-        end
-      end
-    end
-
     context "active record 4.1+" do
       it "doesn't write a heroku specific database.yml" do
         Hatchet::Runner.new("activerecord41_scaffold").deploy do |app, heroku|
