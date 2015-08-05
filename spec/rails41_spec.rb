@@ -24,4 +24,27 @@ describe "Rails 4.1.x" do
       end
     end
   end
+
+  it "should not overwrite existing files with cached files" do
+    string = SecureRandom.hex(13)
+    new_string = SecureRandom.hex(13)
+
+    Hatchet::Runner.new("rails41_scaffold").deploy do |app, heroku|
+      # First Deploy
+      `mkdir public/assets`
+      `echo #{string} > public/assets/file.txt`
+      `git add -A; git commit -m 'adding file.txt'`
+      app.push!
+
+      # Second Deploy
+      `echo #{new_string} > public/assets/file.txt`
+      `git add -A; git commit -m 'updating file.txt'`
+      app.push!
+
+      # Asserts
+      result = app.run('cat public/assets/file.txt')
+      expect(result).not_to match(string)
+      expect(result).to match(new_string)
+    end
+  end
 end
