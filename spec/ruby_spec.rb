@@ -60,4 +60,22 @@ describe "Ruby apps" do
       end
     end
   end
+
+  describe "database configuration" do
+    context "no active record" do
+      it "writes a heroku specific database.yml" do
+        Hatchet::Runner.new("default_ruby").deploy do |app, heroku|
+          expect(app.output).to include("Writing config/database.yml to read from DATABASE_URL")
+        end
+      end
+    end
+
+    context "active record 4.1+" do
+      it "doesn't write a heroku specific database.yml" do
+        Hatchet::Runner.new("activerecord41_scaffold").deploy do |app, heroku|
+          expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
+        end
+      end
+    end
+  end
 end

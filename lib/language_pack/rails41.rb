@@ -15,11 +15,6 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
     end
   end
 
-  def create_database_yml
-    instrument 'ruby.create_database_yml' do
-    end
-  end
-
   def setup_profiled
     instrument 'setup_profiled' do
       super
