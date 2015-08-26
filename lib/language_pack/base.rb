@@ -19,18 +19,19 @@ class LanguagePack::Base
   DEFAULT_LEGACY_STACK = "cedar"
   ROOT_DIR             = File.expand_path("../../..", __FILE__)
 
-  attr_reader :build_path, :cache
+  attr_reader :build_path, :cache, :app_dir
 
   # changes directory to the build_path
   # @param [String] the path of the build dir
   # @param [String] the path of the cache dir this is nil during detect and release
   def initialize(build_path, cache_path=nil)
-     self.class.instrument "base.initialize" do
+    self.class.instrument "base.initialize" do
       @build_path    = build_path
+      @app_dir       = Pathname.new(env("APP_DIR") || "")
       @stack         = ENV.fetch("STACK")
       @cache         = LanguagePack::Cache.new(cache_path) if cache_path
       @metadata      = LanguagePack::Metadata.new(@cache)
-      @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
+      @bundler_cache = LanguagePack::BundlerCache.new(@cache, stack: @stack, app_dir: @app_dir)
       @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
       @warnings      = []
       @deprecations  = []
@@ -104,7 +105,7 @@ class LanguagePack::Base
       f.write(release.to_yaml)
     end
 
-    unless File.exist?("Procfile")
+    unless File.exist?(app_dir + "Procfile")
       msg =  "No Procfile detected, using the default web server (webrick)\n"
       msg << "https://devcenter.heroku.com/articles/ruby-default-web-server"
       warn msg

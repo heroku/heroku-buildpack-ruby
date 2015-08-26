@@ -21,10 +21,11 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 
   def default_process_types
     instrument "rails3.default_process_types" do
+      rails_path = app_dir + "script/rails"
       # let's special case thin here
       web_process = bundler.has_gem?("thin") ?
         "bundle exec thin start -R config.ru -e $RAILS_ENV -p $PORT" :
-        "bundle exec rails server -p $PORT"
+        "bundle exec #{rails_path} server -p $PORT"
 
       super.merge({
         "web" => web_process,
