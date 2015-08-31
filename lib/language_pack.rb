@@ -7,7 +7,8 @@ module LanguagePack
   end
 
   def self.app_dir
-    @app_dir ||= LanguagePack::ShellHelpers.user_env_hash["APP_DIR"]
+    dir = LanguagePack::ShellHelpers.user_env_hash["APP_DIR"]
+    dir && Dir.exists?(dir) ? dir : nil
   end
 
   def self.app_path
