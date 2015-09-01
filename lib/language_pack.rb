@@ -6,6 +6,15 @@ module LanguagePack
   module Helpers
   end
 
+  def self.app_dir
+    dir = LanguagePack::ShellHelpers.user_env_hash["APP_DIR"]
+    dir && Dir.exists?(dir) ? dir : nil
+  end
+
+  def self.app_path
+    @app_path ||= app_dir ? File.join(ARGV[0], app_dir) : ARGV[0]
+  end
+
   # detects which language pack to use
   # @param [Array] first argument is a String of the build directory
   # @return [LanguagePack] the {LanguagePack} detected
@@ -13,8 +22,10 @@ module LanguagePack
     Instrument.instrument 'detect' do
       Dir.chdir(args.first)
 
-      pack = [ NoLockfile, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
-        klass.use?
+      pack = Dir.chdir(app_path) do
+        [ NoLockfile, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+          klass.use?
+        end
       end
 
       return pack ? pack.new(*args) : nil

@@ -5,14 +5,15 @@ require "language_pack/cache"
 # manipulating the `vendor/bundle` Bundler cache directory.
 # supports storing the cache in a "stack" directory
 class LanguagePack::BundlerCache
-  attr_reader :bundler_dir
+  attr_reader :bundler_dir, :app_dir
 
   # @param [LanguagePack::Cache] cache object
   # @param [String] stack buildpack is running on
-  def initialize(cache, stack = nil)
+  def initialize(cache, stack: nil, app_dir: "")
     @cache       = cache
     @stack       = stack
-    @bundler_dir = Pathname.new("vendor/bundle")
+    @app_dir     = Pathname.new(app_dir)
+    @bundler_dir = @app_dir + "vendor/bundle"
     @stack_dir   = @stack ? Pathname.new(@stack) + @bundler_dir : @bundler_dir
   end
 
@@ -41,7 +42,7 @@ class LanguagePack::BundlerCache
 
   # writes cache contents to cache store
   def store
-    @cache.store(".bundle")
+    @cache.store(app_dir + ".bundle")
     @cache.store(@bundler_dir, @stack_dir)
   end
 

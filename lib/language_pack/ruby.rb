@@ -94,9 +94,20 @@ class LanguagePack::Ruby < LanguagePack::Base
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
+        symlink_procfile
       end
       super
     end
+  end
+
+  # Heroku expects the procfile to be in the root directory
+  # This symlinks the Procfile that might be in @app_dir into root
+  def symlink_procfile
+    # No need to run this task if app_dir doesn't exist
+    return unless @app_dir
+
+    procfile = "#{app_dir}/Procfile"
+    FileUtils.ln(procfile, "Procfile") if File.exists?(procfile)
   end
 
 private
@@ -287,6 +298,8 @@ SHELL
       set_env_default  "LANG",     "en_US.UTF-8"
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
+      set_env_default  "BUNDLE_GEMFILE", "$HOME/#{app_dir}/Gemfile"
+      set_env_default  "RAKEOPT", "'--rakefile #{app_dir}/Rakefile'"
 
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
 
@@ -529,7 +542,7 @@ WARNING
         else
           # using --deployment is preferred if we can
           bundle_command += " --deployment"
-          cache.load ".bundle"
+          cache.load(app_dir + ".bundle")
         end
 
         topic("Installing dependencies using bundler #{bundler.version}")
@@ -549,8 +562,8 @@ WARNING
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
           env_vars       = {
-            "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
-            "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
+            "BUNDLE_GEMFILE"                => (app_dir + "Gemfile").to_s,
+            "BUNDLE_CONFIG"                 => (app_dir + ".bundle/config").to_s,
             "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
             "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
             "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),

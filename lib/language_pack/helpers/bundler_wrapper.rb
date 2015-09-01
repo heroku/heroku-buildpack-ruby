@@ -13,7 +13,6 @@ class LanguagePack::Helpers::BundlerWrapper
   DEFAULT_FETCHER    = LanguagePack::Fetcher.new(VENDOR_URL)         # coupling
   BUNDLER_DIR_NAME   = LanguagePack::Ruby::BUNDLER_GEM_PATH          # coupling
   BUNDLER_PATH       = File.expand_path("../../../../tmp/#{BUNDLER_DIR_NAME}", __FILE__)
-  GEMFILE_PATH       = Pathname.new "./Gemfile"
 
   attr_reader   :bundler_path
 
@@ -21,7 +20,7 @@ class LanguagePack::Helpers::BundlerWrapper
     @fetcher              = options[:fetcher]      || DEFAULT_FETCHER
     @bundler_tmp          = Dir.mktmpdir
     @bundler_path         = options[:bundler_path] || File.join(@bundler_tmp, "#{BUNDLER_DIR_NAME}")
-    @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
+    @gemfile_path         = options[:gemfile_path] || Pathname.new(LanguagePack.app_path + "/Gemfile")
     @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
     @gemfile_lock_path    = "#{@gemfile_path}.lock"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
