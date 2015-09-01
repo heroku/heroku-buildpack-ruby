@@ -1,5 +1,7 @@
 ## Master
 
+## v139 (8/31/2015)
+
 * Cached asset file should never take precedent over existing file (#402)
 * Do not write `database.yml` when using active record >= 4.1 (previously we only detected >= Rails 4.1) (#403)
 
