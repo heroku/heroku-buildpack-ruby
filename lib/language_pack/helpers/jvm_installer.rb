@@ -4,7 +4,7 @@ class LanguagePack::JvmInstaller
   include LanguagePack::ShellHelpers
 
   SYS_PROPS_FILE  = "system.properties"
-  JVM_BASE_URL    = "http://lang-jvm.s3.amazonaws.com/jdk"
+  JVM_BASE_URL    = "https://lang-jvm.s3.amazonaws.com/jdk"
   JVM_1_8_PATH    = "openjdk1.8-latest"
   JVM_1_7_PATH    = "openjdk1.7-latest"
   JVM_1_7_25_PATH = "openjdk1.7.0_25"
