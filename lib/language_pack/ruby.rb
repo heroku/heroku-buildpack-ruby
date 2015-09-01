@@ -299,6 +299,7 @@ SHELL
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",     binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":") + ":$PATH"
       set_env_default  "BUNDLE_GEMFILE", "$HOME/#{app_dir}/Gemfile"
+      set_env_default  "RAKEOPT", "'--rakefile #{app_dir}/Rakefile'"
 
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
 
