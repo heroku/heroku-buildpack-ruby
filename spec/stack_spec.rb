@@ -1,7 +1,7 @@
 require_relative "spec_helper"
 
 describe "Stack Changes" do
-  it "should reinstall gems on stack change" do
+  xit "should reinstall gems on stack change" do
     app = Hatchet::Runner.new('mri_200').setup!
     app.heroku.put_stack(app.name, "cedar-14")
     app.deploy do |app, heroku|

@@ -1,17 +1,6 @@
 require_relative 'spec_helper'
 
 describe "Bugs" do
-  context "MRI 1.8.7 on cedar" do
-    it "should install nokogiri" do
-      app = Hatchet::Runner.new('mri_187_nokogiri').setup!
-      app.heroku.put_stack(app.name, "cedar")
-      app.deploy do |app, heroku|
-        expect(app.output).to match("Installing nokogiri")
-        expect(app.output).to match("Bundle complete")
-      end
-    end
-  end
-
   it "nokogiri should use the system libxml2" do
     Hatchet::Runner.new("nokogiri_160").deploy do |app|
       expect(app.output).to match("nokogiri")
