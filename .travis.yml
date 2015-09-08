@@ -1,7 +1,7 @@
 language: ruby
 rvm:
 - 2.0.0
-before_script: bundle exec rake hatchet:setup_travis
+before_script: bundle exec rake travis:setup
 script: bundle exec parallel_rspec -n 11 spec/
 after_script:
 - heroku keys:remove $USER@`hostname`
@@ -12,3 +12,10 @@ env:
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_APP_LIMIT=80
   - secure: bM8uWN5b9hZzzHk73EN9xHCK65vuopcbwQILcuMt0A1mHB8tSH1xyMYddNrbGdfznLAVXf8UjvKvv6rvvG4O+j3GRuIWVNukoAvZxG0FC9QxYuKbDccEPPdtqGwVEfWEKQYLajsIpF8/ACyALGV+Oe/Z28WRk6Ba3FLptfulc6s=
+sudo: false
+addons:
+  apt:
+    sources:
+      - heroku
+    packages:
+      - heroku-toolbelt
