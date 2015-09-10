@@ -9,17 +9,6 @@ describe "Ruby Versions" do
     end
   end
 
-
-  it "should deploy ruby 1.8.7 properly on cedar" do
-    app = Hatchet::Runner.new('mri_187').setup!
-    app.heroku.put_stack(app.name, "cedar")
-    app.deploy do |app|
-      version = '1.8.7'
-      expect(app.output).to match(version)
-      expect(app.run('ruby -v')).to match(version)
-    end
-  end
-
   it "should deploy ruby 1.9.2 properly" do
     Hatchet::Runner.new("mri_192").deploy do |app|
       version = '1.9.2'
@@ -54,32 +43,6 @@ describe "Ruby Versions" do
     end
   end
 
-  it "should deploy jruby 1.7.3 (legacy jdk) properly on cedar", stack: :cedar do
-    app = Hatchet::Runner.new("ruby_193_jruby_173")
-    app.setup!
-    app.heroku.put_stack(app.name, "cedar")
-
-    app.deploy do |app|
-      expect(app.output).to match("Installing JVM: openjdk1.7.0_25")
-      expect(app.output).to match("ruby-1.9.3-jruby-1.7.3")
-      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
-      expect(app.run('ruby -v')).to match("jruby 1.7.3")
-    end
-  end
-
-  it "should deploy jruby 1.7.6 (jdk 7) latest properly on cedar", stack: :cedar do
-    app = Hatchet::Runner.new("ruby_193_jruby_176")
-    app.setup!
-    app.heroku.put_stack(app.name, 'cedar')
-
-    app.deploy do |app|
-      expect(app.output).to match("Installing JVM: openjdk1.7-latest")
-      expect(app.output).to match("ruby-1.9.3-jruby-1.7.6")
-      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
-      expect(app.run('ruby -v')).to match("jruby 1.7.6")
-    end
-  end
-
   it "should deploy jdk 8 on cedar-14 by default" do
     app = Hatchet::Runner.new("ruby_193_jruby_17161")
     app.setup!
@@ -105,16 +68,6 @@ describe "Ruby Versions" do
     app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk1.7-latest")
       expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
-    end
-  end
-
-  it "should deploy jruby 1.7.16.1 (jdk 8) properly on cedar with sys props file" do
-    app = Hatchet::Runner.new("ruby_193_jruby_17161_jdk8")
-    app.setup!
-    app.heroku.put_stack(app.name, 'cedar')
-
-    app.deploy do |app|
-      expect(app.output).to match("Installing JVM: openjdk1.8-latest")
     end
   end
 end

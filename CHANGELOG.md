@@ -1,5 +1,9 @@
 ## Master
 
+## v140 (9/9/2015)
+
+* JRuby specific ruby error message (#412)
+
 ## v139 (8/31/2015)
 
 * Cached asset file should never take precedent over existing file (#402)
