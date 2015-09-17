@@ -1,6 +1,6 @@
 # Scalingo buildpack: Ruby
 
-A Scalingo [buildpack](http://doc.scalingo.com/buildpacks/) for Ruby based apps (Ruby, Rack, and Rails apps). It uses [Bundler](http://gembundler.com) for dependency management.
+A Scalingo [buildpack](http://doc.scalingo.com/buildpacks) for Ruby based apps (Ruby, Rack, and Rails apps). It uses [Bundler](http://gembundler.com) for dependency management.
 
 ## Usage
 
