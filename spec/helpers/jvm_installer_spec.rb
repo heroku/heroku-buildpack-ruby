@@ -12,6 +12,8 @@ describe "JvmInstall" do
 
         expect(`ls bin`).to match("java")
         expect(`cat release 2>&1`).to match("1.8.0_51")
+
+        ENV['JDK_URL_1_8'] = nil
       end
     end
   end
@@ -19,8 +21,6 @@ describe "JvmInstall" do
   it "downloads standard JDK" do
     Dir.mktmpdir do |dir|
       Dir.chdir(dir) do
-        ENV['JDK_URL_1_8'] = nil
-
         jvm_installer = LanguagePack::JvmInstaller.new(dir, @stack)
         jvm_installer.install("1.8")
 
