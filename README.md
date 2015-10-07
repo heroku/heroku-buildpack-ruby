@@ -3,6 +3,8 @@
 
 This is a [Heroku Buildpack](http://devcenter.heroku.com/articles/buildpacks) for Ruby, Rack, and Rails apps. It uses [Bundler](http://gembundler.com) for dependency management.
 
+This buildpack requires 64-bit Linux.
+
 ## Usage
 
 ### Ruby
