@@ -1,5 +1,7 @@
 ## Master
 
+* Support for custom JDK versions in system.properties (#423)
+
 ## v140 (9/9/2015)
 
 * JRuby specific ruby error message (#412)
