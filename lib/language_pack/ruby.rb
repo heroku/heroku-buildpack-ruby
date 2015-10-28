@@ -262,7 +262,7 @@ SHELL
         ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
       end
       setup_ruby_install_env
-      ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
+      ENV["PATH"] += ":#{node_preinstall_bin_path}" if node_js_installed?
 
       # TODO when buildpack-env-args rolls out, we can get rid of
       # ||= and the manual setting below
@@ -754,17 +754,28 @@ params = CGI.parse(uri.query || "")
   # @note execjs will blow up if no JS RUNTIME is detected and is loaded.
   # @return [Array] the node.js binary path if we need it or an empty Array
   def add_node_js_binary
-    bundler.has_gem?('execjs') && !node_js_installed? ? [@node_installer.binary_path] : []
-  end
-
-  def node_bp_bin_path
-    "#{Dir.pwd}/#{NODE_BP_PATH}"
+    bundler.has_gem?('execjs') && node_not_preinstalled? ? [@node_installer.binary_path] : []
   end
 
   # checks if node.js is installed via the official heroku-buildpack-nodejs using multibuildpack
-  # @return [Boolean] true if it's detected and false if it isn't
-  def node_js_installed?
-    @node_js_installed ||= run("#{node_bp_bin_path}/node -v") && $?.success?
+  # @return String if it's detected and false if it isn't
+  def node_preinstall_bin_path
+    return @node_preinstall_bin_path if defined?(@node_preinstall_bin_path)
+
+    legacy_path = "#{Dir.pwd}/#{NODE_BP_PATH}"
+    path        = run("which node")
+    if path && $?.success?
+      @node_preinstall_bin_path = path
+    elsif run("#{legacy_path}/node -v") && $?.success?
+      @node_preinstall_bin_path = legacy_path
+    else
+      @node_preinstall_bin_path = false
+    end
+  end
+  alias :node_js_installed? :node_preinstall_bin_path
+
+  def node_not_preinstalled?
+    !node_js_installed?
   end
 
   def run_assets_precompile_rake_task
