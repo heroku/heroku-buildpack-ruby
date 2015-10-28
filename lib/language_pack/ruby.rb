@@ -207,6 +207,9 @@ case $(ulimit -u) in
 512)   # 2X Dyno
   JVM_MAX_HEAP=768
   ;;
+16384) # IX Dyno
+  JVM_MAX_HEAP=2048
+  ;;
 32768) # PX Dyno
   JVM_MAX_HEAP=5120
   ;;
@@ -244,7 +247,7 @@ EOF
   # default JAVA_TOOL_OPTIONS
   # return [String] string of JAVA_TOOL_OPTIONS
   def default_java_tool_options
-    "-Xmx${JVM_MAX_HEAP:-\"384\"}m -Djava.rmi.server.useCodebaseOnly=true"
+    "-Xmx${JVM_MAX_HEAP:-\"384\"}m"
   end
 
   # sets up the environment variables for the build process
