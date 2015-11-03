@@ -1,6 +1,12 @@
 ## Master
 
+## v141 (11/03/2015)
+
 * Support for custom JDK versions in system.properties (#423)
+* Fix nodejs buildpack integration (#429)
+* Automatic jruby heap setting for IX dynos (#426)
+* Warn when RAILS_ENV != production (https://devcenter.heroku.com/articles/deploying-to-a-custom-rails-environment)
+* Warn when using asset_sync (https://devcenter.heroku.com/articles/please-do-not-use-asset-sync)
 
 ## v140 (9/9/2015)
 
