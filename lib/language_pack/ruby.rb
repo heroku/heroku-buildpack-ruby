@@ -150,7 +150,7 @@ private
       elsif ruby_version.ruby_version == "1.8.7"
         @slug_vendor_base = "vendor/bundle/1.8"
       else
-        @slug_vendor_base = run_stdout(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
+        @slug_vendor_base = run_no_pipe(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
         error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
         @slug_vendor_base
       end
@@ -217,6 +217,14 @@ esac
 EOF
   end
 
+  def set_java_mem
+    <<-EOF
+if ! [[ "${JAVA_OPTS}" == *-Xmx* ]]; then
+  export JAVA_MEM=${JAVA_MEM:--Xmx${JVM_MAX_HEAP}m}
+fi
+EOF
+  end
+
   def set_default_web_concurrency
     <<-EOF
 case $(ulimit -u) in
@@ -244,10 +252,10 @@ EOF
     "-Xcompile.invokedynamic=false"
   end
 
-  # default JAVA_TOOL_OPTIONS
-  # return [String] string of JAVA_TOOL_OPTIONS
-  def default_java_tool_options
-    "-Xmx${JVM_MAX_HEAP:-\"384\"}m"
+  # default Java Xmx
+  # return [String] string of Java Xmx
+  def default_java_mem
+    "-Xmx${JVM_MAX_HEAP:-384}m"
   end
 
   # sets up the environment variables for the build process
@@ -255,9 +263,9 @@ EOF
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
-        ENV["JAVA_TOOL_OPTIONS"] = run(<<-SHELL).chomp
+        ENV["JAVA_MEM"] = run(<<-SHELL).chomp
 #{set_jvm_max_heap}
-echo #{default_java_tool_options}
+echo #{default_java_mem}
 SHELL
         ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
       end
@@ -287,9 +295,9 @@ SHELL
 
       if ruby_version.jruby?
         add_to_export set_jvm_max_heap
+        add_to_export set_java_mem
         set_export_default "JAVA_OPTS",  default_java_opts
         set_export_default "JRUBY_OPTS", default_jruby_opts
-        set_export_default "JAVA_TOOL_OPTIONS", default_java_tool_options
       end
     end
   end
@@ -305,9 +313,9 @@ SHELL
 
       if ruby_version.jruby?
         add_to_profiled set_jvm_max_heap
+        add_to_profiled set_java_mem
         set_env_default "JAVA_OPTS", default_java_opts
         set_env_default "JRUBY_OPTS", default_jruby_opts
-        set_env_default "JAVA_TOOL_OPTIONS", default_java_tool_options
       end
     end
   end
