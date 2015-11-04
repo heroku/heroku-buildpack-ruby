@@ -80,6 +80,15 @@ class LanguagePack::Ruby < LanguagePack::Base
     end
   end
 
+  def best_practice_warnings
+    if bundler.has_gem?("asset_sync")
+      warn(<<-WARNING)
+You are using the `asset_sync` gem.
+See https://devcenter.heroku.com/articles/please-do-not-use-asset-sync for more information.
+WARNING
+    end
+  end
+
   def compile
     instrument 'ruby.compile' do
       # check for new app at the beginning of the compile
@@ -102,6 +111,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         build_bower
         run_assets_precompile_rake_task
       end
+      best_practice_warnings
       super
     end
   end
@@ -204,10 +214,21 @@ case $(ulimit -u) in
 512)   # 2X Dyno
   JVM_MAX_HEAP=768
   ;;
+16384) # IX Dyno
+  JVM_MAX_HEAP=2048
+  ;;
 32768) # PX Dyno
   JVM_MAX_HEAP=5120
   ;;
 esac
+EOF
+  end
+
+  def set_java_mem
+    <<-EOF
+if ! [[ "${JAVA_OPTS}" == *-Xmx* ]]; then
+  export JAVA_MEM=${JAVA_MEM:--Xmx${JVM_MAX_HEAP}m}
+fi
 EOF
   end
 
@@ -238,10 +259,10 @@ EOF
     "-Xcompile.invokedynamic=false"
   end
 
-  # default JAVA_TOOL_OPTIONS
-  # return [String] string of JAVA_TOOL_OPTIONS
-  def default_java_tool_options
-    "-Xmx${JVM_MAX_HEAP:-\"384\"}m -Djava.rmi.server.useCodebaseOnly=true"
+  # default Java Xmx
+  # return [String] string of Java Xmx
+  def default_java_mem
+    "-Xmx${JVM_MAX_HEAP:-384}m"
   end
 
   # sets up the environment variables for the build process
@@ -249,14 +270,14 @@ EOF
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
-        ENV["JAVA_TOOL_OPTIONS"] = run(<<-SHELL).chomp
+        ENV["JAVA_MEM"] = run(<<-SHELL).chomp
 #{set_jvm_max_heap}
-echo #{default_java_tool_options}
+echo #{default_java_mem}
 SHELL
         ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
       end
       setup_ruby_install_env
-      ENV["PATH"] += ":#{node_bp_bin_path}" if node_js_installed?
+      ENV["PATH"] += ":#{node_preinstall_bin_path}" if node_js_installed?
 
       # TODO when buildpack-env-args rolls out, we can get rid of
       # ||= and the manual setting below
@@ -281,9 +302,9 @@ SHELL
 
       if ruby_version.jruby?
         add_to_export set_jvm_max_heap
+        add_to_export set_java_mem
         set_export_default "JAVA_OPTS",  default_java_opts
         set_export_default "JRUBY_OPTS", default_jruby_opts
-        set_export_default "JAVA_TOOL_OPTIONS", default_java_tool_options
       end
     end
   end
@@ -299,9 +320,9 @@ SHELL
 
       if ruby_version.jruby?
         add_to_profiled set_jvm_max_heap
+        add_to_profiled set_java_mem
         set_env_default "JAVA_OPTS", default_java_opts
         set_env_default "JRUBY_OPTS", default_jruby_opts
-        set_env_default "JAVA_TOOL_OPTIONS", default_java_tool_options
       end
     end
   end
@@ -364,7 +385,7 @@ ERROR_MSG
 
       topic "Using Ruby version: #{ruby_version.version}"
       if !ruby_version.set
-        warn(<<WARNING)
+        warn(<<-WARNING)
 You have not declared a Ruby version in your Gemfile.
 To set your Ruby version add this line to your Gemfile:
 #{ruby_version.to_gemfile}
@@ -508,7 +529,7 @@ ERROR
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
   def remove_vendor_bundle
     if File.exists?("vendor/bundle")
-      warn(<<WARNING)
+      warn(<<-WARNING)
 Removing `vendor/bundle`.
 Checking in `vendor/bundle` is not supported. Please remove this directory
 and add it to your .gitignore. To vendor your gems with Bundler, use
@@ -532,7 +553,7 @@ WARNING
         bundle_command << " -j4"
 
         if bundler.windows_gemfile_lock?
-          warn(<<WARNING, inline: true)
+          warn(<<-WARNING, inline: true)
 Removing `Gemfile.lock` because it was generated on Windows.
 Bundler will do a full resolve so native gems are handled properly.
 This may result in unexpected gem versions being used in your app.
@@ -806,17 +827,28 @@ params = CGI.parse(uri.query || "")
   # @note execjs will blow up if no JS RUNTIME is detected and is loaded.
   # @return [Array] the node.js binary path if we need it or an empty Array
   def add_node_js_binary
-    bundler.has_gem?('execjs') && !node_js_installed? ? [@node_installer.binary_path] : []
-  end
-
-  def node_bp_bin_path
-    "#{Dir.pwd}/#{NODE_BP_PATH}"
+    bundler.has_gem?('execjs') && node_not_preinstalled? ? [@node_installer.binary_path] : []
   end
 
   # checks if node.js is installed via the official heroku-buildpack-nodejs using multibuildpack
-  # @return [Boolean] true if it's detected and false if it isn't
-  def node_js_installed?
-    @node_js_installed ||= run("#{node_bp_bin_path}/node -v") && $?.success?
+  # @return String if it's detected and false if it isn't
+  def node_preinstall_bin_path
+    return @node_preinstall_bin_path if defined?(@node_preinstall_bin_path)
+
+    legacy_path = "#{Dir.pwd}/#{NODE_BP_PATH}"
+    path        = run("which node")
+    if path && $?.success?
+      @node_preinstall_bin_path = path
+    elsif run("#{legacy_path}/node -v") && $?.success?
+      @node_preinstall_bin_path = legacy_path
+    else
+      @node_preinstall_bin_path = false
+    end
+  end
+  alias :node_js_installed? :node_preinstall_bin_path
+
+  def node_not_preinstalled?
+    !node_js_installed?
   end
 
   def run_assets_precompile_rake_task
