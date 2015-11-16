@@ -79,6 +79,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     if bundler.has_gem?("asset_sync")
       warn(<<-WARNING)
 You are using the `asset_sync` gem.
+This is not recommended.
 See https://devcenter.heroku.com/articles/please-do-not-use-asset-sync for more information.
 WARNING
     end
