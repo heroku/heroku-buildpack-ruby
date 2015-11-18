@@ -220,7 +220,7 @@ EOF
   def set_java_mem
     <<-EOF
 if ! [[ "${JAVA_OPTS}" == *-Xmx* ]]; then
-  export JAVA_MEM=${JAVA_MEM:--Xmx${JVM_MAX_HEAP}m}
+  export JAVA_MEM=${JAVA_MEM:--Xmx${JVM_MAX_HEAP:-384}m}
 fi
 EOF
   end
