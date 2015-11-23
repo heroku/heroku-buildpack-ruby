@@ -758,6 +758,8 @@ params = CGI.parse(uri.query || "")
       ENV['DATABASE_URL'] = env('DATABASE_URL')
       ENV['RAILS_ENV'] = env('RAILS_ENV')
       ENV['RACK_ENV'] = env('RACK_ENV')
+      # Segment gem does some questionable validation when started
+      ENV['SEGMENT_WRITE_KEY'] = env('SEGMENT_WRITE_KEY')
       topic "Running: rake db:migrate"
       time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake db:migrate 2>&1") }
       if $?.success?
