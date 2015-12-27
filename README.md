@@ -1,7 +1,7 @@
 # Heroku Buildpack for Ruby
 ![ruby](https://cloud.githubusercontent.com/assets/51578/8882726/52caf102-3217-11e5-8a6c-2d47c57f0030.jpg)
 
-This is a [Heroku Buildpack](http://devcenter.heroku.com/articles/buildpacks) for Ruby, Rack, and Rails apps. It uses [Bundler](http://gembundler.com) for dependency management.
+This is a [Heroku Buildpack](http://devcenter.heroku.com/articles/buildpacks) for Ruby, Rack, [Lotus](http://lotusrb.org) and Rails apps. It uses [Bundler](http://gembundler.com) for dependency management.
 
 This buildpack requires 64-bit Linux.
 
@@ -37,6 +37,41 @@ The buildpack will detect your app as Ruby if it has a `Gemfile` and `Gemfile.lo
 #### Bundler
 
 For non-windows `Gemfile.lock` files, the `--deployment` flag will be used. In the case of windows, the Gemfile.lock will be deleted and Bundler will do a full resolve so native gems are handled properly. The `vendor/bundle` directory is cached between builds to allow for faster `bundle install` times. `bundle clean` is used to ensure no stale gems are stored between builds.
+
+### Lotus
+
+Example Usage:
+
+    $ ls
+    Gemfile apps db public Gemfile.lock config spec Rakefile config.ru lib
+
+    $ ls config/environment.rb
+    config/environment.rb
+
+    $ heroku create --buildpack https://github.com/heroku/heroku-buildpack-ruby.git
+
+    $ git push heroku master
+    -----> Heroku receiving push
+    -----> Ruby/Lotus app detected
+    -----> Installing dependencies using Bundler version 1.11.2
+           Running: bundle install --without development:test --path vendor/bundle --deployment
+           ...
+    -----> Writing .env to read from DATABASE_URL
+    -----> Preparing app for Lotus asset pipeline
+           Running: rake assets:precompile
+    -----> Discovering process types
+           Procfile declares types      -> web
+           Default types for Ruby/Lotus -> console, rake
+
+The buildpack will detect your apps as a Lotus app if it has an `environment.rb` file in the `config` directory.
+
+#### Logging
+
+Please be noted that by default Lotus log to STDOUT, please revert to the default setting if you change the logger so that logging can be picked up by Heroku's [logplex](http://github.com/heroku/logplex).
+
+#### Serving Static Assets
+
+Static assets are required to be served by Lotus app  via `Lotus::Static` middleware. The buildpack will automatically detect and inject the `SERVE_STATIC_ASSETS=true` into `.env` file.
 
 ### Rails 2
 
