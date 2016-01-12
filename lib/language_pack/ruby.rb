@@ -662,6 +662,8 @@ def attribute(name, value, force_string = false)
 end
 
 adapter = uri.scheme
+
+adapter = "mysql2"     if adapter == "mysql" and Module::const_defined?("Mysql2")
 adapter = "postgresql" if adapter == "postgres"
 
 database = (uri.path || "").split("/")[1]
