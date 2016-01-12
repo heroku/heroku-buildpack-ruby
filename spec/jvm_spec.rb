@@ -11,6 +11,7 @@ describe "JvmInstaller" do
     app.deploy do |app|
       expect(app.output).to match("Using pre-installed JDK")
       expect(app.run("java -version")).to match("1.8.0")
+      expect(app.run("ls .jdk/jre/lib/ext")).to match("pgconfig.jar")
     end
   end
 end

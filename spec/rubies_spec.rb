@@ -57,6 +57,8 @@ describe "Ruby Versions" do
       app.set_config("JRUBY_BUILD_OPTS" => "--dev")
       app.push!
       expect(app.output).to match("JRUBY_OPTS is:  --dev")
+
+      expect(app.run("ls vendor/jvm/jre/lib/ext")).to match("pgconfig.jar")
     end
   end
 

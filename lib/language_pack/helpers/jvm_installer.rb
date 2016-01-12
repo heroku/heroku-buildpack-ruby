@@ -11,6 +11,8 @@ class LanguagePack::JvmInstaller
   JVM_1_7_25_PATH = "openjdk1.7.0_25.tar.gz"
   JVM_1_6_PATH    = "openjdk1.6-latest.tar.gz"
 
+  PG_CONFIG_JAR   = "https://lang-jvm.s3.amazonaws.com/pgconfig.jar"
+
   def initialize(slug_vendor_jvm, stack)
     @vendor_dir = slug_vendor_jvm
     @stack = stack
@@ -60,6 +62,8 @@ class LanguagePack::JvmInstaller
     Dir["#{@vendor_dir}/bin/*"].each do |bin|
       run("ln -s ../#{bin} #{bin_dir}")
     end
+
+    install_pgconfig_jar(PG_CONFIG_JAR)
   end
 
   def fetch_untar(jvm_path, jvm_version=nil)
@@ -87,5 +91,9 @@ EOF
     @fetcher =  LanguagePack::Fetcher.new(base_url)
     fetch_untar(jvm_version)
     true
+  end
+
+  def install_pgconfig_jar(url)
+    run("curl --retry 3 -s -L #{url} -o #{@vendor_dir}/jre/lib/ext/pgconfig.jar")
   end
 end
