@@ -591,7 +591,7 @@ WARNING
             error_message += <<ERROR
 
 
-Detected sqlite3 gem which is not supported on Heroku.
+Detected sqlite3 gem which is not supported on Scalingo.
 http://doc.scalingo.com/databases/sqlite3
 ERROR
           end
