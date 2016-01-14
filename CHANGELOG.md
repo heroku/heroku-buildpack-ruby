@@ -1,5 +1,12 @@
 ## Master
 
+## v142 (01/14/2016)
+
+* Added pgconfig jar to JDK for JRuby JDBC (#450)
+* Let API pick exact postgres plan (#449)
+* Follow redirects on `curl` command (#443)
+* Check for preinstalled JDK (#434)
+
 ## v141 (11/03/2015)
 
 * Support for custom JDK versions in system.properties (#423)
