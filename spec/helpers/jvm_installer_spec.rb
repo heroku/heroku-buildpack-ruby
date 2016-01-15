@@ -73,6 +73,7 @@ describe "JvmInstall" do
         expect(`ls bin`).to match("java")
         expect(`cat release 2>&1`).not_to match("1.8.0_51")
         expect(`cat release 2>&1`).to match("1.8.0")
+        expect(`ls #{dir}/jre/lib/ext`).to match("pgconfig.jar")
       end
     end
   end

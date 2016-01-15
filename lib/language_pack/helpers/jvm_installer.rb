@@ -4,17 +4,21 @@ class LanguagePack::JvmInstaller
   include LanguagePack::ShellHelpers
 
   SYS_PROPS_FILE  = "system.properties"
-  JVM_BASE_URL    = "https://lang-jvm.s3.amazonaws.com/jdk"
+  JVM_BUCKET      = "https://lang-jvm.s3.amazonaws.com"
+  JVM_BASE_URL    = "#{JVM_BUCKET}/jdk"
   JVM_1_9_PATH    = "openjdk1.9-latest.tar.gz"
   JVM_1_8_PATH    = "openjdk1.8-latest.tar.gz"
   JVM_1_7_PATH    = "openjdk1.7-latest.tar.gz"
   JVM_1_7_25_PATH = "openjdk1.7.0_25.tar.gz"
   JVM_1_6_PATH    = "openjdk1.6-latest.tar.gz"
 
+  PG_CONFIG_JAR   = "pgconfig.jar"
+
   def initialize(slug_vendor_jvm, stack)
     @vendor_dir = slug_vendor_jvm
     @stack = stack
     @fetcher = LanguagePack::Fetcher.new(JVM_BASE_URL, stack)
+    @pg_config_jar_fetcher = LanguagePack::Fetcher.new(JVM_BUCKET)
   end
 
   def system_properties
@@ -28,6 +32,11 @@ class LanguagePack::JvmInstaller
   end
 
   def install(jruby_version, forced = false)
+    if Dir.exist?(".jdk")
+      topic "Using pre-installed JDK"
+      return
+    end
+
     jvm_version = system_properties['java.runtime.version']
     case jvm_version
     when "1.9", "9"
@@ -55,6 +64,8 @@ class LanguagePack::JvmInstaller
     Dir["#{@vendor_dir}/bin/*"].each do |bin|
       run("ln -s ../#{bin} #{bin_dir}")
     end
+
+    install_pgconfig_jar
   end
 
   def fetch_untar(jvm_path, jvm_version=nil)
@@ -82,5 +93,14 @@ EOF
     @fetcher =  LanguagePack::Fetcher.new(base_url)
     fetch_untar(jvm_version)
     true
+  end
+
+  def install_pgconfig_jar
+    jdk_ext_dir="#{@vendor_dir}/jre/lib/ext"
+    if Dir.exist?(jdk_ext_dir)
+      Dir.chdir(jdk_ext_dir) do
+        @pg_config_jar_fetcher.fetch(PG_CONFIG_JAR)
+      end
+    end
   end
 end

@@ -171,4 +171,4 @@ If you don't want to run them in parallel you can still:
 $ bundle exec rake spec
 ```
 
-Now go take a nap or something for a really long time.
+Now go take a nap or do something for a really long time.

@@ -227,7 +227,7 @@ EOF
   def set_java_mem
     <<-EOF
 if ! [[ "${JAVA_OPTS}" == *-Xmx* ]]; then
-  export JAVA_MEM=${JAVA_MEM:--Xmx${JVM_MAX_HEAP}m}
+  export JAVA_MEM=${JAVA_MEM:--Xmx${JVM_MAX_HEAP:-384}m}
 fi
 EOF
   end
@@ -820,7 +820,7 @@ params = CGI.parse(uri.query || "")
   # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
   def add_dev_database_addon
-    bundler.has_gem?("pg") ? ['heroku-postgresql:hobby-dev'] : []
+    bundler.has_gem?("pg") ? ['heroku-postgresql'] : []
   end
 
   # decides if we need to install the node.js binary
