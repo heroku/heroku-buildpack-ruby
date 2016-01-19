@@ -67,6 +67,9 @@
   "rails5": [
     "sharpstone/rails5"
   ],
+  "lotusrb": [
+    "joneslee85/bookshelf"
+  ],
   "multibuildpack": [
     "sharpstone/node_multi"
   ]
