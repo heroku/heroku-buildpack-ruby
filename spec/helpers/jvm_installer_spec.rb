@@ -45,7 +45,7 @@ describe "JvmInstall" do
 
         expect(`ls bin`).to match("java")
         expect(`cat release 2>&1`).not_to match("1.8.0")
-        expect(`cat release 2>&1`).to match("1.9.0")
+        expect(`cat release 2>&1`).to match("9-internal")
       end
     end
   end
