@@ -1,5 +1,9 @@
 ## Master
 
+## v143 (01/28/2016)
+
+* Change default for new apps to Ruby 2.2.4 (#454)
+
 ## v142 (01/14/2016)
 
 * Added pgconfig jar to JDK for JRuby JDBC (#450)
