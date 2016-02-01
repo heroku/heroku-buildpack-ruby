@@ -1,0 +1,16 @@
+machine:
+  ruby:
+    version: 2.0.0
+  environment:
+    HATCHET_RETRIES: 3
+    IS_RUNNING_ON_CI: true
+    HATCHET_DEPLOY_STRATEGY: git
+    HATCHET_APP_LIMIT: 80
+
+test:
+  pre:
+    - bundle exec rake travis:setup
+  override:
+    - bundle exec parallel_rspec -n 11 spec/
+  post:
+    - heroku keys:remove $USER@`hostname`

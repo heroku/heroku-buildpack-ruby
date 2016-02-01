@@ -303,6 +303,7 @@ Host heroku.com
     StrictHostKeyChecking no
     CheckHostIP no
     UserKnownHostsFile=/dev/null
+    IdentityFile ~/.ssh/id_rsa
 Host github.com
     StrictHostKeyChecking no
 ' >> ~/.ssh/config"

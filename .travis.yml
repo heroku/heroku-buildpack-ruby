@@ -8,7 +8,7 @@ after_script:
 env:
   global:
   - HATCHET_RETRIES=3
-  - IS_RUNNING_ON_TRAVIS=true
+  - IS_RUNNING_ON_CI=true
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_APP_LIMIT=80
   - secure: bM8uWN5b9hZzzHk73EN9xHCK65vuopcbwQILcuMt0A1mHB8tSH1xyMYddNrbGdfznLAVXf8UjvKvv6rvvG4O+j3GRuIWVNukoAvZxG0FC9QxYuKbDccEPPdtqGwVEfWEKQYLajsIpF8/ACyALGV+Oe/Z28WRk6Ba3FLptfulc6s=
