@@ -1,5 +1,9 @@
 ## Master
 
+## v144 (02/01/2016)
+
+* Fix default ruby to actually be Ruby 2.2.4 (#456)
+
 ## v143 (01/28/2016)
 
 * Change default for new apps to Ruby 2.2.4 (#454)
