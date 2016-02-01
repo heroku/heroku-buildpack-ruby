@@ -3,7 +3,7 @@ machine:
     version: 2.0.0
   environment:
     HATCHET_RETRIES: 3
-    IS_RUNNING_ON_TRAVIS: true
+    IS_RUNNING_ON_CI: true
     HATCHET_DEPLOY_STRATEGY: git
     HATCHET_APP_LIMIT: 80
 
