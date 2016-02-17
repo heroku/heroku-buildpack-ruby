@@ -104,12 +104,18 @@ class LanguagePack::Base
       f.write(release.to_yaml)
     end
 
-    unless File.exist?("Procfile")
-      msg =  "No Procfile detected, using the default web server (webrick)\n"
-      msg << "https://devcenter.heroku.com/articles/ruby-default-web-server"
-      warn msg
-    end
+    warn_webserver
   end
+
+  def warn_webserver
+    return if File.exist?("Procfile")
+    msg =  "No Procfile detected, using the default web server.\n"
+    msg << "We recommend explicitly declaring how to boot your server process via a Procfile.\n"
+    msg << "https://devcenter.heroku.com/articles/ruby-default-web-server"
+    warn msg
+  end
+
+
 
   # log output
   # Ex. log "some_message", "here", :someattr="value"
