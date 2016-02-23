@@ -13,4 +13,14 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
       return is_rails
     end
   end
+
+  def default_config_vars
+    super.merge({
+      "RAILS_LOG_TO_STDOUT" => "enabled"
+    })
+  end
+
+  def install_plugins
+    # do not install plugins, do not call super, do not warn
+  end
 end
