@@ -132,7 +132,7 @@ First you'll need to build a Heroku-compatible version of Node.js:
 
 Open `lib/language_pack/ruby.rb` in your editor, and change the following line:
 
-    BUNDLER_VERSION = "1.1.rc"
+    BUNDLER_VERSION = "1.11.2"
 
 Open `lib/language_pack/base.rb` in your editor, and change the following line:
 
