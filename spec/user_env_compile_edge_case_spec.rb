@@ -16,14 +16,4 @@ describe "User env compile" do
       expect(app.output).to match("Asset precompilation completed")
     end
   end
-
-  it "allows weird characters in the env" do
-    app = Hatchet::Runner.new("rails41_scaffold")
-    app.setup!
-    app.set_config("BAD VALUE"      => %Q{ )(*&^%$#'$'\n''@!~\'\ })
-    app.set_config(%Q{ un"matched } => "bad key" )
-    app.deploy do |app|
-      expect(app.output).to match("Launching")
-    end
-  end
 end
