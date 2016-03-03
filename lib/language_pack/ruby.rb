@@ -829,7 +829,7 @@ params = CGI.parse(uri.query || "")
       rubygems_version_cache  = "rubygems_version"
       stack_cache             = "stack"
 
-      old_bundler_version  = @metadata.read(buildpack_version_cache).chomp if @metadata.exists?(buildpack_version_cache)
+      old_bundler_version  = @metadata.read(bundler_version_cache).chomp if @metadata.exists?(bundler_version_cache)
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
       old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
       old_stack ||= DEFAULT_LEGACY_STACK
@@ -864,7 +864,7 @@ WARNING
         FileUtils.rm_rf("vendor/ruby_version")
         purge_bundler_cache
         # fix bug introduced in v38
-      elsif !old_bundler_version && @metadata.exists?(ruby_version_cache)
+      elsif !@metadata.exists?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
         puts "Broken cache detected. Purging build cache."
         purge_bundler_cache
       elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
