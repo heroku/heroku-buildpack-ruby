@@ -48,6 +48,7 @@ describe "Ruby apps" do
       it "writes a heroku specific database.yml" do
         Hatchet::Runner.new("default_ruby").deploy do |app, heroku|
           expect(app.output).to include("Writing config/database.yml to read from DATABASE_URL")
+          expect(app.output).not_to include("Your app was upgraded to bundler")
         end
       end
     end
