@@ -14,6 +14,13 @@ class LanguagePack::Rails42 < LanguagePack::Rails41
     end
   end
 
+  def setup_profiled
+    instrument 'setup_profiled' do
+      super
+      set_env_default "RAILS_SERVE_STATIC_FILES", "enabled"
+    end
+  end
+
   def default_config_vars
     super.merge({
       "RAILS_SERVE_STATIC_FILES"  => env("RAILS_SERVE_STATIC_FILES") || "enabled"
