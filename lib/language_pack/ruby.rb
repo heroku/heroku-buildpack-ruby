@@ -829,9 +829,23 @@ params = CGI.parse(uri.query || "")
       rubygems_version_cache  = "rubygems_version"
       stack_cache             = "stack"
 
+      old_bundler_version  = @metadata.read(buildpack_version_cache)
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
       old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
       old_stack ||= DEFAULT_LEGACY_STACK
+
+
+      if old_bundler_version && old_bundler_version != BUNDLER_VERSION
+        puts(<<-WARNING)
+Your app was upgraded to bundler #{ BUNDLER_VERSION }.
+Previously you had a successful deploy with bundler #{ old_bundler_version }.
+
+If you see problems related to the bundler version please refer to:
+https://devcenter.heroku.com/articles/bundler-version
+WARNING
+      end
+
+
 
       stack_change  = old_stack != @stack
       convert_stack = @bundler_cache.old?
@@ -850,7 +864,7 @@ params = CGI.parse(uri.query || "")
         FileUtils.rm_rf("vendor/ruby_version")
         purge_bundler_cache
         # fix bug introduced in v38
-      elsif !@metadata.exists?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
+      elsif !old_bundler_version && @metadata.exists?(ruby_version_cache)
         puts "Broken cache detected. Purging build cache."
         purge_bundler_cache
       elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
