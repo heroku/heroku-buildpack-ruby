@@ -842,6 +842,7 @@ Previously you had a successful deploy with bundler #{ old_bundler_version }.
 
 If you see problems related to the bundler version please refer to:
 https://devcenter.heroku.com/articles/bundler-version
+
 WARNING
       end
 
