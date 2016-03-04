@@ -42,6 +42,13 @@ describe "Rails 3.x" do
     end
   end
 
+  it "fails if rake tasks cannot be detected" do
+    Hatchet::Runner.new("rails3-fail-rakefile", allow_failure: true).deploy do |app|
+      expect(app.output).to include("raising so the rake task will not load")
+      expect(app).not_to be_deployed
+    end
+  end
+
   it "fails compile if assets:precompile fails" do
     Hatchet::Runner.new("rails3-fail-assets-compile", allow_failure: true).deploy do |app, heroku|
       expect(app.output).to include("raising on assets:precompile on purpose")
