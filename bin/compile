@@ -8,6 +8,10 @@ require "language_pack"
 require "language_pack/shell_helpers"
 require 'cloud_foundry/language_pack/extensions'
 
+if ENV["BUILDPACK_URL"] && ENV["BUILDPACK_URL"].include?("multi-buildpack")
+  ENV["STACK"] = "cedar-14"
+end
+
 begin
   LanguagePack::Instrument.trace 'compile', 'app.compile' do
     if pack = LanguagePack.detect(ARGV[0], ARGV[1])
