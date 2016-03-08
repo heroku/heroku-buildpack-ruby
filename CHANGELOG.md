@@ -1,5 +1,7 @@
 ## Master
 
+## v145 (03/08/2016)
+
 * Bump bundler to 1.11.2 [Bundler changelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md#1112-2015-12-15) (#461)
 * Rails 5 Support for logging to STDOUT via environment variable (#460)
 
