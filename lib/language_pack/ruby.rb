@@ -544,6 +544,16 @@ WARNING
         bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
         bundle_command << " -j4"
 
+        if File.exist?("#{Dir.pwd}/.bundle/config")
+          warn(<<-WARNING, inline: true)
+You have the `.bundle/config` file checked into your repository
+ It contains local state like the location of the installed bundle
+ as well as configured git local gems, and other settings that should
+not be shared between multiple checkouts of a single repo. Please
+remove the `.bundle/` folder from your repo and add it to your `.gitignore` file.
+WARNING
+        end
+
         if bundler.windows_gemfile_lock?
           warn(<<-WARNING, inline: true)
 Removing `Gemfile.lock` because it was generated on Windows.
@@ -558,7 +568,6 @@ WARNING
         else
           # using --deployment is preferred if we can
           bundle_command += " --deployment"
-          cache.load ".bundle"
         end
 
         topic("Installing dependencies using bundler #{bundler.version}")
@@ -837,7 +846,6 @@ params = CGI.parse(uri.query || "")
       old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
       old_stack ||= DEFAULT_LEGACY_STACK
 
-
       if old_bundler_version && old_bundler_version != BUNDLER_VERSION
         puts(<<-WARNING)
 Your app was upgraded to bundler #{ BUNDLER_VERSION }.
@@ -848,8 +856,6 @@ https://devcenter.heroku.com/articles/bundler-version
 
 WARNING
       end
-
-
 
       stack_change  = old_stack != @stack
       convert_stack = @bundler_cache.old?
