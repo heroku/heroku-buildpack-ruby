@@ -555,6 +555,7 @@ You have the `.bundle/config` file checked into your repository
  as well as configured git local gems, and other settings that should
 not be shared between multiple checkouts of a single repo. Please
 remove the `.bundle/` folder from your repo and add it to your `.gitignore` file.
+https://devcenter.heroku.com/articles/bundler-configuration
 WARNING
         end
 
