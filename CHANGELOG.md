@@ -1,9 +1,17 @@
 ## Master
 
+## v146 (03/23/2016)
+
+* Warn when `.bundle/config` is checked in (#471)
+* Do not cache `.bundle/config` betwee builds (#471)
+* Set WEB_CONCURRENCY for M-Performance dynos using sensible defaults (#474)
+* Fix rake task detection in Rails apps actually fails builds (#475)
+
 ## v145 (03/08/2016)
 
 * Bump bundler to 1.11.2 [Bundler changelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md#1112-2015-12-15) (#461)
 * Rails 5 Support for logging to STDOUT via environment variable (#460)
+* Fail build when rake tasks cannot be detected in a Rails app (#462)
 
 ## v144 (02/01/2016)
 
