@@ -3,7 +3,7 @@
 ## v146 (03/23/2016)
 
 * Warn when `.bundle/config` is checked in (#471)
-* Do not cache `.bundle/config` betwee builds (#471)
+* Do not cache `.bundle/config` between builds (#471)
 * Set WEB_CONCURRENCY for M-Performance dynos using sensible defaults (#474)
 * Fix rake task detection in Rails apps actually fails builds (#475)
 
