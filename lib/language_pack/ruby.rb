@@ -102,6 +102,7 @@ WARNING
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
+        run_docs_generate_rake_task
       end
       best_practice_warnings
       super
@@ -814,6 +815,23 @@ params = CGI.parse(uri.query || "")
         puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
       else
         precompile_fail(precompile.output)
+      end
+    end
+  end
+
+  def run_docs_generate_rake_task
+    instrument 'ruby.run_docs_generate_rake_task' do
+
+      docs_generate = rake.task("docs:generate")
+      return true unless docs_generate.is_defined?
+
+      topic "Generating documentation"
+      docs_generate.invoke(env: rake_env)
+      if docs_generate.success?
+        puts "Documentation generation completed (#{"%.2f" % docs_generate.time}s)"
+      else
+        log "docs_generate", :status => "failure"
+        error "Generating documentation failed."
       end
     end
   end
