@@ -21,9 +21,5 @@ describe "Multibuildpack" do
       expect(app.run("node -v")).to match("node: command not found")
     end
   end
-
-  it "works with buildpack set" do
-    pending("buildpack:set support with hatchet")
-  end
 end
 

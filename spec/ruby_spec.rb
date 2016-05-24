@@ -1,31 +1,31 @@
 require_relative 'spec_helper'
 
 describe "Ruby apps" do
-  describe "default WEB_CONCURRENCY" do
-    it "auto scales WEB_CONCURRENCY" do
-      pending("https://github.com/heroku/api/issues/4426")
-      app = Hatchet::Runner.new("default_ruby")
-      app.setup!
-      app.set_config("SENSIBLE_DEFAULTS" => "enabled")
 
-      app.deploy do |app|
-        app.run('echo "loaded"')
-        expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "1X" } )).to match("value: 2")
-        expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "2X" } )).to match("value: 4")
-        expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "PX" } )).to match("value: 16")
-      end
-    end
-  end
+  # describe "default WEB_CONCURRENCY" do
+  #   it "auto scales WEB_CONCURRENCY" do
+  #     pending("https://github.com/heroku/api/issues/4426")
+  #     app = Hatchet::Runner.new("default_ruby")
+  #     app.setup!
+  #     app.set_config("SENSIBLE_DEFAULTS" => "enabled")
+  #     app.deploy do |app|
+  #       app.run('echo "loaded"')
+  #       expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "1X" } )).to match("value: 2")
+  #       expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "2X" } )).to match("value: 4")
+  #       expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "PX" } )).to match("value: 16")
+  #     end
+  #   end
+  # end
 
   describe "Rake detection" do
     context "default" do
-      it "adds default process types" do
-        Hatchet::Runner.new('empty-procfile').deploy do |app|
-          app.run("console") do |console|
-            console.run("'hello' + 'world'") {|result| expect(result).to match('helloworld')}
-          end
-        end
-      end
+      # it "adds default process types" do
+      #   Hatchet::Runner.new('empty-procfile').deploy do |app|
+      #     app.run("console") do |console|
+      #       console.run("puts 'hello' + 'world'") {|result| expect(result).to match('helloworld')}
+      #     end
+      #   end
+      # end
     end
 
     context "Ruby 1.9+" do
