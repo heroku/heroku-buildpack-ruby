@@ -1,5 +1,7 @@
 ## Master
 
+* Bump bundler to 1.12.5 [Bundler changfelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md#1123-2016-05-06). Allows for use of Ruby version operators.
+
 ## v146 (03/23/2016)
 
 * Warn when `.bundle/config` is checked in (#471)
