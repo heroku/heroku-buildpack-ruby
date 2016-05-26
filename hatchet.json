@@ -17,7 +17,8 @@
     "sharpstone/git_gemspec",
     "sharpstone/no_lockfile",
     "sharpstone/sqlite3_gemfile",
-    "sharpstone/nokogiri_160"
+    "sharpstone/nokogiri_160",
+    "sharpstone/bundle-ruby-version-not-in-lockfile"
   ],
   "ruby": [
     "sharpstone/mri_187",

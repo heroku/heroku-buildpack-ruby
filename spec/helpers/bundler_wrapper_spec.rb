@@ -21,7 +21,7 @@ describe "BundlerWrapper" do
 
   it "detects windows gemfiles" do
     Hatchet::App.new("rails4_windows_mri193").in_directory do |dir|
-      expect(@bundler.install.windows_gemfile_lock?).to be_true
+      expect(@bundler.install.windows_gemfile_lock?).to be_truthy
     end
   end
 
