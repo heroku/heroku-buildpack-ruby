@@ -403,7 +403,7 @@ ERROR
       message = <<ERROR
 An error occurred while installing Ruby #{ruby_version.version}
 For supported Ruby versions see https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
-Note: Only the most recent version of Ruby 2.1 is supported on Cedar-14
+Note: Only the most recent version of Ruby #{ruby_version.version.match(/(\d\.\d)/)[0]} is supported on Cedar-14
 #{error.message}
 ERROR
     end
