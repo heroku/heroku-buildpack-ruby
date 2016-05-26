@@ -40,6 +40,7 @@ describe "Rails 4.0.x" do
   #   Hatchet::Runner.new("rails4_windows_mri193").deploy do |app, heroku|
   #     result = app.run("rails -v")
   #     expect(result).to match("4.0.0")
+
   #     result = app.run("rake -T")
   #     expect(result).to match("assets:precompile")
 
