@@ -1,6 +1,20 @@
 require_relative 'spec_helper'
 
 describe "Ruby apps" do
+  describe "bundler ruby version matcher" do
+    it "installs a version even when not present in the Gemfile.lock" do
+      Hatchet::Runner.new('bundle-ruby-version-not-in-lockfile').deploy do |app|
+        expect(app.output).to         match("2.3.1")
+        expect(app.run("ruby -v")).to match("2.3.1")
+      end
+    end
+
+    it "works even when patchfile is specified" do
+      Hatchet::Runner.new('problem_gemfile_version').deploy do |app|
+        expect(app.output).to match("2.3.0")
+      end
+    end
+  end
 
   # describe "default WEB_CONCURRENCY" do
   #   it "auto scales WEB_CONCURRENCY" do
