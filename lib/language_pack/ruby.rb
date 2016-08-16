@@ -716,7 +716,7 @@ adapter = "postgresql" if adapter == "postgres"
 database = (uri.path || "").split("/")[1]
 
 username = uri.user
-password = uri.password
+password = URI.unescape(uri.password)
 
 host = uri.host
 port = uri.port
