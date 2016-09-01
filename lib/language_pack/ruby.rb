@@ -99,7 +99,7 @@ WARNING
       setup_profiled
       allow_git do
         install_bundler_in_app
-        build_bundler
+        build_bundler("development:test")
         post_bundler
         create_database_yml
         install_binaries
@@ -521,10 +521,10 @@ WARNING
   end
 
   # runs bundler to install the dependencies
-  def build_bundler
+  def build_bundler(default_bundle_without)
     instrument 'ruby.build_bundler' do
       log("bundle") do
-        bundle_without = env("BUNDLE_WITHOUT") || "development:test"
+        bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
         bundle_bin     = "bundle"
         bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
         bundle_command << " -j4"
