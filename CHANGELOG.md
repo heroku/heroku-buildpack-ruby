@@ -1,6 +1,6 @@
 ## Master
 
-* Bump bundler to 1.13.4 [Bundler changelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md#1134-2016-10-11). Allows for use of Ruby version operators.
+* Bump bundler to 1.13.6 [Bundler changelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md). Allows for use of Ruby version operators.
 
 ## v146 (03/23/2016)
 
