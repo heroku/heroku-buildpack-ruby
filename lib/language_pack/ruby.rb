@@ -12,7 +12,7 @@ require "language_pack/version"
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
-  LIBYAML_VERSION      = "0.1.6"
+  LIBYAML_VERSION      = "0.1.7"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.13.6"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
@@ -519,7 +519,7 @@ ERROR
     instrument 'ruby.install_libyaml' do
       FileUtils.mkdir_p dir
       Dir.chdir(dir) do |dir|
-        @fetchers[:buildpack].fetch_untar("#{LIBYAML_PATH}.tgz")
+        @fetchers[:buildpack].fetch_untar("#{@stack}/#{LIBYAML_PATH}.tgz")
       end
     end
   end
@@ -925,7 +925,9 @@ WARNING
 
       # recompile gems for libyaml 0.1.7 update
       if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 147 &&
-          @metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).chomp.match(/ruby 2\.1\.(9|10)/)
+          (@metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).chomp.match(/ruby 2\.1\.(9|10)/) ||
+           bundler.has_gem?("psych")
+          )
         puts "Need to recompile gems for CVE-2014-2014-9130. Clearing bundler cache."
         puts "See https://devcenter.heroku.com/changelog-items/1016."
         purge_bundler_cache
