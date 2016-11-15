@@ -1,5 +1,7 @@
 ## Master
 
+## v147 (11/15/2016)
+
 * Bump bundler to 1.13.6 [Bundler changelog](https://github.com/bundler/bundler/blob/v1.13.6/CHANGELOG.md). Allows for use of Ruby version operators.
 
 ## v146 (03/23/2016)
