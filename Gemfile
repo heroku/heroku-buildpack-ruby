@@ -10,4 +10,5 @@ group :development, :test do
   gem 'rspec-retry'
   gem "netrc"
   gem "git", github: "hone/ruby-git", branch: "master"
+  gem 'json', '~> 2.0.2'
 end
