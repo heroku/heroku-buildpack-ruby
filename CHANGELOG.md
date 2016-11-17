@@ -1,5 +1,10 @@
 ## Master
 
+## v148 (11/17/2016)
+
+* Default Ruby Version is 2.2.6
+* Update libyaml to 0.1.7 for [CVE-2014-9130](https://devcenter.heroku.com/changelog-items/1016)
+
 ## v147 (11/15/2016)
 
 * Bump bundler to 1.13.6 [Bundler changelog](https://github.com/bundler/bundler/blob/v1.13.6/CHANGELOG.md). Allows for use of Ruby version operators.
