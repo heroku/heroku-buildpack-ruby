@@ -57,6 +57,14 @@ describe "Ruby apps" do
     end
   end
 
+  describe "bundler upgrade warning" do
+    it "Shows when using a bad patch level of Ruby" do
+      Hatchet::Runner.new("ruby_193_bad_patch_cedar_14").deploy do |app, heroku|
+        expect(app.output).to include("Your app was upgraded to bundler")
+      end
+    end
+  end
+
   describe "database configuration" do
     context "no active record" do
       it "writes a heroku specific database.yml" do

@@ -11,22 +11,24 @@ class LanguagePack::Helpers::BundlerWrapper
 
   VENDOR_URL         = LanguagePack::Base::VENDOR_URL                # coupling
   DEFAULT_FETCHER    = LanguagePack::Fetcher.new(VENDOR_URL)         # coupling
-  BUNDLER_DIR_NAME   = LanguagePack::Ruby::BUNDLER_GEM_PATH          # coupling
+  BUNDLER_DIR_NAME   = LanguagePack::Ruby::BUNDLER_GEM_PATH          # coupling bundler-1.13.6
   BUNDLER_PATH       = File.expand_path("../../../../tmp/#{BUNDLER_DIR_NAME}", __FILE__)
   GEMFILE_PATH       = Pathname.new "./Gemfile"
 
   attr_reader   :bundler_path
 
   def initialize(options = {})
-    @fetcher              = options[:fetcher]      || DEFAULT_FETCHER
     @bundler_tmp          = Dir.mktmpdir
-    @bundler_path         = options[:bundler_path] || File.join(@bundler_tmp, "#{BUNDLER_DIR_NAME}")
-    @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
-    @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
+    @old_bundler_version  = options[:old_bundler_version]
+    @fetcher              = options[:fetcher]          || DEFAULT_FETCHER
+    @bundler_dir_name     = options[:bundler_dir_name] || BUNDLER_DIR_NAME
+    @bundler_path         = options[:bundler_path]     || File.join(@bundler_tmp, "#{@bundler_dir_name}")
+    @gemfile_path         = options[:gemfile_path]     || GEMFILE_PATH
+    @bundler_tar          = options[:bundler_tar]      || "#{@bundler_dir_name}.tgz"
     @gemfile_lock_path    = "#{@gemfile_path}.lock"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
     ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
-    @path                 = Pathname.new "#{@bundler_path}/gems/#{BUNDLER_DIR_NAME}/lib"
+    @path                 = Pathname.new "#{@bundler_path}/gems/#{@bundler_dir_name}/lib"
   end
 
   def install
@@ -87,7 +89,7 @@ class LanguagePack::Helpers::BundlerWrapper
   def ruby_version
     instrument 'detect_ruby_version' do
       env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
-              "RUBYLIB"  => File.join(bundler_path, "gems", BUNDLER_DIR_NAME, "lib"),
+              "RUBYLIB"  => File.join(bundler_path, "gems", @bundler_dir_name, "lib"),
               "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}"
             }
       command = "bundle platform --ruby"
@@ -113,6 +115,18 @@ class LanguagePack::Helpers::BundlerWrapper
   def fetch_bundler
     instrument 'fetch_bundler' do
       return true if Dir.exists?(bundler_path)
+
+      if @old_bundler_version && @old_bundler_version != @bundler_dir_name
+        puts(<<-WARNING)
+Your app was upgraded to bundler #{ @bundler_dir_name }.
+Previously you had a successful deploy with bundler #{ @old_bundler_version }.
+
+If you see problems related to the bundler version please refer to:
+https://devcenter.heroku.com/articles/bundler-version
+
+WARNING
+      end
+
       FileUtils.mkdir_p(bundler_path)
       Dir.chdir(bundler_path) do
         @fetcher.fetch_untar(@bundler_tar)
