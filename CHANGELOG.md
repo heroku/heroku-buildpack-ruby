@@ -1,5 +1,7 @@
 ## Master
 
+* Guarantee we always show warning when upgrading bundler version.
+
 ## v148 (11/17/2016)
 
 * Default Ruby Version is 2.2.6
