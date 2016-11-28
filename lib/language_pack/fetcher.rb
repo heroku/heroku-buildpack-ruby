@@ -35,11 +35,11 @@ module LanguagePack
     end
 
     def curl_timeout_in_seconds
-      ENV['CURL_TIMEOUT'] || 30
+      env('CURL_TIMEOUT') || 30
     end
 
     def curl_connect_timeout_in_seconds
-      ENV['CURL_CONNECT_TIMEOUT'] || 3
+      env('CURL_CONNECT_TIMEOUT') || 3
     end
 
     def load_config
