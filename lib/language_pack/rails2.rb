@@ -54,6 +54,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     if env("RAILS_ENV") != "production"
       warn(<<-WARNING)
 You are deploying to a non-production environment: #{ env("RAILS_ENV").inspect }.
+This is not recommended.
 See https://devcenter.heroku.com/articles/deploying-to-a-custom-rails-environment for more information.
 WARNING
     end
