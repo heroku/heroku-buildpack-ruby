@@ -1,5 +1,7 @@
 ## Master
 
+## v149 (12/01/2016)
+
 * Guarantee we always show warning when upgrading bundler version.
 
 ## v148 (11/17/2016)
