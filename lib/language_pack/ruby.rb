@@ -659,6 +659,15 @@ https://devcenter.heroku.com/articles/sqlite3
             ERROR
           end
 
+          if bundler_output.match(/but your Gemfile specified/)
+            error_message += <<-ERROR
+
+Detected a mismatch between your Ruby version installed and
+Ruby version specified in Gemfile or Gemfile.lock:
+https://devcenter.heroku.com/articles/ruby-versions#your-ruby-version-is-x-but-your-gemfile-specified-y
+            ERROR
+          end
+
           error error_message
         end
       end
