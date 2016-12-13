@@ -565,10 +565,11 @@ WARNING
   def build_bundler
     instrument 'ruby.build_bundler' do
       log("bundle") do
+        bundle_jobs    = env("BUNDLE_JOBS") || "4"
         bundle_without = env("BUNDLE_WITHOUT") || "development:test"
         bundle_bin     = "bundle"
         bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
-        bundle_command << " -j4"
+        bundle_command << " -j#{bundle_jobs}"
 
         if File.exist?("#{Dir.pwd}/.bundle/config")
           warn(<<-WARNING, inline: true)
