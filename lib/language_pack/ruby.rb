@@ -346,53 +346,12 @@ SHELL
     instrument 'ruby.install_ruby' do
       return false unless ruby_version
 
+      installer = LanguagePack::Installers::RubyInstaller.installer(ruby_version).new(@stack)
+
       if ruby_version.build?
-        FileUtils.mkdir_p(build_ruby_path)
-        Dir.chdir(build_ruby_path) do
-          ruby_vm = "ruby"
-          instrument "ruby.fetch_build_ruby" do
-            @fetchers[:mri].fetch_untar("#{ruby_version.version_for_download.sub(ruby_vm, "#{ruby_vm}-build")}.tgz")
-          end
-        end
+        installer.fetch_unpack(ruby_version, build_ruby_path, true)
       end
-
-      FileUtils.mkdir_p(slug_vendor_ruby)
-      Dir.chdir(slug_vendor_ruby) do
-        instrument "ruby.fetch_ruby" do
-          if ruby_version.rbx?
-            file     = "#{ruby_version.version_for_download}.tar.bz2"
-            sha_file = "#{file}.sha1"
-            @fetchers[:rbx].fetch(file)
-            @fetchers[:rbx].fetch(sha_file)
-
-            expected_checksum = File.read(sha_file).chomp
-            actual_checksum   = Digest::SHA1.file(file).hexdigest
-
-            error <<-ERROR_MSG unless expected_checksum == actual_checksum
-RBX Checksum for #{file} does not match.
-Expected #{expected_checksum} but got #{actual_checksum}.
-Please try pushing again in a few minutes.
-ERROR_MSG
-
-            run("tar jxf #{file}")
-            FileUtils.mv(Dir.glob("app/#{slug_vendor_ruby}/*"), ".")
-            FileUtils.rm_rf("app")
-            FileUtils.rm(file)
-            FileUtils.rm(sha_file)
-          else
-            @fetchers[:mri].fetch_untar("#{ruby_version.version_for_download}.tgz")
-          end
-        end
-      end
-
-      app_bin_dir = "bin"
-      FileUtils.mkdir_p app_bin_dir
-
-      run("ln -s ruby #{slug_vendor_ruby}/bin/ruby.exe")
-
-      Dir["#{slug_vendor_ruby}/bin/*"].each do |vendor_bin|
-        run("ln -s ../#{vendor_bin} #{app_bin_dir}")
-      end
+      installer.install(ruby_version, slug_vendor_ruby)
 
       @metadata.write("buildpack_ruby_version", ruby_version.version_for_download)
 
