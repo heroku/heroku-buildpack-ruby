@@ -1,31 +1,13 @@
-#!/usr/bin/env ruby
+#!/bin/bash
 
-# sync output
-$stdout.sync = true
+BIN_DIR=$(cd $(dirname $0); pwd)
 
-$:.unshift File.expand_path("../../lib", __FILE__)
-require "language_pack"
-require "language_pack/shell_helpers"
+# bootstrap ruby
+ruby_dir=`$BIN_DIR/bootstrap $2`
+echo $ruby_dir
+function atexit {
+  rm -rf $ruby_dir
+}
+trap atexit EXIT
 
-begin
-  LanguagePack::Instrument.trace 'compile', 'app.compile' do
-    LanguagePack::ShellHelpers.initialize_env(ARGV[2])
-    if pack = LanguagePack.detect(ARGV[0], ARGV[1])
-      pack.topic("Compiling #{pack.name}")
-      pack.log("compile") do
-        pack.compile
-      end
-    end
-  end
-rescue Exception => e
-  Kernel.puts " !"
-  e.message.split("\n").each do |line|
-    Kernel.puts " !     #{line.strip}"
-  end
-  Kernel.puts " !"
-  if e.is_a?(BuildpackError)
-    exit 1
-  else
-    raise e
-  end
-end
+$ruby_dir/bin/ruby $BIN_DIR/ruby_compile $@
