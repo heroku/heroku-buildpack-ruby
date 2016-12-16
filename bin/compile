@@ -5,9 +5,9 @@ ROOT_DIR=$(dirname $BIN_DIR)
 
 ruby_dir="$ROOT_DIR/vendor/ruby/$STACK"
 if [ ! -d "$ROOT_DIR/vendor/ruby/$STACK" ]; then
+  ruby_dir=$(mktemp -d)
   # bootstrap ruby
-  ruby_dir=`$BIN_DIR/bootstrap $2`
-  echo $ruby_dir
+  $BIN_DIR/bootstrap $ruby_dir
   function atexit {
     rm -rf $ruby_dir
   }
