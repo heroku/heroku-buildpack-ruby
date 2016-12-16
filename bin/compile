@@ -1,13 +1,17 @@
 #!/bin/bash
 
 BIN_DIR=$(cd $(dirname $0); pwd)
+ROOT_DIR=$(dirname $BIN_DIR)
 
-# bootstrap ruby
-ruby_dir=`$BIN_DIR/bootstrap $2`
-echo $ruby_dir
-function atexit {
-  rm -rf $ruby_dir
-}
-trap atexit EXIT
+ruby_dir="$ROOT_DIR/vendor/ruby/$STACK"
+if [ ! -d "$ROOT_DIR/vendor/ruby/$STACK" ]; then
+  # bootstrap ruby
+  ruby_dir=`$BIN_DIR/bootstrap $2`
+  echo $ruby_dir
+  function atexit {
+    rm -rf $ruby_dir
+  }
+  trap atexit EXIT
+fi
 
 $ruby_dir/bin/ruby $BIN_DIR/ruby_compile $@

@@ -1,3 +1,5 @@
+require 'language_pack/fetcher'
+
 class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 

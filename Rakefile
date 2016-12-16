@@ -203,12 +203,21 @@ FILE
   task :stage do
     Dir.mktmpdir("heroku-buildpack-ruby") do |tmpdir|
       Git.clone(File.expand_path("."), 'heroku-buildpack-ruby', path: tmpdir)
-      Dir.chdir(tmpdir) do |dir|
+      Dir.chdir(tmpdir) do
         streamer = lambda do |chunk, remaining_bytes, total_bytes|
           File.open("ruby.tgz", "w") {|file| file.print(chunk) }
         end
         Excon.get(latest_release["tar_link"], :response_block => streamer)
-        Dir.chdir("heroku-buildpack-ruby") do |dir|
+        Dir.chdir("heroku-buildpack-ruby") do |buildpack_dir|
+          $:.unshift File.expand_path("../lib", __FILE__)
+          require "language_pack/installers/mri_installer"
+          require "language_pack/ruby_version"
+
+          ["cedar-14"].each do |stack|
+            installer    = LanguagePack::Installers::MriInstaller.new(stack)
+            ruby_version = LanguagePack::RubyVersion.new("ruby-#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}")
+            installer.fetch_unpack(ruby_version, "vendor/ruby/#{stack}")
+          end
           sh "tar xzf ../ruby.tgz .env"
           sh "tar czf ../buildpack.tgz * .env"
         end

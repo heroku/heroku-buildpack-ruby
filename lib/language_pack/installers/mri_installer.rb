@@ -1,4 +1,5 @@
 require 'language_pack/installers/ruby_installer'
+require 'language_pack/base'
 require 'language_pack/shell_helpers'
 
 class LanguagePack::Installers::MriInstaller
