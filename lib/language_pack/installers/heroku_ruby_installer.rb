@@ -2,7 +2,7 @@ require 'language_pack/installers/ruby_installer'
 require 'language_pack/base'
 require 'language_pack/shell_helpers'
 
-class LanguagePack::Installers::MriInstaller
+class LanguagePack::Installers::HerokuRubyInstaller
   include LanguagePack::ShellHelpers, LanguagePack::Installers::RubyInstaller
 
   BASE_URL = LanguagePack::Base::VENDOR_URL

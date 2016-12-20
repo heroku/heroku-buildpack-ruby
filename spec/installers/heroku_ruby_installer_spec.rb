@@ -1,7 +1,7 @@
 require "spec_helper"
 
-describe LanguagePack::Installers::MriInstaller do
-  let(:installer)    { LanguagePack::Installers::MriInstaller.new("cedar-14") }
+describe LanguagePack::Installers::HerokuRubyInstaller do
+  let(:installer)    { LanguagePack::Installers::HerokuRubyInstaller.new("cedar-14") }
   let(:ruby_version) { LanguagePack::RubyVersion.new("ruby-2.3.3") }
 
   describe "#fetch_unpack" do

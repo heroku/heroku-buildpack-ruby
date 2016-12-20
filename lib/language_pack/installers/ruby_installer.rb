@@ -10,7 +10,7 @@ module LanguagePack::Installers::RubyInstaller
     if ruby_version.rbx?
       LanguagePack::Installers::RbxInstaller
     else
-      LanguagePack::Installers::MriInstaller
+      LanguagePack::Installers::HerokuRubyInstaller
     end
   end
 

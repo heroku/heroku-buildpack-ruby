@@ -8,6 +8,6 @@ require "language_pack"
 
 DEFAULT_STACK = "cedar-14"
 
-installer    = LanguagePack::Installers::MriInstaller.new(ENV['STACK'] || DEFAULT_STACK)
+installer    = LanguagePack::Installers::HerokuRubyInstaller.new(ENV['STACK'] || DEFAULT_STACK)
 ruby_version = LanguagePack::RubyVersion.new("ruby-#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}")
 installer.fetch_unpack(ruby_version, ARGV[0])

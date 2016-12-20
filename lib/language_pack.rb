@@ -34,7 +34,7 @@ require "language_pack/helpers/stale_file_cleaner"
 require "language_pack/helpers/rake_runner"
 require "language_pack/helpers/bundler_wrapper"
 require "language_pack/installers/ruby_installer"
-require "language_pack/installers/mri_installer"
+require "language_pack/installers/heroku_ruby_installer"
 require "language_pack/installers/rbx_installer"
 
 require "language_pack/ruby"
