@@ -18,7 +18,7 @@ module LanguagePack
     LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}"
     RUBY_VERSION_REGEX     = %r{
         (?<ruby_version>\d+\.\d+\.\d+){0}
-        (?<patchlevel>p\d+){0}
+        (?<patchlevel>p-?\d+){0}
         (?<engine>\w+){0}
         (?<engine_version>.+){0}
 
@@ -35,12 +35,12 @@ module LanguagePack
       set_version
       parse_version
 
-      @version_without_patchlevel = @version.sub(/-p[\d]+/, '')
+      @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
     end
 
     # https://github.com/bundler/bundler/issues/4621
     def version_for_download
-      if patchlevel_is_significant?
+      if patchlevel_is_significant? && @patchlevel && @patchlevel.sub(/p/, '').to_i >= 0
         @version
       else
         version_without_patchlevel
