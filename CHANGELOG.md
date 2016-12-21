@@ -1,5 +1,12 @@
 ## Master
 
+* Allow deployment of pre-release rubies (preview and rc) with Bundler 1.13.6+. This is needed because the patch level is recorded in the gemfile as `-1` since it is not released yet. For example 2.4.0rc1 will show up in a `Gemfile.lock` like this:
+
+```
+RUBY VERSION
+   ruby 2.4.0p-1
+```
+
 ## v149 (12/01/2016)
 
 * Guarantee we always show warning when upgrading bundler version.
