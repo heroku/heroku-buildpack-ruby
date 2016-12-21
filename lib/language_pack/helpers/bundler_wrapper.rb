@@ -100,7 +100,7 @@ class LanguagePack::Helpers::BundlerWrapper
       if output.match(/No ruby version specified/)
         ""
       else
-        output.chomp.sub('(', '').sub(')', '').sub(/(p\d+)/, ' \1').split.join('-')
+        output.chomp.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
       end
     end
   end
