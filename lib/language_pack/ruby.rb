@@ -853,8 +853,8 @@ params = CGI.parse(uri.query || "")
   def run_webpack_compile_rake_task
     instrument 'ruby.run_webpack_compile_rake_task' do
 
-      compile = rake.task("webpacker:precompile")
-      return true unless compile.is_defined?
+      compile = rake.task("webpacker:compile")
+      # return true unless compile.is_defined?
 
       topic "compiling webpacks"
       compile.invoke(env: rake_env)
