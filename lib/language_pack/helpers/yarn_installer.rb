@@ -27,6 +27,7 @@ class LanguagePack::YarnInstaller
     FileUtils.rm_rf("dist")
     puts `export PATH=$PATH:tmp`
     puts `echo $PATH`
+    puts `ls /tmp`
   end
 
 end
