@@ -25,7 +25,7 @@ class LanguagePack::YarnInstaller
     @fetcher.fetch_untar(version, "dist/bin/yarnpkg")
     FileUtils.mv("dist/bin/yarnpkg", "/tmp/yarnpkg")
     FileUtils.rm_rf("dist")
-    puts `export PATH=$PATH:tmp`
+    puts `export PATH=$PATH:/tmp`
     puts `echo $PATH`
     puts `ls /tmp`
   end
