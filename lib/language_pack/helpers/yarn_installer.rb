@@ -5,6 +5,7 @@ class LanguagePack::YarnInstaller
   def initialize(build_path, cache_path)
     @fetcher = LanguagePack::Fetcher.new(YARN_SOURCE_URL)
     @build_path = build_path
+    puts "build path = #{@build_path}"
   end
 
   def version
