@@ -25,7 +25,7 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
     instrument "rails51.compile" do
       super
       allow_git do
-        @yarn_installer.install
+        puts @yarn_installer.install
         install_node_packages
         run_webpack_compile_rake_task
       end
@@ -33,7 +33,7 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
   end
 
   def install_node_packages
-    `#{@build_path}/bin/yarn install`
+    puts `#{@build_path}/bin/yarn install`
   end
 
   def run_webpack_compile_rake_task
