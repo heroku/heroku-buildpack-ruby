@@ -105,7 +105,6 @@ WARNING
         post_bundler
         create_database_yml
         install_binaries
-        run_webpack_compile_rake_task
         run_assets_precompile_rake_task
       end
       best_practice_warnings
