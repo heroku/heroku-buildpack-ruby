@@ -3,7 +3,7 @@ class LanguagePack::YarnInstaller
   YARN_SOURCE_URL = "https://yarnpkg.com/"
 
   def initialize(build_path, cache_path)
-    @fetcher = LanguagePack::Fetcher.new(NODEJS_BASE_URL)
+    @fetcher = LanguagePack::Fetcher.new(YARN_SOURCE_URL)
     @build_path = build_path
   end
 
