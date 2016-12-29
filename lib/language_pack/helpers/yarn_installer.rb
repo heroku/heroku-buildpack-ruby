@@ -22,10 +22,10 @@ class LanguagePack::YarnInstaller
   end
 
   def install
-    @fetcher.fetch_untar(version, "dist/bin/yarnpkg")
-    FileUtils.mv("dist/bin/yarnpkg", "/tmp/yarnpkg")
+    @fetcher.fetch_untar(version, "dist/bin/")
+    FileUtils.cp_r("dist/bin/", "/tmp/yarn/bin")
     FileUtils.rm_rf("dist")
-    puts `export PATH=$PATH:/tmp`
+    puts `export PATH=$PATH:/tmp/yarn/bin`
     puts `echo $PATH`
     puts `ls /tmp`
   end
