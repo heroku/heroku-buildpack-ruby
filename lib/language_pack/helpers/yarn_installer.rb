@@ -26,6 +26,7 @@ class LanguagePack::YarnInstaller
     FileUtils.mv("dist/bin/yarnpkg", "/tmp/yarnpkg")
     FileUtils.rm_rf("dist")
     puts `export PATH=$PATH:tmp`
+    puts `echo PATH`
   end
 
 end
