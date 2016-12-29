@@ -13,7 +13,7 @@ module LanguagePack
     Instrument.instrument 'detect' do
       Dir.chdir(args.first)
 
-      pack = [ NoLockfile, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+      pack = [ NoLockfile, Rails51, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
         klass.use?
       end
 

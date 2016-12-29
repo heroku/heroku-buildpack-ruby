@@ -18,6 +18,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   NODE_BP_PATH         = "vendor/node/bin"
+  YARN_URL             = "https://yarnpkg.com/latest.tar.gz"
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -39,6 +40,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     super(build_path, cache_path)
     @fetchers[:mri]    = LanguagePack::Fetcher.new(VENDOR_URL, @stack)
     @fetchers[:rbx]    = LanguagePack::Fetcher.new(RBX_BASE_URL, @stack)
+    @yarn_installer    = LanguagePack::Fetcher.new(YARN_URL, @stack)
     @node_installer    = LanguagePack::NodeInstaller.new(@stack)
     @jvm_installer     = LanguagePack::JvmInstaller.new(slug_vendor_jvm, @stack)
   end
@@ -103,8 +105,8 @@ WARNING
         post_bundler
         create_database_yml
         install_binaries
-        run_assets_precompile_rake_task
         run_webpack_compile_rake_task
+        run_assets_precompile_rake_task
       end
       best_practice_warnings
       super
@@ -846,23 +848,6 @@ params = CGI.parse(uri.query || "")
         puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
       else
         precompile_fail(precompile.output)
-      end
-    end
-  end
-
-  def run_webpack_compile_rake_task
-    instrument 'ruby.run_webpack_compile_rake_task' do
-
-      compile = rake.task("webpacker:compile")
-      # return true unless compile.is_defined?
-
-      topic "compiling webpacks"
-      compile.invoke(env: rake_env)
-      if compile.success?
-        puts "Wepacker compile completed (#{"%.2f" % compile.time}s)"
-      else
-        log "webpacker_compile", :status => "failure"
-        msg = "webpacker compile failed.\n"
       end
     end
   end
