@@ -104,6 +104,7 @@ WARNING
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
+        run_webpack_compile_rake_task
       end
       best_practice_warnings
       super
@@ -845,6 +846,23 @@ params = CGI.parse(uri.query || "")
         puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
       else
         precompile_fail(precompile.output)
+      end
+    end
+  end
+
+  def run_webpack_compile_rake_task
+    instrument 'ruby.run_webpack_compile_rake_task' do
+
+      compile = rake.task("webpacker:precompile")
+      return true unless compile.is_defined?
+
+      topic "compiling webpacks"
+      compile.invoke(env: rake_env)
+      if compile.success?
+        puts "Wepacker compile completed (#{"%.2f" % compile.time}s)"
+      else
+        log "webpacker_compile", :status => "failure"
+        msg = "webpacker compile failed.\n"
       end
     end
   end
