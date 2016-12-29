@@ -27,10 +27,10 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
     instrument "rails51.compile" do
       super
       allow_git do
-        puts "installing yarn"
-        puts @node_installer.install
-        puts @yarn_installer.install
-        puts "installing yarn done"
+        # puts "installing yarn"
+        # puts @node_installer.install
+        # puts @yarn_installer.install
+        # puts "installing yarn done"
         install_node_packages
         run_webpack_compile_rake_task
       end
@@ -40,7 +40,7 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
   def install_node_packages
     puts "installing node packages"
     puts "PWD : #{`pwd`}"
-    puts `#{@build_path}/bin/yarn install`
+    puts `./bin/yarn install`
     puts "installing node packages done"
   end
 
