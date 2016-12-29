@@ -23,6 +23,7 @@ class LanguagePack::YarnInstaller
 
   def install
     @fetcher.fetch_untar(version, "dist/bin/")
+    FileUtils.mkdir_p("/tmp/yarn/bin")
     FileUtils.cp_r("dist/bin/", "/tmp/yarn/bin")
     FileUtils.rm_rf("dist")
     puts `export PATH=$PATH:/tmp/yarn/bin`
