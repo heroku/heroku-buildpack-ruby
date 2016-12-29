@@ -19,6 +19,8 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
     super(build_path, cache_path)
     @yarn_installer    = LanguagePack::YarnInstaller.new(build_path, cache_path)
     @build_path = build_path
+    puts "Build path = #{build_path}"
+    puts "cache path = #{cache_path}"
   end
 
   def compile
