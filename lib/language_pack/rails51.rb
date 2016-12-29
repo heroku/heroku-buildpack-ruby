@@ -33,7 +33,9 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
   end
 
   def install_node_packages
+    puts "installing node packages"
     puts `#{@build_path}/bin/yarn install`
+    puts "installing node packages done"
   end
 
   def run_webpack_compile_rake_task
