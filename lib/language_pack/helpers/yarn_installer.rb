@@ -21,10 +21,9 @@ class LanguagePack::YarnInstaller
   end
 
   def install
-    FileUtils.mkdir_p("/tmp/yarn")
-    @fetcher.fetch_untar(version, "/tmp/yarn")
-    FileUtils.mv("/tmp/yarn/dist/bin/yarnpkg", "#{@build_path}/vendor/yarnpkg")
-    FileUtils.rm_rf("/tmp/yarn")
+    @fetcher.fetch_untar(version, "dist/bin/yarnpkg")
+    FileUtils.mv("dist/bin/yarnpkg", "#{@build_path}/vendor/yarnpkg")
+    FileUtils.rm_rf("dist")
   end
 
 end
