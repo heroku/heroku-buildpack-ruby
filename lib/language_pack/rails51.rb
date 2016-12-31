@@ -28,8 +28,8 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
       super
       allow_git do
         # puts "installing yarn"
-        # puts @node_installer.install
-        # puts @yarn_installer.install
+        puts @node_installer.install
+        puts @yarn_installer.install
         # puts "installing yarn done"
         install_node_packages
         run_webpack_compile_rake_task
