@@ -1,6 +1,7 @@
 require 'securerandom'
 require "language_pack"
 require "language_pack/rails42"
+require "language_pack/helpers/yarn_wrapper"
 
 class LanguagePack::Rails5 < LanguagePack::Rails42
   # @return [Boolean] true if it's a Rails 5.x app
@@ -11,6 +12,22 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
       is_rails = rails_version >= Gem::Version.new('5.x') &&
                  rails_version <  Gem::Version.new('6.0.0')
       return is_rails
+    end
+  end
+
+  def initialize(build_path, cache_path=nil)
+    super(build_path, cache_path)
+    @yarn_wrapper    = LanguagePack::Helpers::YarnWrapper.new
+  end
+
+  def compile
+    instrument "rails5.compile" do
+      super
+      allow_git do
+        # installs node, yarn, node modules if package.json and yarn.lock present.
+        @yarn_wrapper.install_node_modules_and_dependencies
+        run_webpack_compile_rake_task
+      end
     end
   end
 
@@ -29,5 +46,23 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
 
   def install_plugins
     # do not install plugins, do not call super, do not warn
+  end
+
+  def run_webpack_compile_rake_task
+    instrument 'ruby.run_webpack_compile_rake_task' do
+
+      compile = rake.task("webpacker:compile")
+      return true unless compile.is_defined?
+
+      topic "compiling webpacks"
+      compile.invoke(env: rake_env)
+      if compile.success?
+        puts "Wepacker compile completed (#{"%.2f" % compile.time}s)"
+      else
+        log "webpacker_compile", :status => "failure"
+        msg = "webpacker compile failed.\n"
+        error(msg)
+      end
+    end
   end
 end

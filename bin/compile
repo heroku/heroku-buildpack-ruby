@@ -1,31 +1,10 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
 
-# sync output
-$stdout.sync = true
+BUILD_DIR=${1:-}
+CACHE_DIR=${2:-}
+ENV_DIR=${3:-}
+BP_DIR=$(cd $(dirname ${0:-}); cd ..; pwd)
 
-$:.unshift File.expand_path("../../lib", __FILE__)
-require "language_pack"
-require "language_pack/shell_helpers"
-
-begin
-  LanguagePack::Instrument.trace 'compile', 'app.compile' do
-    LanguagePack::ShellHelpers.initialize_env(ARGV[2])
-    if pack = LanguagePack.detect(ARGV[0], ARGV[1])
-      pack.topic("Compiling #{pack.name}")
-      pack.log("compile") do
-        pack.compile
-      end
-    end
-  end
-rescue Exception => e
-  Kernel.puts " !"
-  e.message.split("\n").each do |line|
-    Kernel.puts " !     #{line.strip}"
-  end
-  Kernel.puts " !"
-  if e.is_a?(BuildpackError)
-    exit 1
-  else
-    raise e
-  end
-end
+export PATH="$BUILD_DIR/vendor/yarn/bin:$BUILD_DIR/vendor/node/bin":$PATH
+ruby bin/compile.rb $BUILD_DIR $CACHE_DIR $ENV_DIR $BP_DIR
