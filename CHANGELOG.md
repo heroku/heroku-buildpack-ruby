@@ -1,5 +1,7 @@
 ## Master
 
+* Upgrade to bundler 1.13.7.
+
 ## v150 (12/23/2016)
 
 * Allow deployment of pre-release rubies (preview and rc) with Bundler 1.13.6+. This is needed because the patch level is recorded in the gemfile as `-1` since it is not released yet. For example 2.4.0rc1 will show up in a `Gemfile.lock` like this:
