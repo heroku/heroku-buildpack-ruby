@@ -16,4 +16,6 @@ if [ ! -d "$ROOT_DIR/vendor/ruby/$STACK" ]; then
   trap atexit EXIT
 fi
 
+export PATH=$ruby_dir/bin/:$PATH
+
 $ruby_dir/bin/ruby $BIN_DIR/ruby_compile $@
