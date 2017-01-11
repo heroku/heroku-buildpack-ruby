@@ -5,8 +5,6 @@ require 'hatchet'
 require 'rspec/retry'
 require 'language_pack'
 
-require 'language_pack'
-
 ENV['RACK_ENV'] = 'test'
 
 RSpec.configure do |config|
