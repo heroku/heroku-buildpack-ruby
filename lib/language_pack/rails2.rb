@@ -20,12 +20,20 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     "Ruby/Rails"
   end
 
+  def default_env_vars
+    {
+      "RAILS_ENV" => "production",
+      "RACK_ENV" => "production"
+    }
+  end
+
   def default_config_vars
     instrument "rails2.default_config_vars" do
-      super.merge({
-        "RAILS_ENV" => env("RAILS_ENV") || "production",
-        "RACK_ENV"  => env("RACK_ENV")  || "production",
-      })
+      config_vars = super
+      default_env_vars.map do |key, value|
+        config_vars[key] = env(key) || value
+      end
+      config_vars
     end
   end
 
@@ -80,8 +88,9 @@ private
   # sets up the profile.d script for this buildpack
   def setup_profiled
     super
-    set_env_default "RACK_ENV",  "production"
-    set_env_default "RAILS_ENV", "production"
+    default_env_vars.each do |key, value|
+      set_env_default key, value
+    end
   end
 
 end
