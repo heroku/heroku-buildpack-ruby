@@ -29,11 +29,7 @@ class LanguagePack::Rails2
     File.open("lib/tasks/heroku_db_test_purge.rake", "w") do |file|
       file.puts <<FILE
 Rake::Task["db:test:purge"].clear
-namespace :db do
-  namespace :test do
-    task :purge do
-    end
-  end
+task "db:test:purge" do
 end
 FILE
     end
