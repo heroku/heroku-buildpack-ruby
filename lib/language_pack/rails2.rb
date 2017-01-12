@@ -29,11 +29,11 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
 
   def default_config_vars
     instrument "rails2.default_config_vars" do
-      super.merge(Hash[
-        default_env_vars.map do |key, value|
-          [key, env(key) || value]
-        end
-      ])
+      config_vars = super
+      default_env_vars.map do |key, value|
+        config_vars[key] = env(key) || value
+      end
+      config_vars
     end
   end
 
