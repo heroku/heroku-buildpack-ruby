@@ -1,6 +1,10 @@
 ## Master
 
-* Upgrade to bundler 1.13.7.
+## v151 (01/16/2016)
+
+* Upgrade to bundler 1.13.7 (#519)
+* Vendor Default Ruby to execute the buildpack (#515)
+* Heroku CI Support (#516)
 
 ## v150 (12/23/2016)
 

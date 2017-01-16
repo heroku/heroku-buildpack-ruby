@@ -213,7 +213,7 @@ FILE
           require "language_pack/installers/heroku_ruby_installer"
           require "language_pack/ruby_version"
 
-          ["cedar-14"].each do |stack|
+          %w(cedar-14 heroku-16).each do |stack|
             installer    = LanguagePack::Installers::HerokuRubyInstaller.new(stack)
             ruby_version = LanguagePack::RubyVersion.new("ruby-#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}")
             installer.fetch_unpack(ruby_version, "vendor/ruby/#{stack}")
