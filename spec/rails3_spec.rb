@@ -20,6 +20,10 @@ describe "Rails 3.x" do
     Hatchet::Runner.new("rails3_12factor").deploy do |app, heroku|
       expect(app.output).not_to match("Add 'rails_12factor' gem to your Gemfile to skip plugin injection")
       expect(successful_body(app)).to eq("hello")
+
+      # https://github.com/heroku/heroku-buildpack-ruby/issues/525
+      env = app.run("env")
+      expect(env).not_to match("RAILS_GROUPS")
     end
   end
 
