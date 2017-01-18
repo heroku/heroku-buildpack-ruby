@@ -19,12 +19,6 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     "Ruby/Rails"
   end
 
-  def default_env_vars
-    super.merge({
-      "RAILS_GROUPS" => "assets"
-    })
-  end
-
   def default_process_types
     instrument "rails3.default_process_types" do
       # let's special case thin here
@@ -37,6 +31,10 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
         "console" => "bundle exec rails console"
       })
     end
+  end
+
+  def rake_env
+    super.merge(default_env_vars.merge("RAILS_GROUPS" => "assets"))
   end
 
   def compile
