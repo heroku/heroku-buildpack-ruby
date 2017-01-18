@@ -1,5 +1,9 @@
 ## Master
 
+## v152 (01/18/2016)
+
+* Remove RAILS_GROUPS=assets from being set in .profile.d (#526)
+
 ## v151 (01/16/2016)
 
 * Upgrade to bundler 1.13.7 (#519)
