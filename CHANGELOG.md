@@ -1,5 +1,9 @@
 ## Master
 
+## v153 (01/18/2016)
+
+* Fix regression, where defaults would override user env with rake (#528)
+
 ## v152 (01/18/2016)
 
 * Remove RAILS_GROUPS=assets from being set in .profile.d (#526)
