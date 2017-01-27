@@ -1,0 +1,11 @@
+[[Vendor]]
+# get tokens for logging build tokens
+url = "https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/ruby.tgz"
+dir = "."
+files = [".env"]
+[[Vendor]]
+url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/ruby-2.2.6.tgz"
+dir = "vendor/ruby/cedar-14"
+[[Vendor]]
+url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-16/ruby-2.2.6.tgz"
+dir = "vendor/ruby/heroku-16"
