@@ -17,6 +17,10 @@ class LanguagePack::Ruby < LanguagePack::Base
   BUNDLER_VERSION      = "1.13.7"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
+  BOWER_VERSION        = "1.7.5"
+  BOWER_BASE_URL       = "http://heroku-buildpack-ruby-bower.s3.amazonaws.com"
+  NODE_JS_VERSION      = "0.10.21"
+  NODE_JS_BASE_URL     = "http://heroku-buildpack-nodejs.s3.amazonaws.com"
   NODE_BP_PATH         = "vendor/node/bin"
 
   # detects if this is a valid Ruby app
@@ -103,6 +107,9 @@ WARNING
         post_bundler
         create_database_yml
         install_binaries
+        install_node
+        install_bower
+        build_bower
         run_assets_precompile_rake_task
       end
       best_practice_warnings
@@ -441,7 +448,7 @@ ERROR
   # default set of binaries to install
   # @return [Array] resulting list
   def binaries
-    add_node_js_binary
+    []
   end
 
   # vendors binaries into the slug
@@ -633,6 +640,64 @@ https://devcenter.heroku.com/articles/ruby-versions#your-ruby-version-is-x-but-y
     end
   end
 
+  def install_node
+    log("node") do
+      bin_dir = "bin"
+      FileUtils.mkdir_p bin_dir
+      run("curl #{NODE_JS_BASE_URL}/nodejs-#{NODE_JS_VERSION}.tgz -s -o - | tar xzf -")
+      if $?.success?
+        topic "Using Node.js version: #{NODE_JS_VERSION}"
+      else
+        error "Can't install nodejs-#{NODE_JS_VERSION}"
+      end
+      Dir["bin/*"].each {|path| run("chmod +x #{path}") }
+    end
+  end
+
+  # install bower as npm module
+  def install_bower
+    log("bower") do
+      run("curl #{BOWER_BASE_URL}/bower-#{bower_version}/node_modules.tar.gz -s -o - | tar xzf -")
+      unless $?.success?
+        error "Can't install Bower #{bower_version}. You can specify the version listed on http://heroku-buildpack-ruby-bower.s3-website-us-east-1.amazonaws.com/"
+      end
+    end
+  end
+
+  # runs bower to install the dependencies
+  def build_bower
+    error_message = <<ERROR
+Can't install JavaScript dependencies
+
+Bower 1.0.0 released at 2013-07-23
+https://github.com/bower/bower/blob/master/CHANGELOG.md
+
+Check these points:
+* Change from component.json to bower.json
+* bower.json requires 'name' option
+ERROR
+
+    log("bower") do
+      topic("Installing JavaScript dependencies using Bower #{bower_version}")
+
+      load_bower_cache
+
+      pipe("./node_modules/bower/bin/bower install --config.storage.packages=vendor/bower/packages --config.storage.registry=vendor/bower/registry --config.tmp=vendor/bower/tmp 2>&1")
+      if $?.success?
+        log "bower", :status => "success"
+        puts "Cleaning up the bower tmp."
+        FileUtils.rm_rf("vendor/bower/tmp")
+        cache.store "vendor/bower"
+      else
+        error error_message
+      end
+    end
+  end
+
+  def bower_version
+    env('BOWER_VERSION') || BOWER_VERSION
+  end
+
   def post_bundler
     instrument "ruby.post_bundler" do
       Dir[File.join(slug_vendor_base, "**", ".git")].each do |dir|
@@ -820,6 +885,12 @@ params = CGI.parse(uri.query || "")
 
   def bundler_cache
     "vendor/bundle"
+  end
+
+  def load_bower_cache
+    instrument "ruby.load_bower_cache" do
+      cache.load "vendor/bower"
+    end
   end
 
   def load_bundler_cache
