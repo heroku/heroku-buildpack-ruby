@@ -81,6 +81,8 @@ private
         else
           precompile_fail(precompile.output)
         end
+      else
+        puts "No assets:precompile task, assuming that the asset pipeline is not in use"
       end
     end
   end
