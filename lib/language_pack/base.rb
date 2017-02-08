@@ -153,12 +153,24 @@ private ##################################
     end
   end
 
+  # Writes the required variables to an `export` file to the root directory
+  # So that multibuildpack can do it thing
+  def add_to_export(string)
+    export_file = File.join(ROOT_DIR, "export")
+    FileUtils.mkdir_p export
+    File.open(export_file, "a") do |file|
+      file.puts string
+    end
+  end
+
   def set_env_default(key, val)
     add_to_profiled "export #{key}=${#{key}:-#{val}}"
+    add_to_export   "export #{key}=${#{key}:-#{val}}"
   end
 
   def set_env_override(key, val)
     add_to_profiled %{export #{key}="#{val.gsub('"','\"')}"}
+    add_to_export   %{export #{key}="#{val.gsub('"','\"')}"}
   end
 
   def add_to_export(string)
