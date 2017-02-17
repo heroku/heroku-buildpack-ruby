@@ -761,7 +761,19 @@ params = CGI.parse(uri.query || "")
   # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
   def add_dev_database_addon
-    bundler.has_gem?("pg") ? ['heroku-postgresql'] : []
+    pg_adapters.any? {|a| bundler.has_gem?(a) } ? ['heroku-postgresql'] : []
+  end
+
+  def pg_adapters
+    [
+      "pg",
+      "activerecord-jdbcpostgresql-adapter",
+      "jdbc-postgres",
+      "jdbc-postgresql",
+      "jruby-pg",
+      "rjack-jdbc-postgres",
+      "tgbyte-activerecord-jdbcpostgresql-adapter"
+    ]
   end
 
   # decides if we need to install the node.js binary
