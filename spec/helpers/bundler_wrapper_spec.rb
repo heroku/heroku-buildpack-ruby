@@ -41,7 +41,7 @@ describe "BundlerWrapper" do
 
     it "handles JRuby pre gemfiles" do
       Hatchet::App.new("jruby-minimal").in_directory do |dir|
-        expect(@bundler.ruby_version).to eq("ruby-2.2.0-jruby-9.0.0.0.pre1")
+        expect(@bundler.ruby_version).to eq("ruby-2.3.1-p0-jruby-9.1.7.0")
       end
     end
 
@@ -52,4 +52,3 @@ describe "BundlerWrapper" do
     end
   end
 end
-
