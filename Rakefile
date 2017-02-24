@@ -100,7 +100,7 @@ namespace :buildpack do
   def connection
     @connection ||= begin
       user, password = Netrc.read["api.heroku.com"]
-      Excon.new("https://#{CGI.escape(user)}:#{password}@buildkits.herokuapp.com")
+      Excon.new("https://#{CGI.escape(user)}:#{password}@buildkits.heroku.com")
     end
   end
 
