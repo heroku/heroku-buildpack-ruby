@@ -1,5 +1,7 @@
 ## Master
 
+* Bump bundler to 1.14.3 [Bundler changelog](https://github.com/bundler/bundler/blob/v1.14.3/CHANGELOG.md).
+
 ## v153 (01/18/2017)
 
 * Fix regression, where defaults would override user env with rake (#528)
