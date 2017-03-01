@@ -1,5 +1,10 @@
 ## Master
 
+## v154 (03/01/2017)
+
+* Postgres database add-on will only be provisioned if app has a postgres driver in the `Gemfile`. (#535)
+* Fix regression, where JRuby patchlevel was being pulled from `Gemfile.lock` and used when not appropriate (#536)
+
 ## v153 (01/18/2017)
 
 * Fix regression, where defaults would override user env with rake (#528)
