@@ -204,10 +204,8 @@ FILE
     Dir.mktmpdir("heroku-buildpack-ruby") do |tmpdir|
       Git.clone(File.expand_path("."), 'heroku-buildpack-ruby', path: tmpdir)
       Dir.chdir(tmpdir) do
-        streamer = lambda do |chunk, remaining_bytes, total_bytes|
-          File.open("ruby.tgz", "w") {|file| file.print(chunk) }
-        end
-        Excon.get(latest_release["tar_link"], :response_block => streamer)
+        sh "curl #{latest_release["tar_link"]} > ruby.tgz"
+
         Dir.chdir("heroku-buildpack-ruby") do |buildpack_dir|
           $:.unshift File.expand_path("../lib", __FILE__)
           require "language_pack/installers/heroku_ruby_installer"
