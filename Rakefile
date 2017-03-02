@@ -256,7 +256,15 @@ FILE
   task :publish do
     buildpack_name = "heroku/ruby"
     puts "Publishing #{buildpack_name} buildpack"
-    resp = connection.post(multipart_form_data("buildpacks/buildpack.tgz").merge(path: "/buildpacks/#{buildpack_name}"))
+
+    print "Enter your yubikey > "
+    yubikey = STDIN.gets.chomp
+
+    request_hash = multipart_form_data("buildpacks/buildpack.tgz").merge(path: "/buildpacks/#{buildpack_name}")
+    request_hash[:headers]["heroku-two-factor-code"] = yubikey
+
+    resp = connection.post(request_hash)
+
     puts resp.status
     puts resp.body
   end
