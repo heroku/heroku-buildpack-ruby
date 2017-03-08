@@ -73,6 +73,9 @@
   "rails5": [
     "sharpstone/rails5"
   ],
+  "rails51": [
+    "schneems/rails51_webpacker"
+  ],
   "multibuildpack": [
     "sharpstone/node_multi"
   ]

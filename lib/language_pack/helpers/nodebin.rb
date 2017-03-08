@@ -17,4 +17,8 @@ class LanguagePack::Nodebin
   def self.node_lts
     node("latest?range=6.x")
   end
+
+  def self.yarn(q)
+    query("yarn/linux-x64/#{q}")
+  end
 end
