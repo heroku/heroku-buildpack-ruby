@@ -1,4 +1,4 @@
-require_relative "spec_helper"
+require_relative "../spec_helper"
 
 describe "Stack Changes" do
   xit "should reinstall gems on stack change" do

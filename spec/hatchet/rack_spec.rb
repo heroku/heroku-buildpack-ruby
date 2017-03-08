@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 describe "Rack" do
   it "should not overwrite already set environment variables" do

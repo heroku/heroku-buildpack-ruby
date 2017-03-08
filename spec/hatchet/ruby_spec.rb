@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 describe "Ruby apps" do
   describe "bundler ruby version matcher" do
