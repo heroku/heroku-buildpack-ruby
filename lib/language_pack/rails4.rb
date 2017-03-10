@@ -1,3 +1,4 @@
+require "fileutils"
 require "language_pack"
 require "language_pack/rails3"
 
@@ -89,11 +90,12 @@ WARNING
           puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
 
           puts "Cleaning assets"
-          rake.task("assets:clean").invoke(env: rake_env)
+          rake.task("assets:clean[0]").invoke(env: rake_env)
 
           cleanup_assets_cache
           @cache.store public_assets_folder
           @cache.store default_assets_cache
+          FileUtils.rm_rf(default_assets_cache)
         else
           precompile_fail(precompile.output)
         end
