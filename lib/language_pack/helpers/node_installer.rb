@@ -13,6 +13,10 @@ class LanguagePack::Helpers::NodeInstaller
   end
 
   def install
+    # Untar of this file produces artifacts that the app does not need to run.
+    # If we ran this command in the app directory, we would have to manually
+    # clean up un-used files. Instead we untar in a temp directory which
+    # helps us avoid accidentally deleting code out of the user's slug by mistake.
     Dir.mktmpdir do |dir|
       node_bin = "#{binary_path}/bin/node"
 
