@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe LanguagePack::NodeInstaller do
+describe LanguagePack::Helpers::NodeInstaller do
   describe "#install" do
     it "should extract a node binary" do
-      installer = LanguagePack::NodeInstaller.new
+      installer = LanguagePack::Helpers::NodeInstaller.new
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
           installer.install

@@ -1,6 +1,6 @@
 require "language_pack/shell_helpers"
 
-class LanguagePack::JvmInstaller
+class LanguagePack::Helpers::JvmInstaller
   include LanguagePack::ShellHelpers
 
   SYS_PROPS_FILE  = "system.properties"

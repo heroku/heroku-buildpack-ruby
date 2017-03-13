@@ -1,10 +1,10 @@
-class LanguagePack::YarnInstaller
+class LanguagePack::Helpers::YarnInstaller
   attr_reader :version
 
   def initialize
     # Grab latest yarn, until release practice stabilizes
     # https://github.com/yarnpkg/yarn/issues/376#issuecomment-253366910
-    nodebin  = LanguagePack::Nodebin.yarn("latest")
+    nodebin  = LanguagePack::Helpers::Nodebin.yarn("latest")
     @version = nodebin["number"]
     @url     = nodebin["url"]
     @fetcher = LanguagePack::Fetcher.new("")

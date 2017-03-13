@@ -1,6 +1,6 @@
 require 'json'
 
-class LanguagePack::Nodebin
+class LanguagePack::Helpers::Nodebin
   URL = "https://nodebin.herokai.com/v1/"
 
   def self.query(q)
