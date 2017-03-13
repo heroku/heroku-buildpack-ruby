@@ -470,7 +470,11 @@ ERROR
     Dir.chdir(bin_dir) do |dir|
       if name.match(/^node\-/)
         @node_installer.install
+        # need to set PATH here b/c `node-gyp` can change the CWD, but still depends on executing node.
+        # the current PATH is relative, but it needs to be absolute for this.
+        # doing this here also prevents it from being exported during runtime
         node_bin_path = File.absolute_path(".")
+        # this needs to be set after so other binaries in bin/ don't take precedence"
         ENV["PATH"] = "#{ENV["PATH"]}:#{node_bin_path}"
       elsif name.match(/^yarn\-/)
         FileUtils.mkdir_p("../vendor")
