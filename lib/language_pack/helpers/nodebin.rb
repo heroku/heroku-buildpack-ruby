@@ -10,14 +10,14 @@ class LanguagePack::Helpers::Nodebin
     end
   end
 
-  def self.hardcoded_node_lts(q)
+  def self.hardcoded_node_lts
     {
       number: "6.10.0",
       url:    "https://s3.amazonaws.com/heroku-nodejs-bins/node/release/linux-x64/node-v6.10.0-linux-x64.tar.gz"
     }
   end
 
-  def self.hardcoded_yarn(q)
+  def self.hardcoded_yarn
     {
       number: "0.22.0",
       url:    "https://s3.amazonaws.com/heroku-nodejs-bins/yarn/release/yarn-v0.22.0.tar.gz"
