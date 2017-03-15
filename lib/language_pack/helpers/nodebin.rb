@@ -10,15 +10,29 @@ class LanguagePack::Helpers::Nodebin
     end
   end
 
+  def self.hardcoded_node_lts(q)
+    {
+      number: "6.10.0",
+      url:    "https://s3.amazonaws.com/heroku-nodejs-bins/node/release/linux-x64/node-v6.10.0-linux-x64.tar.gz"
+    }
+  end
+
+  def self.hardcoded_yarn(q)
+    {
+      number: "0.22.0",
+      url:    "https://s3.amazonaws.com/heroku-nodejs-bins/yarn/release/yarn-v0.22.0.tar.gz"
+    }
+  end
+
   def self.node(q)
     query("node/linux-x64/#{q}")
   end
 
   def self.node_lts
-    node("latest?range=6.x")
+    hardcoded_node_lts # node("latest?range=6.x")
   end
 
   def self.yarn(q)
-    query("yarn/linux-x64/#{q}")
+    hardcoded_yarn # query("yarn/linux-x64/#{q}")
   end
 end
