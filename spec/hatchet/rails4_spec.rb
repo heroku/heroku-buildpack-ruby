@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 describe "Rails 4.0.x" do
   it "should detect rails successfully" do

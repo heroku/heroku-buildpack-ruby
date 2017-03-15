@@ -9,7 +9,7 @@ describe "Multibuildpack" do
   end
 
   it "node is installed by default without multi buildpack" do
-    default_node_version = LanguagePack::NodeInstaller::MODERN_NODE_VERSION
+    default_node_version = LanguagePack::Helpers::NodeInstaller.new.version
     Hatchet::Runner.new("node_multi").deploy do |app|
       expect(app.output).to match("Node Version in Ruby buildpack is: v#{default_node_version}")
       expect(app.run("node -v")).to match(default_node_version)

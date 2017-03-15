@@ -1,44 +1,35 @@
-class LanguagePack::NodeInstaller
-  MODERN_NODE_VERSION = "0.10.30"
-  MODERN_BINARY_PATH  = "node-v#{MODERN_NODE_VERSION}-linux-x64"
+class LanguagePack::Helpers::NodeInstaller
+  attr_reader :version
 
-  LEGACY_NODE_VERSION = "0.4.7"
-  LEGACY_BINARY_PATH = "node-#{LEGACY_NODE_VERSION}"
-
-  NODEJS_BASE_URL     = "https://s3pository.heroku.com/node/v#{MODERN_NODE_VERSION}/"
-
-  def initialize(stack)
-    @fetchers = {
-      modern: LanguagePack::Fetcher.new(NODEJS_BASE_URL),
-      legacy: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, LanguagePack::Base::DEFAULT_LEGACY_STACK)
-    }
-    @legacy   = stack == LanguagePack::Base::DEFAULT_LEGACY_STACK
-  end
-
-  def version
-    if @legacy
-      LEGACY_NODE_VERSION
-    else
-      MODERN_NODE_VERSION
-    end
+  def initialize
+    nodebin = LanguagePack::Helpers::Nodebin.node_lts
+    @version = nodebin["number"]
+    @url     = nodebin["url"]
+    @fetcher = LanguagePack::Fetcher.new("")
   end
 
   def binary_path
-    if @legacy
-      LEGACY_BINARY_PATH
-    else
-      MODERN_BINARY_PATH
-    end
+    node_folder(@version)
   end
 
   def install
-    if @legacy
-      @fetchers[:legacy].fetch_untar("#{LEGACY_BINARY_PATH}.tgz")
-    else
-      node_bin = "#{MODERN_BINARY_PATH}/bin/node"
-      @fetchers[:modern].fetch_untar("#{MODERN_BINARY_PATH}.tar.gz", "#{MODERN_BINARY_PATH}/bin/node")
-      FileUtils.mv(node_bin, ".")
-      FileUtils.rm_rf(MODERN_BINARY_PATH)
+    # Untar of this file produces artifacts that the app does not need to run.
+    # If we ran this command in the app directory, we would have to manually
+    # clean up un-used files. Instead we untar in a temp directory which
+    # helps us avoid accidentally deleting code out of the user's slug by mistake.
+    Dir.mktmpdir do |dir|
+      node_bin = "#{binary_path}/bin/node"
+
+      Dir.chdir(dir) do
+        @fetcher.fetch_untar(@url, node_bin)
+      end
+
+      FileUtils.mv("#{dir}/#{node_bin}", ".")
     end
+  end
+
+  private
+  def node_folder(version)
+    "node-v#{version}-linux-x64"
   end
 end

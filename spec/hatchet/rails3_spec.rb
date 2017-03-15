@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 describe "Rails 3.x" do
   it "should deploy on ruby 1.9.3" do
