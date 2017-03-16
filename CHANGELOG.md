@@ -1,5 +1,9 @@
 ## Master
 
+## v155 (03/16/2017)
+
+* Yarn now installed for apps with `webpacker` gem (#547)
+
 ## v154 (03/01/2017)
 
 * Postgres database add-on will only be provisioned if app has a postgres driver in the `Gemfile`. (#535)
