@@ -26,6 +26,7 @@ class LanguagePack::Rails2
 
   # rails test runner + rspec depend on db:test:purge which drops/creates a db which doesn't work on Heroku's DB plans
   def blank_db_test_purge_task
+    FileUtils::mkdir_p 'lib/tasks'
     File.open("lib/tasks/heroku_db_test_purge.rake", "w") do |file|
       file.puts <<FILE
 Rake::Task["db:test:purge"].clear
