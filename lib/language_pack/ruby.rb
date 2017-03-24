@@ -330,7 +330,7 @@ SHELL
   def setup_profiled
     instrument 'setup_profiled' do
       profiled_path = [binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":")]
-      profiled_path << "vendor/#{@yarn_installer.binary_path}" if add_yarn_binary
+      profiled_path << "vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
       set_env_default  "LANG",     "en_US.UTF-8"
@@ -807,6 +807,10 @@ params = CGI.parse(uri.query || "")
 
   def add_yarn_binary
     bundler.has_gem?('webpacker') && yarn_not_preinstalled? ? [@yarn_installer.name] : []
+  end
+
+  def has_yarn_binary?
+    add_yarn_binary.any?
   end
 
   # checks if node.js is installed via the official heroku-buildpack-nodejs using multibuildpack
