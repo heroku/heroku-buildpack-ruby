@@ -76,6 +76,9 @@
   ],
   "ci": [
     "sharpstone/rails5_ruby_schema_format",
-    "sharpstone/heroku-ci-json-example"
+    "sharpstone/heroku-ci-json-example",
+    "sharpstone/rails5_sql_schema_format",
+    "sharpstone/rails_31_ruby_schema_format",
+    "sharpstone/rails_31_sql_schema_format"
   ]
 }
