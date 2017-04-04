@@ -1,9 +1,13 @@
 #!/usr/bin/env ruby
 
-# sync output
+# This script compiles an application so it can run on Heroku.
+# It will install the application's specified verison of Ruby, it's dependencies
+# and certain framework specific requirements (such as calling `rake assets:precompile`
+# for rails apps). You can see all features described in the devcenter
+# https://devcenter.heroku.com/articles/ruby-support
 $stdout.sync = true
 
-$:.unshift File.expand_path("../../lib", __FILE__)
+$:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
 
