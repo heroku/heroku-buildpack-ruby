@@ -308,21 +308,4 @@ begin
 rescue LoadError => e
 end
 
-namespace :travis do
-  task :setup do
-    sh "bundle exec hatchet install"
-    sh "if [ `git config --get user.email` ]; then echo 'already set'; else `git config --global user.email 'buildpack@example.com'`; fi"
-    sh "if [ `git config --get user.name` ];  then echo 'already set'; else `git config --global user.name  'BuildpackTester'`      ; fi"
-    sh "echo '
-Host heroku.com
-    StrictHostKeyChecking no
-    CheckHostIP no
-    UserKnownHostsFile=/dev/null
-    IdentityFile ~/.ssh/id_rsa
-Host github.com
-    StrictHostKeyChecking no
-' >> ~/.ssh/config"
-    sh "ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''"
-    sh "yes | heroku keys:add"
-  end
-end
+
