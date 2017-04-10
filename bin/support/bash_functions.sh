@@ -4,7 +4,7 @@
 #
 # Example:
 #
-#   heroku_buildpack_ruby_install_ruby "$BIN_DIR" "$ROOT_DIR"
+#   heroku_buildpack_ruby_install_ruby "$BIN_DIR" "$BUILDPACK_DIR"
 #
 # Takes two arguments, the first is the location of the buildpack's
 # `bin` directory. This is where the `download_ruby` script can be
@@ -19,8 +19,8 @@
 heroku_buildpack_ruby_install_ruby()
 {
   local bin_dir=$1
-  local root_dir=$2
-  heroku_buildpack_ruby_dir="$root_dir/vendor/ruby/$STACK"
+  local buildpack_dir=$2
+  heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$STACK"
 
   # The -d flag checks to see if a file exists and is a directory
   if [ ! -d "$heroku_buildpack_ruby_dir" ]; then
