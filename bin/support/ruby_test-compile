@@ -10,6 +10,7 @@
 #
 # It also sets up the database (if one is present) and populates the database
 # with the appropriate schema.
+$stdout.sync = true
 
 $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
