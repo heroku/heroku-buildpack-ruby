@@ -1,6 +1,6 @@
 machine:
   ruby:
-    version: 2.4.0
+    version: 2.4.1
   environment:
     HATCHET_RETRIES: 3
     IS_RUNNING_ON_CI: true
