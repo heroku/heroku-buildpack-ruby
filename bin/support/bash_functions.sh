@@ -32,8 +32,8 @@ heroku_buildpack_ruby_install_ruby()
       rm -rf $heroku_buildpack_ruby_dir
     }
     trap atexit EXIT
-  fi
 
-  export PATH=$heroku_buildpack_ruby_dir/bin/:$PATH
-  unset GEM_PATH
+    export PATH=$heroku_buildpack_ruby_dir/bin/:$PATH
+    unset GEM_PATH
+  fi
 }
