@@ -15,7 +15,8 @@
 # is set in codon outside of the buildpack. An example of a stack
 # would be "cedar-14".
 #
-# Returns the directory where ruby was downloaded
+# Relies on global scope to set the variable `$heroku_buildpack_ruby_dir`
+# that can be used by other scripts
 heroku_buildpack_ruby_install_ruby()
 {
   local bin_dir=$1
