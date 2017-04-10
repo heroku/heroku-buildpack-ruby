@@ -11,6 +11,10 @@
 # found. The second argument is the root directory where Ruby
 # can be installed.
 #
+# This function relies on the env var `$STACK` being set. This
+# is set in codon outside of the buildpack. An example of a stack
+# would be "cedar-14".
+#
 # Returns the directory where ruby was downloaded
 heroku_buildpack_ruby_install_ruby()
 {
