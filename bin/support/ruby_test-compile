@@ -1,9 +1,18 @@
 #!/usr/bin/env ruby
 
-# sync output
+# This script installs an app's Ruby version and dependencies. It's
+# essentially the same thing as `ruby_compile` (which is called by bin/compile)
+# except that some behavior is cusomtized by the inclusion of the
+# `language_pack/test` file. One difference is dependencies
+# the `bin/compile` installs dependencies via bundler and excludes `development:test`
+# gems, however we need `test` gems to run tests, so instead only `development`
+# is excluded.
+#
+# It also sets up the database (if one is present) and populates the database
+# with the appropriate schema.
 $stdout.sync = true
 
-$:.unshift File.expand_path("../../lib", __FILE__)
+$:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
 require "language_pack/test"
@@ -30,4 +39,3 @@ rescue Exception => e
     raise e
   end
 end
-

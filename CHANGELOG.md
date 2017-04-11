@@ -1,8 +1,9 @@
 ## Master
 
-## v156 (04/11/2017)
-
-* Update default Ruby version to 2.3.4.
+* Fix "double ruby rainbow bug" caused by executing two `compile` actions on the same
+app (#553 & #555)
+* Remove Ruby 1.8.7 compatiability to allow for #555. This version of Ruby has been EOL
+for a long time. It is not available on Cedar-14 and Cedar-10 is EOL
 
 ## v155 (03/16/2017)
 

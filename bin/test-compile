@@ -3,19 +3,9 @@
 # bootstraps the ruby needed and then executes `bin/ruby_test-compile`
 
 BIN_DIR=$(cd $(dirname $0); pwd)
-ROOT_DIR=$(dirname $BIN_DIR)
+BUILDPACK_DIR=$(dirname $BIN_DIR)
 
-ruby_dir="$ROOT_DIR/vendor/ruby/$STACK"
-if [ ! -d "$ROOT_DIR/vendor/ruby/$STACK" ]; then
-  ruby_dir=$(mktemp -d)
-  # bootstrap ruby
-  $BIN_DIR/bootstrap $ruby_dir
-  function atexit {
-    rm -rf $ruby_dir
-  }
-  trap atexit EXIT
-fi
+source "$BIN_DIR/support/bash_functions.sh"
+heroku_buildpack_ruby_install_ruby "$BIN_DIR" "$BUILDPACK_DIR"
 
-export PATH=$ruby_dir/bin/:$PATH
-
-$ruby_dir/bin/ruby $BIN_DIR/ruby_test-compile $@
+$heroku_buildpack_ruby_dir/bin/ruby $BIN_DIR/support/ruby_test-compile $@

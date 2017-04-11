@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 
-# sync output
+# This script will download a version of Ruby for the buildpack to use
+# and put it in the `ARGV.first` location.
 $stdout.sync = true
 
-$:.unshift File.expand_path("../../lib", __FILE__)
+$:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 
 DEFAULT_STACK = "cedar-14"
