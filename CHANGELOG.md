@@ -1,5 +1,9 @@
 ## Master
 
+## v156 (04/11/2017)
+
+* Update default Ruby version to 2.3.4.
+
 ## v155 (03/16/2017)
 
 * Yarn now installed for apps with `webpacker` gem (#547)
