@@ -1,6 +1,6 @@
 machine:
   ruby:
-    version: 2.0.0
+    version: 2.4.1
   environment:
     HATCHET_RETRIES: 3
     IS_RUNNING_ON_CI: true
@@ -9,7 +9,7 @@ machine:
 
 test:
   pre:
-    - bundle exec rake travis:setup
+    - bundle exec rake hatchet:setup_travis
   override:
     - bundle exec parallel_rspec -n 11 spec/
   post:

@@ -1,12 +1,16 @@
 #!/usr/bin/env ruby
 
-# sync output
+# This script will detect which test script or framework an app is likely to be
+# using and run the appropriate command. It is expected that `ruby_test-compile`
+# will be run before this file, this installs a version of Ruby and any dependencies
+# a customer's app needs.
 $stdout.sync = true
 
-$:.unshift File.expand_path("../../lib", __FILE__)
+$:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
 require "language_pack/test"
+require "language_pack/ruby"
 
 include LanguagePack::ShellHelpers
 
@@ -20,13 +24,18 @@ def execute_command(command)
   pipe(command, :user_env => true)
 end
 
-# bin/test BUILD_DIR ENV_DIR ARTIFACT_DIR
+# $ bin/test BUILD_DIR ENV_DIR ARTIFACT_DIR
 build_dir, env_dir, artifact_dir = ARGV
 LanguagePack::ShellHelpers.initialize_env(env_dir)
-# point bundler wrapper to app's bundler gem
-bundler_path = "#{build_dir}/vendor/bundle/ruby/2.3.0/gems/"
+
+# The `ruby_test-compile` program installs a version of Ruby for the
+# user's application. It needs the propper `PATH`, where ever Ruby is installed
+# we always add a symlink to the `bin/ruby` file so that is always valid.
+# We calculate the gem path the same way we do when compiling.
+LanguagePack::ShellHelpers.user_env_hash["PATH"] = "#{build_dir}/bin:#{ENV["PATH"]}"
+LanguagePack::ShellHelpers.user_env_hash["GEM_PATH"] = LanguagePack::Ruby.slug_vendor_base
+
 bundler = LanguagePack::Helpers::BundlerWrapper.new(
-  bundler_path: bundler_path,
   gemfile_path: "#{build_dir}/Gemfile"
 )
 # load bundler

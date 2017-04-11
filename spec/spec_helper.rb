@@ -43,3 +43,8 @@ ReplRunner.register_commands(:console)  do |config|
   config.return_char "\n"                  # the character that submits the command
   config.sync_stdout "STDOUT.sync = true"  # force REPL to not buffer standard out
 end
+
+if ENV['TRAVIS']
+  # Don't execute tests against "merge" commits
+  exit 0 if ENV['TRAVIS_PULL_REQUEST'] != 'false' && ENV['TRAVIS_BRANCH'] == 'master'
+end
