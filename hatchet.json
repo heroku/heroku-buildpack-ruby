@@ -78,9 +78,5 @@
   ],
   "multibuildpack": [
     "sharpstone/node_multi"
-  ],
-  "ci": [
-    "sharpstone/rails5_ruby_schema_format",
-    "sharpstone/heroku-ci-json-example"
   ]
 }

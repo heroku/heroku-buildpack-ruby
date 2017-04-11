@@ -160,18 +160,19 @@ WARNING
     "/usr/local/bin:/usr/bin:/bin"
   end
 
-  def self.slug_vendor_base
-    command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
-    slug_vendor_base = run_no_pipe(command, user_env: true).chomp
-    error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
-    return slug_vendor_base
-  end
-
   # the relative path to the bundler directory of gems
   # @return [String] resulting path
   def slug_vendor_base
     instrument 'ruby.slug_vendor_base' do
-      @slug_vendor_base ||= self.class.slug_vendor_base
+      if @slug_vendor_base
+        @slug_vendor_base
+      elsif ruby_version.ruby_version == "1.8.7"
+        @slug_vendor_base = "vendor/bundle/1.8"
+      else
+        @slug_vendor_base = run_no_pipe(%q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")).chomp
+        error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
+        @slug_vendor_base
+      end
     end
   end
 
