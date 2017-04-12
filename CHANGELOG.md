@@ -1,5 +1,9 @@
 ## Master
 
+## v158 (04/12/2017)
+
+*  Fix CI issue causing system Ruby to be used (#558)
+
 ## v157 (04/11/2017)
 
 * Fix "double ruby rainbow bug" caused by executing two `compile` actions on the same
