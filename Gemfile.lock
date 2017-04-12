@@ -29,7 +29,7 @@ GEM
     heroku-api (0.4.2)
       excon (~> 0.45)
       multi_json (~> 1.8)
-    heroku_hatchet (2.0.2)
+    heroku_hatchet (2.0.3)
       activesupport (~> 4)
       anvil-cli (~> 0)
       excon (~> 0)
@@ -78,7 +78,7 @@ GEM
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.2)
+    unf_ext (0.0.7.3)
 
 PLATFORMS
   ruby
