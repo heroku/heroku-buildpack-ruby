@@ -2,9 +2,11 @@
 
 A Scalingo [buildpack](http://doc.scalingo.com/buildpacks) for Ruby based apps (Ruby, Rack, and Rails apps). It uses [Bundler](http://gembundler.com) for dependency management.
 
+This buildpack requires 64-bit Linux.
+
 ## Usage
 
-This buildpack will be used if your app has a `Gemfile` and `Gemfile.lock` in the root directory. It will then use Bundler to install your dependencies. 
+This buildpack will be used if your app has a `Gemfile` and `Gemfile.lock` in the root directory. It will then use Bundler to install your dependencies.
 
 ```
     $ scalingo create ruby-app
@@ -24,7 +26,7 @@ This buildpack will be used if your app has a `Gemfile` and `Gemfile.lock` in th
            Default types for Ruby  -> console, rake
 ```
 
-The buildpack will detect your app as Ruby if it has a `Gemfile` and `Gemfile.lock` files in the root directory. It will then proceed to run `bundle install` after setting up the appropriate environment for [ruby](http://ruby-lang.org) and [Bundler](http://gembundler.com).
+The buildpack will detect your app as Ruby if it has a `Gemfile` and `Gemfile.lock` files in the root directory. It will then proceed to run `bundle install` after setting up the appropriate environment for [ruby](http://ruby-lang.org) and [Bundler](https://bundler.io).
 
 #### Bundler
 
@@ -91,7 +93,7 @@ First you'll need to build a Scalingo-compatible version of Node.js:
 
 Open `lib/language_pack/ruby.rb` in your editor, and change the following line:
 
-    BUNDLER_VERSION = "1.1.rc"
+    BUNDLER_VERSION = "1.11.2"
 
 Open `lib/language_pack/base.rb` in your editor, and change the following line:
 
@@ -115,6 +117,9 @@ it does not parallelize tests within a test file. To run the tests: clone the re
 $ bundle exec hatchet install
 ```
 
+then go to [hatchet](https://github.com/heroku/hatchet) repo and follow the
+instructions to set it up.
+
 Now run the tests:
 
 ```sh
@@ -127,4 +132,4 @@ If you don't want to run them in parallel you can still:
 $ bundle exec rake spec
 ```
 
-Now go take a nap or something for a really long time.
+Now go take a nap or do something for a really long time.

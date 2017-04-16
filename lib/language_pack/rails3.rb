@@ -33,6 +33,10 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     end
   end
 
+  def rake_env
+    default_env_vars.merge("RAILS_GROUPS" => "assets").merge(super)
+  end
+
   def compile
     instrument "rails3.compile" do
       super
@@ -79,23 +83,6 @@ private
         end
       end
     end
-  end
-
-  def rake_env
-    if user_env_hash.empty?
-      default_env = {
-        "RAILS_GROUPS" => ENV["RAILS_GROUPS"] || "assets",
-        "RAILS_ENV"    => ENV["RAILS_ENV"]    || "production",
-        "DATABASE_URL" => database_url
-      }
-    else
-      default_env = {
-        "RAILS_GROUPS" => "assets",
-        "RAILS_ENV"    => "production",
-        "DATABASE_URL" => database_url
-      }
-    end
-    default_env.merge(user_env_hash)
   end
 
   # generate a dummy database_url

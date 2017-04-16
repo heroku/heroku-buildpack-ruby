@@ -14,6 +14,7 @@ Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
   include LanguagePack::ShellHelpers
+  extend LanguagePack::ShellHelpers
 
   VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
   DEFAULT_LEGACY_STACK = "cedar"
@@ -104,12 +105,17 @@ class LanguagePack::Base
       f.write(release.to_yaml)
     end
 
-    unless File.exist?("Procfile")
-      msg =  "No Procfile detected, using the default web server (webrick)\n"
-      msg << "http://doc.scalingo.com/languages/ruby/web-server"
-      warn msg
-    end
+    warn_webserver
   end
+
+  def warn_webserver
+    return if File.exist?("Procfile")
+    msg =  "No Procfile detected, using the default web server (webrick)\n"
+    msg << "http://doc.scalingo.com/languages/ruby/web-server"
+    warn msg
+  end
+
+
 
   # log output
   # Ex. log "some_message", "here", :someattr="value"

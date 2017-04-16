@@ -30,7 +30,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
     end
   end
 
-  def build_bundler
+  def build_bundler(default_bundle_without)
     instrument "rails4.build_bundler" do
       super
     end
@@ -79,7 +79,7 @@ WARNING
 
         topic("Preparing app for Rails asset pipeline")
 
-        @cache.load public_assets_folder
+        @cache.load_without_overwrite public_assets_folder
         @cache.load default_assets_cache
 
         precompile.invoke(env: rake_env)
