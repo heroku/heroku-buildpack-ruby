@@ -145,6 +145,8 @@ WARNING
     paths.unshift("#{slug_vendor_jvm}/bin") if ruby_version.jruby?
     paths.unshift(safe_binstubs)
 
+    paths.unshift('/app/.heroku/node/bin')
+
     paths.join(":")
   end
 
