@@ -18,7 +18,7 @@ module LanguagePack
     end
 
     def self.delimiter_for(prefix)
-      (prefix.end_with? '_') ? '' : DEPENDENCIES_TRANSLATION_DELIMITER
+      (prefix == "" || prefix.end_with?('_')) ? '' : DEPENDENCIES_TRANSLATION_DELIMITER
     end
   end
 end
