@@ -1,6 +1,4 @@
-puts "-----> Buildpack version #{`cat #{File.dirname(__FILE__)}/../../../VERSION`}"
-
-DEPENDENCIES_PATH = File.expand_path("../../dependencies", File.expand_path($0))
+DEPENDENCIES_PATH = File.expand_path("../../../dependencies", File.expand_path($0))
 DEPENDENCIES_TRANSLATION_REGEX = /[:\/]/
 DEPENDENCIES_TRANSLATION_DELIMITER = '_'
 
@@ -14,6 +12,7 @@ ENV['STACK'] ||= ''
 module LanguagePack
   module Extensions
     def self.translate(host_url, original_filename)
+      original_filename = original_filename.gsub(DEPENDENCIES_TRANSLATION_REGEX, DEPENDENCIES_TRANSLATION_DELIMITER)
       prefix = host_url.to_s.gsub(DEPENDENCIES_TRANSLATION_REGEX, DEPENDENCIES_TRANSLATION_DELIMITER)
       "#{prefix}#{delimiter_for(prefix)}#{original_filename}"
     end

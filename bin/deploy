@@ -4,8 +4,10 @@ set -euo pipefail
 language='ruby'
 
 dependencies=(
-  'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/libyaml-0.1.6.tgz'
+  'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/libyaml-0.1.6.tgz'
+  'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/libyaml-0.1.7.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/bundler-1.9.7.tgz'
+  'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/bundler-1.13.7.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby_versions.yml'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/ruby-2.4.1.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/ruby-2.4.0.tgz'
@@ -55,8 +57,8 @@ dependencies=(
 )
 
 symlinks=(
-  'https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_bundler-1.9.7.tgz:https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_scalingo_bundler-1.9.7.tgz'
-  'https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_libyaml-0.1.6.tgz:https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_scalingo_libyaml-0.1.6.tgz'
+  'https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_cedar-14_libyaml-0.1.6.tgz:https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_scalingo_libyaml-0.1.6.tgz'
+  'https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_cedar-14_libyaml-0.1.7.tgz:https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_scalingo_libyaml-0.1.7.tgz'
   'https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_rails3_serve_static_assets.tgz:https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_scalingo_rails3_serve_static_assets.tgz'
   'https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_rails_log_stdout.tgz:https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_scalingo_rails_log_stdout.tgz'
   'https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_cedar-14_ruby-1.8.7-jruby-1.7.10.tgz:https___s3-external-1.amazonaws.com_heroku-buildpack-ruby_scalingo_ruby-1.8.7-jruby-1.7.10.tgz'
