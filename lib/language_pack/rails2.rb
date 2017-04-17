@@ -3,7 +3,7 @@ require "language_pack"
 require "language_pack/rack"
 
 # Rails 2 Language Pack. This is for any Rails 2.x apps.
-class LanguagePack::Rails2 < LanguagePack::Ruby
+class LanguagePack::Rails2 < LanguagePack::Rack
   # detects if this is a valid Rails 2 app
   # @return [Boolean] true if it's a Rails 2 app
   def self.use?
