@@ -1,4 +1,4 @@
-require 'securerandom'
+require "securerandom"
 require "language_pack"
 require "language_pack/rails4"
 
