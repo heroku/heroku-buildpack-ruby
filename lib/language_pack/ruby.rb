@@ -106,6 +106,7 @@ WARNING
         post_bundler
         create_database_yml
         install_binaries
+        run_db_migrate_rake_task
         run_assets_precompile_rake_task
       end
       best_practice_warnings
@@ -846,6 +847,31 @@ params = CGI.parse(uri.query || "")
 
   def yarn_not_preinstalled?
     !yarn_preinstall_bin_path
+  end
+
+  #
+  def run_db_migrate_rake_task
+    instrument 'ruby.run_db_migrate_rake_task' do
+      dbmigrate = rake.task("db:migrate")
+      return true unless dbmigrate.is_defined?
+
+      require 'benchmark'
+      if env('DATABASE_URL').nil?
+        puts "Skipping database migration since DATABASE_URL is not defined."
+        return
+      end
+      ENV['DATABASE_URL'] = env('DATABASE_URL')
+      ENV['RAILS_ENV'] = env('RAILS_ENV')
+      ENV['RACK_ENV'] = env('RACK_ENV')
+      # Segment gem does some questionable validation when started
+      ENV['SEGMENT_WRITE_KEY'] = env('SEGMENT_WRITE_KEY')
+      topic "Running: rake db:migrate"
+      time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake db:migrate 2>&1") }
+      if $?.success?
+        puts "Database migration completed (#{"%.2f" % time}s)"
+      end
+
+    end
   end
 
   def run_assets_precompile_rake_task
