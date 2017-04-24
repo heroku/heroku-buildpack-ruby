@@ -1,5 +1,9 @@
 ## Master
 
+## v159 (04/24/2017)
+
+*  Blacklist JAVA_OPTS and JAVA_TOOL_OPTIONS during build (#559)
+
 ## v158 (04/12/2017)
 
 *  Fix CI issue causing system Ruby to be used (#558)
