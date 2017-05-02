@@ -23,13 +23,14 @@ class LanguagePack::Ruby
 
   private
   def prepare_tests
-    schema_load = rake.task("db:schema:load")
+    schema_load = rake.task("db:schema:load_if_ruby")
+    structure_load = rake.task("db:structure:load_if_sql")
     db_migrate  = rake.task("db:migrate")
     return true unless (schema_load.is_defined? || db_migrate.is_defined?)
 
     topic "Preparing test database schema"
 
-    [schema_load, db_migrate].each do |rake_task|
+    [schema_load, structure_load, db_migrate].each do |rake_task|
       if rake_task.is_defined?
         rake_task.invoke(env: rake_env)
         if rake_task.success?
