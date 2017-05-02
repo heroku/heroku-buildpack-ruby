@@ -93,6 +93,8 @@ WARNING
       # check for new app at the beginning of the compile
       new_app?
       Dir.chdir(build_path)
+      @old_bundler_version = @metadata.read(bundler_version_cache)
+
       remove_vendor_bundle
       warn_bundler_upgrade
       install_ruby
@@ -111,6 +113,17 @@ WARNING
       best_practice_warnings
       super
     end
+  rescue => e
+    if @old_bundler_version && @old_bundler_version != BUNDLER_VERSION
+      warn(<<-WARNING)
+An error occured while deploying using bundler #{ BUNDLER_VERSION }.
+Previously you had a successful deploy with bundler #{ @old_bundler_version }.
+
+If you believe the failure related to the bundler version change please refer to:
+https://devcenter.heroku.com/articles/bundler-version
+WARNING
+    end
+    raise e
   end
 
 private
