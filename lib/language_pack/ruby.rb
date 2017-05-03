@@ -836,7 +836,7 @@ params = CGI.parse(uri.query || "")
   def yarn_preinstall_bin_path
     return @yarn_preinstall_bin_path if defined?(@yarn_preinstall_bin_path)
 
-    path = run("which yarn")
+    path = run("which yarnpkg")
     if path && $?.success?
       @yarn_preinstall_bin_path = path
     else
