@@ -27,7 +27,8 @@ end
 
 def successful_body(app, options = {})
   retry_limit = options[:retry_limit] || 50
-  Excon.get("http://#{app.name}.herokuapp.com", :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
+  url = "http://#{app.name}.herokuapp.com"
+  Excon.get(url, :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
 end
 
 def create_file_with_size_in(size, dir)
