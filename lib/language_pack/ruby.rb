@@ -726,6 +726,8 @@ password = uri.password
 host = uri.host
 port = uri.port
 
+schema_search_path = ENV["SCHEMA_SEARCH_PATH"] || "\"$user\",public"
+
 params = CGI.parse(uri.query || "")
 
 %>
@@ -737,7 +739,8 @@ params = CGI.parse(uri.query || "")
   <%= attribute "password", password, true %>
   <%= attribute "host",     host %>
   <%= attribute "port",     port %>
-
+  <%= attribute "schema_search_path", schema_search_path %>
+  
 <% params.each do |key, value| %>
   <%= key %>: <%= value.first %>
 <% end %>
