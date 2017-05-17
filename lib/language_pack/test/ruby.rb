@@ -35,7 +35,7 @@ class LanguagePack::Ruby
       when "sql"
         structure_load = rake.task("db:structure:load")
       else
-        puts "Could not determine schema/structure from ActiveRecord::Base.schema_format:\n#{result}"
+        puts "Could not determine schema/structure from `ActiveRecord::Base.schema_format`:\n#{result}"
       end
     end
 
