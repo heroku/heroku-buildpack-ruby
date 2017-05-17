@@ -43,14 +43,8 @@ describe "Ruby apps" do
     end
 
     context "Ruby 1.9+" do
-      it "runs rake tasks if no rake gem" do
-        Hatchet::Runner.new('mri_200_no_rake').deploy do |app, heroku|
-          expect(app.output).to include("foo")
-        end
-      end
-
       it "runs a rake task if the gem exists" do
-        Hatchet::Runner.new('mri_200_rake').deploy do |app, heroku|
+        Hatchet::Runner.new('default_with_rakefile').deploy do |app, heroku|
           expect(app.output).to include("foo")
         end
       end
