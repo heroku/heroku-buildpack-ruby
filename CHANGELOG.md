@@ -1,5 +1,9 @@
 ## Master
 
+## v162 (05/18/2017)
+
+* Disable roubocop warnings for `heroku_clear_tasks` (#567)
+
 ## v161 (05/18/2017)
 
 * Ruby apps being run on CI are no longer expected to have Rails commands (#565)
