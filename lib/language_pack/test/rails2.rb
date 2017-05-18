@@ -19,24 +19,28 @@ class LanguagePack::Rails2
   end
 
   def prepare_tests
+    # need to clear db:create before db:schema:load_if_ruby gets called by super
+    topic "Clearing #{db_test_tasks_to_clear.join(" ")} rake tasks"
+    clear_db_test_tasks
     super
-    topic "Clearing db:test:purge rake task"
-    blank_db_test_purge_task
+  end
+
+  def db_test_tasks_to_clear
+    ["db:test:purge", "db:create"]
   end
 
   # rails test runner + rspec depend on db:test:purge which drops/creates a db which doesn't work on Heroku's DB plans
-  def blank_db_test_purge_task
+  def clear_db_test_tasks
     FileUtils::mkdir_p 'lib/tasks'
     File.open("lib/tasks/heroku_clear_tasks.rake", "w") do |file|
-      file.puts <<-FILE
-Rake::Task['db:test:purge'].clear
-task 'db:test:purge' do
-end
-
-Rake::Task['db:create'].clear
-task 'db:create' do
+      content = db_test_tasks_to_clear.map do |task_name|
+        <<-FILE
+Rake::Task['#{task_name}'].clear
+task '#{task_name}' do
 end
 FILE
+      end.join("\n")
+      file.print content
     end
   end
 end
