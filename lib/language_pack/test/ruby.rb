@@ -22,25 +22,12 @@ class LanguagePack::Ruby
   end
 
   private
+  def db_prepare_test_rake_tasks
+    ["db:schema:load", "db:migrate"].map {|name| rake.task(name) }
+  end
+
   def prepare_tests
-    schema_load    = rake.task("db:schema:load_if_ruby")
-    structure_load = rake.task("db:structure:load_if_sql")
-    db_migrate     = rake.task("db:migrate")
-
-    if schema_load.not_defined? && structure_load.not_defined?
-      result = detect_schema_format
-      case result.lines.last.chomp
-      when "ruby"
-        schema_load    = rake.task("db:schema:load")
-      # currently not a possible edge case
-      when "sql"
-        structure_load = rake.task("db:structure:load")
-      else
-        puts "Could not determine schema/structure from `ActiveRecord::Base.schema_format`:\n#{result}"
-      end
-    end
-
-    rake_tasks = [schema_load, structure_load, db_migrate].select(&:is_defined?)
+    rake_tasks = db_prepare_test_rake_tasks.select(&:is_defined?)
     return true if rake_tasks.empty?
 
     topic "Preparing test database"
@@ -52,10 +39,5 @@ class LanguagePack::Ruby
         error "Could not prepare database for test"
       end
     end
-  end
-
-
-  def detect_schema_format
-    run("rails runner 'puts ActiveRecord::Base.schema_format'", user_env: true)
   end
 end

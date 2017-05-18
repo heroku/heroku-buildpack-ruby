@@ -79,6 +79,7 @@
     "sharpstone/heroku-ci-json-example",
     "sharpstone/rails5_sql_schema_format",
     "sharpstone/rails_31_ruby_schema_format",
-    "sharpstone/rails_31_sql_schema_format"
+    "sharpstone/rails_31_sql_schema_format",
+    "sharpstone/ruby_no_rails_test"
   ]
 }
