@@ -24,4 +24,10 @@ describe "CI" do
       expect(test_run.output).to match("db:schema:load completed")
     end
   end
+
+  it "Works with a vanilla ruby app" do
+    Hatchet::Runner.new("ruby_no_rails_test").run_ci do |test_run|
+      # Expect success test run
+    end
+  end
 end
