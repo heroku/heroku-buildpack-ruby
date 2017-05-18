@@ -24,10 +24,4 @@ describe "CI" do
       expect(test_run.output).to match("db:schema:load completed")
     end
   end
-
-  it "Works with Rails 3.1 SQL schema apps" do
-    Hatchet::Runner.new("rails_31_sql_schema_format").run_ci do |test_run|
-      expect(test_run.output).to match("db:structure:load completed")
-    end
-  end
 end

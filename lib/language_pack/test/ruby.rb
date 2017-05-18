@@ -32,6 +32,7 @@ class LanguagePack::Ruby
       case result.lines.last.chomp
       when "ruby"
         schema_load    = rake.task("db:schema:load")
+      # currently not a possible edge case
       when "sql"
         structure_load = rake.task("db:structure:load")
       else
