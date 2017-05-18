@@ -46,4 +46,31 @@ FILE
       file.print content
     end
   end
+
+  private
+  def db_prepare_test_rake_tasks
+    schema_load    = rake.task("db:schema:load_if_ruby")
+    structure_load = rake.task("db:structure:load_if_sql")
+    db_migrate     = rake.task("db:migrate")
+
+    if schema_load.not_defined? && structure_load.not_defined?
+      result = detect_schema_format
+      case result.lines.last.chomp
+      when "ruby"
+        schema_load    = rake.task("db:schema:load")
+      # currently not a possible edge case
+      when "sql"
+        structure_load = rake.task("db:structure:load")
+      else
+        puts "Could not determine schema/structure from `ActiveRecord::Base.schema_format`:\n#{result}"
+      end
+    end
+
+    [schema_load, structure_load, db_migrate]
+  end
+
+
+  def detect_schema_format
+    run("rails runner 'puts ActiveRecord::Base.schema_format'", user_env: true)
+  end
 end
