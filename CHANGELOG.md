@@ -1,5 +1,10 @@
 ## Master
 
+## v160 (05/18/2017)
+
+* `bin/rails test` only gets called in CI for Rails 5+ apps
+* support `:sql` (structure) Rails schema for CI (#549)
+
 ## v159 (04/24/2017)
 
 *  Blacklist JAVA_OPTS and JAVA_TOOL_OPTIONS during build (#559)
