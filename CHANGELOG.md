@@ -1,5 +1,9 @@
 ## Master
 
+## v161 (05/18/2017)
+
+* Ruby apps being run on CI are no longer expected to have Rails commands (#565)
+
 ## v160 (05/18/2017)
 
 * `bin/rails test` only gets called in CI for Rails 5+ apps
