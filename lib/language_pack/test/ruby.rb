@@ -55,6 +55,6 @@ class LanguagePack::Ruby
 
 
   def detect_schema_format
-    run("rails runner 'puts ActiveRecord::Base.schema_format'")
+    run("rails runner 'puts ActiveRecord::Base.schema_format'", user_env: true)
   end
 end
