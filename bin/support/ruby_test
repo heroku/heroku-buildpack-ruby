@@ -50,7 +50,7 @@ execute_test(
     else
       "bundle exec rspec"
     end
-  elsif File.exist?("bin/rails")
+  elsif File.exist?("bin/rails") && bundler.has_gem?("railties") && bundler.gem_version("railties") >= Gem::Version.new("5.x")
     "bin/rails test"
   elsif File.exist?("bin/rake")
     "bin/rake test"
