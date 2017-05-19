@@ -33,14 +33,16 @@ class LanguagePack::Rails2
   end
 
   # rails test runner + rspec depend on db:test:purge which drops/creates a db which doesn't work on Heroku's DB plans
+  # We use a %Q in the file instead of strings to avoid rubocop complaining about
+  # single or double quoted strings
   def clear_db_test_tasks
     FileUtils::mkdir_p 'lib/tasks'
     File.open("lib/tasks/heroku_clear_tasks.rake", "w") do |file|
       file.puts "# rubocop:disable all"
       content = db_test_tasks_to_clear.map do |task_name|
         <<-FILE
-Rake::Task['#{task_name}'].clear
-task '#{task_name}' do
+Rake::Task[%Q{#{task_name}}].clear
+task %Q{#{task_name}} do
 end
 FILE
       end.join("\n")
