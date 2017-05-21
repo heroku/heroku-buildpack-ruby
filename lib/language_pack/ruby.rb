@@ -541,6 +541,19 @@ WARNING
     "vendor/bundle/bin"
   end
 
+  def gem_source_http
+    "http://rubygems.org"
+  end
+
+  def gem_source_https
+    "https://rubygems.org"
+  end
+
+  def mirror(mirror_param)
+    return !ENV[mirror_param].to_s.empty?
+  end
+
+
   # runs bundler to install the dependencies
   def build_bundler(default_bundle_without)
     instrument 'ruby.build_bundler' do
@@ -603,6 +616,26 @@ WARNING
             "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
           }
           env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
+          
+          #Add mirror support
+          if mirror("GEM_SOURCE_MIRROR_HTTP")
+            instrument "ruby.bundle_config" do
+              mirror_command = "#{bundle_bin} config mirror.#{gem_source_http} #{ENV['GEM_SOURCE_MIRROR_HTTP']}"
+              puts "Running: #{mirror_command}"
+              bundle_config_mirror = run_no_pipe("#{mirror_command}", env: env_vars, user_env: true)
+              error "Problem detecting bundler config mirror.http: #{bundle_config_mirror}" unless $?.success?
+            end
+          end
+          if mirror("GEM_SOURCE_MIRROR_HTTPS")
+            instrument "ruby.bundle_config" do
+              mirror_command = "#{bundle_bin} config mirror.#{gem_source_https} #{ENV['GEM_SOURCE_MIRROR_HTTPS']}"
+              puts "Running: #{mirror_command}"   
+              bundle_config_mirror = run_no_pipe("#{mirror_command}", env: env_vars, user_env: true)
+              error "Problem detecting bundler config mirror.https: #{bundle_config_mirror}" unless $?.success?
+            end
+          end
+
+          
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
             bundle_time = Benchmark.realtime do
