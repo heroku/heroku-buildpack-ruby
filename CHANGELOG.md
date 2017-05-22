@@ -1,5 +1,9 @@
 ## Master
 
+## v163 (05/22/2017)
+
+* Fix CI rake tasks not running (#571)
+
 ## v162 (05/18/2017)
 
 * Disable roubocop warnings for `heroku_clear_tasks` (#567)
