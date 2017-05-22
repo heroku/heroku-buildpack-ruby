@@ -30,4 +30,10 @@ describe "CI" do
       # Expect success test run
     end
   end
+
+  it "Works with a rails app that does not have activerecord" do
+    Hatchet::Runner.new("activerecord_rake_tasks_does_not_exist").run_ci do |test_run|
+      expect(test_run.output).to_not match("db:migrate")
+    end
+  end
 end

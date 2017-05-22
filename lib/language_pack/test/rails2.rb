@@ -39,8 +39,10 @@ class LanguagePack::Rails2
       file.puts "# rubocop:disable all"
       content = db_test_tasks_to_clear.map do |task_name|
         <<-FILE
-Rake::Task['#{task_name}'].clear
-task '#{task_name}' do
+if Rake::Task.task_defined?('#{task_name}')
+  Rake::Task['#{task_name}'].clear
+  task '#{task_name}' do
+  end
 end
 FILE
       end.join("\n")
@@ -55,13 +57,14 @@ FILE
     structure_load = rake.task("db:structure:load_if_sql")
     db_migrate     = rake.task("db:migrate")
 
+    return [] if db_migrate.not_defined?
+
     if schema_load.not_defined? && structure_load.not_defined?
       result = detect_schema_format
       case result.lines.last.chomp
       when "ruby"
         schema_load    = rake.task("db:schema:load")
-      # currently not a possible edge case
-      when "sql"
+      when "sql" # currently not a possible edge case, we think
         structure_load = rake.task("db:structure:load")
       else
         puts "Could not determine schema/structure from `ActiveRecord::Base.schema_format`:\n#{result}"
