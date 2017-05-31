@@ -388,8 +388,6 @@ ERROR
 
     if ruby_version.jruby?
       message << "Note: Only JRuby 1.7.13 and newer are supported on Cedar-14"
-    elsif ruby_version.ruby_version.start_with?("2.1")
-      message << "Note: Only the most recent version of Ruby 2.1 is supported on Cedar-14\n"
     end
 
     message << "\nDebug Information"
