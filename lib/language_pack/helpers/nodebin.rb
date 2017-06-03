@@ -1,4 +1,4 @@
-require 'json'
+require 'vendor/okjson'
 
 class LanguagePack::Helpers::Nodebin
   URL = "https://nodebin.herokai.com/v1/"
@@ -6,7 +6,7 @@ class LanguagePack::Helpers::Nodebin
   def self.query(q)
     response = Net::HTTP.get_response(URI("#{URL}/#{q}"))
     if response.code == '200'
-      JSON.parse(response.body)
+      OkJson.decode(response.body)
     end
   end
 
