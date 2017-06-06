@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 describe "Rails 4.0.x" do
   it "should detect rails successfully" do
@@ -10,7 +10,7 @@ describe "Rails 4.0.x" do
     end
   end
 
-  it "should deploy on ruby 2.0.0" do
+  it "should skip asset compilation when deployed with manifest file" do
     Hatchet::Runner.new("rails4-manifest").deploy do |app, heroku|
       expect(app.output).to include("Detected manifest file, assuming assets were compiled locally")
       expect(app.output).not_to match("Include 'rails_12factor' gem to enable all platform features")
@@ -56,6 +56,15 @@ describe "Rails 4.0.x" do
     Hatchet::Runner.new("rails4-fail-assets-compile", allow_failure: true).deploy do |app, heroku|
       expect(app.output).to include("raising on assets:precompile on purpose")
       expect(app).not_to be_deployed
+    end
+  end
+
+  it "should not override user settings" do
+    app = Hatchet::Runner.new("rails4-env-assets-compile")
+    app.setup!
+    app.set_config("RAILS_ENV" => "staging")
+    app.deploy do |a, heroku|
+      expect(a.output).to include("w00t")
     end
   end
 end

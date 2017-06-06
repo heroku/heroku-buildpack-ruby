@@ -21,6 +21,10 @@ class LanguagePack::Helpers::RakeRunner
       @output          = ""
     end
 
+    def not_defined?
+      !is_defined?
+    end
+
     def success?
       status == :pass
     end

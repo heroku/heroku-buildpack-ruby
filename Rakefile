@@ -100,7 +100,7 @@ namespace :buildpack do
   def connection
     @connection ||= begin
       user, password = Netrc.read["api.heroku.com"]
-      Excon.new("https://#{CGI.escape(user)}:#{password}@buildkits.herokuapp.com")
+      Excon.new("https://#{CGI.escape(user)}:#{password}@buildkits.heroku.com")
     end
   end
 
@@ -203,12 +203,19 @@ FILE
   task :stage do
     Dir.mktmpdir("heroku-buildpack-ruby") do |tmpdir|
       Git.clone(File.expand_path("."), 'heroku-buildpack-ruby', path: tmpdir)
-      Dir.chdir(tmpdir) do |dir|
-        streamer = lambda do |chunk, remaining_bytes, total_bytes|
-          File.open("ruby.tgz", "w") {|file| file.print(chunk) }
-        end
-        Excon.get(latest_release["tar_link"], :response_block => streamer)
-        Dir.chdir("heroku-buildpack-ruby") do |dir|
+      Dir.chdir(tmpdir) do
+        sh "curl #{latest_release["tar_link"]} > ruby.tgz"
+
+        Dir.chdir("heroku-buildpack-ruby") do |buildpack_dir|
+          $:.unshift File.expand_path("../lib", __FILE__)
+          require "language_pack/installers/heroku_ruby_installer"
+          require "language_pack/ruby_version"
+
+          %w(cedar-14 heroku-16).each do |stack|
+            installer    = LanguagePack::Installers::HerokuRubyInstaller.new(stack)
+            ruby_version = LanguagePack::RubyVersion.new("ruby-#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}")
+            installer.fetch_unpack(ruby_version, "vendor/ruby/#{stack}")
+          end
           sh "tar xzf ../ruby.tgz .env"
           sh "tar czf ../buildpack.tgz * .env"
         end
@@ -249,7 +256,15 @@ FILE
   task :publish do
     buildpack_name = "heroku/ruby"
     puts "Publishing #{buildpack_name} buildpack"
-    resp = connection.post(multipart_form_data("buildpacks/buildpack.tgz").merge(path: "/buildpacks/#{buildpack_name}"))
+
+    print "Enter your yubikey > "
+    yubikey = STDIN.gets.chomp
+
+    request_hash = multipart_form_data("buildpacks/buildpack.tgz").merge(path: "/buildpacks/#{buildpack_name}")
+    request_hash[:headers]["heroku-two-factor-code"] = yubikey
+
+    resp = connection.post(request_hash)
+
     puts resp.status
     puts resp.body
   end
@@ -293,21 +308,4 @@ begin
 rescue LoadError => e
 end
 
-namespace :travis do
-  task :setup do
-    sh "bundle exec hatchet install"
-    sh "if [ `git config --get user.email` ]; then echo 'already set'; else `git config --global user.email 'buildpack@example.com'`; fi"
-    sh "if [ `git config --get user.name` ];  then echo 'already set'; else `git config --global user.name  'BuildpackTester'`      ; fi"
-    sh "echo '
-Host heroku.com
-    StrictHostKeyChecking no
-    CheckHostIP no
-    UserKnownHostsFile=/dev/null
-    IdentityFile ~/.ssh/id_rsa
-Host github.com
-    StrictHostKeyChecking no
-' >> ~/.ssh/config"
-    sh "ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''"
-    sh "yes | heroku keys:add"
-  end
-end
+

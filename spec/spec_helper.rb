@@ -5,8 +5,6 @@ require 'hatchet'
 require 'rspec/retry'
 require 'language_pack'
 
-require 'language_pack'
-
 ENV['RACK_ENV'] = 'test'
 
 RSpec.configure do |config|
@@ -29,7 +27,8 @@ end
 
 def successful_body(app, options = {})
   retry_limit = options[:retry_limit] || 50
-  Excon.get("http://#{app.name}.herokuapp.com", :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
+  url = "http://#{app.name}.herokuapp.com"
+  Excon.get(url, :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
 end
 
 def create_file_with_size_in(size, dir)
@@ -44,4 +43,9 @@ ReplRunner.register_commands(:console)  do |config|
   config.startup_timeout 60                # seconds to boot
   config.return_char "\n"                  # the character that submits the command
   config.sync_stdout "STDOUT.sync = true"  # force REPL to not buffer standard out
+end
+
+if ENV['TRAVIS']
+  # Don't execute tests against "merge" commits
+  exit 0 if ENV['TRAVIS_PULL_REQUEST'] != 'false' && ENV['TRAVIS_BRANCH'] == 'master'
 end
