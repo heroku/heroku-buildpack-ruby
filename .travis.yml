@@ -2,7 +2,15 @@ language: ruby
 rvm:
 - 2.4.1
 before_script:
-- wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+- |
+  set -ex
+  # add heroku repository to apt
+  echo "deb https://cli-assets.heroku.com/branches/stable/apt ./" \
+   > /etc/apt/sources.list.d/heroku.list
+  wget -qO- https://cli-assets.heroku.com/apt/release.key | apt-key add -
+  # apt-get install -y apt-transport-https
+  apt-get update
+  apt-get install -y heroku
 - bundle exec rake hatchet:setup_travis
 script: bundle exec parallel_rspec -n 11 spec/
 after_script:
