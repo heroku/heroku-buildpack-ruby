@@ -14,6 +14,7 @@ env:
   - secure: xFS5oLPMGyT6N0LKwU7wllaEZEVLzE/D5HuD14q3Vfd4L369XpV6ORYJF/2mkf765m+LH1MaN09rJaKc00ZcQfQECMuzyWagLsr1bVKs+szta3G/nFjjVTwmoPX5kVw5q7e6TYvS/KAzo+n8u5pW+zu8MMTwnv40QI6LfcbZkTc=
   - secure: wd/FBYI9I37PJ+eXhO8vesvWELkklNgGRA1xo/tuA31+ACpY/jG5EjrHd+semsfDTxM8fZe3s0foIch+jeMTIOcGs98tDC/L/8b/h6i0Qic0DqkAk6B30fT+5Nl3dufjiXsBJg5xj1zYqW6ka3DKIDjnn+3ao2cme05MtDQBHdc=
 sudo: false
+dist: trusty
 addons:
   apt:
     sources:
