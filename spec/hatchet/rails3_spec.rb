@@ -2,9 +2,8 @@ require_relative '../spec_helper'
 
 describe "Rails 3.x" do
   it "should deploy on ruby 1.9.3" do
-    app = Hatchet::Runner.new("rails3_mri_193")
+    app = Hatchet::Runner.new("rails3_mri_193", stack: "cedar-14")
     app.setup!
-    app.heroku.put_stack(app.name, "cedar-14")
     app.deploy do |app, heroku|
       expect(app.output).to include("Asset precompilation completed")
 
