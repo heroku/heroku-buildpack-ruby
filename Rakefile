@@ -58,9 +58,9 @@ end
 
 desc "update plugins"
 task "plugins:update" do
-  vendor_plugin "http://github.com/heroku/rails_log_stdout.git", "legacy"
-  vendor_plugin "http://github.com/pedro/rails3_serve_static_assets.git"
-  vendor_plugin "http://github.com/hone/rails31_enable_runtime_asset_compilation.git"
+  vendor_plugin "https://github.com/heroku/rails_log_stdout.git", "legacy"
+  vendor_plugin "https://github.com/pedro/rails3_serve_static_assets.git"
+  vendor_plugin "https://github.com/hone/rails31_enable_runtime_asset_compilation.git"
 end
 
 desc "install vendored gem"
