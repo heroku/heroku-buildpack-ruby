@@ -22,5 +22,20 @@ class LanguagePack::Installers::HerokuRubyInstaller
       @fetcher.fetch_untar(file)
     end
   end
+
+  def setup_binstubs(*)
+    super
+    Dir["#{DEFAULT_BIN_DIR}/{rake,bundle,rails}"].select do |binstub|
+      begin
+        if File.file?(binstub)
+          shebang = File.open(binstub, &:readline)
+          if !shebang.match %r{\A#!/usr/bin/env ruby(.exe)?\z}
+            warn("Binstub #{binstub} contains shebang #{shebang}. This may cause issues if the program specified is unavailable.", inline: true)
+          end
+        end
+      rescue EOFError
+      end
+    end
+  end
 end
 
