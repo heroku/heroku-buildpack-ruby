@@ -1,5 +1,9 @@
 ## Master
 
+## v164 (06/21/2017)
+
+* Update Bundler to 1.15.1 (#579)
+
 ## v163 (05/22/2017)
 
 * Fix CI rake tasks not running (#571)
