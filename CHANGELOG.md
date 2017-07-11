@@ -1,5 +1,9 @@
 ## Master
 
+## v166 (07/11/2017)
+
+* no changes from v165
+
 ## v165 (07/11/2017)
 
 * Set `$JAVA_HOME` for JRuby apps during build (#593)
