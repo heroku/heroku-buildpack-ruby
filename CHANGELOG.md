@@ -1,5 +1,10 @@
 ## Master
 
+## v165 (07/11/2017)
+
+* Set `$JAVA_HOME` for JRuby apps during build (#593)
+* Update Node to 6.11.1 (#598)
+
 ## v164 (06/21/2017)
 
 * Update Bundler to 1.15.1 (#579)
