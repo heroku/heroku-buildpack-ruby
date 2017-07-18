@@ -151,7 +151,7 @@ s3_curl() {
   headers[${#headers[@]}]="Date: ${date}"
   [[ ${md5} ]] && headers[${#headers[@]}]="Content-MD5: ${md5}"
     curl ${arg} "${inout}" ${stdopts} -o - -K <(curl_headers "${headers[@]}") \
-       "http://s3.amazonaws.com${bucket}${remote}"
+       "https://s3.amazonaws.com${bucket}${remote}"
   return $?
 }
 
