@@ -21,7 +21,9 @@ module LanguagePack
 
     def fetch_untar(path, files_to_extract = nil)
       curl = curl_command("#{@host_url.join(path)} -s -o")
-      run!("#{curl} - | tar zxf - #{files_to_extract}", error_class: FetchError)
+      run! "#{curl} - | tar zxf - #{files_to_extract}",
+        error_class: FetchError,
+        max_attempts: 3
     end
 
     def fetch_bunzip2(path, files_to_extract = nil)
