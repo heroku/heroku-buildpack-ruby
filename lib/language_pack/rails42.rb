@@ -26,4 +26,45 @@ class LanguagePack::Rails42 < LanguagePack::Rails41
       "RAILS_SERVE_STATIC_FILES"  => env("RAILS_SERVE_STATIC_FILES") || "enabled"
     })
   end
+
+  def node_modules_folder
+    "node_modules"
+  end
+
+  def run_assets_precompile_rake_task
+    instrument "rails42.run_assets_precompile_rake_task" do
+      log("assets_precompile") do
+        if Dir.glob("public/assets/{.sprockets-manifest-*.json,manifest-*.json}", File::FNM_DOTMATCH).any?
+          puts "Detected manifest file, assuming assets were compiled locally"
+          return true
+        end
+
+        precompile = rake.task("assets:precompile")
+        return true unless precompile.is_defined?
+
+        topic("Preparing app for Rails asset pipeline")
+
+        @cache.load_without_overwrite public_assets_folder
+        @cache.load default_assets_cache
+        @cache.load node_modules_folder
+
+        precompile.invoke(env: rake_env)
+
+        if precompile.success?
+          log "assets_precompile", :status => "success"
+          puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
+
+          puts "Cleaning assets"
+          rake.task("assets:clean").invoke(env: rake_env)
+
+          cleanup_assets_cache
+          @cache.store public_assets_folder
+          @cache.store default_assets_cache
+          @cache.store node_modules_folder
+        else
+          precompile_fail(precompile.output)
+        end
+      end
+    end
+  end
 end
