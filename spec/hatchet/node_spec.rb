@@ -16,9 +16,15 @@ describe "Multibuildpack" do
     end
   end
 
-  it "doesn't install node without exec JS" do
+  it "doesn't install node without execjs or webpacker" do
     Hatchet::Runner.new("default_ruby").deploy do |app|
       expect(app.run("node -v")).to match("node: command not found")
+    end
+  end
+
+  it "installs node when webpacker is detected but no execjs" do
+    Hatchet::Runner.new("webpacker_no_execjs").deploy do |app|
+      expect(app.output).to match("Installing node-v")
     end
   end
 end
