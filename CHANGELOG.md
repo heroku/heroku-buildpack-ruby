@@ -1,5 +1,7 @@
 ## Master
 
+* Update Bundler to 1.15.3 (#609)
+
 ## v167 (07/25/2016)
 
 * Update Bundler to 1.15.2 (#602)
