@@ -20,12 +20,20 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     "Ruby/Rails"
   end
 
+  def default_env_vars
+    {
+      "RAILS_ENV" => "production",
+      "RACK_ENV" => "production"
+    }
+  end
+
   def default_config_vars
     instrument "rails2.default_config_vars" do
-      super.merge({
-        "RAILS_ENV" => env("RAILS_ENV") || "production",
-        "RACK_ENV"  => env("RACK_ENV")  || "production",
-      })
+      config_vars = super
+      default_env_vars.map do |key, value|
+        config_vars[key] = env(key) || value
+      end
+      config_vars
     end
   end
 
@@ -54,6 +62,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     if env("RAILS_ENV") != "production"
       warn(<<-WARNING)
 You are deploying to a non-production environment: #{ env("RAILS_ENV").inspect }.
+This is not recommended.
 See https://devcenter.heroku.com/articles/deploying-to-a-custom-rails-environment for more information.
 WARNING
     end
@@ -70,17 +79,12 @@ private
     end
   end
 
-  # most rails apps need a database
-  # @return [Array] shared database addon
-  def add_dev_database_addon
-    ['heroku-postgresql']
-  end
-
   # sets up the profile.d script for this buildpack
   def setup_profiled
     super
-    set_env_default "RACK_ENV",  "production"
-    set_env_default "RAILS_ENV", "production"
+    default_env_vars.each do |key, value|
+      set_env_default key, value
+    end
   end
 
 end

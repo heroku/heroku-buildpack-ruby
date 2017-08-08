@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 describe "Bugs" do
   it "nokogiri should use the system libxml2" do

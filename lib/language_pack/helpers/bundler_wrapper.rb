@@ -1,3 +1,5 @@
+require 'language_pack/fetcher'
+
 class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
@@ -88,7 +90,8 @@ class LanguagePack::Helpers::BundlerWrapper
     instrument 'detect_ruby_version' do
       env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
               "RUBYLIB"  => File.join(bundler_path, "gems", BUNDLER_DIR_NAME, "lib"),
-              "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}"
+              "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
+              "BUNDLE_DISABLE_VERSION_CHECK" => "true"
             }
       command = "bundle platform --ruby"
 
@@ -100,7 +103,7 @@ class LanguagePack::Helpers::BundlerWrapper
       if output.match(/No ruby version specified/)
         ""
       else
-        output.chomp.sub('(', '').sub(')', '').sub(/(p\d+)/, ' \1').split.join('-')
+        output.chomp.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
       end
     end
   end

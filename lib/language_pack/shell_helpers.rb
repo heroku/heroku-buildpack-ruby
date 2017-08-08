@@ -27,7 +27,7 @@ module LanguagePack
     end
 
     def self.blacklist?(key)
-      %w(PATH GEM_PATH GEM_HOME GIT_DIR JRUBY_OPTS).include?(key)
+      %w(PATH GEM_PATH GEM_HOME GIT_DIR JRUBY_OPTS JAVA_OPTS JAVA_TOOL_OPTIONS).include?(key)
     end
 
     def self.initialize_env(path)
@@ -41,14 +41,25 @@ module LanguagePack
       end
     end
 
+    # run a shell command (deferring to #run), and raise an error if it fails
+    # @param [String] command to be run
+    # @return [String] result of #run
+    # @option options [Error] :error_class Class of error to raise, defaults to Standard Error
+    # @option options [Integer] :max_attempts Number of times to attempt command before raising
     def run!(command, options = {})
-      result      = run(command, options)
-      error_class = options.delete(:error_class) || StandardError
-      unless $?.success?
-        message = "Command: '#{command}' failed unexpectedly:\n#{result}"
-        raise error_class, message
+      max_attempts = options[:max_attempts] || 1
+      error_class = options[:error_class] || StandardError
+      max_attempts.times do |attempt_number|
+        result = run(command, options)
+        if $?.success?
+          return result
+        end
+        if attempt_number == max_attempts - 1
+          raise error_class, "Command: '#{command}' failed unexpectedly:\n#{result}"
+        else
+          puts "Command: '#{command}' failed on attempt #{attempt_number + 1} of #{max_attempts}."
+        end
       end
-      return result
     end
 
     # doesn't do any special piping. stderr won't be redirected.

@@ -9,13 +9,13 @@ describe "Cleans Stale Files" do
       sleep 1 # need mtime of files to be different
       new_file = create_file_with_size_in(file_size, dir)
 
-      expect(old_file.exist?).to be_true
-      expect(new_file.exist?).to be_true
+      expect(old_file.exist?).to be_truthy
+      expect(new_file.exist?).to be_truthy
 
       ::LanguagePack::Helpers::StaleFileCleaner.new(dir).clean_over(2*file_size - 50)
 
-      expect(old_file.exist?).to be_false
-      expect(new_file.exist?).to be_true
+      expect(old_file.exist?).to be_falsey
+      expect(new_file.exist?).to be_truthy
     end
   end
 
@@ -26,14 +26,14 @@ describe "Cleans Stale Files" do
       sleep 1 # need mtime of files to be different
       new_file = create_file_with_size_in(file_size, dir)
 
-      expect(old_file.exist?).to be_true
-      expect(new_file.exist?).to be_true
+      expect(old_file.exist?).to be_truthy
+      expect(new_file.exist?).to be_truthy
       dir_size = File.stat(dir)
 
       ::LanguagePack::Helpers::StaleFileCleaner.new(dir).clean_over(2*file_size + 50)
 
-      expect(old_file.exist?).to be_true
-      expect(new_file.exist?).to be_true
+      expect(old_file.exist?).to be_truthy
+      expect(new_file.exist?).to be_truthy
     end
   end
 end
