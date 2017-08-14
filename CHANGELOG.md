@@ -1,4 +1,8 @@
-## Master
+## v168 (08/14/2017)
+
+* Install Node when using either ExecJS _or_ Webpacker (#608)
+* Make installs more robust against temporary network issues by retrying failed
+  downloads in `LanguagePack::Fetcher#fetch_untar`, which installs Rubies (#585)
 
 ## v167 (07/25/2016)
 
