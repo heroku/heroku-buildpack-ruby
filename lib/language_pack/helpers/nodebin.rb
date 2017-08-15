@@ -19,7 +19,7 @@ class LanguagePack::Helpers::Nodebin
   end
 
   def self.hardcoded_yarn
-    version = "0.22.0"
+    version = "1.0.2"
     {
       "number" => version,
       "url"    => "https://yarnpkg.com/downloads/#{version}/yarn-v#{version}.tar.gz"
