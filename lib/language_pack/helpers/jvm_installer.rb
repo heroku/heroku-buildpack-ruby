@@ -59,7 +59,7 @@ class LanguagePack::Helpers::JvmInstaller
       fetch_env_untar('JDK_URL_1_7') || fetch_untar(JVM_1_7_PATH, "openjdk-7")
     when "1.6", "6"
       fetch_env_untar('JDK_URL_1_6') || fetch_untar(JVM_1_6_PATH, "openjdk-6")
-    when nil
+    when "1.8", "8", nil
       if @stack == "cedar"
         if forced || Gem::Version.new(jruby_version) >= Gem::Version.new("1.7.4")
           fetch_untar(JVM_1_7_PATH, "openjdk-7")
