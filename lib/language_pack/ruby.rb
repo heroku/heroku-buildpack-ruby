@@ -25,12 +25,26 @@ class LanguagePack::Ruby < LanguagePack::Base
   # @return [Boolean] true if it's a Ruby app
   def self.use?
     instrument "ruby.use" do
-      File.exist?("Gemfile")
+      !gemfile.nil?
     end
   end
 
+  def self.gemfile
+    ["./gems.rb", "./Gemfile"].detect { |gemfile| File.exist?(gemfile) }
+  end
+
+  def self.lockfile
+    if lockfile = ["./gems.locked", "./Gemfile.lock"].detect { |gemfile| File.exist?(gemfile) }
+      return lockfile
+    end
+    gemfile == "./gems.rb" ? "./gems.locked" : "./Gemfile.lock"
+  end
+
   def self.bundler
-    @@bundler ||= LanguagePack::Helpers::BundlerWrapper.new.install
+    @@bundler ||= LanguagePack::Helpers::BundlerWrapper.new(
+      gemfile_path: gemfile,
+      gemfile_lock_path: lockfile,
+    ).install
   end
 
   def bundler
@@ -593,7 +607,7 @@ WARNING
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
           env_vars       = {
-            "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
+            "BUNDLE_GEMFILE"                => File.expand_path(self.class.gemfile),
             "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
             "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
             "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),

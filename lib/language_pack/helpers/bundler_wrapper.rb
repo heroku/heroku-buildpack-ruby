@@ -25,7 +25,7 @@ class LanguagePack::Helpers::BundlerWrapper
     @bundler_path         = options[:bundler_path] || File.join(@bundler_tmp, "#{BUNDLER_DIR_NAME}")
     @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
     @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
-    @gemfile_lock_path    = "#{@gemfile_path}.lock"
+    @gemfile_lock_path    = options[:gemfile_lock_path] || "#{GEMFILE_PATH}.lock"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
     ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
     @path                 = Pathname.new "#{@bundler_path}/gems/#{BUNDLER_DIR_NAME}/lib"
