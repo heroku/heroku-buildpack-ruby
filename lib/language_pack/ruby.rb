@@ -88,6 +88,20 @@ WARNING
     end
   end
 
+  def warn_bad_binstubs
+    Dir["bin/{rake,bundle,rails}"].select do |binstub|
+      begin
+        if File.file?(binstub)
+          shebang = File.open(binstub, &:readline)
+          if !shebang.match %r{\A#!/usr/bin/env ruby(.exe)?\z}
+            warn("Binstub #{binstub} contains shebang #{shebang}. This may cause issues if the program specified is unavailable.", inline: true)
+          end
+        end
+      rescue EOFError
+      end
+    end
+  end
+
   def compile
     instrument 'ruby.compile' do
       # check for new app at the beginning of the compile
@@ -95,6 +109,7 @@ WARNING
       Dir.chdir(build_path)
       remove_vendor_bundle
       warn_bundler_upgrade
+      warn_bad_binstubs
       install_ruby
       install_jvm
       setup_language_pack_environment
