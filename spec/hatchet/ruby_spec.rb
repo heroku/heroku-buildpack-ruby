@@ -69,4 +69,12 @@ describe "Ruby apps" do
       end
     end
   end
+
+  describe "gems.rb detection" do
+    it "detects an app using gems.rb instead of Gemfile" do
+      Hatchet::Runner.new("gems.rb").deploy do |app, heroku|
+        expect(app).to be_deployed
+      end
+    end
+  end
 end
