@@ -1,3 +1,824 @@
+## v168 (08/14/2017)
+
+* Install Node when using either ExecJS _or_ Webpacker (#608)
+* Make installs more robust against temporary network issues by retrying failed
+  downloads in `LanguagePack::Fetcher#fetch_untar`, which installs Rubies (#585)
+
+## v167 (07/25/2016)
+
+* Update Bundler to 1.15.2 (#602)
+
+## v166 (07/11/2017)
+
+* no changes from v165
+
+## v165 (07/11/2017)
+
+* Set `$JAVA_HOME` for JRuby apps during build (#593)
+* Update Node to 6.11.1 (#598)
+
+## v164 (06/21/2017)
+
+* Update Bundler to 1.15.1 (#579)
+
+## v163 (05/22/2017)
+
+* Fix CI rake tasks not running (#571)
+
+## v162 (05/18/2017)
+
+* Disable roubocop warnings for `heroku_clear_tasks` (#567)
+
+## v161 (05/18/2017)
+
+* Ruby apps being run on CI are no longer expected to have Rails commands (#565)
+
+## v160 (05/18/2017)
+
+* `bin/rails test` only gets called in CI for Rails 5+ apps
+* support `:sql` (structure) Rails schema for CI (#549)
+
+## v159 (04/24/2017)
+
+*  Blacklist JAVA_OPTS and JAVA_TOOL_OPTIONS during build (#559)
+
+## v158 (04/12/2017)
+
+*  Fix CI issue causing system Ruby to be used (#558)
+
+## v157 (04/11/2017)
+
+* Fix "double ruby rainbow bug" caused by executing two `compile` actions on the same
+app (#553 & #555)
+* Remove Ruby 1.8.7 compatiability to allow for #555. This version of Ruby has been EOL
+for a long time. It is not available on Cedar-14 and Cedar-10 is EOL
+
+## v156 (04/11/2017)
+
+* Update default Ruby version to 2.3.4.
+
+## v155 (03/16/2017)
+
+* Yarn now installed for apps with `webpacker` gem (#547)
+
+## v154 (03/01/2017)
+
+* Postgres database add-on will only be provisioned if app has a postgres driver in the `Gemfile`. (#535)
+* Fix regression, where JRuby patchlevel was being pulled from `Gemfile.lock` and used when not appropriate (#536)
+
+## v153 (01/18/2017)
+
+* Fix regression, where defaults would override user env with rake (#528)
+
+## v152 (01/18/2017)
+
+* Remove RAILS_GROUPS=assets from being set in .profile.d (#526)
+
+## v151 (01/16/2017)
+
+* Upgrade to bundler 1.13.7 (#519)
+* Vendor Default Ruby to execute the buildpack (#515)
+* Heroku CI Support (#516)
+
+## v150 (12/23/2016)
+
+* Allow deployment of pre-release rubies (preview and rc) with Bundler 1.13.6+. This is needed because the patch level is recorded in the gemfile as `-1` since it is not released yet. For example 2.4.0rc1 will show up in a `Gemfile.lock` like this:
+
+```
+RUBY VERSION
+   ruby 2.4.0p-1
+```
+
+## v149 (12/01/2016)
+
+* Guarantee we always show warning when upgrading bundler version.
+
+## v148 (11/17/2016)
+
+* Default Ruby Version is 2.2.6
+* Update libyaml to 0.1.7 for [CVE-2014-9130](https://devcenter.heroku.com/changelog-items/1016)
+
+## v147 (11/15/2016)
+
+* Bump bundler to 1.13.6 [Bundler changelog](https://github.com/bundler/bundler/blob/v1.13.6/CHANGELOG.md). Allows for use of Ruby version operators.
+
+## v146 (03/23/2016)
+
+* Warn when `.bundle/config` is checked in (#471)
+* Do not cache `.bundle/config` between builds (#471)
+* Set WEB_CONCURRENCY for M-Performance dynos using sensible defaults (#474)
+* Fix rake task detection in Rails apps actually fails builds (#475)
+
+## v145 (03/08/2016)
+
+* Bump bundler to 1.11.2 [Bundler changelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md#1112-2015-12-15) (#461)
+* Rails 5 Support for logging to STDOUT via environment variable (#460)
+* Fail build when rake tasks cannot be detected in a Rails app (#462)
+
+## v144 (02/01/2016)
+
+* Fix default ruby to actually be Ruby 2.2.4 (#456)
+
+## v143 (01/28/2016)
+
+* Change default for new apps to Ruby 2.2.4 (#454)
+
+## v142 (01/14/2016)
+
+* Added pgconfig jar to JDK for JRuby JDBC (#450)
+* Let API pick exact postgres plan (#449)
+* Follow redirects on `curl` command (#443)
+* Check for preinstalled JDK (#434)
+
+## v141 (11/03/2015)
+
+* Support for custom JDK versions in system.properties (#423)
+* Fix nodejs buildpack integration (#429)
+* Automatic jruby heap setting for IX dynos (#426)
+* Warn when RAILS_ENV != production (https://devcenter.heroku.com/articles/deploying-to-a-custom-rails-environment)
+* Warn when using asset_sync (https://devcenter.heroku.com/articles/please-do-not-use-asset-sync)
+
+## v140 (9/9/2015)
+
+* JRuby specific ruby error message (#412)
+
+## v139 (8/31/2015)
+
+* Cached asset file should never take precedent over existing file (#402)
+* Do not write `database.yml` when using active record >= 4.1 (previously we only detected >= Rails 4.1) (#403)
+
+## v138 (5/19/2015)
+
+* Bump bundler to 1.9.7 [Bundler changelog](https://github.com/bundler/bundler/blob/master/CHANGELOG.md#196-2015-05-02) (#378)
+
+## v137 (5/11/2015)
+
+* Blacklist `JRUBY_OPTS`, use `JRUBY_BUILD_OPTS` to override build `JRUBY_OPTS`.  (#384)
+* Revert `--dev` during JRuby build for now. (#384)
+
+## v136 (5/6/2015)
+
+* JRUBY_BUILD_OPTS env var will override any build time jruby opts (#381)
+
+## v135 (5/5/2015)
+
+* Support sprockets 3.0 manifest file naming convention (#367)
+* Set `--dev` by default for JRuby builds (but not at runtime). This optimizes the JVM for short process and is ideal for `bundle install` and asset precompiles.
+* Cleanup `.git` folders in the bundle directory after `bundle install`.
+
+## v134 (3/1/2015)
+
+* JVM is now available on cedar-14, do not vendor in JVM based on individual gems. If customer needs a specific version they should use multibuildpack with java and ruby buildpacks.
+* Set a default value of WEB_CONCURRENCY based on dyno size when `SENSIBLE_DEFAULTS` environment variable is present.
+* Run `bundle clean` in the same context as `bundle install` heroku/heroku-buildpack-ruby#347
+* Rails 4.2+ apps will have environment variable RAILS_SERVE_STATIC_FILES set to "enabled" by default #349
+* Rails 5 apps now work on Heroku #349
+
+## v133 (1/22/2015)
+
+* Bump bundler to 1.7.12 which includes multiple fixes and support for block source declaration (https://github.com/bundler/bundler/blob/1-7-stable/CHANGELOG.md).
+
+## v132 (1/21/2015)
+
+* Support multibuildpack export file (#319)
+* Auto set the JVM MAX HEAP based on dyno size for JRuby (#323)
+* Use s3 based npmjs servers for node (#336)
+* Support system.properties file for specifying JDK in JRuby (#305)
+* Fix ruby version parsing to support JRuby 9.0.0.0.pre1 (#339)
+
+## v131 (1/15/2015)
+
+* Revert v130 due to lack of propper messaging around WEB_CONCURRENCY settings.
+
+## v130 (1/15/2015)
+
+* Auto set WEB_CONCURRENCY based on dyno size if not already set.
+* Support multibuildpack export file (#319)
+* Auto set the JVM MAX HEAP based on dyno size for JRuby (#323)
+* Use s3 based npmjs servers for node (#336)
+* Support system.properties file for specifying JDK in JRuby (#305)
+
+## v129 (11/6/2014)
+
+* Fix asset caching bug (#300)
+
+## v128 (11/4/2014)
+
+* Better cedar14 Ruby install error message
+
+## v127 (9/18/2014)
+
+* rbx is now stack aware
+
+## v126 (8/4/2014)
+
+* fix bundler cache clearing on ruby version change
+* vendor the jvm when yui-compressor is detected
+
+## v125 (8/1/2014)
+
+* bump to node 0.10.30 on cedar-14
+
+## v124 (8/1/2014)
+
+* use node 0.10.29 on cedar-14
+* properly use vendored jvm, so not to be dependent on java on the stack image
+
+## v123 (7/25/2014)
+
+* fix permission denied edge cases when copying the bundler cache with minitest
+
+## v122 (7/25/2014)
+
+* handle bundler cache for stack changes on existing apps
+
+## v121 (6/30/2014)
+
+* on new apps, source default envs instead of replacing them
+* support different stacks for new apps
+
+## v120 (6/16/2014)
+
+* Bump bundler to 1.6.3 which includes improved dependency resolver
+
+## v119 (5/9/2014)
+
+* Temporarily disable default ruby cache
+
+## v118 (5/6/2014)
+
+* Ruby version detection now loads user environment variables
+
+## v117 (4/14/2014)
+
+Features:
+
+
+Bugfixes:
+
+* fix anvil use case of multibuildpack with node
+
+
+## v116 (4/10/2014)
+
+Features:
+
+
+Bugfixes:
+
+* Revert back to Bundler 1.5.2
+
+
+## v115 (4/9/2014)
+
+Features:
+
+
+Bugfixes:
+
+* Add default process types to all apps deployed regardless of `Procfile`
+
+## v114 (4/9/2014)
+
+Features:
+
+* Bundler 1.6.1
+* Warn when not using a Procfile (looking at you webrick)
+
+Bugfixes:
+
+
+## v113 (4/8/2014)
+
+Features:
+
+* use heroku-buildpack-nodejs's node binary
+* `CURL_CONNECT_TIMEOUT` and `CURL_TIMEOUT` are configurable as ENV vars
+
+Bugfixes:
+
+* Don't double print "Running: rake assets:precompile" on Ruby apps
+
+
+## v112 (3/27/2014)
+
+Features:
+
+
+Bugfixes:
+
+* compile psych with libyaml 0.1.6 for CVE-2014-2525
+
+## v111 (3/20/2014)
+
+Features:
+
+
+Bugfixes:
+
+* spelling
+
+
+## v110 (3/20/2014)
+
+Features:
+
+* Better message when running `assets:precompile` without a database
+
+Bugfixes:
+
+## v108 (2/27/2014)
+
+Features:
+
+* parse Bundler patchlevel option
+
+Bugfixes:
+
+* don't let users step on themselves by replacing `env` in `$PATH`
+
+## v107 (2/26/2014)
+
+Features:
+
+Bugfixes:
+
+* more shellescaping bug fixes
+
+
+## v105
+
+Rollbacked to v103
+
+
+## v104 (2/26/2014)
+
+Features:
+
+Bugfixes:
+
+* fix bugs in shellescaping (#231)
+
+
+## v103 (2/18/2014)
+
+Features:
+
+* Rails 4.1.0 Support. Stop writing database.yml and support for secrets.yml by generating SECRET_KEY_BASE for users.
+
+Bugfixes:
+
+
+## v102 (2/6/2014)
+
+Features:
+
+Bugfixes:
+
+* use blacklist of env vars, so users can't break the build process
+
+
+## v101 (2/5/2014)
+
+Features:
+
+Bugfixes:
+
+* fix rake detection when DATABASE_URL is not present
+* support BUNDLE_WITHOUT when using ponies
+* quote ponies env vars, so build doesn't break
+
+
+## v100 (2/4/2014)
+
+Features:
+
+Bugfixes:
+
+* compile psych with libyaml 0.1.5 for CVE-2013-6393
+
+## v99 (2/4/2014)
+
+Features:
+
+* Noop
+
+Bugfixes:
+
+
+## v98 (1/30/2014)
+
+Features:
+
+Bugfixes:
+
+* Use vendored JDK binary during build
+
+
+## v97 (1/30/2014)
+
+Features:
+
+Bugfixes:
+
+* Actually finalize method rename to `install_bundler_in_app`
+
+
+## v96 (1/29/2014)
+
+Features:
+
+Bugfixes:
+
+* Finalize method rename to `install_bundler_in_app`
+
+## v95
+
+Rollback to v93
+
+## v94 (1/29/2014)
+
+Features:
+
+Bugfixes:
+
+* Fixed `uninitialized constant Rake::DSL` error when running rake tasks on Ruby 1.9.2
+
+## v93 (01/28/2014)
+
+Features:
+
+* buildpack-env-arg (ponies) support
+
+Bugfixes:
+
+## v92 (01/27/2014)
+
+Features:
+
+Bugfixes:
+
+* Only display rake error messages if a `Rakefile` exists
+* when detecting for ruby version, don't use stderr messages
+
+## v91 (01/16/2014)
+
+Features:
+
+* Parallel gem installation with bundler 1.5.2
+
+Bugfixes:
+
+
+## v90 (01/09/2014)
+
+Features:
+
+* Rollback v89 due to bug in bundler 1.5.1
+
+Bugfixes:
+
+## v89 (01/09/2014)
+
+Features:
+
+* Use most recent version of bundler with support for parallel Gem installation
+
+Bugfixes:
+
+## v86 (12/11/2013)
+
+Features:
+
+Bugfixes:
+
+* Windows warnings will now display before bundle install, this prevents an un-resolvable `Gemfile` from erroring which previously prevented the warning roll up from being shown. When this happened the developer did not see that we are clearing the `Gemfile.lock` from the git repository when bundled on a windows machine.
+* Checks for `public/assets/manifest*.json` and `public/assets/manifest.yml` will now come before Rake task detection introduced in v85.
+
+## v85 (12/05/2013)
+
+Features:
+
+
+Bugfixes:
+
+* Any errors in a Rakefile will now be explicitly shown as such instead of hidden in a `assets:precompile` task detection failure (#171)
+* Now using correct default "hobby" database #179
+
+## v84 (11/06/2013)
+
+Features:
+
+* Any Ruby app with a rake `assets:precompile` task present that does not run successfully will now fail. This matches the current behavior of Rails 3 and 4 deploys.
+
+
+Bugfixes:
+
+* Fix default gem cache
+
+## v83 (10/29/2013)
+
+Features:
+
+* RubyVersion extracted into its own class
+* Release no longer requires language_pack
+* Detect no longer requires language_pack
+* Downloads with curl now retry on failed connections, pass exit status appropriately
+
+Bugfixes:
+
+* Errors in Gemfiles will no longer show up as bad ruby versions #36
+* Fix warning warning libjffi-1.2.so on < JRuby 1.7.3
+
+## v82 (10/28/2013)
+
+Bugfixes:
+
+* Rails 3 deploys that do not successfully run `assets:precompile` will now fail.
+
+## v81 (10/15/2013)
+
+Features:
+
+* add Default Bundler Cache for new Ruby 2.0.0 apps
+* use Virginia S3 bucket instead of Cloudfront
+
+## v80 (9/23/2013)
+
+Features:
+
+* Cache 50mb of Rails 4 intermediate cache
+* Support for Ruby 2.1.0
+
+Bugfixes:
+
+* Disable invoke dynamic on JRuby by default until JDK stabalizes it
+
+## v79 (9/3/2013)
+
+Bugfixes:
+
+* Remove LPXC debug output when `DEBUG` env var is set (#141)
+* Symlink ruby.exe, so Rails 4 bins work for Windows (#139)
+
+## v78 (8/28/2013)
+
+Features:
+
+* Don't add plugins if already gems
+
+Bugfixes:
+
+* Fix issue #127 Race condition with LPXC
+
+## v77 (8/5/2013)
+
+Features:
+
+* Force nokogiri to compile with system libs
+
+## v76 (7/29/2013)
+
+Bugfixes:
+
+* fix request_id for instrumentation to follow standard
+
+## v75 (7/29/2013)
+
+Features:
+
+* add request_id to instrumentation
+* switchover to rubinius hosted rbx binaries
+
+Bugfixes:
+
+* OpenJDK version was rolled back, stop special casing JRuby 1.7.3.
+
+## v74 (7/24/2013)
+
+Bugfixes:
+
+* Lock JRuby 1.7.3 and lower to older version of JDK due to <https://github.com/jruby/jruby/issues/626>
+
+## v73 (7/23/2013)
+
+* Revert to v69 due to asset:precompile bugs
+
+## v72 (7/23/2013)
+
+Bugfixes:
+
+* Fix rake task detection for Rails 3 (@hynkle, #118)
+
+## v71 (7/18/2013)
+
+* Revert to v69 due to asset:precompile bugs
+
+## v70 (7/18/2013)
+
+Bugfixes:
+
+* Don't silently fail rake task checks (@gabrielg, #34)
+
+## v69 (7/16/2013)
+
+Bugfixes:
+
+* Add spacing to end of instrumentation
+
+## v68 (7/16/2013)
+
+Features:
+
+* Log buildpack name and entering rails3/4 compile
+
+## v67 (7/10/2013)
+
+Features:
+
+* Fetcher uses CDN if available
+* Add buildpack_version to the instrumentation output
+
+Bugfixes:
+
+* Don't print DEBUG messages for lxpc when env var is present
+* Fix ruby gemfile warning line for JRuby
+
+## v66 (7/9/2013)
+
+Bugfixes:
+
+* Include logtoken properly
+
+## v65 (7/9/2013)
+
+Features:
+
+* Instrument timing infrastructure for the buildpack
+
+Bugfixes:
+
+* Fix DATABASE_URL to use jdbc-postgres for JRuby (@jkrall, #116)
+
+## v64 (6/19/2013)
+
+Features:
+
+* only download one copy of bundler per process (@dpiddy, #69)
+* roll up all warnings for end of push output
+* write database.yml for Rails 4
+
+Bugfixes:
+
+* fix sqlite3 error messaging detection
+
+## v63 (6/17/2013)
+
+Features:
+
+* Lock default ruby if default ruby is used
+* Change default ruby to 2.0.0
+* Stop using the stack image ruby and always vendor ruby
+
+## v62 (5/21/2013)
+
+Bugfixes:
+
+* Correctly detect asset manifest files in Rails 4
+* Fix jruby 1.8.7 bundler/psych require bug
+
+## v61 (4/18/2013)
+
+Features:
+
+* Start caching the rubygems version used.
+
+Bugfixes:
+
+* Rebuild bundler cache if rubygems 2 is detected. Bugfixes in later rubygems.
+
+## v60 (4/17/2013)
+
+Security:
+
+* Disable Java RMI Remote Classloading for CVE-2013-1537, <https://bugzilla.redhat.com/show_bug.cgi?id=952387>
+
+## v59 (4/4/2013)
+
+Bugfixes:
+
+* Change JVM S3 bucket
+
+## v58 (3/19/2013)
+
+Bugfixes:
+
+* Fix ruby 1.8.7 not being able to compile native extensions
+
+## v57 (3/18/2013)
+
+Bugfixes:
+
+* Fix git gemspec bug in bundler
+
+## v56 (3/11/2013)
+
+Bugfixes:
+
+* Upgrade bundler to 1.3.2 to fix --dry-clean/Would have removed bug in bundle clean, part 2.
+
+## v55 (3/7/2013)
+
+Bugfixes:
+
+* Revert back to Bundler 1.3.0.pre.5, see https://gist.github.com/mattonrails/e063caf86962995e7ba0
+
+## v54 (3/7/2013)
+
+Bugfixes:
+
+* Upgrade bundler to 1.3.2 to fix --dry-clean/Would have removed bug in bundle clean
+
+## v53 (3/6/2013)
+
+Bugfixes:
+
+* bin/detect for Rails 3 and 4 will use railties for detection vs the rails gem
+* bin/detect does not error out when Gemfile + Gemfile.lock are missing
+
+## v52 (2/25/2013)
+
+Bugfixes:
+
+* Revert back to 1.3.0.pre.5 due to bundler warnings
+
+## v51 (2/25/2013)
+
+Features:
+
+* Initial Rails 4 beta support
+* Upgrade bundler to 1.3.0
+
+Bugfixes:
+
+* Better buildpack detection through Gemfile.lock gems
+
+## v50 (1/31/2013)
+
+Features:
+
+* Restore ruby deploys back to normal
+
+## v49 (1/30/2013)
+
+Features:
+
+* Re-enable ruby deploys for apps just using the heroku cache
+* Display ruby version change when busting the cache
+
+## v48 (1/30/2013)
+
+Features:
+
+* Update deploy error message copy to link to status incident.
+
+## v47 (1/30/2013)
+
+Features:
+
+* Disable ruby deploys due to rubygems.org compromise
+
+## v46 (1/10/2013)
+
+Features:
+
+* Upgrade Bundler to 1.3.0.pre.5
+* bundler binstubs now go in vendor/bundle/bin
+
+## v45 (12/14/2012)
+
+Features:
+
+* Stop setting env vars in bin/release now that login-shell is released
+* Enable Invoke Dynamic on JRuby by default
+* GEM_PATH is now updated on each push
+
+## v44 (12/14/2012)
+
+Faulty Release
+
+## v43 (12/13/2012)
+
+Features:
+
+* Upgrade Bundler to 1.3.0.pre.2
+
+## v42 (11/26/2012)
+
+Features:
+
+* Upgrade Bundler to 1.2.2 to fix Ruby 2.0.0/YAML issues
+
 ## v41 (11/1/2012)
 
 Features:

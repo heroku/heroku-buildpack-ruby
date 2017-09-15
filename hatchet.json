@@ -1,0 +1,89 @@
+{
+  "rake": [
+    "sharpstone/asset_precompile_fail",
+    "sharpstone/asset_precompile_pass",
+    "sharpstone/asset_precompile_not_found",
+    "sharpstone/connect_to_database_on_first_push",
+    "sharpstone/no_rakefile",
+    "sharpstone/bad_rakefile",
+    "sharpstone/default_with_rakefile"
+  ],
+  "bundler": [
+    "sharpstone/bad_gemfile_on_platform",
+    "sharpstone/problem_gemfile_version",
+    "sharpstone/git_gemspec",
+    "sharpstone/no_lockfile",
+    "sharpstone/sqlite3_gemfile",
+    "sharpstone/nokogiri_160",
+    "sharpstone/bundle-ruby-version-not-in-lockfile"
+  ],
+  "ruby": [
+    "sharpstone/mri_187",
+    "sharpstone/mri_193_p547",
+    "sharpstone/ruby_193_jruby_173",
+    "sharpstone/ruby_193_jruby_176",
+    "sharpstone/ruby_193_jruby_17161",
+    "sharpstone/ruby_193_jruby_17161_jdk7",
+    "sharpstone/ruby_193_jruby_17161_jdk8",
+    "sharpstone/ruby_193_bad_patch_cedar_14",
+    "sharpstone/jruby-minimal",
+    "sharpstone/empty-procfile",
+    "sharpstone/bad_ruby_version",
+    "sharpstone/activerecord41_scaffold"
+  ],
+  "rack": [
+    "sharpstone/default_ruby",
+    "sharpstone/mri_187_nokogiri",
+    "sharpstone/mri_192",
+    "sharpstone/mri_193",
+    "sharpstone/mri_200"
+  ],
+  "rails2": [
+    "sharpstone/rails23_mri_193"
+  ],
+  "rails3": [
+    "sharpstone/rails3_mri_193",
+    "sharpstone/railties3_mri_193",
+    "sharpstone/rails3_12factor",
+    "sharpstone/rails3_one_plugin",
+    "sharpstone/rails3_runtime_assets",
+    "sharpstone/rails3-fail-assets-compile",
+    "sharpstone/rails3-fail-rakefile"
+
+  ],
+  "rails4": [
+    "sharpstone/rails4-manifest",
+    "sharpstone/rails3-to-4-no-bin",
+    "sharpstone/rails4_windows_mri193",
+    "sharpstone/rails4-env-assets-compile",
+    "sharpstone/rails4-fail-assets-compile"
+  ],
+  "rails41": [
+    "sharpstone/rails41_scaffold"
+  ],
+  "rails42": [
+    "sharpstone/rails42_scaffold",
+    "sharpstone/rails42_sprockets3_manifest"
+  ],
+  "rails5": [
+    "sharpstone/rails5"
+  ],
+  "rails51": [
+    "schneems/rails51_webpacker"
+  ],
+  "multibuildpack": [
+    "sharpstone/node_multi"
+  ],
+  "node": [
+    "sharpstone/webpacker_no_execjs"
+  ],
+  "ci": [
+    "sharpstone/rails5_ruby_schema_format",
+    "sharpstone/heroku-ci-json-example",
+    "sharpstone/rails5_sql_schema_format",
+    "sharpstone/rails_31_ruby_schema_format",
+    "sharpstone/rails_31_sql_schema_format",
+    "sharpstone/ruby_no_rails_test",
+    "sharpstone/activerecord_rake_tasks_does_not_exist"
+  ]
+}

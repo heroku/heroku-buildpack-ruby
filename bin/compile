@@ -1,13 +1,11 @@
-#!/usr/bin/env ruby
+#!/bin/bash
+# The actual `bin/compile` code lives in `bin/support/ruby_compile`. This file 
+# instead bootstraps the ruby needed and then executes `bin/support/ruby_compile`
 
-# sync output
-$stdout.sync = true
+BIN_DIR=$(cd $(dirname $0); pwd)
+BUILDPACK_DIR=$(dirname $BIN_DIR)
 
-$:.unshift File.expand_path("../../lib", __FILE__)
-require "language_pack"
+source "$BIN_DIR/support/bash_functions.sh"
+heroku_buildpack_ruby_install_ruby "$BIN_DIR" "$BUILDPACK_DIR"
 
-if pack = LanguagePack.detect(ARGV[0], ARGV[1])
-  pack.log("compile") do
-    pack.compile
-  end
-end
+$heroku_buildpack_ruby_dir/bin/ruby $BIN_DIR/support/ruby_compile $@

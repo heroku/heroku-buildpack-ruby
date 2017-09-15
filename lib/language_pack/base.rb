@@ -2,24 +2,51 @@ require "language_pack"
 require "pathname"
 require "yaml"
 require "digest/sha1"
+require "language_pack/shell_helpers"
+require "language_pack/cache"
+require "language_pack/helpers/bundler_cache"
+require "language_pack/metadata"
+require "language_pack/fetcher"
+require "language_pack/instrument"
 
 Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
-  VENDOR_URL = "https://s3.amazonaws.com/heroku-buildpack-ruby"
+  include LanguagePack::ShellHelpers
+  extend LanguagePack::ShellHelpers
 
-  attr_reader :build_path, :cache_path
+  VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
+  DEFAULT_LEGACY_STACK = "cedar"
+  ROOT_DIR             = File.expand_path("../../..", __FILE__)
+
+  attr_reader :build_path, :cache
 
   # changes directory to the build_path
   # @param [String] the path of the build dir
-  # @param [String] the path of the cache dir
+  # @param [String] the path of the cache dir this is nil during detect and release
   def initialize(build_path, cache_path=nil)
-    @build_path = build_path
-    @cache_path = cache_path
-    @id = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
+     self.class.instrument "base.initialize" do
+      @build_path    = build_path
+      @stack         = ENV.fetch("STACK")
+      @cache         = LanguagePack::Cache.new(cache_path) if cache_path
+      @metadata      = LanguagePack::Metadata.new(@cache)
+      @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
+      @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
+      @warnings      = []
+      @deprecations  = []
+      @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
 
-    Dir.chdir build_path
+      Dir.chdir build_path
+    end
+  end
+
+  def instrument(*args, &block)
+    self.class.instrument(*args, &block)
+  end
+
+  def self.instrument(*args, &block)
+    LanguagePack::Instrument.instrument(*args, &block)
   end
 
   def self.===(build_path)
@@ -53,19 +80,43 @@ class LanguagePack::Base
 
   # this is called to build the slug
   def compile
+    write_release_yaml
+    instrument 'base.compile' do
+      Kernel.puts ""
+      @warnings.each do |warning|
+        Kernel.puts "###### WARNING:"
+        puts warning
+        Kernel.puts ""
+      end
+      if @deprecations.any?
+        topic "DEPRECATIONS:"
+        puts @deprecations.join("\n")
+      end
+    end
   end
 
-  # collection of values passed for a release
-  # @return [String] in YAML format of the result
-  def release
-    setup_language_pack_environment
+  def write_release_yaml
+    release = {}
+    release["addons"]                = default_addons
+    release["config_vars"]           = default_config_vars
+    release["default_process_types"] = default_process_types
+    FileUtils.mkdir("tmp") unless File.exists?("tmp")
+    File.open("tmp/heroku-buildpack-release-step.yml", 'w') do |f|
+      f.write(release.to_yaml)
+    end
 
-    {
-      "addons" => default_addons,
-      "config_vars" => default_config_vars,
-      "default_process_types" => default_process_types
-    }.to_yaml
+    warn_webserver
   end
+
+  def warn_webserver
+    return if File.exist?("Procfile")
+    msg =  "No Procfile detected, using the default web server.\n"
+    msg << "We recommend explicitly declaring how to boot your server process via a Procfile.\n"
+    msg << "https://devcenter.heroku.com/articles/ruby-default-web-server"
+    warn msg
+  end
+
+
 
   # log output
   # Ex. log "some_message", "here", :someattr="value"
@@ -111,6 +162,21 @@ private ##################################
     add_to_profiled %{export #{key}="#{val.gsub('"','\"')}"}
   end
 
+  def add_to_export(string)
+    export = File.join(ROOT_DIR, "export")
+    File.open(export, "a") do |file|
+      file.puts string
+    end
+  end
+
+  def set_export_default(key, val)
+    add_to_export "export #{key}=${#{key}:-#{val}}"
+  end
+
+  def set_export_override(key, val)
+    add_to_export %{export #{key}="#{val.gsub('"','\"')}"}
+  end
+
   def log_internal(*args)
     message = build_log_message(args)
     %x{ logger -p user.notice -t "slugc[$$]" "buildpack-ruby #{message}" }
@@ -126,107 +192,4 @@ private ##################################
       end
     end.join(" ")
   end
-
-  # display error message and stop the build process
-  # @param [String] error message
-  def error(message)
-    Kernel.puts " !"
-    message.split("\n").each do |line|
-      Kernel.puts " !     #{line.strip}"
-    end
-    Kernel.puts " !"
-    log "exit", :error => message
-    exit 1
-  end
-
-  # run a shell comannd and pipe stderr to stdout
-  # @param [String] command to be run
-  # @return [String] output of stdout and stderr
-  def run(command)
-    %x{ #{command} 2>&1 }
-  end
-
-  # run a shell command and pipe stderr to /dev/null
-  # @param [String] command to be run
-  # @return [String] output of stdout
-  def run_stdout(command)
-    %x{ #{command} 2>/dev/null }
-  end
-
-  # run a shell command and stream the output
-  # @param [String] command to be run
-  def pipe(command)
-    output = ""
-    IO.popen(command) do |io|
-      until io.eof?
-        buffer = io.gets
-        output << buffer
-        puts buffer
-      end
-    end
-
-    output
-  end
-
-  # display a topic message
-  # (denoted by ----->)
-  # @param [String] topic message to be displayed
-  def topic(message)
-    Kernel.puts "-----> #{message}"
-    $stdout.flush
-  end
-
-  # display a message in line
-  # (indented by 6 spaces)
-  # @param [String] message to be displayed
-  def puts(message)
-    message.split("\n").each do |line|
-      super "       #{line.strip}"
-    end
-    $stdout.flush
-  end
-
-  # create a Pathname of the cache dir
-  # @return [Pathname] the cache dir
-  def cache_base
-    Pathname.new(cache_path)
-  end
-
-  # removes the the specified
-  # @param [String] relative path from the cache_base
-  def cache_clear(path)
-    target = (cache_base + path)
-    target.exist? && target.rmtree
-  end
-
-  # write cache contents
-  # @param [String] path of contents to store. it will be stored using this a relative path from the cache_base.
-  # @param [Boolean] defaults to true. if set to true, the cache store directory will be cleared before writing to it.
-  def cache_store(path, clear_first=true)
-    cache_clear(path) if clear_first
-    cache_copy path, (cache_base + path)
-  end
-
-  # load cache contents
-  # @param [String] relative path of the cache contents
-  def cache_load(path)
-    cache_copy (cache_base + path), path
-  end
-
-  # copy cache contents
-  # @param [String] source directory
-  # @param [String] destination directory
-  def cache_copy(from, to)
-    return false unless File.exist?(from)
-    FileUtils.mkdir_p File.dirname(to)
-    system("cp -a #{from}/. #{to}")
-  end
-
-  # check if the cache content exists
-  # @param [String] relative path of the cache contents
-  # @param [Boolean] true if the path exists in the cache and false if otherwise
-  def cache_exists?(path)
-    File.exists?(cache_base + path)
-  end
 end
-

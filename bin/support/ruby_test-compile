@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+# This script installs an app's Ruby version and dependencies. It's
+# essentially the same thing as `ruby_compile` (which is called by bin/compile)
+# except that some behavior is cusomtized by the inclusion of the
+# `language_pack/test` file. One difference is dependencies
+# the `bin/compile` installs dependencies via bundler and excludes `development:test`
+# gems, however we need `test` gems to run tests, so instead only `development`
+# is excluded.
+#
+# It also sets up the database (if one is present) and populates the database
+# with the appropriate schema.
+$stdout.sync = true
+
+$:.unshift File.expand_path("../../../lib", __FILE__)
+require "language_pack"
+require "language_pack/shell_helpers"
+require "language_pack/test"
+
+begin
+  LanguagePack::Instrument.trace 'test_compile', 'app.test_compile' do
+    if pack = LanguagePack.detect(ARGV[0], ARGV[1])
+      LanguagePack::ShellHelpers.initialize_env(ARGV[2])
+      pack.topic("Setting up Test for #{pack.name}")
+      pack.log("test_compile") do
+        pack.compile
+      end
+    end
+  end
+rescue Exception => e
+  Kernel.puts " !"
+  e.message.split("\n").each do |line|
+    Kernel.puts " !     #{line.strip}"
+  end
+  Kernel.puts " !"
+  if e.is_a?(BuildpackError)
+    exit 1
+  else
+    raise e
+  end
+end
