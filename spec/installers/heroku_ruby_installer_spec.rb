@@ -48,5 +48,4 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
     end
 
   end
-
 end
