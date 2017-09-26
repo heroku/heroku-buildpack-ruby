@@ -4,6 +4,8 @@
 * Make installs more robust against temporary network issues by retrying failed
   downloads in `LanguagePack::Fetcher#fetch_untar`, which installs Rubies (#585)
 
+* Yarn version upgraded to v1.0.2
+
 ## v167 (07/25/2016)
 
 * Update Bundler to 1.15.2 (#602)
