@@ -3,8 +3,6 @@ rvm:
 - 2.4.1
 before_script: bundle exec rake hatchet:setup_travis
 script: bundle exec parallel_rspec -n 11 spec/
-after_script:
-- heroku keys:remove $USER@`hostname`
 env:
   global:
   - HATCHET_RETRIES=3

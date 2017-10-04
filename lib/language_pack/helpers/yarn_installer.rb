@@ -11,7 +11,7 @@ class LanguagePack::Helpers::YarnInstaller
   end
 
   def name
-    "yarn-#{@version}"
+    "yarn-v#{@version}"
   end
 
   def binary_path
@@ -21,10 +21,10 @@ class LanguagePack::Helpers::YarnInstaller
   def install
     Dir.mktmpdir do |dir|
       Dir.chdir(dir) do
-        @fetcher.fetch_untar(@url, "dist")
+        @fetcher.fetch_untar(@url)
       end
 
-      FileUtils.mv("#{dir}/dist", name)
+      FileUtils.mv(File.join(dir, name), name)
     end
   end
 end

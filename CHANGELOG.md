@@ -1,4 +1,12 @@
-## Master
+## v169 (09/28/2017)
+
+* Yarn version upgraded to v1.0.2
+
+## v168 (08/14/2017)
+
+* Install Node when using either ExecJS _or_ Webpacker (#608)
+* Make installs more robust against temporary network issues by retrying failed
+  downloads in `LanguagePack::Fetcher#fetch_untar`, which installs Rubies (#585)
 
 ## v167 (07/25/2016)
 
