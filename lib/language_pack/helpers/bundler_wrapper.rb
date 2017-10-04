@@ -90,7 +90,8 @@ class LanguagePack::Helpers::BundlerWrapper
     instrument 'detect_ruby_version' do
       env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
               "RUBYLIB"  => File.join(bundler_path, "gems", BUNDLER_DIR_NAME, "lib"),
-              "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}"
+              "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
+              "BUNDLE_DISABLE_VERSION_CHECK" => "true"
             }
       command = "bundle platform --ruby"
 

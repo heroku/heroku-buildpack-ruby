@@ -14,11 +14,25 @@ class LanguagePack::Helpers::JvmInstaller
 
   PG_CONFIG_JAR   = "pgconfig.jar"
 
+  PREINSTALLED_JDK_DIR = ".jdk"
+
   def initialize(slug_vendor_jvm, stack)
     @vendor_dir = slug_vendor_jvm
     @stack = stack
     @fetcher = LanguagePack::Fetcher.new(JVM_BASE_URL, stack)
     @pg_config_jar_fetcher = LanguagePack::Fetcher.new(JVM_BUCKET)
+  end
+
+  def java_home
+    if preinstalled_jdk?
+      PREINSTALLED_JDK_DIR
+    else
+      @vendor_dir
+    end
+  end
+
+  def preinstalled_jdk?
+    Dir.exist?(PREINSTALLED_JDK_DIR)
   end
 
   def system_properties
@@ -32,7 +46,7 @@ class LanguagePack::Helpers::JvmInstaller
   end
 
   def install(jruby_version, forced = false)
-    if Dir.exist?(".jdk")
+    if preinstalled_jdk?
       topic "Using pre-installed JDK"
       return
     end

@@ -2,7 +2,9 @@ require_relative '../spec_helper'
 
 describe "Rails 3.x" do
   it "should deploy on ruby 1.9.3" do
-    Hatchet::Runner.new("rails3_mri_193").deploy do |app, heroku|
+    app = Hatchet::Runner.new("rails3_mri_193", stack: "cedar-14")
+    app.setup!
+    app.deploy do |app, heroku|
       expect(app.output).to include("Asset precompilation completed")
 
       expect(app.output).to match("WARNING")
@@ -11,15 +13,12 @@ describe "Rails 3.x" do
       ls = app.run("ls vendor/plugins")
       expect(ls).to match("rails3_serve_static_assets")
       expect(ls).to match("rails_log_stdout")
-
-      expect(successful_body(app)).to eq("hello")
     end
   end
 
   it "should not have warnings when using the rails_12factor gem" do
     Hatchet::Runner.new("rails3_12factor").deploy do |app, heroku|
       expect(app.output).not_to match("Add 'rails_12factor' gem to your Gemfile to skip plugin injection")
-      expect(successful_body(app)).to eq("hello")
 
       # https://github.com/heroku/heroku-buildpack-ruby/issues/525
       env = app.run("env")
@@ -32,16 +31,13 @@ describe "Rails 3.x" do
       expect(app.output).not_to match("rails_log_stdout")
       expect(app.output).to match("rails3_serve_static_assets")
       expect(app.output).to match("Add 'rails_12factor' gem to your Gemfile to skip plugin injection")
-      expect(successful_body(app)).to eq("hello")
     end
   end
 
   context "when not using the rails gem" do
-    it "should deploy on ruby 1.9.3" do
-      Hatchet::Runner.new("railties3_mri_193").deploy do |app, heroku|
-        expect(app.output).to include("Asset precompilation completed")
-        expect(app.output).to match("Ruby/Rails")
-        expect(successful_body(app)).to eq("hello")
+    it "should detect as a rails app" do
+      Hatchet::App.new('railties3_mri_193').in_directory do
+        expect(LanguagePack::Rails3.use?).to eq(true)
       end
     end
   end
