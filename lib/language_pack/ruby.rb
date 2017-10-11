@@ -550,8 +550,8 @@ WARNING
 
         puts "GEM_PATH: #{`$GEM_PATH`}"
         puts "cat vendor/bundle/ruby/2.5.0/bin/bundle:\n #{`cat -n vendor/bundle/ruby/2.5.0/bin/bundle`} "
-        puts "Gem.bin_path('bundler', 'bundle', '1.15.4'): #{Gem.bin_path('bundler', 'bundle', '1.15.4')}"
-        puts "cat -n #{Gem.bin_path('bundler', 'bundle', '1.15.4')}:\n#{`cat -n #{Gem.bin_path('bundler', 'bundle', '1.15.4')}`}"
+        puts "Gem.bin_path('bundler', 'bundle', '1.15.2'): #{Gem.bin_path('bundler', 'bundle', '1.15.2')}"
+        puts "cat -n #{Gem.bin_path('bundler', 'bundle', '1.15.2')}:\n#{`cat -n #{Gem.bin_path('bundler', 'bundle', '1.15.2')}`}"
 
 
 
