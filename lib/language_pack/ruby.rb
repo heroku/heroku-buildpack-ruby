@@ -546,7 +546,8 @@ WARNING
       log("bundle") do
 
         puts "GEM_PATH: #{`$GEM_PATH`}"
-        puts "cat vendor/bundle/ruby/2.5.0/bin/bundle:\n #{`cat vendor/bundle/ruby/2.5.0/bin/bundle`} "
+        puts "cat vendor/bundle/ruby/2.5.0/bin/bundle:\n #{`cat -n vendor/bundle/ruby/2.5.0/bin/bundle`} "
+        puts "cat #{`which bundle`}\n #{`cat -n $(which bundle)`}"
 
         bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
         bundle_bin     = "bundle"
