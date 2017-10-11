@@ -546,12 +546,13 @@ WARNING
       log("bundle") do
 
         puts "=="
+        puts `bundle -v`
+
         # puts bundler.bundler_path
         # puts `ls #{bundler.bundler_path}/bin`
 
         puts slug_vendor_base
         puts `ls #{slug_vendor_base}`
-        puts `bundle -v`
 
         # ENV["GEM_PATH"] = "vendor/bundle:#{ENV["GEM_PATH"]}"
 
