@@ -547,7 +547,7 @@ WARNING
 
         puts "=="
         puts bundler.bundler_path
-        puts `ls #{bundler.bundler_path}`
+        puts `ls #{bundler.bundler_path}/bin`
 
         puts "PATH: #{`echo $PATH`}"
         puts "GEM_PATH: #{`echo $GEM_PATH`}"
