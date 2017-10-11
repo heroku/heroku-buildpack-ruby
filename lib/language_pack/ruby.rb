@@ -546,10 +546,8 @@ WARNING
       log("bundle") do
 
 
-
-
-        puts "PATH: #{`$PATH`}"
-        puts "GEM_PATH: #{`$GEM_PATH`}"
+        puts "PATH: #{`echo $PATH`}"
+        puts "GEM_PATH: #{`echo $GEM_PATH`}"
         puts "which bundle #{`which bundle`}"
         puts "cat vendor/bundle/ruby/2.5.0/bin/bundle:\n #{`cat -n vendor/bundle/ruby/2.5.0/bin/bundle`} "
         # puts "Gem.bin_path('bundler', 'bundle', '>= 0.a'): #{Gem.bin_path('bundler', 'bundle', '>= 0.a')}"
