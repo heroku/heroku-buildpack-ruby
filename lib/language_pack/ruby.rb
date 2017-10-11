@@ -545,10 +545,11 @@ WARNING
     instrument 'ruby.build_bundler' do
       log("bundle") do
 
+        puts "=="
+        puts bundler.bundler_path
+        puts `ls #{bundler.bundler_path}`
 
         puts "PATH: #{`echo $PATH`}"
-        puts bundler.bundler_path
-
         puts "GEM_PATH: #{`echo $GEM_PATH`}"
         puts "which bundle #{`which bundle`}"
         puts "cat vendor/bundle/ruby/2.5.0/bin/bundle:\n #{`cat -n vendor/bundle/ruby/2.5.0/bin/bundle`} "
