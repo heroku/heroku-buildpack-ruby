@@ -544,6 +544,10 @@ WARNING
   def build_bundler(default_bundle_without)
     instrument 'ruby.build_bundler' do
       log("bundle") do
+
+        puts "GEM_PATH: #{`$GEM_PATH`}"
+        puts "cat vendor/bundle/ruby/2.5.0/bin/bundle:\n #{`cat vendor/bundle/ruby/2.5.0/bin/bundle`} "
+
         bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
         bundle_bin     = "bundle"
         bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
