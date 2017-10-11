@@ -550,6 +550,7 @@ WARNING
         puts "Gem.bin_path('bundler', 'bundle', version): #{Gem.bin_path('bundler', 'bundle', version)}"
         puts "cat -n #{Gem.bin_path('bundler', 'bundle', '1.15.4')}:\n#{`cat -n #{Gem.bin_path('bundler', 'bundle', '1.15.4')}`}"
 
+
         bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
         bundle_bin     = "bundle"
         bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
