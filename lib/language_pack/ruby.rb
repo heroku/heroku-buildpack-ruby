@@ -584,7 +584,7 @@ WARNING
         # version of bundler actually being used
         bundler_version =
           if ruby_version.ruby_version >= "2.5.0"
-            `#{bundler_path}/exe/#{bundle_bin} -v`.downcase.chomp
+            run!("#{bundler_path}/exe/#{bundle_bin} -v").downcase.chomp
           else
             "bundler #{bundler.version}"
           end
