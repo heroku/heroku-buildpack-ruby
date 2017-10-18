@@ -16,6 +16,14 @@ describe "Ruby apps" do
     end
   end
 
+  describe "2.5.0" do
+    it "works" do
+      Hatchet::Runner.new("ruby_25").deploy do
+        # works
+      end
+    end
+  end
+
   # describe "default WEB_CONCURRENCY" do
   #   it "auto scales WEB_CONCURRENCY" do
   #     pending("https://github.com/heroku/api/issues/4426")
