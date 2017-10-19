@@ -1,3 +1,7 @@
+## v170 (10/19/2017)
+
+* Compatiability for Ruby 2.5.0 preview 1 (#628)
+
 ## v169 (09/28/2017)
 
 * Yarn version upgraded to v1.0.2
