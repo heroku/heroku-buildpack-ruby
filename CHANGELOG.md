@@ -1,6 +1,11 @@
 ## master
 
+* Disable bundler version check (#632)
 * Update Bundler to 1.15.4 (#625)
+
+## v170 (10/19/2017)
+
+* Compatiability for Ruby 2.5.0 preview 1 (#628)
 
 ## v169 (09/28/2017)
 
