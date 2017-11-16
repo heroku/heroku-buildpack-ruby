@@ -68,4 +68,13 @@ describe "Ruby Versions on cedar-14" do
       expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
     end
   end
+
+  it "should deploy jruby with the naether gem" do
+    app = Hatchet::Runner.new("jruby_naether")
+    app.setup!
+    app.deploy do |app|
+      expect(app.output).to match("Installing naether")
+      expect(app.output).not_to include("An error occurred while installing naether")
+    end
+  end
 end

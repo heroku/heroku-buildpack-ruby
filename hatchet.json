@@ -32,6 +32,9 @@
     "sharpstone/bad_ruby_version",
     "sharpstone/activerecord41_scaffold"
   ],
+  "jruby": [
+    "sharpstone/jruby_naether"
+  ],
   "rack": [
     "sharpstone/default_ruby",
     "sharpstone/mri_187_nokogiri",
