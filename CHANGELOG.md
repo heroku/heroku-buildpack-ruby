@@ -1,6 +1,7 @@
-## Master
+## master
 
 * Disable bundler version check (#632)
+* Update Bundler to 1.15.4 (#625)
 
 ## v170 (10/19/2017)
 
