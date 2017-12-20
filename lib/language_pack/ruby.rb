@@ -549,8 +549,11 @@ WARNING
     instrument 'ruby.build_bundler' do
       log("bundle") do
         bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
+        # See https://github.com/tenex/rails-assets/issues/415
+        bundle_full_index = env("BUNDLE_FULL_INDEX")
         bundle_bin     = "bundle"
         bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
+        bundle_command << " --full-index" if bundle_full_index
         bundle_command << " -j4"
 
         if File.exist?("#{Dir.pwd}/.bundle/config")
