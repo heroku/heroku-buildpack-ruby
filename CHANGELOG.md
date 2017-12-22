@@ -1,5 +1,9 @@
 ## Master
 
+## v173 (12/22/2017)
+
+* Remove Bundler shim since Bundler 2.5.0 will not vendor Bundler (#645)
+
 ## v172 (12/22/2017)
 
 * updated Ruby 2.5.0 support + Bundler shim (#640)
