@@ -443,7 +443,7 @@ ERROR
       end
 
       # write bundler shim, so we can control the version bundler used
-      # Ruby 2.5.0 started vendoring bundler
+      # Ruby 2.6.0 started vendoring bundler
       write_bundler_shim("vendor/bundle/bin") if ruby_version.vendored_bundler?
     end
   end
