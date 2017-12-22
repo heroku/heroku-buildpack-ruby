@@ -91,6 +91,11 @@ module LanguagePack
       end
     end
 
+    # does this vendor bundler
+    def vendored_bundler?
+      Gem::Version.new(self.ruby_version) >= Gem::Version.new("2.5.0dev")
+    end
+
     private
 
     def none
