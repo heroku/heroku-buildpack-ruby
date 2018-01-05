@@ -8,7 +8,7 @@ describe "JvmInstall" do
         begin
           ENV['JDK_URL_1_8'] = "http://lang-jvm.s3.amazonaws.com/jdk/openjdk1.8.0_51-cedar14.tar.gz"
 
-          jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "cedar-14")
+          jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "heroku-16")
           jvm_installer.install("9.0.1.0")
 
           expect(`ls bin`).to match("java")
@@ -25,7 +25,7 @@ describe "JvmInstall" do
       Dir.chdir(dir) do
         File.open('system.properties', 'w') { |f| f.write("java.runtime.version=1.7") }
 
-        jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "cedar-14")
+        jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "heroku-16")
         jvm_installer.install("9.0.1.0")
 
         expect(`ls bin`).to match("java")
@@ -40,12 +40,12 @@ describe "JvmInstall" do
       Dir.chdir(dir) do
         File.open('system.properties', 'w') { |f| f.write("java.runtime.version=1.9") }
 
-        jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "cedar-14")
+        jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "heroku-16")
         jvm_installer.install("9.0.1.0")
 
         expect(`ls bin`).to match("java")
         expect(`cat release 2>&1`).not_to match("1.8.0")
-        expect(`cat release 2>&1`).to match("9-internal")
+        expect(`cat release 2>&1`).to match("9")
       end
     end
   end
@@ -67,7 +67,7 @@ describe "JvmInstall" do
   it "downloads default JDK" do
     Dir.mktmpdir do |dir|
       Dir.chdir(dir) do
-        jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "cedar-14")
+        jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "heroku-16")
         jvm_installer.install("9.0.1.0")
 
         expect(`ls bin`).to match("java")
@@ -83,7 +83,7 @@ describe "JvmInstall" do
       Dir.chdir(dir) do
         File.open('system.properties', 'w') { |f| f.write("java.runtime.version=foobar") }
 
-        jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "cedar-14")
+        jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "heroku-16")
 
         expect{ jvm_installer.install("9.0.1.0") }.to raise_error(BuildpackError)
       end

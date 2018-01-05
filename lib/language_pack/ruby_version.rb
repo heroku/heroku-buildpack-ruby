@@ -91,6 +91,11 @@ module LanguagePack
       end
     end
 
+    # does this vendor bundler
+    def vendored_bundler?
+      false
+    end
+
     private
 
     def none

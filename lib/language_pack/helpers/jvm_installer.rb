@@ -14,11 +14,25 @@ class LanguagePack::Helpers::JvmInstaller
 
   PG_CONFIG_JAR   = "pgconfig.jar"
 
+  PREINSTALLED_JDK_DIR = ".jdk"
+
   def initialize(slug_vendor_jvm, stack)
     @vendor_dir = slug_vendor_jvm
     @stack = stack
     @fetcher = LanguagePack::Fetcher.new(JVM_BASE_URL, stack)
     @pg_config_jar_fetcher = LanguagePack::Fetcher.new(JVM_BUCKET)
+  end
+
+  def java_home
+    if preinstalled_jdk?
+      PREINSTALLED_JDK_DIR
+    else
+      @vendor_dir
+    end
+  end
+
+  def preinstalled_jdk?
+    Dir.exist?(PREINSTALLED_JDK_DIR)
   end
 
   def system_properties
@@ -32,7 +46,7 @@ class LanguagePack::Helpers::JvmInstaller
   end
 
   def install(jruby_version, forced = false)
-    if Dir.exist?(".jdk")
+    if preinstalled_jdk?
       topic "Using pre-installed JDK"
       return
     end
@@ -45,7 +59,7 @@ class LanguagePack::Helpers::JvmInstaller
       fetch_env_untar('JDK_URL_1_7') || fetch_untar(JVM_1_7_PATH, "openjdk-7")
     when "1.6", "6"
       fetch_env_untar('JDK_URL_1_6') || fetch_untar(JVM_1_6_PATH, "openjdk-6")
-    when nil
+    when "1.8", "8", nil
       if @stack == "cedar"
         if forced || Gem::Version.new(jruby_version) >= Gem::Version.new("1.7.4")
           fetch_untar(JVM_1_7_PATH, "openjdk-7")

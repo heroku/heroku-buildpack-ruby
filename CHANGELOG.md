@@ -1,5 +1,46 @@
 ## Master
 
+## v173 (12/22/2017)
+
+* Remove Bundler shim since Bundler 2.5.0 will not vendor Bundler (#645)
+
+## v172 (12/22/2017)
+
+* updated Ruby 2.5.0 support + Bundler shim (#640)
+* Disable bundler version check (#632)
+* set JAVA_HOME to absolute path during `bundle install` (#631)
+
+## v170 (10/19/2017)
+
+* Compatiability for Ruby 2.5.0 preview 1 (#628)
+
+## v169 (09/28/2017)
+
+* Yarn version upgraded to v1.0.2
+
+## v168 (08/14/2017)
+
+* Install Node when using either ExecJS _or_ Webpacker (#608)
+* Make installs more robust against temporary network issues by retrying failed
+  downloads in `LanguagePack::Fetcher#fetch_untar`, which installs Rubies (#585)
+
+## v167 (07/25/2016)
+
+* Update Bundler to 1.15.2 (#602)
+
+## v166 (07/11/2017)
+
+* no changes from v165
+
+## v165 (07/11/2017)
+
+* Set `$JAVA_HOME` for JRuby apps during build (#593)
+* Update Node to 6.11.1 (#598)
+
+## v164 (06/21/2017)
+
+* Update Bundler to 1.15.1 (#579)
+
 ## v163 (05/22/2017)
 
 * Fix CI rake tasks not running (#571)
