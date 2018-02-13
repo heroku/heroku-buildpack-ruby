@@ -1,5 +1,9 @@
 ## Master
 
+## v174 (02/13/2018)
+
+* Only set JAVA_HOME for Bundler when using JRuby (#649, @jkutner)
+
 ## v173 (12/22/2017)
 
 * Remove Bundler shim since Bundler 2.5.0 will not vendor Bundler (#645)
