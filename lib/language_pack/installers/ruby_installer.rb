@@ -24,6 +24,8 @@ module LanguagePack::Installers::RubyInstaller
     run("ln -s ruby #{install_dir}/bin/ruby.exe")
 
     Dir["#{install_dir}/bin/*"].each do |vendor_bin|
+      # for Ruby 2.6.0+ don't symlink the Bundler bin so our shim works
+      next if vendor_bin.include?("bundle")
       run("ln -s ../#{vendor_bin} #{DEFAULT_BIN_DIR}")
     end
   end

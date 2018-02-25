@@ -442,6 +442,10 @@ ERROR
       Dir.chdir(slug_vendor_base) do |dir|
         `cp -R #{bundler.bundler_path}/. .`
       end
+
+      # write bundler shim, so we can control the version bundler used
+      # Ruby 2.6.0 started vendoring bundler
+      write_bundler_shim("vendor/bundle/bin") if ruby_version.vendored_bundler?
     end
   end
 
@@ -542,6 +546,40 @@ WARNING
     "vendor/bundle/bin"
   end
 
+  def bundler_path
+    @bundler_path ||= "#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}"
+  end
+
+  def write_bundler_shim(path)
+    FileUtils.mkdir_p(path)
+    shim_path = "#{path}/bundle"
+    File.open(shim_path, "w") do |file|
+      file.print <<-BUNDLE
+#!/usr/bin/env ruby
+require 'rubygems'
+
+version = "#{BUNDLER_VERSION}"
+
+if ARGV.first
+  str = ARGV.first
+  str = str.dup.force_encoding("BINARY") if str.respond_to? :force_encoding
+  if str =~ /\A_(.*)_\z/ and Gem::Version.correct?($1) then
+    version = $1
+    ARGV.shift
+  end
+end
+
+if Gem.respond_to?(:activate_bin_path)
+load Gem.activate_bin_path('bundler', 'bundle', version)
+else
+gem "bundler", version
+load Gem.bin_path("bundler", "bundle", version)
+end
+BUNDLE
+    end
+    FileUtils.chmod(0755, shim_path)
+  end
+
   # runs bundler to install the dependencies
   def build_bundler(default_bundle_without)
     instrument 'ruby.build_bundler' do
@@ -601,8 +639,10 @@ WARNING
             "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
             "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
             "RUBYOPT"                       => syck_hack,
-            "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
+            "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true",
+            "BUNDLE_DISABLE_VERSION_CHECK"  => "true"
           }
+          env_vars["JAVA_HOME"] = noshellescape("#{pwd}/$JAVA_HOME") if ruby_version.jruby?
           env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
