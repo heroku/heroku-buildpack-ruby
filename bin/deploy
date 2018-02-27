@@ -9,6 +9,7 @@ dependencies=(
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/bundler-1.9.7.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/bundler-1.13.7.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/bundler-1.15.2.tgz'
+  'https://s3.amazonaws.com/heroku-nodejs-bins/node/release/linux-x64/node-v6.13.0-linux-x64.tar.gz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/ruby_versions.yml'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/ruby-2.5.0.tgz'
   'https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/ruby-2.4.3.tgz'
