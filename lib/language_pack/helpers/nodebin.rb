@@ -31,10 +31,18 @@ class LanguagePack::Helpers::Nodebin
   end
 
   def self.node_lts
-    hardcoded_node_lts # node("latest?range=6.x")
+    if ENV['LAST_NODE_LTS'] == "1"
+      node("latest?range=6.x")
+    else
+      hardcoded_node_lts # node("latest?range=6.x")
+    end
   end
 
   def self.yarn(q)
-    hardcoded_yarn # query("yarn/linux-x64/#{q}")
+    if ENV['LAST_YARN'] == "1"
+      query("yarn/linux-x64/#{q}")
+    else
+      hardcoded_yarn # query("yarn/linux-x64/#{q}")
+    end
   end
 end
