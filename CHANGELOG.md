@@ -1,5 +1,10 @@
 ## Master
 
+## Unreleased
+
+* Node version upgraded to v8.9.4 (@josephpage)
+* Yarn version upgraded to v1.5.1 (@josephpage)
+
 ## v174 (02/13/2018)
 
 * Only set JAVA_HOME for Bundler when using JRuby (#649, @jkutner)
