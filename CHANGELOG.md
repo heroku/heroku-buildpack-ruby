@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-* Node version upgraded to v8.9.4 (@josephpage)
-* Yarn version upgraded to v1.5.1 (@josephpage)
+* Node version upgraded to v8.10.0 (#714, @josephpage)
+* Yarn version upgraded to v1.5.1 (#714, @josephpage)
 
 ## v174 (02/13/2018)
 

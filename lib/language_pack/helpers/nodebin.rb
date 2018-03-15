@@ -11,7 +11,7 @@ class LanguagePack::Helpers::Nodebin
   end
 
   def self.hardcoded_node_lts
-    version = "8.9.4"
+    version = "8.10.0"
     {
       "number" => version,
       "url"    => "https://s3pository.heroku.com/node/v#{version}/node-v#{version}-linux-x64.tar.gz"
