@@ -164,7 +164,7 @@ module LanguagePack
 
     private
       def private_log(name, key_value_hash)
-        File.open(ENV["BUILDPACK_LOG_FILE"], "a+") do |f|
+        File.open(ENV["BUILDPACK_LOG_FILE"] || "/dev/null", "a+") do |f|
           key_value_hash.each do |key, value|
             f.puts "#{name}##{ENV["BPLOG_PREFIX"]}#{key}=#{value}"
           end
