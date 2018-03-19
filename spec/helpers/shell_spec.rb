@@ -21,7 +21,7 @@ describe "ShellHelpers" do
         Tempfile.open("logfile.log") do |f|
           ENV["BUILDPACK_LOG_FILE"] = f.path
           FakeShell.new.mcount "foo"
-          expect(File.read(f.path)).to match("count#foo=1")
+          expect(File.read(f.path)).to match("count#buildpack.ruby.foo=1")
         end
       ensure
         ENV["BUILDPACK_LOG_FILE"] = original

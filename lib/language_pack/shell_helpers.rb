@@ -1,6 +1,5 @@
 require "shellwords"
 
-
 class BuildpackError < StandardError
 end
 
@@ -166,7 +165,11 @@ module LanguagePack
       def private_log(name, key_value_hash)
         File.open(ENV["BUILDPACK_LOG_FILE"] || "/dev/null", "a+") do |f|
           key_value_hash.each do |key, value|
-            f.puts "#{name}##{ENV["BPLOG_PREFIX"]}#{key}=#{value}"
+            metric = String.new("#{name}#")
+            metric << "#{ENV["BPLOG_PREFIX"]}"
+            metric << "." unless metric.end_with?('.')
+            metric << "#{key}=#{value}"
+            f.puts metric
           end
         end
       end
