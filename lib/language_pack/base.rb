@@ -93,6 +93,7 @@ class LanguagePack::Base
         puts @deprecations.join("\n")
       end
     end
+    mcount "ruby.success"
   end
 
   def write_release_yaml

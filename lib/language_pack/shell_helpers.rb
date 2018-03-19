@@ -14,6 +14,18 @@ module LanguagePack
   module ShellHelpers
     @@user_env_hash = {}
 
+    def mcount(key, value = 1)
+      private_log("count", key => value)
+    end
+
+    def mmeasure(key, value)
+      private_log("measure", key => value)
+    end
+
+    def munique(key, value)
+      private_log("unique", key => value)
+    end
+
     def self.user_env_hash
       @@user_env_hash
     end
@@ -149,5 +161,14 @@ module LanguagePack
     def noshellescape(string)
       NoShellEscape.new(string)
     end
+
+    private
+      def private_log(name, key_value_hash)
+        File.open(ENV["BUILDPACK_LOG_FILE"] || "/dev/null", "a+") do |f|
+          key_value_hash.each do |key, value|
+            f.puts "#{name}##{ENV["BPLOG_PREFIX"]}#{key}=#{value}"
+          end
+        end
+      end
   end
 end

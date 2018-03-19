@@ -14,6 +14,21 @@ describe "ShellHelpers" do
     include LanguagePack::ShellHelpers
   end
 
+  describe "mcount" do
+    it "logs to a file" do
+      begin
+        original = ENV["BUILDPACK_LOG_FILE"]
+        Tempfile.open("logfile.log") do |f|
+          ENV["BUILDPACK_LOG_FILE"] = f.path
+          FakeShell.new.mcount "foo"
+          expect(File.read(f.path)).to match("count#foo=1")
+        end
+      ensure
+        ENV["BUILDPACK_LOG_FILE"] = original
+      end
+    end
+  end
+
   describe "#command_options_to_string" do
     it "formats ugly keys correctly" do
       env      = {%Q{ un"matched } => "bad key"}

@@ -35,23 +35,6 @@ describe "Rails 4.0.x" do
     end
   end
 
-  # it "works with windows" do
-  #   pending("failing due to free dynos not being able to have more than 1 process type")
-  #   Hatchet::Runner.new("rails4_windows_mri193").deploy do |app, heroku|
-  #     result = app.run("rails -v")
-  #     expect(result).to match("4.0.0")
-  #     result = app.run("rake -T")
-  #     expect(result).to match("assets:precompile")
-
-  #     result = app.run("bundle show rails")
-  #     expect(result).to match("rails-4.0.0")
-  #     expect(app.output).to match("Removing `Gemfile.lock`")
-
-  #     before_final_warnings = app.output.split("Bundle completed").first
-  #     expect(before_final_warnings).to match("Removing `Gemfile.lock`")
-  #   end
-  # end
-
   it "fails compile if assets:precompile fails" do
     Hatchet::Runner.new("rails4-fail-assets-compile", allow_failure: true).deploy do |app, heroku|
       expect(app.output).to include("raising on assets:precompile on purpose")
