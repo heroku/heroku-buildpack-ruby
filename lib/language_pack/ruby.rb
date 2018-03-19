@@ -376,8 +376,8 @@ WARNING
 
     true
   rescue LanguagePack::Fetcher::FetchError => error
-    mcount "ruby.fail.bad_version_fetch"
-    mcount "ruby.fail.bad_version_fetch.#{ruby_version.version_for_download}"
+    mcount "fail.bad_version_fetch"
+    mcount "fail.bad_version_fetch.#{ruby_version.version_for_download}"
     message = <<ERROR
 An error occurred while installing #{ruby_version.version_for_download}
 
@@ -669,12 +669,12 @@ WARNING
           # Keep gem cache out of the slug
           FileUtils.rm_rf("#{slug_vendor_base}/cache")
         else
-          mcount "ruby.fail.bundle.install"
+          mcount "fail.bundle.install"
           log "bundle", :status => "failure"
           error_message = "Failed to install gems via Bundler."
           puts "Bundler Output: #{bundler_output}"
           if bundler_output.match(/An error occurred while installing sqlite3/)
-            mcount "ruby.fail.sqlite3"
+            mcount "fail.sqlite3"
             error_message += <<-ERROR
 
 Detected sqlite3 gem which is not supported on Heroku:
@@ -683,7 +683,7 @@ https://devcenter.heroku.com/articles/sqlite3
           end
 
           if bundler_output.match(/but your Gemfile specified/)
-            mcount "ruby.fail.ruby_version_mismatch"
+            mcount "fail.ruby_version_mismatch"
             error_message += <<-ERROR
 
 Detected a mismatch between your Ruby version installed and
@@ -913,13 +913,22 @@ params = CGI.parse(uri.query || "")
   end
 
   def precompile_fail(output)
-    mcount "ruby.fail.assets_precompile"
+    mcount "fail.assets_precompile"
     log "assets_precompile", :status => "failure"
     msg = "Precompiling assets failed.\n"
     if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
       msg << "Attempted to access a nonexistent database:\n"
       msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
     end
+
+    sprockets_version = bundler.gem_version('sprockets')
+    if output.match(/Sprockets::FileNotFound/) && (sprockets_version < Gem::Version.new('4.0.0.beta7') && sprockets_version > Gem::Version.new('4.0.0.beta4'))
+      mcount "fail.assets_precompile.file_not_found_beta"
+      msg << "If you have this file in your project\n"
+      msg << "try upgrading to Sprockets 4.0.0.beta7 or later:\n"
+      msg << "https://github.com/rails/sprockets/pull/547\n"
+    end
+
     error msg
   end
 
