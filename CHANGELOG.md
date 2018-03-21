@@ -1,5 +1,10 @@
 ## Master
 
+## v175 (03/21/2018)
+
+* Suggest users encountering a specific sprockets error in specific beta versions to upgrade (#718)
+* Log metrics for common failures (#716)
+
 ## v174 (02/13/2018)
 
 * Only set JAVA_HOME for Bundler when using JRuby (#649, @jkutner)
