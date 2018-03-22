@@ -1,5 +1,8 @@
 ## Master
 
+* Node version upgraded to v8.9.4 (#714)
+* Yarn version upgraded to v1.5.1 (#714)
+
 ## v175 (03/21/2018)
 
 * Suggest users encountering a specific sprockets error in specific beta versions to upgrade (#718)
