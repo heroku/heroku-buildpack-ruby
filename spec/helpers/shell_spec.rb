@@ -56,4 +56,37 @@ describe "ShellHelpers" do
       ])
     end
   end
+
+  def read_file_lines
+    lines = []
+    File.open("spec/fixtures/invalid_encoding.log") do |f|
+      f.each_line do |line|
+        lines << line
+      end
+    end
+    lines
+  end
+
+  describe "#puts" do
+
+    context 'when the message has valid encoding' do
+      it 'does not raise an exception' do
+        sh = FakeShell.new
+        expect(Kernel).to_not receive(:puts)
+        message = "npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@^1.0.0 (node_modules/chokidar/node_modules/fsevents)"
+        result = sh.puts message
+        expect(result).to eq $stdout.flush
+      end
+    end
+
+    context 'when the message does not have a valid utf-8 character' do
+      it 'rescues the error and show the message as string' do
+        sh = FakeShell.new
+        lines = read_file_lines
+        expect(Kernel).to receive(:puts)
+        result = sh.puts lines[0]
+        expect(result).to eq $stdout.flush
+      end
+    end
+  end
 end

@@ -132,9 +132,18 @@ module LanguagePack
     # (indented by 6 spaces)
     # @param [String] message to be displayed
     def puts(message)
+      begin
+
       message.to_s.split("\n").each do |line|
         super "       #{line.strip}"
       end
+
+      # Sometimes it fails because encoding problems
+      # look at the spec for a reference
+      rescue Exception
+        Kernel.puts "       #{message.to_s}"
+      end
+
       $stdout.flush
     end
 
