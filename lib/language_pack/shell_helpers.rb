@@ -132,19 +132,22 @@ module LanguagePack
     # (indented by 6 spaces)
     # @param [String] message to be displayed
     def puts(message)
-      begin
-
-      message.to_s.split("\n").each do |line|
-        super "       #{line.strip}"
-      end
-
-      # Sometimes it fails because encoding problems
-      # look at the spec for a reference
-      rescue Exception
-        Kernel.puts "       #{message.to_s}"
+      message.each_line do |line|
+        if line.end_with?('\n'.freeze)
+          print "       #{line}"
+        else
+          print "       #{line}\n"
+        end
       end
 
       $stdout.flush
+    rescue ArgumentError => e
+      error_message = e.message
+      raise e if error_message !~ /invalid byte sequence/
+
+      mcount "fail.invalid_utf8"
+      error_message << "\n       Invalid string: #{message}"
+      raise e, error_message
     end
 
     def warn(message, options = {})
