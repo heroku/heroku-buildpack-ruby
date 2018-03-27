@@ -1,6 +1,6 @@
 ## Master
 
-## v176 (3j/27/2018)
+## v176 (3/27/2018)
 
 * Node version upgraded to v8.9.4 (#714)
 * Yarn version upgraded to v1.5.1 (#714)
