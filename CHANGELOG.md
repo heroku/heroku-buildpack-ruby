@@ -1,7 +1,10 @@
 ## Master
 
+## v176 (3j/27/2018)
+
 * Node version upgraded to v8.9.4 (#714)
 * Yarn version upgraded to v1.5.1 (#714)
+* Fix issue with malformed UTF-8 string parsing (#724)
 
 ## v175 (03/21/2018)
 
