@@ -61,10 +61,18 @@ describe "Ruby apps" do
 
   describe "database configuration" do
     context "no active record" do
-      it "writes a heroku specific database.yml" do
+      it "does not write a database.yml" do
         Hatchet::Runner.new("default_ruby").deploy do |app, heroku|
-          expect(app.output).to include("Writing config/database.yml to read from DATABASE_URL")
+          expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
           expect(app.output).not_to include("Your app was upgraded to bundler")
+        end
+      end
+    end
+
+    context "active record 3.x"  do
+      it "writes a heroku specific database.yml" do
+        Hatchet::Runner.new("rails3_12factor").deploy do |app, heroku|
+          expect(app.output).to include("Writing config/database.yml to read from DATABASE_URL")
         end
       end
     end
