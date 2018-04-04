@@ -18,6 +18,7 @@
     "sharpstone/bundle-ruby-version-not-in-lockfile"
   ],
   "ruby": [
+    "sharpstone/cd_ruby",
     "sharpstone/mri_187",
     "sharpstone/mri_193_p547",
     "sharpstone/ruby_193_jruby_173",
