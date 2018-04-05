@@ -133,7 +133,7 @@ module LanguagePack
     # @param [String] message to be displayed
     def puts(message)
       message.each_line do |line|
-        if line.end_with?('\n'.freeze)
+        if line.end_with?("\n".freeze)
           print "       #{line}"
         else
           print "       #{line}\n"
