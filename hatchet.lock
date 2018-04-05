@@ -97,6 +97,8 @@
   - 136e3e2627ed5e64e1491f9aff2b402462ce3d25
 - - "./repos/ruby/bad_ruby_version"
   - 7bf3470265a87ea6361640aa4bfce6ce3b743520
+- - "./repos/ruby/cd_ruby"
+  - 5d4139af87bbb941008ef945408eb8b6a5276369
 - - "./repos/ruby/empty-procfile"
   - 7cae0aae424c2028b81b5d37ee24d42db8e545b9
 - - "./repos/ruby/jruby-minimal"
