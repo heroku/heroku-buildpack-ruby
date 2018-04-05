@@ -1,6 +1,15 @@
 require_relative '../spec_helper'
 
 describe "Ruby apps" do
+
+  describe "running Ruby from outside the default dir" do
+    it "works" do
+      Hatchet::Runner.new('cd_ruby').deploy do |app|
+        expect(app.output).to match("2.3.5")
+      end
+    end
+  end
+
   describe "bundler ruby version matcher" do
     it "installs a version even when not present in the Gemfile.lock" do
       Hatchet::Runner.new('bundle-ruby-version-not-in-lockfile').deploy do |app|
