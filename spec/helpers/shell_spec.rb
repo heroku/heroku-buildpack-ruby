@@ -19,6 +19,15 @@ describe "ShellHelpers" do
     include LanguagePack::ShellHelpers
   end
 
+  describe "pipe" do
+    it "does not double append newlines" do
+      sh = FakeShell.new
+      sh.pipe('bundle install')
+      first_line = sh.print_calls.first.first
+      expect(first_line.end_with?("\n\n")).to be(false)
+    end
+  end
+
   describe "mcount" do
     it "logs to a file" do
       begin
