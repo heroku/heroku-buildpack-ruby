@@ -1,5 +1,11 @@
 ## Master
 
+## v177 (4/10/2018)
+
+* New apps that do not specify a Ruby version now get 2.3.7 (#732)
+* Bugfix: `bundle install` output no longer has an extra newline (#735)
+* Bugfix: when deploying an application the `ruby` version specified in the Gemfile is available outide of the home directory (#733)
+
 ## v176 (3/27/2018)
 
 * Node version upgraded to v8.9.4 (#714)
