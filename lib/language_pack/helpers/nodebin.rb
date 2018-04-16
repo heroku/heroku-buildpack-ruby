@@ -14,7 +14,7 @@ class LanguagePack::Helpers::Nodebin
     version = "8.10.0"
     {
       "number" => version,
-      "url"    => "https://s3pository.heroku.com/node/v#{version}/node-v#{version}-linux-x64.tar.gz"
+      "url"    => "https://s3.amazonaws.com/heroku-nodejs-bins/node/release/linux-x64/node-v#{version}-linux-x64.tar.gz"
     }
   end
 
@@ -22,7 +22,7 @@ class LanguagePack::Helpers::Nodebin
     version = "1.5.1"
     {
       "number" => version,
-      "url"    => "https://yarnpkg.com/downloads/#{version}/yarn-v#{version}.tar.gz"
+      "url"    => "https://s3.amazonaws.com/heroku-nodejs-bins/yarn/release/yarn-v#{version}.tar.gz"
     }
   end
 
