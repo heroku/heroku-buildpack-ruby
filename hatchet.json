@@ -76,6 +76,10 @@
   "rails51": [
     "schneems/rails51_webpacker"
   ],
+  "rails52": [
+    "sharpstone/active_storage_non_local",
+    "sharpstone/active_storage_local"
+  ],
   "multibuildpack": [
     "sharpstone/node_multi"
   ],
