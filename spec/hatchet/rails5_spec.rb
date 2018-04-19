@@ -10,7 +10,7 @@ describe "Rails 5" do
   describe "active storage" do
     it "non-local storage warnings" do
       Hatchet::Runner.new("active_storage_non_local").deploy do |app, heroku|
-        expect(app.output).to     match('heroku-buildpack-activestorage-preview')
+        expect(app.output).to     match('binary dependencies required')
         expect(app.output).to_not match('config.active_storage.service')
       end
     end
@@ -19,12 +19,12 @@ describe "Rails 5" do
       Hatchet::Runner.new(
         "active_storage_local",
         buildpacks: [
-          "https://github.com/heroku/heroku-buildpack-activestorage-preview",
+          # "https://github.com/heroku/heroku-buildpack-activestorage-preview",
           Hatchet::App.default_buildpack
         ]
       ).deploy do |app, heroku|
-        expect(app.output).to_not match('heroku-buildpack-activestorage-preview')
-        expect(app.output).to     match('config.active_storage.service')
+        expect(app.output).to match('binary dependencies required')
+        expect(app.output).to match('config.active_storage.service')
       end
     end
   end

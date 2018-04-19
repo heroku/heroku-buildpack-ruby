@@ -62,7 +62,9 @@ If you are uploading files to this app, they will not persist after the app
 is restarted, on one-off dynos, or if the app has multiple dynos.
 Heroku applications have an ephemeral files system. To
 persist uploaded files, please use a service such as S3 and update your Rails
-configuration. More information can be found in this article:
+configuration.
+
+For more information can be found in this article:
   https://devcenter.heroku.com/articles/active-storage-on-heroku
 
 WARNING
@@ -74,8 +76,6 @@ WARNING
 We detected that some binary dependencies required to
 use all the preview features of Active Storage are not
 present on this system. You can add them by running this command:
-
-  $ heroku buildpacks:add -i 1 https://github.com/heroku/heroku-buildpack-activestorage-preview
 
 For more information please see:
   https://devcenter.heroku.com/articles/active-storage-on-heroku
