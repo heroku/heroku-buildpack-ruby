@@ -1,5 +1,9 @@
 ## Master
 
+## v180 (4/23/2018)
+
+* Fix case where user environment variables were not being used (#745)
+
 ## v179 (4/23/2018)
 
 * Emit warnings for Active Storage (#739)
