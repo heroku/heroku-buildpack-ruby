@@ -79,6 +79,10 @@
   - fc537b7091260d8cc6fdf2bc0fac7032d910a261
 - - "./repos/rails51/rails51_webpacker"
   - d8460fc9eeb93108b6037a3ea755ec7a111ad03c
+- - "./repos/rails52/active_storage_local"
+  - a1b6b18e081001b407898532fb9cb061a29ceee1
+- - "./repos/rails52/active_storage_non_local"
+  - cba59b7559f1f806684b65654228d44fcda91a82
 - - "./repos/rake/asset_precompile_fail"
   - 16f7834331d6bb3fc5c284130b14eb1ff74d99d5
 - - "./repos/rake/asset_precompile_not_found"
