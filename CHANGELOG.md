@@ -1,5 +1,9 @@
 ## Master
 
+## v179 (4/23/2018)
+
+* Emit warnings for Active Storage (#739)
+
 ## v178 (4/17/2018)
 
 * Use S3 directly instead of s3pository for Node downloads (#740)
