@@ -1,5 +1,9 @@
 ## Master
 
+## v178 (4/17/2018)
+
+* Use S3 directly instead of s3pository for Node downloads (#740)
+
 ## v177 (4/10/2018)
 
 * New apps that do not specify a Ruby version now get 2.3.7 (#732)
