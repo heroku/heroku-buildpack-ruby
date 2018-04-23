@@ -75,7 +75,7 @@ WARNING
       warn(<<-WARNING)
 We detected that some binary dependencies required to
 use all the preview features of Active Storage are not
-present on this system. You can add them by running this command:
+present on this system.
 
 For more information please see:
   https://devcenter.heroku.com/articles/active-storage-on-heroku
