@@ -71,7 +71,8 @@ WARNING
     end
 
     def warn_no_ffmpeg
-      mcount("warn.activestorage.no_binaries")
+      mcount("warn.activestorage.no_binaries.stack-#{stack}")
+      mcount("warn.activestorage.no_binaries.all")
       warn(<<-WARNING)
 We detected that some binary dependencies required to
 use all the preview features of Active Storage are not

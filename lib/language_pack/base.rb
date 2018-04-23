@@ -21,7 +21,7 @@ class LanguagePack::Base
   DEFAULT_LEGACY_STACK = "cedar"
   ROOT_DIR             = File.expand_path("../../..", __FILE__)
 
-  attr_reader :build_path, :cache
+  attr_reader :build_path, :cache, :stack
 
   # changes directory to the build_path
   # @param [String] the path of the build dir
