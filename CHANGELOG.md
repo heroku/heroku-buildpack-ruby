@@ -1,5 +1,9 @@
 ## Master
 
+## v181 (4/23/2018)
+
+* The `active_storage` is not guranteed to be present (#748)
+
 ## v180 (4/23/2018)
 
 * Fix case where user environment variables were not being used (#745)
