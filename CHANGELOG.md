@@ -1,5 +1,9 @@
 ## Master
 
+## v182 (4/24/2018)
+
+* Do not warn when `rails runner` cannot be executed (#749)
+
 ## v181 (4/23/2018)
 
 * The `active_storage` is not guranteed to be present (#748)
