@@ -51,7 +51,8 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
 
     def local_storage?
       command = 'bin/rails runner "puts %Q{heroku_detecting_active_storage_config=#{Rails.application.config.try(:active_storage).try(:service)}}"'
-      out = run!(command, user_env: true)
+      out = run(command, user_env: true)
+      return false unless $?.success?
       out =~ /heroku_detecting_active_storage_config=local/
     end
 
