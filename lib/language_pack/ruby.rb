@@ -518,6 +518,12 @@ ERROR
   # install libyaml into the LP to be referenced for psych compilation
   # @param [String] tmpdir to store the libyaml files
   def install_libyaml(dir)
+    case stack
+    when "cedar-14", "heroku-16"
+    else
+      return
+    end
+
     instrument 'ruby.install_libyaml' do
       FileUtils.mkdir_p dir
       Dir.chdir(dir) do
