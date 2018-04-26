@@ -1,5 +1,9 @@
 ## Master
 
+## v183 (4/26/2018)
+
+* Support for not yet released heroku-18 stack (#750)
+
 ## v182 (4/24/2018)
 
 * Do not warn when `rails runner` cannot be executed (#749)
