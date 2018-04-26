@@ -85,6 +85,8 @@ describe "Upgrading ruby apps" do
     app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)
     app.setup!
     app.deploy do |app|
+      expect(app.run(%Q{echo 'MALLOC_ARENA_MAX_is=$MALLOC_ARENA_MAX'})).to match("MALLOC_ARENA_MAX_is=2")
+
       run!(%Q{echo "ruby '2.5.1'" >> Gemfile})
       run!("git add -A; git commit -m update-ruby")
       app.push!

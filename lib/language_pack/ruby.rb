@@ -121,6 +121,22 @@ WARNING
 
 private
 
+  def default_malloc_arena_max?
+    return true if @metadata.exists?("default_malloc_arena_max")
+    return @metadata.touch("default_malloc_arena_max") if new_app?
+
+    return false
+  end
+
+  def stack_not_14_not_16?
+    case stack
+    when "cedar-14", "heroku-16"
+      return false
+    else
+      return true
+    end
+  end
+
   def warn_bundler_upgrade
     old_bundler_version  = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
 
@@ -352,6 +368,7 @@ SHELL
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",      profiled_path.join(":")
 
+      set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
 
       if ruby_version.jruby?
@@ -568,11 +585,7 @@ ERROR
   # install libyaml into the LP to be referenced for psych compilation
   # @param [String] tmpdir to store the libyaml files
   def install_libyaml(dir)
-    case stack
-    when "cedar-14", "heroku-16"
-    else
-      return
-    end
+    return false if stack_not_14_not_16?
 
     instrument 'ruby.install_libyaml' do
       FileUtils.mkdir_p dir
