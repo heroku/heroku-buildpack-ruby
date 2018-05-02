@@ -22,6 +22,7 @@ env:
     - TEST_SUITE=hatchet/rails23_spec.rb
     - TEST_SUITE=hatchet/rails3_spec.rb
     - TEST_SUITE=hatchet/rails4_spec.rb
+    - TEST_SUITE=hatchet/rails5_spec.rb
     - TEST_SUITE=hatchet/rubies_spec.rb
     - TEST_SUITE=hatchet/ruby_spec.rb
     - TEST_SUITE=hatchet/stack_spec.rb
