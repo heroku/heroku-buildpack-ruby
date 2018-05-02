@@ -48,7 +48,7 @@ describe "Rails 4.x" do
 
   it "should detect rails successfully" do
     Hatchet::App.new('rails4-manifest').in_directory do
-      expect(LanguagePack::Rails42.use?).to eq(true)
+      expect(LanguagePack::Rails4.use?).to eq(true)
     end
     Hatchet::App.new('rails4-manifest').in_directory do
       expect(LanguagePack::Rails3.use?).to eq(false)

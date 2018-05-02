@@ -60,7 +60,7 @@
 - - "./repos/rails3/railties3_mri_193"
   - 8cc041cffb9f5635017aa118d16688491f794e91
 - - "./repos/rails4/rails3-to-4-no-bin"
-  - 95c14c6381edadd55eed294cd21149eae8e784ab
+  - 3fd6e84f5d8eaaadb6d95aeb1f367f62da28cc62
 - - "./repos/rails4/rails4-env-assets-compile"
   - ba8c352856685c3e46ae227ffbc175d6aa8e868b
 - - "./repos/rails4/rails4-fail-assets-compile"
@@ -70,9 +70,9 @@
 - - "./repos/rails4/rails4_windows_mri193"
   - f4c7b6209835050468bbb87827acf652b8f4d8ce
 - - "./repos/rails41/rails41_scaffold"
-  - a16a04c3a36bfaf6178e92619bd24b21b9d440e7
+  - d98e9ccee771b3745f1ab1936a697a05229392df
 - - "./repos/rails42/rails42_scaffold"
-  - e103fc313febe3aa94bd891b88181807bb5f4316
+  - 5da1259651bf29b80af2bb27789422def02be5a8
 - - "./repos/rails42/rails42_sprockets3_manifest"
   - 4ea4b080599b4394bdf6753a7b392d9ed6b844a7
 - - "./repos/rails5/rails5"
