@@ -1,7 +1,9 @@
 language: ruby
 rvm:
 - 2.4.4
-before_script: bundle exec rake hatchet:setup_travis
+before_script:
+  - gem install bundler -v 1.15.4
+  - bundle exec rake hatchet:setup_travis
 script: bundle exec parallel_rspec -n 11 spec/$TEST_SUITE
 env:
   global:
