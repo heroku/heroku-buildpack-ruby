@@ -78,7 +78,7 @@
 - - "./repos/rails5/rails5"
   - 1680c5da829e03ffb9345187971a13e5109d86a6
 - - "./repos/rails51/rails51_webpacker"
-  - 002ea4e0fce7b2b827ef7937c600743cc32fc901
+  - 61ade71748b50effae7fd4aef2832ed0d89660e2
 - - "./repos/rails52/active_storage_local"
   - a1b6b18e081001b407898532fb9cb061a29ceee1
 - - "./repos/rails52/active_storage_non_local"
