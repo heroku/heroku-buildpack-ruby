@@ -1,7 +1,6 @@
 require_relative '../spec_helper'
 
 describe "Ruby apps" do
-
   describe "running Ruby from outside the default dir" do
     it "works" do
       Hatchet::Runner.new('cd_ruby').deploy do |app|
@@ -84,6 +83,41 @@ describe "Ruby apps" do
           expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
         end
       end
+    end
+  end
+end
+
+describe "Raise errors on specific gems" do
+  it "should should raise on sqlite3" do
+    Hatchet::Runner.new("sqlite3_gemfile", allow_failure: true).deploy do |app|
+      expect(app).not_to be_deployed
+      expect(app.output).to include("Detected sqlite3 gem which is not supported")
+      expect(app.output).to include("devcenter.heroku.com/articles/sqlite3")
+    end
+  end
+end
+
+
+
+describe "No Lockfile" do
+  it "should not deploy" do
+    Hatchet::Runner.new("no_lockfile", allow_failure: true).deploy do |app|
+      expect(app).not_to be_deployed
+      expect(app.output).to include("Gemfile.lock required")
+    end
+  end
+end
+
+describe "Rack" do
+  it "should not overwrite already set environment variables" do
+    custom_env = "FFFUUUUUUU"
+    app = Hatchet::Runner.new("default_ruby")
+    app.setup!
+    app.set_config("RACK_ENV" => custom_env)
+    expect(app.run("env")).to match(custom_env)
+
+    app.deploy do |app|
+      expect(app.run("env")).to match(custom_env)
     end
   end
 end
