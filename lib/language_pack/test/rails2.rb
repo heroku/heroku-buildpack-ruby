@@ -36,6 +36,7 @@ class LanguagePack::Rails2
   def clear_db_test_tasks
     FileUtils::mkdir_p 'lib/tasks'
     File.open("lib/tasks/heroku_clear_tasks.rake", "w") do |file|
+      file.puts "# rubocop:disable Lint/UnneededDisable"
       file.puts "# rubocop:disable all"
       content = db_test_tasks_to_clear.map do |task_name|
         <<-FILE
@@ -47,6 +48,7 @@ end
 FILE
       end.join("\n")
       file.print content
+      file.puts "# rubocop:enable Lint/UnneededDisable"
       file.puts "# rubocop:enable all"
     end
   end
