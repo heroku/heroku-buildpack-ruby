@@ -1,6 +1,5 @@
 require "shellwords"
 
-
 class BuildpackError < StandardError
 end
 
@@ -13,6 +12,18 @@ end
 module LanguagePack
   module ShellHelpers
     @@user_env_hash = {}
+
+    def mcount(key, value = 1)
+      private_log("count", key => value)
+    end
+
+    def mmeasure(key, value)
+      private_log("measure", key => value)
+    end
+
+    def munique(key, value)
+      private_log("unique", key => value)
+    end
 
     def self.user_env_hash
       @@user_env_hash
@@ -121,10 +132,22 @@ module LanguagePack
     # (indented by 6 spaces)
     # @param [String] message to be displayed
     def puts(message)
-      message.to_s.split("\n").each do |line|
-        super "       #{line.strip}"
+      message.each_line do |line|
+        if line.end_with?("\n".freeze)
+          print "       #{line}"
+        else
+          print "       #{line}\n"
+        end
       end
+
       $stdout.flush
+    rescue ArgumentError => e
+      error_message = e.message
+      raise e if error_message !~ /invalid byte sequence/
+
+      mcount "fail.invalid_utf8"
+      error_message << "\n       Invalid string: #{message}"
+      raise e, error_message
     end
 
     def warn(message, options = {})
@@ -149,5 +172,18 @@ module LanguagePack
     def noshellescape(string)
       NoShellEscape.new(string)
     end
+
+    private
+      def private_log(name, key_value_hash)
+        File.open(ENV["BUILDPACK_LOG_FILE"] || "/dev/null", "a+") do |f|
+          key_value_hash.each do |key, value|
+            metric = String.new("#{name}#")
+            metric << "#{ENV["BPLOG_PREFIX"]}"
+            metric << "." unless metric.end_with?('.')
+            metric << "#{key}=#{value}"
+            f.puts metric
+          end
+        end
+      end
   end
 end

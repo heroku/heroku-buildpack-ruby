@@ -6,3 +6,4 @@ vendor/bundle/*
 .ruby-version
 buildpacks/*
 .anvil/
+tmp/*.log

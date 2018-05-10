@@ -10,6 +10,7 @@ require "language_pack/fetcher"
 require "language_pack/instrument"
 
 Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
+ENV["BPLOG_PREFIX"] = "buildpack.ruby"
 
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
@@ -20,7 +21,7 @@ class LanguagePack::Base
   DEFAULT_LEGACY_STACK = "cedar"
   ROOT_DIR             = File.expand_path("../../..", __FILE__)
 
-  attr_reader :build_path, :cache
+  attr_reader :build_path, :cache, :stack
 
   # changes directory to the build_path
   # @param [String] the path of the build dir
@@ -93,6 +94,7 @@ class LanguagePack::Base
         puts @deprecations.join("\n")
       end
     end
+    mcount "success"
   end
 
   def write_release_yaml

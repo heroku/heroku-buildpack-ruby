@@ -1,6 +1,14 @@
 require_relative '../spec_helper'
 
 describe "Ruby apps" do
+  describe "running Ruby from outside the default dir" do
+    it "works" do
+      Hatchet::Runner.new('cd_ruby').deploy do |app|
+        expect(app.output).to match("2.3.5")
+      end
+    end
+  end
+
   describe "bundler ruby version matcher" do
     it "installs a version even when not present in the Gemfile.lock" do
       Hatchet::Runner.new('bundle-ruby-version-not-in-lockfile').deploy do |app|
@@ -12,6 +20,14 @@ describe "Ruby apps" do
     it "works even when patchfile is specified" do
       Hatchet::Runner.new('problem_gemfile_version').deploy do |app|
         expect(app.output).to match("2.3.0")
+      end
+    end
+  end
+
+  describe "2.5.0" do
+    it "works" do
+      Hatchet::Runner.new("ruby_25").deploy do
+        # works
       end
     end
   end
@@ -67,6 +83,41 @@ describe "Ruby apps" do
           expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
         end
       end
+    end
+  end
+end
+
+describe "Raise errors on specific gems" do
+  it "should should raise on sqlite3" do
+    Hatchet::Runner.new("sqlite3_gemfile", allow_failure: true).deploy do |app|
+      expect(app).not_to be_deployed
+      expect(app.output).to include("Detected sqlite3 gem which is not supported")
+      expect(app.output).to include("devcenter.heroku.com/articles/sqlite3")
+    end
+  end
+end
+
+
+
+describe "No Lockfile" do
+  it "should not deploy" do
+    Hatchet::Runner.new("no_lockfile", allow_failure: true).deploy do |app|
+      expect(app).not_to be_deployed
+      expect(app.output).to include("Gemfile.lock required")
+    end
+  end
+end
+
+describe "Rack" do
+  it "should not overwrite already set environment variables" do
+    custom_env = "FFFUUUUUUU"
+    app = Hatchet::Runner.new("default_ruby")
+    app.setup!
+    app.set_config("RACK_ENV" => custom_env)
+    expect(app.run("env")).to match(custom_env)
+
+    app.deploy do |app|
+      expect(app.run("env")).to match(custom_env)
     end
   end
 end

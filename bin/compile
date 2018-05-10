@@ -1,5 +1,5 @@
 #!/bin/bash
-# The actual `bin/compile` code lives in `bin/support/ruby_compile`. This file 
+# The actual `bin/compile` code lives in `bin/support/ruby_compile`. This file
 # instead bootstraps the ruby needed and then executes `bin/support/ruby_compile`
 
 BIN_DIR=$(cd $(dirname $0); pwd)
