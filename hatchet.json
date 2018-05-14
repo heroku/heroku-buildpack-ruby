@@ -18,6 +18,7 @@
     "sharpstone/bundle-ruby-version-not-in-lockfile"
   ],
   "ruby": [
+    "sharpstone/cd_ruby",
     "sharpstone/mri_187",
     "sharpstone/mri_193_p547",
     "sharpstone/ruby_193_jruby_173",
@@ -26,10 +27,14 @@
     "sharpstone/ruby_193_jruby_17161_jdk7",
     "sharpstone/ruby_193_jruby_17161_jdk8",
     "sharpstone/ruby_193_bad_patch_cedar_14",
+    "sharpstone/ruby_25",
     "sharpstone/jruby-minimal",
     "sharpstone/empty-procfile",
     "sharpstone/bad_ruby_version",
     "sharpstone/activerecord41_scaffold"
+  ],
+  "jruby": [
+    "sharpstone/jruby_naether"
   ],
   "rack": [
     "sharpstone/default_ruby",
@@ -70,6 +75,10 @@
   ],
   "rails51": [
     "schneems/rails51_webpacker"
+  ],
+  "rails52": [
+    "sharpstone/active_storage_non_local",
+    "sharpstone/active_storage_local"
   ],
   "multibuildpack": [
     "sharpstone/node_multi"

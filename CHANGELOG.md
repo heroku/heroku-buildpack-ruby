@@ -1,5 +1,74 @@
 ## Master
 
+## v183 (4/26/2018)
+
+* Support for not yet released heroku-18 stack (#750)
+
+## v182 (4/24/2018)
+
+* Do not warn when `rails runner` cannot be executed (#749)
+
+## v181 (4/23/2018)
+
+* The `active_storage` is not guranteed to be present (#748)
+
+## v180 (4/23/2018)
+
+* Fix case where user environment variables were not being used (#745)
+
+## v179 (4/23/2018)
+
+* Emit warnings for Active Storage (#739)
+
+## v178 (4/17/2018)
+
+* Use S3 directly instead of s3pository for Node downloads (#740)
+
+## v177 (4/10/2018)
+
+* New apps that do not specify a Ruby version now get 2.3.7 (#732)
+* Bugfix: `bundle install` output no longer has an extra newline (#735)
+* Bugfix: when deploying an application the `ruby` version specified in the Gemfile is available outide of the home directory (#733)
+
+## v176 (3/27/2018)
+
+* Node version upgraded to v8.9.4 (#714)
+* Yarn version upgraded to v1.5.1 (#714)
+* Fix issue with malformed UTF-8 string parsing (#724)
+
+## v175 (03/21/2018)
+
+* Suggest users encountering a specific sprockets error in specific beta versions to upgrade (#718)
+* Log metrics for common failures (#716)
+
+## v174 (02/13/2018)
+
+* Only set JAVA_HOME for Bundler when using JRuby (#649, @jkutner)
+
+## v173 (12/22/2017)
+
+* Remove Bundler shim since Bundler 2.5.0 will not vendor Bundler (#645)
+
+## v172 (12/22/2017)
+
+* updated Ruby 2.5.0 support + Bundler shim (#640)
+* Disable bundler version check (#632)
+* set JAVA_HOME to absolute path during `bundle install` (#631)
+
+## v170 (10/19/2017)
+
+* Compatiability for Ruby 2.5.0 preview 1 (#628)
+
+## v169 (09/28/2017)
+
+* Yarn version upgraded to v1.0.2
+
+## v168 (08/14/2017)
+
+* Install Node when using either ExecJS _or_ Webpacker (#608)
+* Make installs more robust against temporary network issues by retrying failed
+  downloads in `LanguagePack::Fetcher#fetch_untar`, which installs Rubies (#585)
+
 ## v167 (07/25/2016)
 
 * Update Bundler to 1.15.2 (#602)

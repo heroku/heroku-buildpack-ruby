@@ -12,7 +12,7 @@ module LanguagePack
       end
     end
 
-    DEFAULT_VERSION_NUMBER = "2.3.4"
+    DEFAULT_VERSION_NUMBER = "2.4.4"
     DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}"
     LEGACY_VERSION_NUMBER  = "1.9.2"
     LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}"
@@ -89,6 +89,11 @@ module LanguagePack
       else
         "ruby '#{ruby_version}', :engine => '#{engine}', :engine_version => '#{engine_version}'"
       end
+    end
+
+    # does this vendor bundler
+    def vendored_bundler?
+      false
     end
 
     private
