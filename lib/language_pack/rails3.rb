@@ -45,6 +45,31 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 
 private
 
+  def config_detect
+    super
+    @assets_compile_config = @rails_runner.detect("assets.compile")
+  end
+
+  def best_practice_warnings
+    super
+    if assets_compile_enabled?
+      mcount("warn.assets.compile.true")
+      warn(<<-WARNING)
+You set your `config.assets.compile = true` in production.
+This can negatively impact the performance of your application.
+
+For more information can be found in this article:
+  https://devcenter.heroku.com/articles/rails-asset-pipeline#compile-set-to-true-in-production
+
+WARNING
+    end
+  end
+
+  def assets_compile_enabled?
+    return false unless @assets_compile_config.success?
+    @assets_compile_config.has_match?("true")
+  end
+
   def install_plugins
     instrument "rails3.install_plugins" do
       return false if bundler.has_gem?('rails_12factor')

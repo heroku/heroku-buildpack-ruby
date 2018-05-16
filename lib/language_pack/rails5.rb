@@ -40,6 +40,12 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
   end
 
   private
+
+    def config_detect
+      super
+      @local_storage_config = @rails_runner.detect("active_storage.service")
+    end
+
     def has_ffmpeg?
       run("which ffmpeg")
       return $?.success?
@@ -50,10 +56,8 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
     end
 
     def local_storage?
-      command = 'bin/rails runner "puts %Q{heroku_detecting_active_storage_config=#{Rails.application.config.try(:active_storage).try(:service)}}"'
-      out = run(command, user_env: true)
-      return false unless $?.success?
-      out =~ /heroku_detecting_active_storage_config=local/
+      return false unless @local_storage_config.success?
+      @local_storage_config.has_match?("local")
     end
 
     def warn_local_storage

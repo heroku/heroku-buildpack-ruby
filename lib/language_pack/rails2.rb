@@ -16,6 +16,11 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     end
   end
 
+  def initialize
+    super
+    @rails_runner = LanguagePack::Helpers::RailsRunner.new
+  end
+
   def name
     "Ruby/Rails"
   end

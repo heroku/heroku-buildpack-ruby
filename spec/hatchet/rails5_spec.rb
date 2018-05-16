@@ -19,12 +19,13 @@ describe "Rails 5" do
       Hatchet::Runner.new(
         "active_storage_local",
         buildpacks: [
-          # "https://github.com/heroku/heroku-buildpack-activestorage-preview",
+          "https://github.com/heroku/heroku-buildpack-activestorage-preview",
           Hatchet::App.default_buildpack
         ]
       ).deploy do |app, heroku|
-        expect(app.output).to match('binary dependencies required')
-        expect(app.output).to match('config.active_storage.service')
+        expect(app.output).to_not match('binary dependencies required')
+        expect(app.output).to     match('config.active_storage.service')
+        expect(app.output).to     match('config.assets.compile = true')
       end
     end
   end
