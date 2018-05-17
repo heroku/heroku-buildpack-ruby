@@ -75,18 +75,15 @@ class LanguagePack::Helpers::RailsRunner
     @output        = nil
     @success       = false
     @debug         = env('HEROKU_DEBUG_RAILS_RUNNER')
-    puts "DELETEME: debug is #{@debug}"
   end
 
   def detect(config_string)
-    puts "DELETEME: Detecting #{config_string}"
     config = RailsConfig.new(config_string, self, debug: @debug)
     @command_array << config.to_command
     config
   end
 
   def output
-    puts "DELETEME: getting output"
     @output ||= call
   end
 
@@ -101,7 +98,6 @@ class LanguagePack::Helpers::RailsRunner
   private
 
     def call
-      puts "DELETEME: calling call"
       topic("Detecting rails configuration")
       out = run(command, user_env: true)
       @success = $?.success?

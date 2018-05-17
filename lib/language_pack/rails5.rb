@@ -33,7 +33,6 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
 
   def config_detect
     super
-    puts "DELETEME: about to detect local storage"
     @local_storage_config = @rails_runner.detect("active_storage.service")
   end
 
@@ -56,7 +55,6 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
     end
 
     def local_storage?
-      puts "DELETEME: checking for success"
       return false unless @local_storage_config.success?
       @local_storage_config.has_match?("local")
     end
