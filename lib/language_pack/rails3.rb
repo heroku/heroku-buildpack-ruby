@@ -66,6 +66,10 @@ WARNING
 private
 
   def assets_compile_enabled?
+    puts "DELETEME Assets compile enabled"
+    puts "DELETEME @assets_compile_config.success? #{@assets_compile_config.success?}"
+    puts "DELETEME @assets_compile_config.did_match?('true'): #{@assets_compile_config.did_match?("true")}"
+
     return false unless @assets_compile_config.success?
     @assets_compile_config.did_match?("true")
   end
