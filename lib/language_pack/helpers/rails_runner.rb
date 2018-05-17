@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This class is used for running `rails runner` against
 # apps, primarially for the intention of detecting configuration.
 #
