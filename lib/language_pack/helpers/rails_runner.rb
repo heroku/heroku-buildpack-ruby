@@ -35,11 +35,13 @@ class LanguagePack::Helpers::RailsRunner
   #
   class RailsConfig
     def initialize(config, rails_runner, options={})
-      @debug        = options[:debug]
-      @rails_runner = rails_runner
       @config       = config
+      @rails_runner = rails_runner
+      @debug        = options[:debug]
+
       @success      = nil
       @heroku_key   = "heroku.detecting.config.for.#{config}"
+
       @rails_config = String.new('#{')
       @rails_config << 'Rails.application.config'
       config.split('.').each do |part|
