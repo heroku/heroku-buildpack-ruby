@@ -34,7 +34,9 @@ class LanguagePack::Helpers::RailsRunner
   #    config.to_command # => "puts %Q{heroku.detecting.config.for.active_storage.service=Rails.application.config.try(:active_storage).try(:service)}; "
   #
   class RailsConfig
-    def initialize(config, rails_runner)
+
+    def initialize(config, rails_runner, options={})
+      @debug        = options[:debug]
       @rails_runner = rails_runner
       @config       = config
       @heroku_key   = "heroku.detecting.config.for.#{config}"
@@ -59,7 +61,9 @@ class LanguagePack::Helpers::RailsRunner
       cmd << 'puts %Q{'
       cmd << "#{@heroku_key}=#{@rails_config}"
       cmd << '}; '
-      cmd << 'rescue; end;'
+      cmd << 'rescue => e; '
+      cmd << 'puts e; puts e.backtrace; ' if @debug
+      cmd << 'end;'
       cmd
     end
   end
@@ -70,10 +74,11 @@ class LanguagePack::Helpers::RailsRunner
     @command_array = []
     @output = ""
     @success = false
+    @debug = env('HEROKU_DEBUG_RAILS_RUNNER')
   end
 
   def detect(config_string)
-    config = RailsConfig.new(config_string, self)
+    config = RailsConfig.new(config_string, self, debug: @debug)
     @command_array << config.to_command
     config
   end
@@ -96,6 +101,10 @@ class LanguagePack::Helpers::RailsRunner
       topic("Detecting rails configuration")
       out = run(command, user_env: true)
       @success = $?.success?
+      if @debug
+        puts "$ #{command}"
+        puts out
+      end
       out
     end
 end
