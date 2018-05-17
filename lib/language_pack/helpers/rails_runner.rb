@@ -38,7 +38,8 @@ class LanguagePack::Helpers::RailsRunner
       @rails_runner = rails_runner
       @config       = config
       @heroku_key   = "heroku.detecting.config.for.#{config}"
-      @rails_config = String.new('#{Rails.application.config')
+      @rails_config = String.new('#{')
+      @rails_config << 'Rails.application.config'
       config.split('.').each do |part|
         @rails_config << ".try(:#{part})"
       end
