@@ -47,11 +47,11 @@ class LanguagePack::Helpers::RailsRunner
     end
 
     def success?
-      rails_runner.success? && rails_runner.output =~ %r(#{heroku_key})
+      @rails_runner.success? && @rails_runner.output =~ %r(#{heroku_key})
     end
 
     def did_match?(val)
-      rails_runner.output =~ %r(#{heroku_key}=#{val})
+      @rails_runner.output =~ %r(#{heroku_key}=#{val})
     end
 
     def to_command
