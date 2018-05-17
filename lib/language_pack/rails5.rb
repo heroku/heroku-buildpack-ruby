@@ -31,6 +31,12 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
     # do not install plugins, do not call super, do not warn
   end
 
+  def config_detect
+    super
+    puts "DELETEME: about to detect local storage"
+    @local_storage_config = @rails_runner.detect("active_storage.service")
+  end
+
   def best_practice_warnings
     return unless bundler.has_gem?("activestorage")
     return unless File.exist?("config/storage.yml")
@@ -40,12 +46,6 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
   end
 
   private
-
-    def config_detect
-      super
-      @local_storage_config = @rails_runner.detect("active_storage.service")
-    end
-
     def has_ffmpeg?
       run("which ffmpeg")
       return $?.success?
@@ -56,6 +56,7 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
     end
 
     def local_storage?
+      puts "DELETEME: checking for success"
       return false unless @local_storage_config.success?
       @local_storage_config.has_match?("local")
     end

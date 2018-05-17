@@ -43,10 +43,9 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     end
   end
 
-private
-
   def config_detect
     super
+    puts "DELETEME: about to detect assets compile"
     @assets_compile_config = @rails_runner.detect("assets.compile")
   end
 
@@ -64,6 +63,8 @@ For more information can be found in this article:
 WARNING
     end
   end
+
+private
 
   def assets_compile_enabled?
     return false unless @assets_compile_config.success?
