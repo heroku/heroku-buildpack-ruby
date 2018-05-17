@@ -37,6 +37,7 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
   end
 
   def best_practice_warnings
+    super
     return unless bundler.has_gem?("activestorage")
     return unless File.exist?("config/storage.yml")
 
