@@ -56,7 +56,7 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
 
     def local_storage?
       return false unless @local_storage_config.success?
-      @local_storage_config.has_match?("local")
+      @local_storage_config.did_match?("local")
     end
 
     def warn_local_storage

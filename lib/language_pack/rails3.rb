@@ -67,7 +67,7 @@ private
 
   def assets_compile_enabled?
     return false unless @assets_compile_config.success?
-    @assets_compile_config.has_match?("true")
+    @assets_compile_config.did_match?("true")
   end
 
   def install_plugins
