@@ -55,7 +55,12 @@ class LanguagePack::Helpers::RailsRunner
     end
 
     def to_command
-      "begin; puts %Q{#{@heroku_key}=#{@rails_config}}; rescue; end;"
+      cmd = String.new('begin; ')
+      cmd << 'puts %Q{'
+      cmd << "#{@heroku_key}=#{@rails_config}"
+      cmd << '}; '
+      cmd << 'rescue; end;'
+      cmd
     end
   end
 
@@ -88,6 +93,7 @@ class LanguagePack::Helpers::RailsRunner
   private
 
     def call
+      topic("Detecting rails configuration")
       out = run(command, user_env: true)
       @success = $?.success?
       out
