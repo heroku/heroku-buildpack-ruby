@@ -72,9 +72,9 @@ class LanguagePack::Helpers::RailsRunner
 
   def initialize
     @command_array = []
-    @output = ""
-    @success = false
-    @debug = env('HEROKU_DEBUG_RAILS_RUNNER')
+    @output        = nil
+    @success       = false
+    @debug         = env('HEROKU_DEBUG_RAILS_RUNNER')
     puts "DELETEME: debug is #{@debug}"
   end
 
