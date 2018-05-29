@@ -4,6 +4,7 @@ require "benchmark"
 require "rubygems"
 require "language_pack"
 require "language_pack/base"
+require "language_pack/shell_helpers"
 require "language_pack/ruby_version"
 require "language_pack/helpers/nodebin"
 require "language_pack/helpers/node_installer"
@@ -709,6 +710,26 @@ https://devcenter.heroku.com/articles/ruby-versions#your-ruby-version-is-x-but-y
       Dir[File.join(slug_vendor_base, "**", ".git")].each do |dir|
         FileUtils.rm_rf(dir)
       end
+      # TODO: someday move this to another file
+      puts 'Setting new enviroment variables in current process with Aldagai gem...'
+
+      variables_output = run!('bundle exec aldagai raw_list', { user_env: true })
+
+      regex_for_temp_env_variables = /\w+=.+/
+      splitted_output = variables_output.split("\n")
+
+      splitted_output.each do |output_piece|
+        matched = output_piece.match(regex_for_temp_env_variables)
+
+        if matched
+          name, value = matched[0].split("=")
+          puts "  ➥ Setting #{name} in temporal environment with value: #{value}..."
+          ENV[name] = value
+        end
+      end
+
+      puts 'Loading new environment variables with Aldagai gem...'
+      run!('bundle exec aldagai set', { user_env: true })
       bundler.clean
     end
   end
