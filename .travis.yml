@@ -1,4 +1,8 @@
 language: ruby
+cache:
+  bundler: true
+  directories:
+    - repos
 rvm:
 - 2.4.4
 before_script:
