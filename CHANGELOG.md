@@ -1,5 +1,13 @@
 ## Master
 
+## v185 (5/31/2018)
+
+* The Ruby buildpack bootstrap Ruby version is now 2.5.1. This is not a customer facing feature (#765)
+
+## v184 (5/30/2018)
+
+* Default Ruby version is now 2.4.4 (#734)
+
 ## v183 (4/26/2018)
 
 * Support for not yet released heroku-18 stack (#750)
