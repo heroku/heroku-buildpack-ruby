@@ -108,9 +108,13 @@ WARNING
         install_binaries
         run_assets_precompile_rake_task
       end
+      config_detect
       best_practice_warnings
       super
     end
+  end
+
+  def config_detect
   end
 
 private
