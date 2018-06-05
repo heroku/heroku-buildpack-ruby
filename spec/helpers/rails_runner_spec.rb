@@ -36,8 +36,10 @@ describe "Rails Runner" do
 
         rails_runner  = LanguagePack::Helpers::RailsRunner.new
         local_storage = rails_runner.detect("active_storage.service")
+        local_storage = rails_runner.detect("foo.bar")
 
         expect(rails_runner.output).to match("heroku.detecting.config.for.active_storage.service=active_storage.service")
+        expect(rails_runner.output).to match("heroku.detecting.config.for.foo.bar=foo.bar")
         expect(rails_runner.success?).to be(true)
       end
     end
@@ -74,27 +76,38 @@ describe "Rails Runner" do
   def mock_rails_runner(try_code = "")
         executable_contents = <<-FILE
 #!/usr/bin/env ruby
-
 require 'ostruct'
 
-class Object
+module Rails; end
+def Rails.application
+  OpenStruct.new(config: TryMock.new) # Rails.application.config #=> TryMock instance
+end
+
+# Mock object used to record calls
+# for example:
+#
+#   obj = Try.new
+#   obj.try(:active_storage).try(:service)
+#   puts obj.to_s # => "active_storage.service"
+#
+class TryMock
+  def initialize(array = [])
+    @try_array = array
+  end
+
   def try(value)
-    $tried ||= []
-    $tried << value
+    @try_array << value
     #{try_code}
-    $tried.join(".")
+    return TryMock.new(@try_array)
+  end
+
+  def to_s
+    @try_array.join(".")
   end
 end
 
-module Rails; end
-
-def Rails.application
-  OpenStruct.new(config: Object.new)
-end
-
-ARGV.shift # remove "runner"
-
-eval(ARGV.join(" "))
+ARGV.shift           # remove "runner"
+eval(ARGV.join(" ")) # Execute command passed in
 FILE
     FileUtils.mkdir("bin")
     File.open("bin/rails", "w") { |f| f << executable_contents }
