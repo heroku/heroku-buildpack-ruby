@@ -118,13 +118,17 @@ class LanguagePack::Helpers::RailsRunner
       @success = $?.success?
 
       unless @success
-        warn("Detecting rails configuration failed\nset HEROKU_DEBUG_RAILS_RUNNER=1 to debug")
+        message = String.new("Detecting rails configuration failed\n")
+        message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
+        warn(message)
         mcount("warn.rails.runner.fail")
       end
       return out
     rescue Timeout::Error
       @success = false
-      warn("Detecting rails configuration timeout\nset HEROKU_DEBUG_RAILS_RUNNER=1 to debug")
+      message = String.new("Detecting rails configuration timeout\n")
+      message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
+      warn(message)
       mcount("warn.rails.runner.timeout")
       return out
     end
