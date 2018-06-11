@@ -72,11 +72,12 @@ class LanguagePack::Helpers::RailsRunner
 
   include LanguagePack::ShellHelpers
 
-  def initialize
+  def initialize(debug = env('HEROKU_DEBUG_RAILS_RUNNER'), timeout = 65)
     @command_array = []
     @output        = nil
     @success       = false
-    @debug         = env('HEROKU_DEBUG_RAILS_RUNNER')
+    @debug         = debug
+    @timeout       = timeout # seconds
   end
 
   def detect(config_string)
@@ -98,16 +99,38 @@ class LanguagePack::Helpers::RailsRunner
   end
 
   private
-
     def call
       topic("Detecting rails configuration")
-      out = run(command, user_env: true)
-      @success = $?.success?
+      out = execute_command!
+
       if @debug
         puts "$ #{command}"
         puts out
       end
       out
+    end
+
+    def execute_command!
+      out = String.new
+      Timeout.timeout(@timeout) do
+        pipe(command, user_env: true, silent: true, buffer: out)
+      end
+      @success = $?.success?
+
+      unless @success
+        message = String.new("Detecting rails configuration failed\n")
+        message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
+        warn(message)
+        mcount("warn.rails.runner.fail")
+      end
+      return out
+    rescue Timeout::Error
+      @success = false
+      message = String.new("Detecting rails configuration timeout\n")
+      message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
+      warn(message)
+      mcount("warn.rails.runner.timeout")
+      return out
     end
 end
 

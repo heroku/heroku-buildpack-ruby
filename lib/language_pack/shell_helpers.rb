@@ -108,12 +108,13 @@ module LanguagePack
     # run a shell command and stream the output
     # @param [String] command to be run
     def pipe(command, options = {})
-      output = ""
+      output = options[:buffer] || ""
+      silent = options[:silent]
       IO.popen(command_options_to_string(command, options)) do |io|
         until io.eof?
           buffer = io.gets
           output << buffer
-          puts buffer
+          puts buffer unless silent
         end
       end
 
