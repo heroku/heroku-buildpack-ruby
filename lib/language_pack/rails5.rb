@@ -66,7 +66,7 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
 You set your `config.active_storage.service` to :local in production.
 If you are uploading files to this app, they will not persist after the app
 is restarted, on one-off dynos, or if the app has multiple dynos.
-Heroku applications have an ephemeral files system. To
+Heroku applications have an ephemeral file system. To
 persist uploaded files, please use a service such as S3 and update your Rails
 configuration.
 
