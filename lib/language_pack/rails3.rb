@@ -52,6 +52,29 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     super
     if assets_compile_enabled?
       mcount("warn.assets.compile.true")
+
+      safe_sprockets_version_needed = sprocket_version_upgrade_needed
+      if safe_sprockets_version_needed
+        message = <<ERROR
+A security vulnerability has been detected in your application.
+To protect your application you must take action. Your application
+is currently exposing its credentials via an easy to exploit directory
+traversal.
+
+To protect your application you must either upgrade to Sprockets version "#{safe_sprockets_version_needed}"
+or disable dynamic compilation at runtime by setting:
+
+```
+config.assets.compile = false # Disables security vulnerability
+```
+
+To read more about this security vulnerability please refer to this blog post:
+  https://blog.heroku.com/rails-asset-pipeline-vulnerability
+
+ERROR
+        error(message)
+      end
+
       warn(<<-WARNING)
 You set your `config.assets.compile = true` in production.
 This can negatively impact the performance of your application.
@@ -64,6 +87,22 @@ WARNING
   end
 
 private
+
+  def sprocket_version_upgrade_needed
+    # Due to https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-3760
+    sprockets_version = bundler.gem_version('sprockets')
+    if sprockets_version < Gem::Version.new("2.12.5")
+      return "2.12.5"
+    elsif sprockets_version > Gem::Version.new("3") &&
+          sprockets_version < Gem::Version.new("3.7.2")
+      return "3.7.2"
+    elsif sprockets_version > Gem::Version.new("4") &&
+          sprockets_version < Gem::Version.new("4.0.0.beta8")
+      return "4.0.0.beta8"
+    else
+      return false
+    end
+  end
 
   def assets_compile_enabled?
     return false unless @assets_compile_config.success?
