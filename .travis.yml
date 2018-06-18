@@ -33,7 +33,7 @@ env:
     - TEST_SUITE=hatchet/ruby_spec.rb
     - TEST_SUITE=hatchet/stack_spec.rb
 
-sudo: true
+sudo: false
 dist: trusty
 addons:
   apt:
