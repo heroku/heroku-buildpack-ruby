@@ -4,7 +4,7 @@ cache:
   directories:
     - repos
 rvm:
-- 2.4.4
+- 2.4.1
 before_script:
   - gem install bundler -v 1.16.2
   - bundle exec rake hatchet:setup_travis
