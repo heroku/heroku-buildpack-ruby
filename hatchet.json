@@ -78,7 +78,8 @@
   ],
   "rails52": [
     "sharpstone/active_storage_non_local",
-    "sharpstone/active_storage_local"
+    "sharpstone/active_storage_local",
+    "sharpstone/sprockets_asset_compile_true"
   ],
   "multibuildpack": [
     "sharpstone/node_multi"

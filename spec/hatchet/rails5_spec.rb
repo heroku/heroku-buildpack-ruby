@@ -34,6 +34,13 @@ describe "Rails 5" do
       end
     end
   end
+
+  it "blocks bads sprockets config with bad version" do
+    Hatchet::Runner.new("sprockets_asset_compile_true", allow_failure: true).deploy do |app, heroku|
+      expect(app.output).to match('A security vulnerability has been detected')
+      expect(app.output).to match('version "3.7.2"')
+    end
+  end
 end
 
 describe "Rails 5.1" do
