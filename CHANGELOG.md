@@ -1,5 +1,9 @@
 ## Master
 
+## v187 (6/19/2018)
+
+* Prevent apps from deploying with known security vulnerability activated via config (#776)
+
 ## v186 (6/12/2018)
 
 * The Ruby buildpack can now detect Rails configuration in a project (#758 #770)
