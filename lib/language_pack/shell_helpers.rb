@@ -105,6 +105,41 @@ module LanguagePack
       "/usr/bin/env #{env} bash -c #{command.shellescape} #{options[:out]} "
     end
 
+    class ProcessSpawn
+      include ShellHelpers
+
+      def initialize(command, options = {})
+        @timeout_value = options.delete(:timeout)
+        @command       = command_options_to_string(command, options)
+        @did_time_out  = false
+        @success       = false
+      end
+
+      def call
+        @pid ||= Process.spawn(@command)
+      end
+
+      def timeout?
+        @did_time_out
+      end
+
+      def success?
+        @success
+      end
+
+      def wait_with_timeout
+        call
+        Timeout.timeout(@timeout_value) do
+          Process.wait(@pid)
+          @success = $?.success?
+        end
+      rescue Timeout::Error
+        Process.kill("SIGKILL", @pid)
+        @did_time_out = true
+        @success = false
+      end
+    end
+
     # run a shell command and stream the output
     # @param [String] command to be run
     def pipe(command, options = {})
