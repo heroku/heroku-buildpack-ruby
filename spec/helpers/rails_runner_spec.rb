@@ -48,12 +48,16 @@ describe "Rails Runner" do
   it "timeout works as expected" do
     Dir.mktmpdir do |tmpdir|
       Dir.chdir(tmpdir) do
-        mock_rails_runner("sleep(0.05)")
+        mock_rails_runner("pid = Process.spawn('sleep 5'); Process.wait(pid)")
 
-        rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
-        local_storage = rails_runner.detect("active_storage.service")
+        diff = time_it do
+          rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
+          local_storage = rails_runner.detect("active_storage.service")
+          expect(rails_runner.success?).to eq(false)
+          expect(rails_runner.timeout?).to eq(true)
+        end
 
-        expect(rails_runner.success?).to eq(false)
+        expect(diff < 1).to eq(true), "expected time difference #{diff} to be less than 1 second, but was longer"
       end
     end
   end
@@ -71,6 +75,12 @@ describe "Rails Runner" do
         expect(!!local_storage.success?).to eq(true)
       end
     end
+  end
+
+  def time_it
+    start = Time.now
+    yield
+    return Time.now - start
   end
 
   def mock_rails_runner(try_code = "")
