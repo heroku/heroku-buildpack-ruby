@@ -112,11 +112,6 @@ class LanguagePack::Helpers::RailsRunner
       out
     end
 
-    def silent
-      return false if @debug
-      true
-    end
-
     def execute_command!
       # Output is written to a file so if
       # the process gets timed out, the contents of the file
