@@ -136,8 +136,9 @@ class LanguagePack::Base
         log_internal args, :status => "complete", :finish => finish, :elapsed => (finish - start)
         return ret
       rescue StandardError => ex
-        finish = Time.now.to_f
-        log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => ex.message
+        finish  = Time.now.to_f
+        message = Shellwords.escape(ex.message)
+        log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => message
         raise ex
       end
     end
