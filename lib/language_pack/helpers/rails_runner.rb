@@ -40,6 +40,7 @@ class LanguagePack::Helpers::RailsRunner
       @debug        = options[:debug]
 
       @success      = nil
+      @did_time_out = false
       @heroku_key   = "heroku.detecting.config.for.#{config}"
 
       @rails_config = String.new('#{')
@@ -77,7 +78,7 @@ class LanguagePack::Helpers::RailsRunner
     @output        = nil
     @success       = false
     @debug         = debug
-    @timeout       = timeout # seconds
+    @timeout_val   = timeout # seconds
   end
 
   def detect(config_string)
@@ -98,38 +99,42 @@ class LanguagePack::Helpers::RailsRunner
     %Q{rails runner "#{@command_array.join(' ')}"}
   end
 
+  def timeout?
+    @did_time_out
+  end
+
   private
     def call
       topic("Detecting rails configuration")
+      puts "$ #{command}" if @debug
       out = execute_command!
-
-      if @debug
-        puts "$ #{command}"
-        puts out
-      end
+      puts out if @debug
       out
     end
 
     def execute_command!
-      out = String.new
-      Timeout.timeout(@timeout) do
-        pipe(command, user_env: true, silent: true, buffer: out)
-      end
-      @success = $?.success?
+      process = ProcessSpawn.new(command,
+        user_env: true,
+        timeout:  @timeout_val,
+        file:     "./.heroku/ruby/config_detect/rails.txt"
+      )
 
-      unless @success
+      @success      = process.success?
+      @did_time_out = process.timeout?
+      out           = process.output
+
+      if timeout?
+        message = String.new("Detecting rails configuration timeout\n")
+        message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
+        warn(message)
+        mcount("warn.rails.runner.timeout")
+      elsif !@success
         message = String.new("Detecting rails configuration failed\n")
         message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
         warn(message)
         mcount("warn.rails.runner.fail")
       end
-      return out
-    rescue Timeout::Error
-      @success = false
-      message = String.new("Detecting rails configuration timeout\n")
-      message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
-      warn(message)
-      mcount("warn.rails.runner.timeout")
+
       return out
     end
 end

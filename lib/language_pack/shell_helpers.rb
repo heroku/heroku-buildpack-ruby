@@ -115,6 +115,86 @@ module LanguagePack
       "/usr/bin/env #{env} bash -c #{command.shellescape} #{options[:out]} "
     end
 
+    # Class for running process spawn with a timeout
+    #
+    # Example:
+    #
+    #   spawn = ProcessSpawn.new("echo 'hello'")
+    #   spawn.success? # => true
+    #   spawn.timeout? # => false
+    #
+    # If you want to get the output of the process, you will need to pass
+    # in a file:
+    #
+    #   spawn = ProcessSpawn.new("echo 'hello'", file: "hello.txt")
+    #   spawn.success? # => true
+    #   spawn.output   # => "hello"
+    #
+    # The main benefit of using a file is that even if the command fails
+    # or times out, there will still be partial results in the output file.
+    #
+    # To add a timeout, instantiate pass in a hash with a `timeout` key
+    # in seconds:
+    #
+    #   spawn = ProcessSpawn.new("sleep 10", timeout: 4)
+    #   spawn.success? # => false
+    #   spawn.timeout? # => true
+    #
+    class ProcessSpawn
+      include ShellHelpers
+
+      def initialize(command, options = {})
+        @timeout_value = options.delete(:timeout)
+        @file          = options.delete(:file)
+        if @file
+          raise "Cannot specify :file, and :out" if options[:out]
+          @file = Pathname.new(@file)
+          @file.dirname.mkpath
+          options[:out] = ">> #{@file} 2>&1"
+        end
+
+        @command       = command_options_to_string(command, options)
+        @did_time_out  = false
+        @success       = false
+      end
+
+      def output
+        raise "no file name given" if @file.nil?
+        exec_once
+        @file.read
+      end
+
+      def timeout?
+        exec_once
+        @did_time_out
+      end
+
+      def success?
+        exec_once
+        @success
+      end
+
+    private
+      def exec_once
+        return if @exec_once
+        @exec_once = true
+        wait_with_timeout
+        true
+      end
+
+      def wait_with_timeout
+        pid = Process.spawn(@command)
+        Timeout.timeout(@timeout_value) do
+          Process.wait(pid)
+          @success = $?.success?
+        end
+      rescue Timeout::Error
+        Process.kill("SIGKILL", pid)
+        @did_time_out = true
+        @success      = false
+      end
+    end
+
     # run a shell command and stream the output
     # @param [String] command to be run
     def pipe(command, options = {})
