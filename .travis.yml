@@ -6,7 +6,6 @@ cache:
 rvm:
 - 2.4.1
 before_script:
-  - gem install bundler -v 1.16.2
   - bundle exec rake hatchet:setup_travis
 script: bundle exec parallel_rspec -n 11 spec/$TEST_SUITE
 env:
