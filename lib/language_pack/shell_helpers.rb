@@ -12,6 +12,16 @@ end
 module LanguagePack
   module ShellHelpers
     @@user_env_hash = {}
+    @@warnings      = []
+    @@deprecations  = []
+
+    def warnings
+      @@warnings
+    end
+
+    def deprecations
+      @@deprecations
+    end
 
     def mcount(key, value = 1)
       private_log("count", key => value)
@@ -157,8 +167,7 @@ module LanguagePack
         puts message
         Kernel.puts ""
       end
-      @warnings ||= []
-      @warnings << message
+      warnings << message
     end
 
     def error(message)
@@ -166,8 +175,7 @@ module LanguagePack
     end
 
     def deprecate(message)
-      @deprecations ||= []
-      @deprecations << message
+      deprecations << message
     end
 
     def noshellescape(string)
