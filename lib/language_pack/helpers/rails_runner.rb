@@ -113,22 +113,15 @@ class LanguagePack::Helpers::RailsRunner
     end
 
     def execute_command!
-      # Output is written to a file so if
-      # the process gets timed out, the contents of the file
-      # containing the partial output can be used for debugging
-      config_detect_file = Pathname.new("./.heroku/ruby/config_detect/rails.txt")
-      config_detect_file.dirname.mkpath
       process = ProcessSpawn.new(command,
         user_env: true,
         timeout:  @timeout_val,
-        out:      ">> #{config_detect_file} 2>&1"
+        file:     "./.heroku/ruby/config_detect/rails.txt"
       )
-      process.call
-      process.wait_with_timeout
 
-      out           = config_detect_file.read
       @success      = process.success?
       @did_time_out = process.timeout?
+      out           = process.output
 
       if timeout?
         message = String.new("Detecting rails configuration timeout\n")
