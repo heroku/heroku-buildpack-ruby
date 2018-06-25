@@ -1,4 +1,26 @@
 {
-  "spec/hatchet/bugs_spec.rb": 83.60694026947021,
-  "spec/hatchet/ci_spec.rb": 184.3626697063446
+  "spec/hatchet/bugs_spec.rb": 79.58106851577759,
+  "spec/hatchet/ci_spec.rb": 347.8413245677948,
+  "spec/hatchet/jvm_spec.rb": 84.96137690544128,
+  "spec/hatchet/node_spec.rb": 125.81749081611633,
+  "spec/hatchet/rails23_spec.rb": 27.812206029891968,
+  "spec/hatchet/rails3_spec.rb": 216.98798823356628,
+  "spec/hatchet/rails4_spec.rb": 619.4272434711456,
+  "spec/hatchet/rails5_spec.rb": 369.15442943573,
+  "spec/hatchet/rubies_spec.rb": 379.7627942562103,
+  "spec/hatchet/ruby_spec.rb": 209.7765176296234,
+  "spec/hatchet/stack_spec.rb": 34.790956020355225,
+  "spec/helpers/bundler_wrapper_spec.rb": 12.007025480270386,
+  "spec/helpers/fetcher_spec.rb": 0.5906188488006592,
+  "spec/helpers/jvm_installer_spec.rb": 21.238383293151855,
+  "spec/helpers/node_installer_spec.rb": 1.4972991943359375,
+  "spec/helpers/rails_runner_spec.rb": 0.3340415954589844,
+  "spec/helpers/rake_runner_spec.rb": 13.79833722114563,
+  "spec/helpers/ruby_version_spec.rb": 24.048339366912842,
+  "spec/helpers/shell_spec.rb": 0.601851224899292,
+  "spec/helpers/stale_file_cleaner_spec.rb": 2.0138986110687256,
+  "spec/helpers/yarn_installer_spec.rb": 0.5951690673828125,
+  "spec/installers/heroku_ruby_installer_spec.rb": 7.419133901596069,
+  "spec/installers/rbx_installer_spec.rb": 8.129172086715698,
+  "spec/installers/yarn_installer_spec.rb": 0.6401379108428955
 }
