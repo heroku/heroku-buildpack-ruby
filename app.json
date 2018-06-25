@@ -17,7 +17,7 @@
       },
       "scripts": {
         "test-setup": "bundle exec rake hatchet:setup_ci",
-        "test":       "bundle exec rake knapsack:rspec"
+        "test":       "HATCHET_BUILDPACK_BRANCH=$HEROKU_TEST_RUN_BRANCH bundle exec rake knapsack:rspec"
       },
       "buildpacks": [
         { "url": "heroku/ruby" }
