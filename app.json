@@ -1,0 +1,27 @@
+{
+  "name":"Heroku Buildpack Ruby",
+  "description":"The buildpack for Ruby",
+  "environments": {
+    "test": {
+      "env": {
+          "HATCHET_RETRIES":    3,
+          "IS_RUNNING_ON_CI":   true,
+          "HATCHET_APP_LIMIT":  80,
+          "BUILDPACK_LOG_FILE": "tmp/buildpack.log"
+      },
+      "formation": {
+        "test": {
+          "size": "performance-s",
+          "quantity": 16
+        }
+      },
+      "scripts": {
+        "test-setup": "bundle exec rake hatchet:setup_ci",
+        "test":       "bundle exec rake spec:part[($CI_NODE_INDEX + 1),$CI_NODE_TOTAL]"
+      },
+      "buildpacks": [
+        { "url": "heroku/ruby" }
+      ]
+    }
+  }
+}
