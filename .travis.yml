@@ -1,10 +1,10 @@
-language: ruby
+language: generic # comes with ruby 2.4.1
 cache:
-  bundler: true
   directories:
+    - vendor/bundle
     - repos
-rvm:
-- 2.4.1
+install:
+  - bundle install --jobs=4 --retry=3 --deployment --path=vendor/bundle
 before_script:
   - bundle exec rake hatchet:setup_travis
 script: bundle exec parallel_rspec -n 11 spec/$TEST_SUITE
