@@ -5,7 +5,7 @@ describe "Stack Changes" do
     app = Hatchet::Runner.new('default_ruby', stack: "heroku-16").setup!
     app.deploy do |app, heroku|
       app.update_stack("cedar-14")
-      `git commit --allow-empty -m "cedar-14 migrate"`
+      run!('git commit --allow-empty -m "cedar-14 migrate"')
 
       app.push!
       puts app.output
@@ -18,7 +18,7 @@ describe "Stack Changes" do
     app = Hatchet::Runner.new('default_ruby', stack: "cedar-14").setup!
     app.deploy do |app, heroku|
       app.update_stack("cedar-14")
-      `git commit --allow-empty -m "cedar migrate"`
+      run!(%Q{git commit --allow-empty -m "cedar migrate})
 
       app.push!
       puts app.output

@@ -4,6 +4,8 @@ require 'fileutils'
 require 'hatchet'
 require 'rspec/retry'
 require 'language_pack'
+require 'language_pack/shell_helpers'
+include LanguagePack::ShellHelpers
 
 require 'knapsack'
 
@@ -53,3 +55,4 @@ if ENV['TRAVIS']
   # Don't execute tests against "merge" commits
   exit 0 if ENV['TRAVIS_PULL_REQUEST'] != 'false' && ENV['TRAVIS_BRANCH'] == 'master'
 end
+
