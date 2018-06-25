@@ -85,8 +85,6 @@ describe "Upgrading ruby apps" do
     app = Hatchet::Runner.new("default_ruby")
     app.setup!
     app.deploy do |app|
-
-      puts run!("env BUNDLE_GEMFILE=./Gemfile bundle install")
       run!(%Q{echo "ruby '2.4.1'" >> Gemfile})
       run!("git add -A; git commit -m update-ruby")
       app.push!
