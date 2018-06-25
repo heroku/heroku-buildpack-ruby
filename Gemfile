@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 group :development, :test do
   gem "heroku_hatchet"
-  gem "rspec-parts" # another alternative is http://docs.knapsackpro.com/ruby/knapsack
+  gem "knapsack"
   gem "rspec-core"
   gem "rspec-expectations"
   gem "excon"

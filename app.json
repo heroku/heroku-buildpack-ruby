@@ -17,7 +17,7 @@
       },
       "scripts": {
         "test-setup": "bundle exec rake hatchet:setup_ci",
-        "test":       "bundle exec rake spec:part[($CI_NODE_INDEX + 1),$CI_NODE_TOTAL]"
+        "test":       "bundle exec rake knapsack:rspec"
       },
       "buildpacks": [
         { "url": "heroku/ruby" }

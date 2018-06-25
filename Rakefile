@@ -1,7 +1,7 @@
 require "fileutils"
 require "tmpdir"
 require 'hatchet/tasks'
-
+require 'knapsack'
 ENV["BUILDPACK_LOG_FILE"] ||= "tmp/buildpack.log"
 
 S3_BUCKET_NAME  = "heroku-buildpack-ruby"
@@ -310,4 +310,4 @@ begin
 rescue LoadError => e
 end
 
-
+Knapsack.load_tasks if defined?(Knapsack)
