@@ -20,7 +20,7 @@
         "test":       "HATCHET_BUILDPACK_BRANCH=$HEROKU_TEST_RUN_BRANCH bundle exec rake knapsack:rspec"
       },
       "buildpacks": [
-        { "url": "https://github.com/schneems/heroku-buildpack-git" },
+        { "url": "https://github.com/heroku/heroku-buildpack-apt" },
         { "url": "https://github.com/heroku/heroku-buildpack-cli.git" },
         { "url": "heroku/ruby" }
       ]
