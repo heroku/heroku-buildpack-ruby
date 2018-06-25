@@ -11,7 +11,7 @@
       },
       "formation": {
         "test": {
-          "size":     "performance-s",
+          "size":     "performance-m",
           "quantity": 16
         }
       },
