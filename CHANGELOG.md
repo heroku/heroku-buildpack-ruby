@@ -1,5 +1,9 @@
 ## Master
 
+## v188 (6/26/2018)
+
+* Fix rails config detect timeout. Addreses the process deadlock when detecting rails config that contains an infinite task. This was originally addressed in #770 but the implementation did not handle all cases. (#781)
+
 ## v187 (6/19/2018)
 
 * Prevent apps from deploying with known security vulnerability activated via config (#776)
