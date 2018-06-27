@@ -2,7 +2,6 @@ source "https://rubygems.org"
 
 group :development, :test do
   gem "heroku_hatchet"
-  gem "knapsack"
   gem "rspec-core"
   gem "rspec-expectations"
   gem "excon"
@@ -12,4 +11,6 @@ group :development, :test do
   gem "netrc"
   gem "git", github: "hone/ruby-git", branch: "master"
   gem 'json', '~> 2.0.2'
+  gem 'ci-queue'
+  gem 'redis'
 end

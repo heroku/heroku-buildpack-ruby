@@ -6,9 +6,6 @@ require 'rspec/retry'
 require 'language_pack'
 require 'language_pack/shell_helpers'
 
-require 'knapsack'
-
-Knapsack::Adapters::RSpecAdapter.bind
 
 ENV['RACK_ENV'] = 'test'
 
