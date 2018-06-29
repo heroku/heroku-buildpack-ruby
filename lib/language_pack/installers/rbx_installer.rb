@@ -16,5 +16,7 @@ class LanguagePack::Installers::RbxInstaller
     FileUtils.mv(Dir.glob("rubinius/#{ruby_version.engine_version}/*"), ".")
     FileUtils.rm_rf("rubinius")
   end
-end
 
+  def cache=(*)
+  end
+end

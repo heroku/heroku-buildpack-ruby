@@ -10,6 +10,7 @@ require "language_pack/helpers/node_installer"
 require "language_pack/helpers/yarn_installer"
 require "language_pack/helpers/jvm_installer"
 require "language_pack/version"
+require "language_pack/fetch_cacher"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
@@ -44,6 +45,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     @node_installer    = LanguagePack::Helpers::NodeInstaller.new
     @yarn_installer    = LanguagePack::Helpers::YarnInstaller.new
     @jvm_installer     = LanguagePack::Helpers::JvmInstaller.new(slug_vendor_jvm, @stack)
+    @fetch_cacher      = LanguagePack::FetchCacher.new(cache_path, "ruby_installer")
   end
 
   def name
@@ -359,6 +361,7 @@ SHELL
       return false unless ruby_version
 
       installer = LanguagePack::Installers::RubyInstaller.installer(ruby_version).new(@stack)
+      installer.cache = @fetch_cacher
 
       if ruby_version.build?
         installer.fetch_unpack(ruby_version, build_ruby_path, true)

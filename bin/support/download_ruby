@@ -6,9 +6,11 @@ $stdout.sync = true
 
 $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
+require "language_pack/fetch_cacher"
 
 DEFAULT_STACK = "cedar-14"
 
 installer    = LanguagePack::Installers::HerokuRubyInstaller.new(ENV['STACK'] || DEFAULT_STACK)
 ruby_version = LanguagePack::RubyVersion.new("ruby-#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}")
+installer.cache = LanguagePack::FetchCacher.new(ARGV[1], "ruby_installer")
 installer.fetch_unpack(ruby_version, ARGV[0])

@@ -21,6 +21,7 @@ heroku_buildpack_ruby_install_ruby()
 {
   local bin_dir=$1
   local buildpack_dir=$2
+  local cache_dir=$3
   heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$STACK"
 
   # The -d flag checks to see if a file exists and is a directory.
@@ -32,7 +33,7 @@ heroku_buildpack_ruby_install_ruby()
   if [ ! -d "$heroku_buildpack_ruby_dir" ]; then
     heroku_buildpack_ruby_dir=$(mktemp -d)
     # bootstrap ruby
-    $bin_dir/support/download_ruby $heroku_buildpack_ruby_dir
+    $bin_dir/support/download_ruby $heroku_buildpack_ruby_dir $cache_dir
     function atexit {
       rm -rf $heroku_buildpack_ruby_dir
     }
