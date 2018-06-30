@@ -8,6 +8,8 @@ module LanguagePack
     include ShellHelpers
     CDN_YAML_FILE = File.expand_path("../../../config/cdn.yml", __FILE__)
 
+    attr_accessor :cache
+
     def initialize(host_url, stack = nil)
       @config   = load_config
       @host_url = fetch_cdn(host_url)
@@ -52,5 +54,23 @@ module LanguagePack
       url = @config[url] || url
       Pathname.new(url)
     end
+
+    module WithCache
+      def fetch_untar(path, files_to_extract = nil)
+        return super unless cache
+
+        url = @host_url.join(path)
+
+        cache_file = cache.get url
+        if cache_file.exist?
+          command = "tar zxf #{cache_file} #{files_to_extract}"
+        else
+          curl = curl_command("#{url} -s -o")
+          command = "#{curl} - | tee #{cache_file} | tar zxf - #{files_to_extract}"
+        end
+        run!(command, error_class: FetchError, max_attempts: 3)
+      end
+    end
+    prepend WithCache
   end
 end

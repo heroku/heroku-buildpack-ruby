@@ -1,11 +1,15 @@
 require 'language_pack/installers/ruby_installer'
 require 'language_pack/base'
 require 'language_pack/shell_helpers'
+require 'forwardable'
 
 class LanguagePack::Installers::HerokuRubyInstaller
+  extend Forwardable
   include LanguagePack::ShellHelpers, LanguagePack::Installers::RubyInstaller
 
   BASE_URL = LanguagePack::Base::VENDOR_URL
+
+  delegate :'cache=' => :@fetcher
 
   def initialize(stack)
     @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack)
@@ -23,4 +27,3 @@ class LanguagePack::Installers::HerokuRubyInstaller
     end
   end
 end
-
