@@ -379,6 +379,8 @@ To set your Ruby version add this line to your Gemfile:
 # See https://devcenter.heroku.com/articles/ruby-versions for more information.
 WARNING
       end
+
+      @fetch_cacher.clean
     end
 
     true
