@@ -1,9 +1,17 @@
 GIT
-  remote: git://github.com/hone/ruby-git.git
+  remote: https://github.com/hone/ruby-git.git
   revision: 264836fcff3c037d8d8fc44bd770b150b46fdc4e
   branch: master
   specs:
     git (1.2.6)
+
+GIT
+  remote: https://github.com/schneems/ci-queue.git
+  revision: 20d40ff742f7dc33d33a5a5d0bd9cfe043c9246e
+  branch: schneems/heroku-ci
+  specs:
+    ci-queue (0.13.4)
+      ansi
 
 GEM
   remote: https://rubygems.org/
@@ -14,8 +22,6 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     ansi (1.5.0)
-    ci-queue (0.13.4)
-      ansi
     concurrent-ruby (1.0.5)
     diff-lcs (1.3)
     erubis (2.7.0)
@@ -71,7 +77,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ci-queue
+  ci-queue!
   excon
   git!
   heroku_hatchet
