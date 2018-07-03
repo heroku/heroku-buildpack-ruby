@@ -62,6 +62,22 @@ module LanguagePack
       end
     end
 
+    # Should only be used once in the top level script
+    # for example $ bin/support/ruby_compile
+    def self.display_error_and_exit(e)
+      Kernel.puts "\e[1m\e[31m"
+      Kernel.puts " !"
+      e.message.split("\n").each do |line|
+        Kernel.puts " !     #{line.strip}"
+      end
+      Kernel.puts " !\e[0m"
+      if e.is_a?(BuildpackError)
+        exit 1
+      else
+        raise e
+      end
+    end
+
     # run a shell command (deferring to #run), and raise an error if it fails
     # @param [String] command to be run
     # @return [String] result of #run
