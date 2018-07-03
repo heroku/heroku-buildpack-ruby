@@ -259,9 +259,10 @@ module LanguagePack
 
     def warn(message, options = {})
       if options.key?(:inline) ? options[:inline] : false
-        Kernel.puts "###### WARNING:"
+        Kernel.puts "\e[1m\e[33m" # Bold yellow
+        Kernel.puts "###### WARNING:\n"
         puts message
-        Kernel.puts ""
+        Kernel.puts "\e[0m"
       end
       warnings << message
     end
