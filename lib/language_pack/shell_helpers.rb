@@ -65,7 +65,7 @@ module LanguagePack
     # Should only be used once in the top level script
     # for example $ bin/support/ruby_compile
     def self.display_error_and_exit(e)
-      Kernel.puts "\e[1m\e[31m"
+      Kernel.puts "\e[1m\e[31m" # Bold Red
       Kernel.puts " !"
       e.message.split("\n").each do |line|
         Kernel.puts " !     #{line.strip}"
