@@ -83,7 +83,8 @@ class LanguagePack::Base
     instrument 'base.compile' do
       Kernel.puts ""
       warnings.each do |warning|
-        Kernel.puts "###### WARNING:\n"
+        Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m"# Bold yellow
+        Kernel.puts ""
         puts warning
         Kernel.puts ""
       end
@@ -91,6 +92,7 @@ class LanguagePack::Base
         topic "DEPRECATIONS:"
         puts @deprecations.join("\n")
       end
+      Kernel.puts ""
     end
     mcount "success"
   end

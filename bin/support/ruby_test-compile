@@ -16,6 +16,7 @@ $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
 require "language_pack/test"
+include LanguagePack::ShellHelpers
 
 begin
   LanguagePack::Instrument.trace 'test_compile', 'app.test_compile' do
@@ -28,14 +29,5 @@ begin
     end
   end
 rescue Exception => e
-  Kernel.puts " !"
-  e.message.split("\n").each do |line|
-    Kernel.puts " !     #{line.strip}"
-  end
-  Kernel.puts " !"
-  if e.is_a?(BuildpackError)
-    exit 1
-  else
-    raise e
-  end
+  LanguagePack::ShellHelpers.display_error_and_exit(e)
 end
