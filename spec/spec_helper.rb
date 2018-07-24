@@ -6,7 +6,6 @@ require 'rspec/retry'
 require 'language_pack'
 require 'language_pack/shell_helpers'
 
-
 ENV['RACK_ENV'] = 'test'
 
 RSpec.configure do |config|
@@ -22,7 +21,6 @@ RSpec.configure do |config|
   end
   config.mock_with :nothing
   config.include LanguagePack::ShellHelpers
-
 end
 
 def git_repo
