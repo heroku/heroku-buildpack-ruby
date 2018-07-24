@@ -1,5 +1,9 @@
 ## Master
 
+## v190 (7/24/2018)
+
+* Support TAP output for Heroku CI (https://github.com/heroku/heroku-buildpack-ruby/pull/790).
+
 ## v189 (7/10/2018)
 
 * Colorize build failures and warnings. (https://github.com/heroku/heroku-buildpack-ruby/pull/788)
