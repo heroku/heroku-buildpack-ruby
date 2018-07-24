@@ -1,8 +1,11 @@
-language: ruby
-rvm:
-- 2.4.4
+language: generic # comes with ruby 2.4.1
+cache:
+  directories:
+    - vendor/bundle
+    - repos
+install:
+  - bundle install --jobs=4 --retry=3 --deployment --path=vendor/bundle
 before_script:
-  - gem install bundler -v 1.16.2
   - bundle exec rake hatchet:setup_travis
 script: bundle exec parallel_rspec -n 11 spec/$TEST_SUITE
 env:
