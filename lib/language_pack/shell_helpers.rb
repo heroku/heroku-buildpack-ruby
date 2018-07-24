@@ -216,11 +216,13 @@ module LanguagePack
     def pipe(command, options = {})
       output = options[:buffer] || ""
       silent = options[:silent]
+      # self.puts uses the method defined in this file
+      output_object = options[:output_object] || self
       IO.popen(command_options_to_string(command, options)) do |io|
         until io.eof?
           buffer = io.gets
           output << buffer
-          puts buffer unless silent
+          output_object.puts(buffer) unless silent
         end
       end
 
