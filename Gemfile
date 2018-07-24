@@ -12,6 +12,6 @@ group :development, :test do
   gem "netrc"
   gem "git", github: "hone/ruby-git", branch: "master"
   gem 'json', '~> 2.0.2'
-  gem 'ci-queue', github: "schneems/ci-queue", branch: 'schneems/heroku-ci'
+  gem 'ci-queue'
   gem 'redis'
 end
