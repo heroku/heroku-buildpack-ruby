@@ -54,7 +54,6 @@
     "sharpstone/rails3_runtime_assets",
     "sharpstone/rails3-fail-assets-compile",
     "sharpstone/rails3-fail-rakefile"
-
   ],
   "rails4": [
     "sharpstone/rails4-manifest",
