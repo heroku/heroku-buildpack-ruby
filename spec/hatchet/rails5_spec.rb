@@ -4,6 +4,9 @@ describe "Rails 5" do
   it "works" do
     Hatchet::Runner.new("rails5").deploy do |app, heroku|
       expect(app.run("rails -v")).to match("")
+
+      # Test BUNDLE_DISABLE_VERSION_CHECK works
+      expect(app.output).not_to include("The latest bundler is")
     end
   end
 
