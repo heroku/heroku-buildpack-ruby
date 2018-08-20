@@ -46,10 +46,13 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   def config_detect
     super
     @assets_compile_config = @rails_runner.detect("assets.compile")
+    @x_sendfile_config     = @rails_runner.detect("action_dispatch.x_sendfile_header")
   end
 
   def best_practice_warnings
     super
+    warn_x_sendfile_use!
+
     if assets_compile_enabled?
       mcount("warn.assets.compile.true")
 
@@ -87,6 +90,52 @@ WARNING
   end
 
 private
+
+  def warn_x_sendfile_use!
+    return false unless @x_sendfile_config.success?
+    if @x_sendfile_config.did_match?("X-Sendfile") && !has_apache? # Apache
+      mcount("warn.x_sendfile_header.apache")
+      warn(<<-WARNING)
+You set `config.action_dispatch.x_sendfile_header = 'X-Sendfile'` in production,
+but you do not have `apache` installed on this app. This setting will cause any assets
+being served by your application to be returned without a body.
+
+To fix this issue, please set:
+
+```
+config.action_dispatch.x_sendfile_header = nil
+```
+WARNING
+    end
+
+    if @x_sendfile_config.did_match?("X-Accel-Redirect") && !has_nginx? # Nginx
+      mcount("warn.x_sendfile_header.nginx")
+
+      warn(<<-WARNING)
+You set `config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'` in production,
+but you do not have `nginx` installed on this app. This setting will cause any assets
+being served by your application to be returned without a body.
+
+To fix this issue, please set:
+
+```
+config.action_dispatch.x_sendfile_header = nil
+```
+WARNING
+    end
+  end
+
+  def has_apache?
+    path = run("which apachectl")
+    return true if path && $?.success?
+    return false
+  end
+
+  def has_nginx?
+    path = run("which nginx")
+    return true if path && $?.success?
+    return false
+  end
 
   def sprocket_version_upgrade_needed
     # Due to https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-3760
