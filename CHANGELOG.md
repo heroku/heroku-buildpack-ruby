@@ -1,5 +1,9 @@
 ## Master
 
+## v190 (unreleased)
+
+* Warn when `config.action_dispatch.x_sendfile_header` is set but apache and nginx are not being used (https://github.com/heroku/heroku-buildpack-ruby/pull/795)
+
 ## v190 (7/24/2018)
 
 * Support TAP output for Heroku CI (https://github.com/heroku/heroku-buildpack-ruby/pull/790).
