@@ -2,6 +2,7 @@ require 'json'
 
 class LanguagePack::Helpers::Nodebin
   URL = "https://nodebin.herokai.com/v1/"
+  HEROKU_S3REPO_MIRROR_URL = ENV['HEROKU_S3REPO_MIRROR_URL'] || "https://s3.amazonaws.com/heroku-nodejs-bins"
 
   def self.query(q)
     response = Net::HTTP.get_response(URI("#{URL}/#{q}"))
@@ -14,7 +15,7 @@ class LanguagePack::Helpers::Nodebin
     version = "8.10.0"
     {
       "number" => version,
-      "url"    => "https://s3.amazonaws.com/heroku-nodejs-bins/node/release/linux-x64/node-v#{version}-linux-x64.tar.gz"
+      "url"    => "#{HEROKU_S3REPO_MIRROR_URL}/node/v8.10.0/node-v#{version}-linux-x64.tar.gz"
     }
   end
 
@@ -22,7 +23,7 @@ class LanguagePack::Helpers::Nodebin
     version = "1.5.1"
     {
       "number" => version,
-      "url"    => "https://s3.amazonaws.com/heroku-nodejs-bins/yarn/release/yarn-v#{version}.tar.gz"
+      "url"    => "https://yarnpkg.com/downloads/#{version}/yarn-v#{version}.tar.gz"
     }
   end
 
