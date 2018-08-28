@@ -80,9 +80,11 @@
 - - "./repos/rails51/rails51_webpacker"
   - 61ade71748b50effae7fd4aef2832ed0d89660e2
 - - "./repos/rails52/active_storage_local"
-  - a1b6b18e081001b407898532fb9cb061a29ceee1
+  - e2119af6ddd4bc21fda9bc7da6401e7aa256e38d
 - - "./repos/rails52/active_storage_non_local"
   - cba59b7559f1f806684b65654228d44fcda91a82
+- - "./repos/rails52/sprockets_asset_compile_true"
+  - 98c6675cf97059278709cf75030e28063e0228d2
 - - "./repos/rake/asset_precompile_fail"
   - 16f7834331d6bb3fc5c284130b14eb1ff74d99d5
 - - "./repos/rake/asset_precompile_not_found"

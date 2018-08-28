@@ -29,14 +29,14 @@ describe "Rails 4.x" do
 
     Hatchet::Runner.new("rails41_scaffold").deploy do |app, heroku|
       # First Deploy
-      `mkdir public/assets`
-      `echo #{string} > public/assets/file.txt`
-      `git add -A; git commit -m 'adding file.txt'`
+      run!(%Q{mkdir public/assets})
+      run!(%Q{echo #{string} > public/assets/file.txt})
+      run!(%Q{git add -A; git commit -m 'adding file.txt'})
       app.push!
 
       # Second Deploy
-      `echo #{new_string} > public/assets/file.txt`
-      `git add -A; git commit -m 'updating file.txt'`
+      run!(%Q{echo #{new_string} > public/assets/file.txt})
+      run!(%Q{git add -A; git commit -m 'updating file.txt'})
       app.push!
 
       # Asserts

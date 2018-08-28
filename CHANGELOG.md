@@ -1,5 +1,37 @@
 ## Master
 
+## v191 (8/23/2018)
+
+* Warn when `config.action_dispatch.x_sendfile_header` is set but apache and nginx are not being used (https://github.com/heroku/heroku-buildpack-ruby/pull/795)
+
+## v190 (7/24/2018)
+
+* Support TAP output for Heroku CI (https://github.com/heroku/heroku-buildpack-ruby/pull/790).
+
+## v189 (7/10/2018)
+
+* Colorize build failures and warnings. (https://github.com/heroku/heroku-buildpack-ruby/pull/788)
+
+## v188 (6/26/2018)
+
+* Fix rails config detect timeout. Addreses the process deadlock when detecting rails config that contains an infinite task. This was originally addressed in #770 but the implementation did not handle all cases. (#781)
+
+## v187 (6/19/2018)
+
+* Prevent apps from deploying with known security vulnerability activated via config (#776)
+
+## v186 (6/12/2018)
+
+* The Ruby buildpack can now detect Rails configuration in a project (#758 #770)
+
+## v185 (5/31/2018)
+
+* The Ruby buildpack bootstrap Ruby version is now 2.5.1. This is not a customer facing feature (#765)
+
+## v184 (5/30/2018)
+
+* Default Ruby version is now 2.4.4 (#734)
+
 ## v183 (4/26/2018)
 
 * Support for not yet released heroku-18 stack (#750)

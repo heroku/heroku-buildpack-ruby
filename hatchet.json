@@ -54,7 +54,6 @@
     "sharpstone/rails3_runtime_assets",
     "sharpstone/rails3-fail-assets-compile",
     "sharpstone/rails3-fail-rakefile"
-
   ],
   "rails4": [
     "sharpstone/rails4-manifest",
@@ -78,7 +77,8 @@
   ],
   "rails52": [
     "sharpstone/active_storage_non_local",
-    "sharpstone/active_storage_local"
+    "sharpstone/active_storage_local",
+    "sharpstone/sprockets_asset_compile_true"
   ],
   "multibuildpack": [
     "sharpstone/node_multi"
