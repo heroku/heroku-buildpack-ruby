@@ -4,6 +4,7 @@ require 'fileutils'
 require 'hatchet'
 require 'rspec/retry'
 require 'language_pack'
+require 'language_pack/shell_helpers'
 
 ENV['RACK_ENV'] = 'test'
 
@@ -19,6 +20,7 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
   config.mock_with :nothing
+  config.include LanguagePack::ShellHelpers
 end
 
 def git_repo
@@ -36,7 +38,6 @@ def create_file_with_size_in(size, dir)
   File.open(name, 'w') {|f| f.print([ 1 ].pack("C") * size) }
   Pathname.new name
 end
-
 
 ReplRunner.register_commands(:console)  do |config|
   config.terminate_command "exit"          # the command you use to end the 'rails console'

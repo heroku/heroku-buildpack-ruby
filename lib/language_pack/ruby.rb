@@ -108,9 +108,13 @@ WARNING
         install_binaries
         run_assets_precompile_rake_task
       end
+      config_detect
       best_practice_warnings
       super
     end
+  end
+
+  def config_detect
   end
 
 private
@@ -648,8 +652,10 @@ WARNING
             "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true",
             "BUNDLE_DISABLE_VERSION_CHECK"  => "true"
           }
-          env_vars["JAVA_HOME"] = noshellescape("#{pwd}/$JAVA_HOME") if ruby_version.jruby?
-          env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
+          env_vars["JAVA_HOME"]                    = noshellescape("#{pwd}/$JAVA_HOME") if ruby_version.jruby?
+          env_vars["BUNDLER_LIB_PATH"]             = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
+          env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
+
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
             bundle_time = Benchmark.realtime do
