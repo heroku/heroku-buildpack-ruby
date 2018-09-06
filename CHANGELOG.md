@@ -1,5 +1,7 @@
 ## Master
 
+* Upgrade to bundler 1.16.4 (https://github.com/heroku/heroku-buildpack-ruby/pull/805)
+
 ## v191 (8/23/2018)
 
 * Warn when `config.action_dispatch.x_sendfile_header` is set but apache and nginx are not being used (https://github.com/heroku/heroku-buildpack-ruby/pull/795)
