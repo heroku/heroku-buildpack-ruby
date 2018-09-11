@@ -25,6 +25,7 @@ class LanguagePack::Helpers::NodeInstaller
       end
 
       FileUtils.mv("#{dir}/#{node_bin}", ".")
+      FileUtils.symlink("./node", "./nodejs")
     end
   end
 
