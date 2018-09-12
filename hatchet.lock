@@ -2,7 +2,7 @@
 - - "./repos/bundler/bad_gemfile_on_platform"
   - 5dd45c83631f58d121afb48b513016cc9e2d3432
 - - "./repos/bundler/bundle-ruby-version-not-in-lockfile"
-  - 892a75783913df4bd64ffb2fdb3c5517f65fdb46
+  - 5c8219d8bbdc8faa6a98781867b9fce25a6f2abb
 - - "./repos/bundler/git_gemspec"
   - 19fc9a51a5c36c81c926bf8e16d07399e0e514aa
 - - "./repos/bundler/no_lockfile"
@@ -10,7 +10,7 @@
 - - "./repos/bundler/nokogiri_160"
   - d9a761776be43e1c685f98ef13c6ef1ee0292267
 - - "./repos/bundler/problem_gemfile_version"
-  - c6266a7d121522b6219a52c69a1d104b00c03359
+  - abc25a7b582a720b99148a1c8753d0d7452254bb
 - - "./repos/bundler/sqlite3_gemfile"
   - 116db685f54dae18f703b3beb90e64fdbddb048d
 - - "./repos/ci/activerecord_rake_tasks_does_not_exist"
@@ -78,7 +78,7 @@
 - - "./repos/rails5/rails5"
   - 1680c5da829e03ffb9345187971a13e5109d86a6
 - - "./repos/rails51/rails51_webpacker"
-  - 61ade71748b50effae7fd4aef2832ed0d89660e2
+  - 75c5c4f21b1d88fc3b8edf60b3f871df3ad70208
 - - "./repos/rails52/active_storage_local"
   - e2119af6ddd4bc21fda9bc7da6401e7aa256e38d
 - - "./repos/rails52/active_storage_non_local"
@@ -104,7 +104,7 @@
 - - "./repos/ruby/bad_ruby_version"
   - 7bf3470265a87ea6361640aa4bfce6ce3b743520
 - - "./repos/ruby/cd_ruby"
-  - 5d4139af87bbb941008ef945408eb8b6a5276369
+  - 88df7181e301d25a8da992107747acff62670327
 - - "./repos/ruby/empty-procfile"
   - 7cae0aae424c2028b81b5d37ee24d42db8e545b9
 - - "./repos/ruby/jruby-minimal"

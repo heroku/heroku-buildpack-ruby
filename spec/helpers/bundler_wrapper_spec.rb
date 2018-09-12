@@ -32,10 +32,10 @@ describe "BundlerWrapper" do
 
     it "handles apps with ruby versions locked in Gemfile.lock" do
       Hatchet::App.new("problem_gemfile_version").in_directory do |dir|
-        expect(@bundler.ruby_version).to eq("ruby-2.3.0-p0")
+        expect(@bundler.ruby_version).to eq("ruby-2.5.1-p0")
 
         ruby_version = LanguagePack::RubyVersion.new(@bundler.ruby_version, is_new: true)
-        expect(ruby_version.version_for_download).to eq("ruby-2.3.0")
+        expect(ruby_version.version_for_download).to eq("ruby-2.5.1")
       end
     end
 
