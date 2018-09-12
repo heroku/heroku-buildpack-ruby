@@ -3,23 +3,23 @@ require_relative '../spec_helper'
 describe "Ruby apps" do
   describe "running Ruby from outside the default dir" do
     it "works" do
-      Hatchet::Runner.new('cd_ruby').deploy do |app|
-        expect(app.output).to match("2.3.5")
+      Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK).deploy do |app|
+        expect(app.output).to match("cd version ruby 2.5.1")
       end
     end
   end
 
   describe "bundler ruby version matcher" do
     it "installs a version even when not present in the Gemfile.lock" do
-      Hatchet::Runner.new('bundle-ruby-version-not-in-lockfile').deploy do |app|
-        expect(app.output).to         match("2.3.1")
-        expect(app.run("ruby -v")).to match("2.3.1")
+      Hatchet::Runner.new('bundle-ruby-version-not-in-lockfile', stack: DEFAULT_STACK).deploy do |app|
+        expect(app.output).to         match("2.5.1")
+        expect(app.run("ruby -v")).to match("2.5.1")
       end
     end
 
     it "works even when patchfile is specified" do
-      Hatchet::Runner.new('problem_gemfile_version').deploy do |app|
-        expect(app.output).to match("2.3.0")
+      Hatchet::Runner.new('problem_gemfile_version', stack: DEFAULT_STACK).deploy do |app|
+        expect(app.output).to match("2.5.1")
       end
     end
   end

@@ -8,6 +8,8 @@ require 'language_pack/shell_helpers'
 
 ENV['RACK_ENV'] = 'test'
 
+DEFAULT_STACK = 'heroku-18'
+
 RSpec.configure do |config|
   config.filter_run focused: true unless ENV['IS_RUNNING_ON_CI']
   config.run_all_when_everything_filtered = true
