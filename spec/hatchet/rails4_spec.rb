@@ -86,13 +86,4 @@ describe "Rails 4.x" do
       expect(app).not_to be_deployed
     end
   end
-
-  it "should not override user settings rails 4.2" do
-    app = Hatchet::Runner.new("rails4-env-assets-compile")
-    app.setup!
-    app.set_config("RAILS_ENV" => "staging")
-    app.deploy do |a, heroku|
-      expect(a.output).to include("w00t")
-    end
-  end
 end
