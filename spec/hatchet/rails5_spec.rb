@@ -3,11 +3,29 @@ require_relative '../spec_helper'
 describe "Rails 5" do
   it "works" do
     Hatchet::Runner.new("rails5").deploy do |app, heroku|
-      expect(app.run("rails -v")).to match("")
-
       # Test BUNDLE_DISABLE_VERSION_CHECK works
       expect(app.output).not_to include("The latest bundler is")
+
+      # Test worker task only appears if the app has that rake task
+      worker_task = worker_task_for_app(app)
+      expect(worker_task).to be_nil
+
+      run!(%Q{echo "task 'jobs:work' do ; end" >> Rakefile})
+      app.commit!
+
+      app.deploy do
+        worker_task = worker_task_for_app(app)
+        expect(worker_task["command"]).to eq("bundle exec rake jobs:work")
+      end
     end
+  end
+
+  def worker_task_for_app(app)
+    app
+     .api_rate_limit.call
+     .formation
+     .list(app.name)
+     .detect { |h| h["type"] == "worker" }
   end
 
   describe "active storage" do

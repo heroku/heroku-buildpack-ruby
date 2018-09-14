@@ -48,11 +48,11 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
         "bundle exec thin start -e $RAILS_ENV -p $PORT" :
         "bundle exec ruby script/server -p $PORT"
 
-      super.merge({
-        "web" => web_process,
-        "worker" => "bundle exec rake jobs:work",
-        "console" => "bundle exec script/console"
-      })
+      process_types = super
+      process_types["web"]     = web_process
+      process_types["worker"]  = "bundle exec rake jobs:work" if rake.task("jobs:work").is_defined?
+      process_types["console"] = "bundle exec script/console"
+      process_types
     end
   end
 

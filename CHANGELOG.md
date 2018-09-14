@@ -1,5 +1,7 @@
 ## Master
 
+* Do not add the `jobs:work` command if an app does not have that rake task available (https://github.com/heroku/heroku-buildpack-ruby/pull/810)
+
 ## v193 (9/14/2018)
 
 * Fix link (https://github.com/heroku/heroku-buildpack-ruby/pull/811)
