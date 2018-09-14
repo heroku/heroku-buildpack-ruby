@@ -61,8 +61,6 @@
   - 8cc041cffb9f5635017aa118d16688491f794e91
 - - "./repos/rails4/rails3-to-4-no-bin"
   - 3fd6e84f5d8eaaadb6d95aeb1f367f62da28cc62
-- - "./repos/rails4/rails4-env-assets-compile"
-  - ba8c352856685c3e46ae227ffbc175d6aa8e868b
 - - "./repos/rails4/rails4-fail-assets-compile"
   - 7f65fbb04ca49be526906a1b0d9155cd24941b8e
 - - "./repos/rails4/rails4-manifest"

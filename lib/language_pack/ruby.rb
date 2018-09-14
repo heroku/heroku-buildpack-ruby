@@ -380,6 +380,41 @@ WARNING
 
     true
   rescue LanguagePack::Fetcher::FetchError => error
+    if stack == "heroku-18" && ruby_version.version_for_download.match?(/ruby-2\.(2|3)/)
+      message = <<ERROR
+An error occurred while installing #{ruby_version.version_for_download}
+
+This version of Ruby is not available on Heroku-18. The minimum supported version
+of Ruby on the Heroku-18 stack can found at:
+
+  https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+
+ERROR
+
+      ci_message = <<ERROR
+
+If you did not intend to build your app for CI on the Heroku-18 stack
+please set your stack version manually in the `app.json`:
+
+```
+"stack": "heroku-16"
+```
+
+More information about this change in behavior can be found at:
+  https://kb.heroku.com/3Y1HEXGJ/why-doesn-t-ruby-2-3-7-work-in-my-ci-tests
+
+ERROR
+
+      if env("CI")
+        mcount "fail.bad_version_fetch.heroku-18.ci"
+        message << ci_message
+      else
+        mcount "fail.bad_version_fetch.heroku-18"
+      end
+
+      error message
+    end
+
     mcount "fail.bad_version_fetch"
     mcount "fail.bad_version_fetch.#{ruby_version.version_for_download}"
     message = <<ERROR
