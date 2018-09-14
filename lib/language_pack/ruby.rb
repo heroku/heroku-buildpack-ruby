@@ -401,7 +401,7 @@ please set your stack version manually in the `app.json`:
 ```
 
 More information about this change in behavior can be found at:
-  https://kb.heroku.com/3Y1HEXGJ/why-doesn-t-ruby-2-3-7-work-in-my-ci-tests
+  https://help.heroku.com/3Y1HEXGJ/why-doesn-t-ruby-2-3-7-work-in-my-ci-tests
 
 ERROR
 
