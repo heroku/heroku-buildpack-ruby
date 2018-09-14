@@ -384,8 +384,8 @@ WARNING
       message = <<ERROR
 An error occurred while installing #{ruby_version.version_for_download}
 
-This version of Ruby is not available on Heroku 18. The minimum supported version
-of Ruby on the Heroku 18 stack can found at:
+This version of Ruby is not available on Heroku-18. The minimum supported version
+of Ruby on the Heroku-18 stack can found at:
 
   https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
 
@@ -393,7 +393,7 @@ ERROR
 
       ci_message = <<ERROR
 
-If you did not intend to build your app for CI on the Heroku 18 stack
+If you did not intend to build your app for CI on the Heroku-18 stack
 please set your stack version manually in the `app.json`:
 
 ```

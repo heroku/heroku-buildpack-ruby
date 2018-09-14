@@ -2,7 +2,7 @@
 
 ## v192 (9/14/2018)
 
-* Add error messages when using unsupported Ruby versions on the Heroku 18 stack (https://github.com/heroku/heroku-buildpack-ruby/pull/809)
+* Add error messages when using unsupported Ruby versions on the Heroku-18 stack (https://github.com/heroku/heroku-buildpack-ruby/pull/809)
 
 ## v191 (8/23/2018)
 
