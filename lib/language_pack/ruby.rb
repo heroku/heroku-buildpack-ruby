@@ -139,8 +139,8 @@ WARNING
     # breaking require. This only applies to Ruby 1.9.2 and 1.8.7.
     safe_binstubs = binstubs_relative_paths - ["bin"]
     paths         = [
-      ENV["PATH"],
       "bin",
+      ENV["PATH"],
       system_paths,
     ]
     paths.unshift("#{slug_vendor_jvm}/bin") if ruby_version.jruby?
