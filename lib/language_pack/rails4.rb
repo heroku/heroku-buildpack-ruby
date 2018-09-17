@@ -68,7 +68,9 @@ WARNING
 
   def cleanup
     super
-    FileUtils.remove_dir(default_assets_cache) unless assets_compile_enabled?
+    return unless assets_compile_enabled?
+    return unless Dir.exist?(default_assets_cache)
+    FileUtils.remove_dir(default_assets_cache)
   end
 
   def run_assets_precompile_rake_task
