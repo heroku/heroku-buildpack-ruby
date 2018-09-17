@@ -79,6 +79,9 @@
     "sharpstone/active_storage_local",
     "sharpstone/sprockets_asset_compile_true"
   ],
+  "heroku": [
+    "heroku/ruby-getting-started"
+  ],
   "multibuildpack": [
     "sharpstone/node_multi"
   ],

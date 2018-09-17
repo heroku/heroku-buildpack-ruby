@@ -27,6 +27,8 @@
   - 540ec776eff3111ad9bb01af204c62725c94a11d
 - - "./repos/ci/ruby_no_rails_test"
   - 3916137106d59b008b67d738abe6a1438f8fbde6
+- - "./repos/heroku/ruby-getting-started"
+  - 7abd8af85c7ba6486bb03a4964da9cea98766b06
 - - "./repos/jruby/jruby_naether"
   - c5081c07de64dcd4b480923e4b7e2a98a9b4a431
 - - "./repos/multibuildpack/node_multi"
