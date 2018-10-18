@@ -1,6 +1,6 @@
 ## Master
 
-## v194 (10/18/2018)
+## v195 (10/18/2018)
 
 * Default Ruby version is now 2.4.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/821)
 
