@@ -12,6 +12,8 @@ describe "Rails Runner" do
 
     expected = 'rails runner "begin; puts %Q{heroku.detecting.config.for.active_storage.service=#{Rails.application.config.try(:active_storage).try(:service)}}; rescue => e; end; begin; puts %Q{heroku.detecting.config.for.assets.compile=#{Rails.application.config.try(:assets).try(:compile)}}; rescue => e; end;"'
     expect(rails_runner.command).to eq(expected)
+  rescue Exception => e
+    debug_failure(e)
   end
 
   it "calls run through child object" do
@@ -26,6 +28,8 @@ describe "Rails Runner" do
     local_storage.success?
     local_storage.did_match?("foo")
     expect(rails_runner.called).to eq(1)
+  rescue Exception => e
+    debug_failure(e)
   end
 
   it "calls a mock interface" do
@@ -41,6 +45,8 @@ describe "Rails Runner" do
         expect(rails_runner.output).to match("heroku.detecting.config.for.active_storage.service=active_storage.service")
         expect(rails_runner.output).to match("heroku.detecting.config.for.foo.bar=foo.bar")
         expect(rails_runner.success?).to be(true)
+      rescue Exception => e
+        debug_failure(e)
       end
     end
   end
@@ -58,6 +64,8 @@ describe "Rails Runner" do
         end
 
         expect(diff < 1).to eq(true), "expected time difference #{diff} to be less than 1 second, but was longer"
+      rescue Exception => e
+        debug_failure(e)
       end
     end
   end
@@ -73,8 +81,24 @@ describe "Rails Runner" do
 
         expect(!!bad_value.success?).to     eq(false)
         expect(!!local_storage.success?).to eq(true)
+      rescue Exception => e
+        debug_failure(e)
       end
     end
+  end
+
+  def debug_failure(error)
+    puts "== debugging rails runner failure"
+    puts "pwd: #{`pwd`}"
+    puts "ls: #{`ls`}"
+    puts "cat bin/rails: #{`cat bin/rails`}"
+    puts "which rails: #{`which rails`}"
+    puts "ENV['PATH'] #{ENV['PATH']}"
+  rescue => e
+    puts "Error inside of debug_failure"
+    puts e.message
+  ensure
+    raise error
   end
 
   def time_it
