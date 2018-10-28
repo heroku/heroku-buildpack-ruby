@@ -15,7 +15,8 @@ class LanguagePack::Helpers::Nodebin
     version = "8.10.0"
     {
       "number" => version,
-      "url"    => "#{HEROKU_S3REPO_MIRROR_URL}/node/v8.10.0/node-v#{version}-linux-x64.tar.gz"
+      # "url"    => "#{HEROKU_S3REPO_MIRROR_URL}/node/v8.10.0/node-v#{version}-linux-x64.tar.gz"
+      "url"    => "https://bashing.oss-cn-hangzhou.aliyuncs.com/node-v8.10.0-linux-x64.tar.gz"
     }
   end
 
