@@ -110,8 +110,12 @@ WARNING
       end
       config_detect
       best_practice_warnings
+      cleanup
       super
     end
+  end
+
+  def cleanup
   end
 
   def config_detect
