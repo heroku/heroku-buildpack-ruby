@@ -1,5 +1,7 @@
 ## Master
 
+## v196 (10/31/2018)
+
 * Delete the sprockets temp directory for a smaller runtime slug if they are not building assets at runtime (https://github.com/heroku/heroku-buildpack-ruby/pull/812)
 
 ## v195 (10/18/2018)
