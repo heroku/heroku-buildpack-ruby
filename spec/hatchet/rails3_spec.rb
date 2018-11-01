@@ -34,13 +34,6 @@ describe "Rails 3.x" do
     end
   end
 
-  context "when not using the rails gem" do
-    it "should detect as a rails app" do
-      Hatchet::App.new('railties3_mri_193').in_directory do
-        expect(LanguagePack::Rails3.use?).to eq(true)
-      end
-    end
-  end
 
   it "fails if rake tasks cannot be detected" do
     Hatchet::Runner.new("rails3-fail-rakefile", allow_failure: true).deploy do |app|

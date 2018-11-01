@@ -43,7 +43,120 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     end
   end
 
+  def config_detect
+    super
+    @assets_compile_config = @rails_runner.detect("assets.compile")
+    @x_sendfile_config     = @rails_runner.detect("action_dispatch.x_sendfile_header")
+  end
+
+  def best_practice_warnings
+    super
+    warn_x_sendfile_use!
+
+    if assets_compile_enabled?
+      mcount("warn.assets.compile.true")
+
+      safe_sprockets_version_needed = sprocket_version_upgrade_needed
+      if safe_sprockets_version_needed
+        message = <<ERROR
+A security vulnerability has been detected in your application.
+To protect your application you must take action. Your application
+is currently exposing its credentials via an easy to exploit directory
+traversal.
+
+To protect your application you must either upgrade to Sprockets version "#{safe_sprockets_version_needed}"
+or disable dynamic compilation at runtime by setting:
+
+```
+config.assets.compile = false # Disables security vulnerability
+```
+
+To read more about this security vulnerability please refer to this blog post:
+  https://blog.heroku.com/rails-asset-pipeline-vulnerability
+
+ERROR
+        error(message)
+      end
+
+      warn(<<-WARNING)
+You set your `config.assets.compile = true` in production.
+This can negatively impact the performance of your application.
+
+For more information can be found in this article:
+  https://devcenter.heroku.com/articles/rails-asset-pipeline#compile-set-to-true-in-production
+
+WARNING
+    end
+  end
+
 private
+
+  def warn_x_sendfile_use!
+    return false unless @x_sendfile_config.success?
+    if @x_sendfile_config.did_match?("X-Sendfile") && !has_apache? # Apache
+      mcount("warn.x_sendfile_header.apache")
+      warn(<<-WARNING)
+You set `config.action_dispatch.x_sendfile_header = 'X-Sendfile'` in production,
+but you do not have `apache` installed on this app. This setting will cause any assets
+being served by your application to be returned without a body.
+
+To fix this issue, please set:
+
+```
+config.action_dispatch.x_sendfile_header = nil
+```
+WARNING
+    end
+
+    if @x_sendfile_config.did_match?("X-Accel-Redirect") && !has_nginx? # Nginx
+      mcount("warn.x_sendfile_header.nginx")
+
+      warn(<<-WARNING)
+You set `config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'` in production,
+but you do not have `nginx` installed on this app. This setting will cause any assets
+being served by your application to be returned without a body.
+
+To fix this issue, please set:
+
+```
+config.action_dispatch.x_sendfile_header = nil
+```
+WARNING
+    end
+  end
+
+  def has_apache?
+    path = run("which apachectl")
+    return true if path && $?.success?
+    return false
+  end
+
+  def has_nginx?
+    path = run("which nginx")
+    return true if path && $?.success?
+    return false
+  end
+
+  def sprocket_version_upgrade_needed
+    # Due to https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-3760
+    sprockets_version = bundler.gem_version('sprockets')
+    if sprockets_version < Gem::Version.new("2.12.5")
+      return "2.12.5"
+    elsif sprockets_version > Gem::Version.new("3") &&
+          sprockets_version < Gem::Version.new("3.7.2")
+      return "3.7.2"
+    elsif sprockets_version > Gem::Version.new("4") &&
+          sprockets_version < Gem::Version.new("4.0.0.beta8")
+      return "4.0.0.beta8"
+    else
+      return false
+    end
+  end
+
+  def assets_compile_enabled?
+    return false unless @assets_compile_config.success?
+    @assets_compile_config.did_match?("true")
+  end
 
   def install_plugins
     instrument "rails3.install_plugins" do

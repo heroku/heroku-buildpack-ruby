@@ -1,5 +1,102 @@
 ## Master
 
+## v196 (10/31/2018)
+
+* Delete the sprockets temp directory for a smaller runtime slug if they are not building assets at runtime (https://github.com/heroku/heroku-buildpack-ruby/pull/812)
+
+## v195 (10/18/2018)
+
+* Default Ruby version is now 2.4.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/821)
+
+## v194 (10/16/2018)
+
+* Do not add the `jobs:work` command if an app does not have that rake task available (https://github.com/heroku/heroku-buildpack-ruby/pull/810)
+
+## v193 (9/14/2018)
+
+* Fix link (https://github.com/heroku/heroku-buildpack-ruby/pull/811)
+
+## v192 (9/14/2018)
+
+* Add error messages when using unsupported Ruby versions on the Heroku-18 stack (https://github.com/heroku/heroku-buildpack-ruby/pull/809)
+
+## v191 (8/23/2018)
+
+* Warn when `config.action_dispatch.x_sendfile_header` is set but apache and nginx are not being used (https://github.com/heroku/heroku-buildpack-ruby/pull/795)
+
+## v190 (7/24/2018)
+
+* Support TAP output for Heroku CI (https://github.com/heroku/heroku-buildpack-ruby/pull/790).
+
+## v189 (7/10/2018)
+
+* Colorize build failures and warnings. (https://github.com/heroku/heroku-buildpack-ruby/pull/788)
+
+## v188 (6/26/2018)
+
+* Fix rails config detect timeout. Addreses the process deadlock when detecting rails config that contains an infinite task. This was originally addressed in #770 but the implementation did not handle all cases. (#781)
+
+## v187 (6/19/2018)
+
+* Prevent apps from deploying with known security vulnerability activated via config (#776)
+
+## v186 (6/12/2018)
+
+* The Ruby buildpack can now detect Rails configuration in a project (#758 #770)
+
+## v185 (5/31/2018)
+
+* The Ruby buildpack bootstrap Ruby version is now 2.5.1. This is not a customer facing feature (#765)
+
+## v184 (5/30/2018)
+
+* Default Ruby version is now 2.4.4 (#734)
+
+## v183 (4/26/2018)
+
+* Support for not yet released heroku-18 stack (#750)
+
+## v182 (4/24/2018)
+
+* Do not warn when `rails runner` cannot be executed (#749)
+
+## v181 (4/23/2018)
+
+* The `active_storage` is not guranteed to be present (#748)
+
+## v180 (4/23/2018)
+
+* Fix case where user environment variables were not being used (#745)
+
+## v179 (4/23/2018)
+
+* Emit warnings for Active Storage (#739)
+
+## v178 (4/17/2018)
+
+* Use S3 directly instead of s3pository for Node downloads (#740)
+
+## v177 (4/10/2018)
+
+* New apps that do not specify a Ruby version now get 2.3.7 (#732)
+* Bugfix: `bundle install` output no longer has an extra newline (#735)
+* Bugfix: when deploying an application the `ruby` version specified in the Gemfile is available outide of the home directory (#733)
+
+## v176 (3/27/2018)
+
+* Node version upgraded to v8.9.4 (#714)
+* Yarn version upgraded to v1.5.1 (#714)
+* Fix issue with malformed UTF-8 string parsing (#724)
+
+## v175 (03/21/2018)
+
+* Suggest users encountering a specific sprockets error in specific beta versions to upgrade (#718)
+* Log metrics for common failures (#716)
+
+## v174 (02/13/2018)
+
+* Only set JAVA_HOME for Bundler when using JRuby (#649, @jkutner)
+
 ## v173 (12/22/2017)
 
 * Remove Bundler shim since Bundler 2.5.0 will not vendor Bundler (#645)

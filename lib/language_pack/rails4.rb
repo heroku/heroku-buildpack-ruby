@@ -66,6 +66,13 @@ WARNING
     "tmp/cache/assets"
   end
 
+  def cleanup
+    super
+    return if assets_compile_enabled?
+    return unless Dir.exist?(default_assets_cache)
+    FileUtils.remove_dir(default_assets_cache)
+  end
+
   def run_assets_precompile_rake_task
     instrument "rails4.run_assets_precompile_rake_task" do
       log("assets_precompile") do

@@ -18,6 +18,7 @@
     "sharpstone/bundle-ruby-version-not-in-lockfile"
   ],
   "ruby": [
+    "sharpstone/cd_ruby",
     "sharpstone/mri_187",
     "sharpstone/mri_193_p547",
     "sharpstone/ruby_193_jruby_173",
@@ -53,13 +54,11 @@
     "sharpstone/rails3_runtime_assets",
     "sharpstone/rails3-fail-assets-compile",
     "sharpstone/rails3-fail-rakefile"
-
   ],
   "rails4": [
     "sharpstone/rails4-manifest",
     "sharpstone/rails3-to-4-no-bin",
     "sharpstone/rails4_windows_mri193",
-    "sharpstone/rails4-env-assets-compile",
     "sharpstone/rails4-fail-assets-compile"
   ],
   "rails41": [
@@ -74,6 +73,14 @@
   ],
   "rails51": [
     "schneems/rails51_webpacker"
+  ],
+  "rails52": [
+    "sharpstone/active_storage_non_local",
+    "sharpstone/active_storage_local",
+    "sharpstone/sprockets_asset_compile_true"
+  ],
+  "heroku": [
+    "heroku/ruby-getting-started"
   ],
   "multibuildpack": [
     "sharpstone/node_multi"

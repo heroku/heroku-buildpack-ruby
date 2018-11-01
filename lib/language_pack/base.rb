@@ -10,6 +10,7 @@ require "language_pack/fetcher"
 require "language_pack/instrument"
 
 Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
+ENV["BPLOG_PREFIX"] = "buildpack.ruby"
 
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
@@ -20,7 +21,7 @@ class LanguagePack::Base
   DEFAULT_LEGACY_STACK = "cedar"
   ROOT_DIR             = File.expand_path("../../..", __FILE__)
 
-  attr_reader :build_path, :cache
+  attr_reader :build_path, :cache, :stack
 
   # changes directory to the build_path
   # @param [String] the path of the build dir
@@ -33,8 +34,6 @@ class LanguagePack::Base
       @metadata      = LanguagePack::Metadata.new(@cache)
       @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
       @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
-      @warnings      = []
-      @deprecations  = []
       @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
 
       Dir.chdir build_path
@@ -83,16 +82,19 @@ class LanguagePack::Base
     write_release_yaml
     instrument 'base.compile' do
       Kernel.puts ""
-      @warnings.each do |warning|
-        Kernel.puts "###### WARNING:"
+      warnings.each do |warning|
+        Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m"# Bold yellow
+        Kernel.puts ""
         puts warning
         Kernel.puts ""
       end
-      if @deprecations.any?
+      if deprecations.any?
         topic "DEPRECATIONS:"
         puts @deprecations.join("\n")
       end
+      Kernel.puts ""
     end
+    mcount "success"
   end
 
   def write_release_yaml
@@ -134,8 +136,9 @@ class LanguagePack::Base
         log_internal args, :status => "complete", :finish => finish, :elapsed => (finish - start)
         return ret
       rescue StandardError => ex
-        finish = Time.now.to_f
-        log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => ex.message
+        finish  = Time.now.to_f
+        message = Shellwords.escape(ex.message)
+        log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => message
         raise ex
       end
     end

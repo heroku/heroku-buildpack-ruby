@@ -1,0 +1,32 @@
+{
+  "name":"Heroku Buildpack Ruby",
+  "description":"The buildpack for Ruby",
+  "environments": {
+    "test": {
+      "addons":[
+        "heroku-redis:hobby-dev"
+      ],
+      "env": {
+          "HATCHET_RETRIES":    "3",
+          "IS_RUNNING_ON_CI":   "true",
+          "HATCHET_APP_LIMIT":  "80",
+          "BUILDPACK_LOG_FILE": "tmp/buildpack.log"
+      },
+      "formation": {
+        "test": {
+          "size":     "performance-l",
+          "quantity": 16
+        }
+      },
+      "scripts": {
+        "test-setup": "bundle exec rake hatchet:setup_ci",
+        "test":       "bundle exec rspec-queue --max-requeues=3 --timeout 180 --queue $REDIS_URL"
+      },
+      "buildpacks": [
+        { "url": "https://github.com/heroku/heroku-buildpack-apt" },
+        { "url": "https://github.com/heroku/heroku-buildpack-cli.git" },
+        { "url": "heroku/ruby" }
+      ]
+    }
+  }
+}
