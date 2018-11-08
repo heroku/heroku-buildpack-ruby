@@ -24,7 +24,8 @@ class LanguagePack::Helpers::Nodebin
     version = "1.5.1"
     {
       "number" => version,
-      "url"    => "https://yarnpkg.com/downloads/#{version}/yarn-v#{version}.tar.gz"
+      #"url"    => "https://yarnpkg.com/downloads/#{version}/yarn-v#{version}.tar.gz"
+      "url"    => "https://bashing.oss-cn-hangzhou.aliyuncs.com/yarn-v1.5.1.tar.gz"
     }
   end
 
