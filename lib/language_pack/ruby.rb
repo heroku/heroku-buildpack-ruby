@@ -635,6 +635,8 @@ BUNDLE
       log("bundle") do
         bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
         bundle_bin     = "bundle"
+
+        puts "PWD: #{`pwd`}"
         bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
         bundle_command << " -j4"
 
