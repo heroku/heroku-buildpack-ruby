@@ -1,5 +1,7 @@
 ## Master
 
+* Upgrade bundler to 1.17.1 ()
+
 ## v197 (12/18/2018)
 
 * Upgrade node version (https://github.com/heroku/heroku-buildpack-ruby/pull/831)
