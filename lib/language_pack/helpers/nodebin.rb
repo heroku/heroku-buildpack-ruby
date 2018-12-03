@@ -22,7 +22,7 @@ class LanguagePack::Helpers::Nodebin
     version = "1.12.3"
     {
       "number" => version,
-      "url"    => "https://s3.amazonaws.com/heroku-nodejs-bins/yarn/release/yarn-v#{version}.tar.gz"
+      "url"    => "https://s3.amazonaws.com/heroku-nodebin/yarn/release/yarn-v#{version}.tar.gz"
     }
   end
 
