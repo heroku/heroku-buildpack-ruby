@@ -27,6 +27,8 @@
   - 540ec776eff3111ad9bb01af204c62725c94a11d
 - - "./repos/ci/ruby_no_rails_test"
   - 3916137106d59b008b67d738abe6a1438f8fbde6
+- - "./repos/heroku/ruby-getting-started"
+  - 7abd8af85c7ba6486bb03a4964da9cea98766b06
 - - "./repos/jruby/jruby_naether"
   - c5081c07de64dcd4b480923e4b7e2a98a9b4a431
 - - "./repos/multibuildpack/node_multi"
@@ -61,8 +63,6 @@
   - 8cc041cffb9f5635017aa118d16688491f794e91
 - - "./repos/rails4/rails3-to-4-no-bin"
   - 3fd6e84f5d8eaaadb6d95aeb1f367f62da28cc62
-- - "./repos/rails4/rails4-env-assets-compile"
-  - ba8c352856685c3e46ae227ffbc175d6aa8e868b
 - - "./repos/rails4/rails4-fail-assets-compile"
   - 7f65fbb04ca49be526906a1b0d9155cd24941b8e
 - - "./repos/rails4/rails4-manifest"

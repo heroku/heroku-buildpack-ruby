@@ -59,7 +59,6 @@
     "sharpstone/rails4-manifest",
     "sharpstone/rails3-to-4-no-bin",
     "sharpstone/rails4_windows_mri193",
-    "sharpstone/rails4-env-assets-compile",
     "sharpstone/rails4-fail-assets-compile"
   ],
   "rails41": [
@@ -79,6 +78,9 @@
     "sharpstone/active_storage_non_local",
     "sharpstone/active_storage_local",
     "sharpstone/sprockets_asset_compile_true"
+  ],
+  "heroku": [
+    "heroku/ruby-getting-started"
   ],
   "multibuildpack": [
     "sharpstone/node_multi"
