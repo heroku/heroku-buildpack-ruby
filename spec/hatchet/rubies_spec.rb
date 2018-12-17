@@ -44,7 +44,7 @@ describe "Ruby Versions on cedar-14" do
   end
 
   it "should deploy jdk 8 on cedar-14 by default" do
-    app = Hatchet::Runner.new("ruby_193_jruby_17161", stack: "cedar-14")
+    app = Hatchet::Runner.new("ruby_193_jruby_17161_without_https", stack: "cedar-14")
     app.setup!
     app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk-8")
@@ -60,14 +60,14 @@ describe "Ruby Versions on cedar-14" do
     end
   end
 
-  it "should deploy jruby 1.7.16.1 (jdk 7) properly on cedar-14 with sys props file" do
-    app = Hatchet::Runner.new("ruby_193_jruby_17161_jdk7", stack: "cedar-14")
-    app.setup!
-    app.deploy do |app|
-      expect(app.output).to match("Installing JVM: openjdk-7")
-      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
-    end
-  end
+  # it "should deploy jruby 1.7.16.1 (jdk 7) properly on cedar-14 with sys props file" do
+  #   app = Hatchet::Runner.new("ruby_193_jruby_17161_jdk7", stack: "cedar-14")
+  #   app.setup!
+  #   app.deploy do |app|
+  #     expect(app.output).to match("Installing JVM: openjdk-7")
+  #     expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
+  #   end
+  # end
 
   it "should deploy jruby with the naether gem" do
     app = Hatchet::Runner.new("jruby_naether", stack: DEFAULT_STACK)

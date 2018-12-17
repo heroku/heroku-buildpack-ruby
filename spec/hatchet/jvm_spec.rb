@@ -4,7 +4,7 @@ describe "JvmInstaller" do
   it "JVM is installed by jvm-common only" do
     buildpacks = ["https://github.com/heroku/heroku-buildpack-jvm-common",
                   Hatchet::App.default_buildpack] # default is heroku-ruby-buildpack here
-    app = Hatchet::Runner.new("ruby_193_jruby_17161", stack: 'cedar-14', buildpacks: buildpacks)
+    app = Hatchet::Runner.new("ruby_193_jruby_17161_without_https", stack: 'cedar-14', buildpacks: buildpacks)
     app.setup!
 
     app.deploy do |app|
