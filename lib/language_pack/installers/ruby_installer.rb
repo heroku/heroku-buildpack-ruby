@@ -24,8 +24,10 @@ module LanguagePack::Installers::RubyInstaller
   def upgrade_rubygems
     version = Gem::Version.new(run("gem -v").chomp)
     if version <= Gem::Version.new(RUBYGEMS_MINIMUM_VERSION)
+      puts "Old gem version: #{version}"
       topic("Upgrading rubygems version")
-      run("gem update --system #{RUBYGEMS_MINIMUM_VERSION}")
+      run!("gem update --system #{RUBYGEMS_MINIMUM_VERSION}")
+      puts run("gem -v")
     end
   end
 
