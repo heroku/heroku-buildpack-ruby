@@ -4,6 +4,7 @@ module LanguagePack::Installers; end
 module LanguagePack::Installers::RubyInstaller
   include LanguagePack::ShellHelpers
 
+  RUBYGEMS_MINIMUM_VERSION = "2.7.8"
   DEFAULT_BIN_DIR = "bin"
 
   def self.installer(ruby_version)
@@ -17,6 +18,15 @@ module LanguagePack::Installers::RubyInstaller
   def install(ruby_version, install_dir)
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)
+    upgrade_rubygems
+  end
+
+  def upgrade_rubygems
+    version = Gem::Version.new(run("gem -v").chomp)
+    if version <= Gem::Version.new(RUBYGEMS_MINIMUM_VERSION)
+      topic("Upgrading rubygems version")
+      run("gem update --system #{RUBYGEMS_MINIMUM_VERSION}")
+    end
   end
 
   def setup_binstubs(install_dir)
