@@ -856,6 +856,11 @@ params = CGI.parse(uri.query || "")
       raise_on_fail      = bundler.gem_version('railties') && bundler.gem_version('railties') > Gem::Version.new('3.x')
 
       topic "Detecting rake tasks"
+
+      puts "ls bin: #{run('ls bin/')}"
+      puts "cat bin/bundle: #{run('cat bin/bundle')}"
+      puts "cat bin/rake: #{run('cat bin/rake')}"
+
       rake = LanguagePack::Helpers::RakeRunner.new(rake_gem_available)
       rake.load_rake_tasks!({ env: rake_env }, raise_on_fail)
       rake
