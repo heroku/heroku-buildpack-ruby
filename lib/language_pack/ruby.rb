@@ -857,9 +857,10 @@ params = CGI.parse(uri.query || "")
 
       topic "Detecting rake tasks"
 
-      puts "ls bin: #{run('ls bin/')}"
-      puts "cat bin/bundle: #{run('cat bin/bundle')}"
-      puts "cat bin/rake: #{run('cat bin/rake')}"
+      # puts "ls bin: #{run('ls bin/')}"
+      # puts "cat bin/bundle: #{run('cat bin/bundle')}"
+      # puts "cat bin/rake: #{run('cat bin/rake')}"
+      puts "which rake: #{run('which rake')}"
 
       rake = LanguagePack::Helpers::RakeRunner.new(rake_gem_available)
       rake.load_rake_tasks!({ env: rake_env }, raise_on_fail)
