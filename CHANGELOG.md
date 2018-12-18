@@ -1,5 +1,10 @@
 ## Master
 
+## v197 (12/18/2018)
+
+* Upgrade node version (https://github.com/heroku/heroku-buildpack-ruby/pull/831)
+* Upgrade yarn version (https://github.com/heroku/heroku-buildpack-ruby/pull/832)
+
 ## v196 (10/31/2018)
 
 * Delete the sprockets temp directory for a smaller runtime slug if they are not building assets at runtime (https://github.com/heroku/heroku-buildpack-ruby/pull/812)
