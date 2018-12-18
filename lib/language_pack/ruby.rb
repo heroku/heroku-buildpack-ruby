@@ -861,6 +861,7 @@ params = CGI.parse(uri.query || "")
       # puts "cat bin/bundle: #{run('cat bin/bundle')}"
       # puts "cat bin/rake: #{run('cat bin/rake')}"
       puts "which rake: #{run('which rake')}"
+      puts "cat vendor/bundle/bin/rake: #{run('cat vendor/bundle/bin/rake')}"
 
       rake = LanguagePack::Helpers::RakeRunner.new(rake_gem_available)
       rake.load_rake_tasks!({ env: rake_env }, raise_on_fail)
