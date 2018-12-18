@@ -120,7 +120,7 @@ class LanguagePack::Helpers::BundlerWrapper
       Dir.chdir(bundler_path) do
         @fetcher.fetch_untar(@bundler_tar)
       end
-      Dir["bin/*"].each { |path| run("chmod 755 #{path}" }
+      Dir["bin/*"].each { |path| run("chmod 755 #{path}") }
     end
   end
 
