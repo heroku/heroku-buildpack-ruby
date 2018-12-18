@@ -299,15 +299,16 @@ module LanguagePack
 end
 
 
-original = ENV.method(:"[]=")
+original_env = ENV.method(:"[]=")
 ENV.send(:define_singleton_method, :"[]=") { |k, v|
   puts "Setting env var: #{k}=#{v}";
-  original.call(k, v)
+  original_env.call(k, v)
 }
 
-# original = Dir.method(:chdir)
-# def Dir.chdir(dir)
-#   puts "Changing directory to #{dir.inspect}"
-#   original.call(dir)
-# end
+original_chdir = Dir.method(:chdir)
+
+Dir.send(:define_singleton_method, :chdir) { |dir, &block|
+  puts "Changing directory to #{dir.inspect}"
+  original_chdir.call(dir, &block)
+}
 
