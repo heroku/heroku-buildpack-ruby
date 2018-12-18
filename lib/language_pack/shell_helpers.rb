@@ -112,6 +112,7 @@ module LanguagePack
     # @option options [Hash] :env explicit environment to run command in
     # @option options [Boolean] :user_env whether or not a user's environment variables will be loaded
     def run(command, options = {})
+      puts "Running: #{command_options_to_string(command, options)}"
       %x{ #{command_options_to_string(command, options)} }
     end
 
@@ -295,4 +296,16 @@ module LanguagePack
         end
       end
   end
+end
+
+
+def ENV[]=(key, value)
+  puts "Setting global ENV: #{key}=#{value}"
+  super
+end
+
+
+def Dir.chdir(dir)
+  puts "Changing directory to #{dir.inspect}"
+  super
 end
