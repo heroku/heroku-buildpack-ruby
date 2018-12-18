@@ -304,7 +304,9 @@ ENV.send(:define_singleton_method, :"[]=") { |k, v|
   puts "Setting env var: #{k}=#{v}"; original.call(k, v)
 }
 
+
+original = Dir.method(:chdir)
 def Dir.chdir(dir)
   puts "Changing directory to #{dir.inspect}"
-  super
+  original.call(dir)
 end
