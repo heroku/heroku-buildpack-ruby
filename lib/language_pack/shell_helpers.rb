@@ -299,11 +299,10 @@ module LanguagePack
 end
 
 
-def ENV[]=(key, value)
-  puts "Setting global ENV: #{key}=#{value}"
-  super
-end
-
+original = ENV.method(:"[]=")
+ENV.send(:define_singleton_method, :"[]=") { |k, v|
+  puts "Setting env var: #{k}=#{v}"; original.call(k, v)
+}
 
 def Dir.chdir(dir)
   puts "Changing directory to #{dir.inspect}"
