@@ -1,5 +1,7 @@
 ## Master
 
+* Rev-default Ruby version to be the latest patch release of last years Ruby version 2.5.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/846)
+
 ## v197 (12/18/2018)
 
 * Upgrade node version (https://github.com/heroku/heroku-buildpack-ruby/pull/831)
