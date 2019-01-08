@@ -73,7 +73,7 @@ class LanguagePack::Helpers::RailsRunner
 
   include LanguagePack::ShellHelpers
 
-  def initialize(debug = env('HEROKU_DEBUG_RAILS_RUNNER'), timeout = 65)
+  def initialize(debug = env('DEBUG_RAILS_RUNNER'), timeout = 65)
     @command_array = []
     @output        = nil
     @success       = false
@@ -125,12 +125,12 @@ class LanguagePack::Helpers::RailsRunner
 
       if timeout?
         message = String.new("Detecting rails configuration timeout\n")
-        message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
+        message << "set DEBUG_RAILS_RUNNER=1 to debug" unless @debug
         warn(message)
         mcount("warn.rails.runner.timeout")
       elsif !@success
         message = String.new("Detecting rails configuration failed\n")
-        message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
+        message << "set DEBUG_RAILS_RUNNER=1 to debug" unless @debug
         warn(message)
         mcount("warn.rails.runner.fail")
       end
