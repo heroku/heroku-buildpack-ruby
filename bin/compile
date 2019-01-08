@@ -5,7 +5,7 @@
 BIN_DIR=$(cd $(dirname $0); pwd)
 BUILDPACK_DIR=$(dirname $BIN_DIR)
 
-if test -n "$BUILDPACK_URL" && (echo $BUILDPACK_URL | grep -q "multi-buildpack") ; then
+if test -n "$BUILDPACK_URL" ; then
   export STACK="cedar-14"
 fi
 
