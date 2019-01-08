@@ -21,7 +21,12 @@ def execute_test(command)
 end
 
 def execute_command(command)
-  pipe(command, :user_env => true)
+  # Normally the `pipe` command will indent output so that it
+  # matches the build output, however in a test TAP depends on
+  # having no whitespace before output. To avoid adding whitespace
+  # for the original Kernel.puts to be used by passing in the
+  # Kernel object.
+  pipe(command, :user_env => true, :output_object => Kernel)
 end
 
 # $ bin/test BUILD_DIR ENV_DIR ARTIFACT_DIR

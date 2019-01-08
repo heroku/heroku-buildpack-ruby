@@ -16,6 +16,11 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     end
   end
 
+  def initialize(build_path, cache_path=nil)
+    super(build_path, cache_path)
+    @rails_runner = LanguagePack::Helpers::RailsRunner.new
+  end
+
   def name
     "Ruby/Rails"
   end
@@ -43,11 +48,11 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
         "bundle exec thin start -e $RAILS_ENV -p $PORT" :
         "bundle exec ruby script/server -p $PORT"
 
-      super.merge({
-        "web" => web_process,
-        "worker" => "bundle exec rake jobs:work",
-        "console" => "bundle exec script/console"
-      })
+      process_types = super
+      process_types["web"]     = web_process
+      process_types["worker"]  = "bundle exec rake jobs:work" if has_jobs_work_task?
+      process_types["console"] = "bundle exec script/console"
+      process_types
     end
   end
 
@@ -62,14 +67,21 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     if env("RAILS_ENV") != "production"
       warn(<<-WARNING)
 You are deploying to a non-production environment: #{ env("RAILS_ENV").inspect }.
-This is not recommended.
-See https://devcenter.heroku.com/articles/deploying-to-a-custom-rails-environment for more information.
+This is not recommended in order to keep dev/prod parity.
 WARNING
     end
     super
   end
 
 private
+  def has_jobs_work_task?
+    if result = rake.task("jobs:work").is_defined?
+      mcount("task.jobs:work.enabled")
+    else
+      mcount("task.jobs:work.disabled")
+    end
+    result
+  end
 
   def install_plugins
     instrument "rails2.install_plugins" do

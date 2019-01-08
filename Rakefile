@@ -1,7 +1,7 @@
 require "fileutils"
 require "tmpdir"
-
-$: << File.expand_path('../lib', __FILE__)
+require 'hatchet/tasks'
+ENV["BUILDPACK_LOG_FILE"] ||= "tmp/buildpack.log"
 
 S3_BUCKET_NAME  = "heroku-buildpack-ruby"
 VENDOR_URL      = "https://s3.amazonaws.com/#{S3_BUCKET_NAME}"
@@ -307,5 +307,3 @@ begin
   task :default => :spec
 rescue LoadError => e
 end
-
-

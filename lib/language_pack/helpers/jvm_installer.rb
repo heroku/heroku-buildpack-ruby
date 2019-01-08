@@ -94,7 +94,7 @@ class LanguagePack::Helpers::JvmInstaller
 Failed to download JVM: #{jvm_path}
 
 If this was a custom version or URL, please check to ensure it is correct.
-Otherwise, please open a ticket at http://help.heroku.com so we can help.
+Otherwise, please constact Scalingo support so we can help.
 EOF
   end
 

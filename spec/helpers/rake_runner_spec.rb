@@ -7,8 +7,8 @@ describe "Rake Runner" do
       task = rake.task("assets:precompile")
       task.invoke
 
-      expect(task.status).to   eq(:pass)
       expect(task.output).to   match("success!")
+      expect(task.status).to   eq(:pass)
       expect(task.time).not_to be_nil
     end
   end
@@ -19,8 +19,8 @@ describe "Rake Runner" do
       task = rake.task("assets:precompile")
       task.invoke
 
-      expect(task.status).to   eq(:fail)
       expect(task.output).to   match("assets:precompile fails")
+      expect(task.status).to   eq(:fail)
       expect(task.time).not_to be_nil
     end
   end

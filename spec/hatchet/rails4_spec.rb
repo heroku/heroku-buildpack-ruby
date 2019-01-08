@@ -1,6 +1,51 @@
 require_relative '../spec_helper'
 
-describe "Rails 4.0.x" do
+describe "Rails 4.x" do
+  it "set RAILS_SERVE_STATIC_FILES" do
+    Hatchet::Runner.new("rails42_scaffold").deploy do |app, heroku|
+      output = app.run("rails runner 'puts ENV[%Q{RAILS_SERVE_STATIC_FILES}].present?'")
+      expect(output).to match(/true/)
+    end
+  end
+
+  it "should be able to run a migration without heroku specific database.yml" do
+    Hatchet::Runner.new("rails41_scaffold").deploy do |app, heroku|
+      expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
+      expect(app.run("rake db:migrate")).to include("20140218165801 CreatePeople")
+    end
+  end
+
+  it "should handle secrets.yml properly" do
+    Hatchet::Runner.new("rails41_scaffold").deploy do |app, heroku|
+      ReplRunner.new(:rails_console, "heroku run bin/rails console -a #{app.name}").run do |console|
+        console.run("ENV['SECRET_KEY_BASE'] == Rails.application.config.secrets.secret_key_base") {|result| expect(result).not_to eq("true") }
+      end
+    end
+  end
+
+  it "should not overwrite existing files with cached files" do
+    string = SecureRandom.hex(13)
+    new_string = SecureRandom.hex(13)
+
+    Hatchet::Runner.new("rails41_scaffold").deploy do |app, heroku|
+      # First Deploy
+      run!(%Q{mkdir public/assets})
+      run!(%Q{echo #{string} > public/assets/file.txt})
+      run!(%Q{git add -A; git commit -m 'adding file.txt'})
+      app.push!
+
+      # Second Deploy
+      run!(%Q{echo #{new_string} > public/assets/file.txt})
+      run!(%Q{git add -A; git commit -m 'updating file.txt'})
+      app.push!
+
+      # Asserts
+      result = app.run('cat public/assets/file.txt')
+      expect(result).not_to match(string)
+      expect(result).to match(new_string)
+    end
+  end
+
   it "should detect rails successfully" do
     Hatchet::App.new('rails4-manifest').in_directory do
       expect(LanguagePack::Rails4.use?).to eq(true)
@@ -17,13 +62,13 @@ describe "Rails 4.0.x" do
     end
   end
 
-  it "detects new manifest file (sprockets 3.x: .sprockets-manifest-<digest>.json)" do
+  it "detects new manifest file (sprockets 3.x: .sprockets-manifest-<digest>.json) Rails 4.2" do
     Hatchet::Runner.new("rails42_sprockets3_manifest").deploy do |app, heroku|
       expect(app.output).to include("Detected manifest file, assuming assets were compiled locally")
     end
   end
 
-  it "upgraded from 3 to 4 missing ./bin still works" do
+  it "upgraded from 3 to 4.2 missing ./bin still works" do
     Hatchet::Runner.new("rails3-to-4-no-bin").deploy do |app, heroku|
       expect(app.output).to include("Asset precompilation completed")
 
@@ -35,36 +80,10 @@ describe "Rails 4.0.x" do
     end
   end
 
-  # it "works with windows" do
-  #   pending("failing due to free dynos not being able to have more than 1 process type")
-  #   Hatchet::Runner.new("rails4_windows_mri193").deploy do |app, heroku|
-  #     result = app.run("rails -v")
-  #     expect(result).to match("4.0.0")
-  #     result = app.run("rake -T")
-  #     expect(result).to match("assets:precompile")
-
-  #     result = app.run("bundle show rails")
-  #     expect(result).to match("rails-4.0.0")
-  #     expect(app.output).to match("Removing `Gemfile.lock`")
-
-  #     before_final_warnings = app.output.split("Bundle completed").first
-  #     expect(before_final_warnings).to match("Removing `Gemfile.lock`")
-  #   end
-  # end
-
-  it "fails compile if assets:precompile fails" do
+  it "fails compile if assets:precompile fails rails 4.2" do
     Hatchet::Runner.new("rails4-fail-assets-compile", allow_failure: true).deploy do |app, heroku|
       expect(app.output).to include("raising on assets:precompile on purpose")
       expect(app).not_to be_deployed
-    end
-  end
-
-  it "should not override user settings" do
-    app = Hatchet::Runner.new("rails4-env-assets-compile")
-    app.setup!
-    app.set_config("RAILS_ENV" => "staging")
-    app.deploy do |a, heroku|
-      expect(a.output).to include("w00t")
     end
   end
 end
