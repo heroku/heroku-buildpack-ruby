@@ -1,5 +1,7 @@
 ## Master
 
+* Allow apps to enable `RUBYOPT=--jit` (https://github.com/heroku/heroku-buildpack-ruby/pull/848)
+
 ## v197 (12/18/2018)
 
 * Upgrade node version (https://github.com/heroku/heroku-buildpack-ruby/pull/831)
