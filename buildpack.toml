@@ -1,4 +1,6 @@
 [buildpack]
+id = "heroku/ruby"
+version = "0.0.1"
 name = "Ruby"
 
   [publish.Ignore]
@@ -20,3 +22,6 @@ name = "Ruby"
   [[publish.Vendor]]
   url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-18/ruby-2.5.1.tgz"
   dir = "vendor/ruby/heroku-18"
+
+[[stacks]]
+id = "heroku-18"
