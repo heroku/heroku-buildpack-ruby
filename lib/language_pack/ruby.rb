@@ -414,12 +414,13 @@ SHELL
   # sets up the profile.d script for this buildpack
   def setup_profiled
     instrument 'setup_profiled' do
-      profiled_path = [binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":")]
+      profiled_path_prefix = @layer_dir ? @build_path : "$HOME"
+      profiled_path = [binstubs_relative_paths.map {|path| "#{profiled_path_prefix}/#{path}" }.join(":")]
       profiled_path << "vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
       set_env_default  "LANG",     "en_US.UTF-8"
-      set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
+      set_env_override "GEM_PATH", "#{profiled_path_prefix}/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",      profiled_path.join(":")
 
       set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?

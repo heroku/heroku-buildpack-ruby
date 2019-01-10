@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+# This script compiles an application so it can run on Heroku.
+# It will install the application's specified version of Ruby, it's dependencies
+# and certain framework specific requirements (such as calling `rake assets:precompile`
+# for rails apps). You can see all features described in the devcenter
+# https://devcenter.heroku.com/articles/ruby-support
+$stdout.sync = true
+
+$:.unshift File.expand_path("../../../lib", __FILE__)
+require "language_pack"
+require "language_pack/shell_helpers"
+
+APP_DIR=ARGV[0]
+LAYER_DIR=ARGV[1]
+PLATFORM_DIR=ARGV[2]
+ENV_DIR="#{PLATFORM_DIR}/env"
+PLAN=ARGV[3]
+
+begin
+  LanguagePack::Instrument.trace 'compile', 'app.compile' do
+    LanguagePack::ShellHelpers.initialize_env(ENV_DIR)
+    if pack = LanguagePack.detect(ARGV[0], nil, LAYER_DIR)
+      pack.topic("Compiling #{pack.name}")
+      pack.log("compile") do
+        pack.build
+      end
+    end
+  end
+rescue Exception => e
+  LanguagePack::ShellHelpers.display_error_and_exit(e)
+end
+
