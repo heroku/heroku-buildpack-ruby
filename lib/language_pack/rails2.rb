@@ -16,7 +16,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     end
   end
 
-  def initialize(build_path, cache_path=nil)
+  def initialize(build_path, cache_path=nil, layer_dir=nil)
     super(build_path, cache_path)
     @rails_runner = LanguagePack::Helpers::RailsRunner.new
   end
