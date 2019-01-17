@@ -1,5 +1,7 @@
 ## Master
 
+## v198 (1/17/2019)
+
 * Rev-default Ruby version to be the latest patch release of last years Ruby version 2.5.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/846)
 * Allow apps to enable `RUBYOPT=--jit` (https://github.com/heroku/heroku-buildpack-ruby/pull/848)
 
