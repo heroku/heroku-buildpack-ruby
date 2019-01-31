@@ -5,6 +5,7 @@ require "digest/sha1"
 require "language_pack/shell_helpers"
 require "language_pack/cache"
 require "language_pack/helpers/bundler_cache"
+require "language_pack/helpers/layer"
 require "language_pack/metadata"
 require "language_pack/fetcher"
 require "language_pack/instrument"
@@ -80,7 +81,26 @@ class LanguagePack::Base
 
   # this is called to build the slug
   def compile
-    write_release
+    write_release_yaml
+    instrument 'base.compile' do
+      Kernel.puts ""
+      warnings.each do |warning|
+        Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m"# Bold yellow
+        Kernel.puts ""
+        puts warning
+        Kernel.puts ""
+      end
+      if deprecations.any?
+        topic "DEPRECATIONS:"
+        puts @deprecations.join("\n")
+      end
+      Kernel.puts ""
+    end
+    mcount "success"
+  end
+
+  def build
+    write_release_toml
     instrument 'base.compile' do
       Kernel.puts ""
       warnings.each do |warning|
@@ -110,16 +130,12 @@ class LanguagePack::Base
   def write_release_toml
     release = build_release
 
-    FileUtils.mkdir_p("#{@layer_dir}/ruby/env.launch")
+    layer = LanguagePack::Helpers::Layer.new(@layer_dir, "env", launch: true)
+    FileUtils.mkdir_p("#{layer.path}/env.launch")
     release["config_vars"].each do |key, value|
-      File.open("#{@layer_dir}/ruby/env.launch/#{key.upcase}", 'a') do |f|
+      File.open("#{layer.path}/env.launch/#{key.upcase}", 'w') do |f|
         f.write(value)
       end
-    end
-    File.open("#{@layer_dir}/ruby.toml", 'w') do |f|
-      f.write(<<TOML)
-launch = true
-TOML
     end
 
     release_toml = release["default_process_types"].map do |type, command|
@@ -213,12 +229,59 @@ private ##################################
     end
   end
 
-  def set_export_default(key, val)
-    add_to_export "export #{key}=${#{key}:-#{val}}"
+  def export(key, value, layer: nil, option: nil)
+    if layer
+      # don't replace if the key is already set
+      return if ENV[key] && option == :default
+
+      filename =
+        if option.nil? || option == :path
+          key
+        elsif option == :default
+          "#{key}.override"
+        else
+          "#{key}.#{option}"
+        end
+
+      FileUtils.mkdir_p("#{layer.path}/env.build")
+      File.open("#{layer.path}/env.build/#{filename}", "w") do |f|
+        f.write(value)
+      end
+    else
+      string =
+        if option == :default
+          "export #{key}=${#{key}:-#{val}}"
+        elsif option == :path
+          "export #{key}=#{val}:$#{key}"
+        else
+          %{export #{key}="#{val.gsub('"','\"')}"}
+        end
+
+      export = File.join(ROOT_DIR, "export")
+      File.open(export, "a") do |file|
+        file.puts string
+      end
+    end
   end
 
-  def set_export_override(key, val)
-    add_to_export %{export #{key}="#{val.gsub('"','\"')}"}
+  #def set_export_default(key, val, layer = nil)
+  #  add_to_export "export #{key}=${#{key}:-#{val}}"
+  #end
+
+  #def set_export_override(key, val)
+  #  add_to_export %{export #{key}="#{val.gsub('"','\"')}"}
+  #end
+
+  def set_export_default(key, val, layer = nil)
+    export key, val, layer: layer, option: :default
+  end
+
+  def set_export_override(key, val, layer = nil)
+    export key, val, layer: layer, option: :override
+  end
+
+  def set_export_path(key, val, layer = nil)
+    export key, val, layer: layer, option: :path
   end
 
   def log_internal(*args)

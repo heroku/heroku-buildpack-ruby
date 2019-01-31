@@ -9,6 +9,7 @@ require "language_pack/helpers/nodebin"
 require "language_pack/helpers/node_installer"
 require "language_pack/helpers/yarn_installer"
 require "language_pack/helpers/jvm_installer"
+require "language_pack/helpers/layer"
 require "language_pack/version"
 
 # base Ruby Language Pack. This is for any base ruby app.
@@ -18,6 +19,8 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   NODE_BP_PATH         = "vendor/node/bin"
+
+  Layer = LanguagePack::Helpers::Layer
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -35,8 +38,8 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.bundler
   end
 
-  def initialize(build_path, cache_path=nil)
-    super(build_path, cache_path)
+  def initialize(*args)
+    super(*args)
     @fetchers[:mri]    = LanguagePack::Fetcher.new(VENDOR_URL, @stack)
     @fetchers[:rbx]    = LanguagePack::Fetcher.new(RBX_BASE_URL, @stack)
     @node_installer    = LanguagePack::Helpers::NodeInstaller.new
@@ -93,14 +96,14 @@ WARNING
       Dir.chdir(build_path)
       remove_vendor_bundle
       warn_bundler_upgrade
-      install_ruby
+      install_ruby(slug_vendor_ruby, build_ruby_path)
       install_jvm
       setup_language_pack_environment
       setup_export
       setup_profiled
       allow_git do
-        install_bundler_in_app
-        build_bundler("development:test")
+        install_bundler_in_app(slug_vendor_base)
+        build_bundler(path: "vendor/bundle", default_bundle_without: "development:test")
         post_bundler
         create_database_yml
         install_binaries
@@ -111,6 +114,42 @@ WARNING
       cleanup
       super
     end
+  end
+
+  def build
+    remove_vendor_bundle
+
+    ruby_layer = Layer.new(@layer_dir, "ruby", launch: true)
+    install_ruby(ruby_layer.path)
+    ruby_layer.metadata["version"] = ruby_version.version
+    ruby_layer.metadata["patchlevel"] = ruby_version.patchlevel
+    ruby_layer.metadata["engine"] = ruby_version.engine
+    ruby_layer.metadata["engine_version"] = ruby_version.engine_version
+    ruby_layer.write
+
+    gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true)
+    setup_language_pack_environment(ruby_layer, gem_layer)
+    setup_export(gem_layer)
+    setup_profiled(ruby_layer, gem_layer)
+    allow_git do
+      # TODO install bundler in separate layer
+      install_bundler_in_app("#{gem_layer.path}/#{slug_vendor_base}")
+      build_bundler(bundle_path: "#{gem_layer.path}/vendor/bundle", default_bundle_without: "development:test")
+      # TODO post_bundler might need to be done in a new layer
+      bundler.clean
+      gem_layer.metadata["gems"] = Digest::SHA2.hexdigest(File.read("Gemfile.lock"))
+      gem_layer.write
+
+      create_database_yml
+      # TODO replace this with multibuildpack stuff? put binaries in their own layer?
+      install_binaries
+      run_assets_precompile_rake_task
+    end
+    config_detect
+    best_practice_warnings
+    cleanup
+
+    super
   end
 
   def cleanup
@@ -287,7 +326,7 @@ EOF
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment
+  def setup_language_pack_environment(ruby_layer = nil, gem_layer = nil)
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
@@ -298,7 +337,7 @@ SHELL
         ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
         ENV["JAVA_HOME"] = @jvm_installer.java_home
       end
-      setup_ruby_install_env
+      setup_ruby_install_env(ruby_layer)
       ENV["PATH"] += ":#{node_preinstall_bin_path}" if node_js_installed?
       ENV["PATH"] += ":#{yarn_preinstall_bin_path}" if !yarn_not_preinstalled?
 
@@ -316,21 +355,30 @@ SHELL
         ENV[key] ||= value
       end
 
-      ENV["GEM_PATH"] = slug_vendor_base
-      ENV["GEM_HOME"] = slug_vendor_base
+      gem_path = gem_layer ? "#{gem_layer.path}/#{slug_vendor_base}" : slug_vendor_base
+      ENV["GEM_PATH"] = gem_path
+      ENV["GEM_HOME"] = gem_path
       ENV["PATH"]     = default_path
     end
   end
 
   # Sets up the environment variables for subsequent processes run by
   # muiltibuildpack. We can't use profile.d because $HOME isn't set up
-  def setup_export
+  def setup_export(layer = nil)
     instrument 'ruby.setup_export' do
       paths = ENV["PATH"].split(":")
-      set_export_override "GEM_PATH", "#{build_path}/#{slug_vendor_base}:$GEM_PATH"
-      set_export_default  "LANG",     "en_US.UTF-8"
-      set_export_override "PATH",     paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":")
+      gem_path =
+        if layer
+          "#{layer.path}/#{slug_vendor_base}"
+        else
+          "#{build_path}/#{slug_vendor_base}"
+        end
+      set_export_path "GEM_PATH", gem_path, layer
+      set_export_default  "LANG", "en_US.UTF-8", layer
+      # TODO ensure path exported is correct
+      set_export_path "PATH", paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":"), layer
 
+      # TODO handle jruby
       if ruby_version.jruby?
         add_to_export set_jvm_max_heap
         add_to_export set_java_mem
@@ -341,19 +389,22 @@ SHELL
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled
+  def setup_profiled(ruby_layer = nil, gem_layer = nil)
     instrument 'setup_profiled' do
       profiled_path_prefix = @layer_dir ? @build_path : "$HOME"
       profiled_path = [binstubs_relative_paths.map {|path| "#{profiled_path_prefix}/#{path}" }.join(":")]
       profiled_path << "vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
+      gem_path_prefix = gem_layer ? gem_layer.path : "$HOME"
+
       set_env_default  "LANG",     "en_US.UTF-8"
-      set_env_override "GEM_PATH", "#{profiled_path_prefix}/#{slug_vendor_base}:$GEM_PATH"
+      set_env_override "GEM_PATH", "#{gem_path_prefix}/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",      profiled_path.join(":")
 
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
 
+      # TODO handle JRUBY
       if ruby_version.jruby?
         add_to_profiled set_jvm_max_heap
         add_to_profiled set_java_mem
@@ -365,7 +416,7 @@ SHELL
 
   # install the vendored ruby
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
-  def install_ruby
+  def install_ruby(install_path, build_ruby_path = nil)
     instrument 'ruby.install_ruby' do
       return false unless ruby_version
 
@@ -374,7 +425,7 @@ SHELL
       if ruby_version.build?
         installer.fetch_unpack(ruby_version, build_ruby_path, true)
       end
-      installer.install(ruby_version, slug_vendor_ruby)
+      installer.install(ruby_version, install_path)
 
       @metadata.write("buildpack_ruby_version", ruby_version.version_for_download)
 
@@ -464,9 +515,11 @@ ERROR
 
   # find the ruby install path for its binstubs during build
   # @return [String] resulting path or empty string if ruby is not vendored
-  def ruby_install_binstub_path
+  def ruby_install_binstub_path(ruby_layer = nil)
     @ruby_install_binstub_path ||=
-      if ruby_version.build?
+      if ruby_layer
+        "#{ruby_layer.path}/bin"
+      elsif ruby_version.build?
         "#{build_ruby_path}/bin"
       elsif ruby_version
         "#{slug_vendor_ruby}/bin"
@@ -476,9 +529,9 @@ ERROR
   end
 
   # setup the environment so we can use the vendored ruby
-  def setup_ruby_install_env
+  def setup_ruby_install_env(ruby_layer = nil)
     instrument 'ruby.setup_ruby_install_env' do
-      ENV["PATH"] = "#{File.expand_path(ruby_install_binstub_path)}:#{ENV["PATH"]}"
+      ENV["PATH"] = "#{File.expand_path(ruby_install_binstub_path(ruby_layer))}:#{ENV["PATH"]}"
 
       if ruby_version.jruby?
         ENV['JAVA_OPTS']  = default_java_opts
@@ -487,10 +540,10 @@ ERROR
   end
 
   # installs vendored gems into the slug
-  def install_bundler_in_app
+  def install_bundler_in_app(bundler_dir)
     instrument 'ruby.install_language_pack_gems' do
-      FileUtils.mkdir_p(slug_vendor_base)
-      Dir.chdir(slug_vendor_base) do |dir|
+      FileUtils.mkdir_p(bundler_dir)
+      Dir.chdir(bundler_dir) do |dir|
         `cp -R #{bundler.bundler_path}/. .`
       end
 
@@ -637,12 +690,12 @@ BUNDLE
   end
 
   # runs bundler to install the dependencies
-  def build_bundler(default_bundle_without)
+  def build_bundler(bundle_path:, default_bundle_without:)
     instrument 'ruby.build_bundler' do
       log("bundle") do
         bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
         bundle_bin     = "bundle"
-        bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
+        bundle_command = "#{bundle_bin} install --without #{bundle_without} --path #{bundle_path} --binstubs #{bundler_binstubs_path}"
         bundle_command << " -j4"
 
         if File.exist?("#{Dir.pwd}/.bundle/config")
@@ -673,7 +726,8 @@ WARNING
         end
 
         topic("Installing dependencies using bundler #{bundler.version}")
-        load_bundler_cache
+        # TODO handle bundler cache loading in CNB
+        #load_bundler_cache
 
         bundler_output = ""
         bundle_time    = nil
