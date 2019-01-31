@@ -16,8 +16,8 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     end
   end
 
-  def initialize(build_path, cache_path=nil, layer_dir=nil)
-    super(build_path, cache_path)
+  def initialize(*args)
+    super(*args)
     @rails_runner = LanguagePack::Helpers::RailsRunner.new
   end
 
@@ -93,8 +93,8 @@ private
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled
-    super
+  def setup_profiled(*args)
+    super(*args)
     default_env_vars.each do |key, value|
       set_env_default key, value
     end
