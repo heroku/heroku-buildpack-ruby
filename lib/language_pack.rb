@@ -22,7 +22,6 @@ module LanguagePack
   end
 end
 
-
 $:.unshift File.expand_path("../../vendor", __FILE__)
 $:.unshift File.expand_path("..", __FILE__)
 

@@ -79,7 +79,6 @@ describe "Ruby Versions on cedar-14" do
   end
 end
 
-
 describe "Upgrading ruby apps" do
   it "works when changing from default version" do
     app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)

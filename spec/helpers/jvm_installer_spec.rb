@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "JvmInstall" do
-
   it "downloads custom JDK" do
     Dir.mktmpdir do |dir|
       Dir.chdir(dir) do
@@ -85,7 +84,7 @@ describe "JvmInstall" do
 
         jvm_installer = LanguagePack::Helpers::JvmInstaller.new(dir, "heroku-16")
 
-        expect{ jvm_installer.install("9.0.1.0") }.to raise_error(BuildpackError)
+        expect { jvm_installer.install("9.0.1.0") }.to raise_error(BuildpackError)
       end
     end
   end

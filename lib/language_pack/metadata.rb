@@ -25,7 +25,7 @@ class LanguagePack::Metadata
     FileUtils.mkdir_p(FOLDER)
 
     full_key = "#{FOLDER}/#{key}"
-    File.open(full_key, 'w') {|f| f.puts value }
+    File.open(full_key, 'w') { |f| f.puts value }
     save if isave
   end
 

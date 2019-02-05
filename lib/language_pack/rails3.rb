@@ -161,10 +161,10 @@ WARNING
   def install_plugins
     instrument "rails3.install_plugins" do
       return false if bundler.has_gem?('rails_12factor')
-      plugins = {"rails_log_stdout" => "rails_stdout_logging", "rails3_serve_static_assets" => "rails_serve_static_assets" }.
-                 reject { |plugin, gem| bundler.has_gem?(gem) }
+      plugins = { "rails_log_stdout" => "rails_stdout_logging", "rails3_serve_static_assets" => "rails_serve_static_assets" }
+                .reject { |_plugin, gem| bundler.has_gem?(gem) }
       return false if plugins.empty?
-      plugins.each do |plugin, gem|
+      plugins.each do |plugin, _gem|
         warn "Injecting plugin '#{plugin}'"
       end
       warn "Add 'rails_12factor' gem to your Gemfile to skip plugin injection"
@@ -203,15 +203,17 @@ WARNING
     instrument "rails3.setup_database_url_env" do
       # need to use a dummy DATABASE_URL here, so rails can load the environment
       return env("DATABASE_URL") if env("DATABASE_URL")
-      scheme =
-        if bundler.has_gem?("pg") || bundler.has_gem?("jdbc-postgres")
-          "postgres"
+
+      if bundler.has_gem?("pg") || bundler.has_gem?("jdbc-postgres")
+        scheme = "postgres"
       elsif bundler.has_gem?("mysql")
-        "mysql"
+        scheme = "mysql"
       elsif bundler.has_gem?("mysql2")
-        "mysql2"
+        scheme = "mysql2"
       elsif bundler.has_gem?("sqlite3") || bundler.has_gem?("sqlite3-ruby")
-        "sqlite3"
+        scheme = "sqlite3"
+      else
+        scheme = ""
       end
       "#{scheme}://user:pass@127.0.0.1/dbname"
     end

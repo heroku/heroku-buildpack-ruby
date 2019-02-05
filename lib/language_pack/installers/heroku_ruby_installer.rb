@@ -23,4 +23,3 @@ class LanguagePack::Installers::HerokuRubyInstaller
     end
   end
 end
-

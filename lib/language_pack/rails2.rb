@@ -16,7 +16,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     end
   end
 
-  def initialize(build_path, cache_path=nil)
+  def initialize(build_path, cache_path = nil)
     super(build_path, cache_path)
     @rails_runner = LanguagePack::Helpers::RailsRunner.new
   end
@@ -66,7 +66,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   def best_practice_warnings
     if env("RAILS_ENV") != "production"
       warn(<<-WARNING)
-You are deploying to a non-production environment: #{ env("RAILS_ENV").inspect }.
+You are deploying to a non-production environment: #{env("RAILS_ENV").inspect}.
 This is not recommended.
 See https://devcenter.heroku.com/articles/deploying-to-a-custom-rails-environment for more information.
 WARNING
@@ -75,8 +75,9 @@ WARNING
   end
 
 private
+
   def has_jobs_work_task?
-    if result = rake.task("jobs:work").is_defined?
+    if (result = rake.task("jobs:work").is_defined?)
       mcount("task.jobs:work.enabled")
     else
       mcount("task.jobs:work.disabled")
@@ -99,5 +100,4 @@ private
       set_env_default key, value
     end
   end
-
 end

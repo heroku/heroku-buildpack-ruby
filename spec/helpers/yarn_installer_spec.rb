@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe LanguagePack::Helpers::YarnInstaller do
   describe "#install" do
-
     it "should extract the yarn package" do
       installer = LanguagePack::Helpers::YarnInstaller.new
 

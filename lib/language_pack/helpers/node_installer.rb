@@ -29,6 +29,7 @@ class LanguagePack::Helpers::NodeInstaller
   end
 
   private
+
   def node_folder(version)
     "node-v#{version}-linux-x64"
   end

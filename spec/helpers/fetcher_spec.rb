@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "Fetches" do
-
   it "bundler" do
     Dir.mktmpdir do |dir|
       Dir.chdir(dir) do
@@ -12,4 +11,3 @@ describe "Fetches" do
     end
   end
 end
-

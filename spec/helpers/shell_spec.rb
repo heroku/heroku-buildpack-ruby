@@ -45,15 +45,15 @@ describe "ShellHelpers" do
 
   describe "#command_options_to_string" do
     it "formats ugly keys correctly" do
-      env      = {%Q{ un"matched } => "bad key"}
-      result   = FakeShell.new.command_options_to_string("bundle install", env:  env)
+      env      = { %Q{ un"matched } => "bad key" }
+      result   = FakeShell.new.command_options_to_string("bundle install", env: env)
       expected = %r{env \\ un\\\"matched\\ =bad\\ key bash -c bundle\\ install 2>&1}
       expect(result.strip).to match(expected)
     end
 
     it "formats ugly values correctly" do
-      env      = {"BAD VALUE"      => %Q{ )(*&^%$#'$'\n''@!~\'\ }}
-      result   = FakeShell.new.command_options_to_string("bundle install", env:  env)
+      env      = { "BAD VALUE" => %Q{ )(*&^%$#'$'\n''@!~\'\ } }
+      result   = FakeShell.new.command_options_to_string("bundle install", env: env)
       expected = %r{env BAD\\ VALUE=\\ \\\)\\\(\\\*\\&\\\^\\%\\\$\\#\\'\\\$\\''\n'\\'\\'@\\!\\~\\'\\  bash -c bundle\\ install 2>&1}
       expect(result.strip).to match(expected)
     end
@@ -84,7 +84,8 @@ describe "ShellHelpers" do
         sh = FakeShell.new
 
         def sh.print(string); string.strip; end
-        def sh.mcount(*args); @error_caught = true; end
+
+        def sh.mcount(*_args); @error_caught = true; end
 
         bad_lines = File.read("spec/fixtures/invalid_encoding.log")
         expect { sh.puts(bad_lines) }.to raise_error(ArgumentError)

@@ -10,7 +10,7 @@ module LanguagePack
       out.puts "measure.#{message}.start=#{start_time} measure.#{message}.end=#{end_time} measure.#{message}.duration=#{duration} measure.#{message}.level=#{level} measure.#{message}.build_id=#{build_id} request_id=#{request_id} measure.#{message}.buildpack_version=#{buildpack_version} measure.#{message}.buildpack=#{buildpack_name} "
     end
 
-    def self.instrument(cat, title = "", *args)
+    def self.instrument(cat, _title = "", *_args)
       ret        = nil
       start_time = DateTime.now.iso8601(6)
       duration = Benchmark.realtime do
@@ -18,7 +18,7 @@ module LanguagePack
           ret = yield
         end
       end
-      end_time   = DateTime.now.iso8601(6)
+      end_time = DateTime.now.iso8601(6)
       bench_msg(cat, block_depth, start_time, end_time, duration, build_id, buildpack_version)
 
       ret
@@ -28,10 +28,7 @@ module LanguagePack
       Thread.current[:out] ||= ENV['LOGPLEX_DEFAULT_TOKEN'] ? Lpxc.new(batch_size: 1) : StringIO.new
     end
 
-    def self.trace(name, *args, &blk)
-      ret         = nil
-      block_depth = 0
-
+    def self.trace(name, *_args, &blk)
       instrument(name) { blk.call }
     end
 

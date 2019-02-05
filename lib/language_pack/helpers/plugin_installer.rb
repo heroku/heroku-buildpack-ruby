@@ -29,7 +29,7 @@ module LanguagePack
         directory = plugin_dir(name)
         return true if directory.exist?
         directory.mkpath
-        Dir.chdir(directory) do |dir|
+        Dir.chdir(directory) do |_dir|
           run("curl #{vendor_url}/#{name}.tgz -s -o - | tar xzf -")
         end
       end

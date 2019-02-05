@@ -1,4 +1,4 @@
-#module LanguagePack::Test::Rails2
+# module LanguagePack::Test::Rails2
 class LanguagePack::Rails2
   # sets up the profile.d script for this buildpack
   def setup_profiled
@@ -10,7 +10,7 @@ class LanguagePack::Rails2
   def default_env_vars
     {
       "RAILS_ENV" => "test",
-      "RACK_ENV"  => "test"
+      "RACK_ENV" => "test"
     }
   end
 
@@ -52,6 +52,7 @@ FILE
   end
 
   private
+
   def db_prepare_test_rake_tasks
     schema_load    = rake.task("db:schema:load_if_ruby")
     structure_load = rake.task("db:structure:load_if_sql")
@@ -73,7 +74,6 @@ FILE
 
     [schema_load, structure_load, db_migrate]
   end
-
 
   def detect_schema_format
     run("rails runner 'puts ActiveRecord::Base.schema_format'", user_env: true)

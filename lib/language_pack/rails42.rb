@@ -23,7 +23,7 @@ class LanguagePack::Rails42 < LanguagePack::Rails41
 
   def default_config_vars
     super.merge({
-      "RAILS_SERVE_STATIC_FILES"  => env("RAILS_SERVE_STATIC_FILES") || "enabled"
+      "RAILS_SERVE_STATIC_FILES" => env("RAILS_SERVE_STATIC_FILES") || "enabled"
     })
   end
 end

@@ -15,3 +15,5 @@ group :development, :test do
   gem 'ci-queue'
   gem 'redis'
 end
+
+gem 'rubocop'

@@ -46,23 +46,24 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
   end
 
   private
-    def has_ffmpeg?
-      run("which ffmpeg")
-      return $?.success?
-    end
 
-    def needs_ffmpeg?
-      !has_ffmpeg?
-    end
+  def has_ffmpeg?
+    run("which ffmpeg")
+    return $?.success?
+  end
 
-    def local_storage?
-      return false unless @local_storage_config.success?
-      @local_storage_config.did_match?("local")
-    end
+  def needs_ffmpeg?
+    !has_ffmpeg?
+  end
 
-    def warn_local_storage
-      mcount("warn.activestorage.local_storage")
-      warn(<<-WARNING)
+  def local_storage?
+    return false unless @local_storage_config.success?
+    @local_storage_config.did_match?("local")
+  end
+
+  def warn_local_storage
+    mcount("warn.activestorage.local_storage")
+    warn(<<-WARNING)
 You set your `config.active_storage.service` to :local in production.
 If you are uploading files to this app, they will not persist after the app
 is restarted, on one-off dynos, or if the app has multiple dynos.
@@ -74,12 +75,12 @@ For more information can be found in this article:
   https://devcenter.heroku.com/articles/active-storage-on-heroku
 
 WARNING
-    end
+  end
 
-    def warn_no_ffmpeg
-      mcount("warn.activestorage.no_binaries.stack-#{stack}")
-      mcount("warn.activestorage.no_binaries.all")
-      warn(<<-WARNING)
+  def warn_no_ffmpeg
+    mcount("warn.activestorage.no_binaries.stack-#{stack}")
+    mcount("warn.activestorage.no_binaries.all")
+    warn(<<-WARNING)
 We detected that some binary dependencies required to
 use all the preview features of Active Storage are not
 present on this system.
@@ -88,5 +89,5 @@ For more information please see:
   https://devcenter.heroku.com/articles/active-storage-on-heroku
 
 WARNING
-    end
+  end
 end

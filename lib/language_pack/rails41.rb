@@ -29,6 +29,7 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
   end
 
   private
+
   def app_secret
     key = "secret_key_base"
 

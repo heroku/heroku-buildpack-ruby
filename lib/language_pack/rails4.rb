@@ -24,7 +24,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   def default_process_types
     instrument "rails4.default_process_types" do
       super.merge({
-        "web"     => "bin/rails server -p $PORT -e $RAILS_ENV",
+        "web" => "bin/rails server -p $PORT -e $RAILS_ENV",
         "console" => "bin/rails console"
       })
     end
@@ -50,7 +50,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
       plugins = ["rails_serve_static_assets", "rails_stdout_logging"].reject { |plugin| bundler.has_gem?(plugin) }
       return false if plugins.empty?
 
-    warn <<-WARNING
+      warn <<-WARNING
 Include 'rails_12factor' gem to enable all platform features
 See https://devcenter.heroku.com/articles/rails-integration-gems for more information.
 WARNING

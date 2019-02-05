@@ -1,4 +1,4 @@
-#module LanguagePack::Test::Ruby
+# module LanguagePack::Test::Ruby
 class LanguagePack::Ruby
   def compile
     instrument 'ruby.test.compile' do
@@ -22,8 +22,9 @@ class LanguagePack::Ruby
   end
 
   private
+
   def db_prepare_test_rake_tasks
-    ["db:schema:load", "db:migrate"].map {|name| rake.task(name) }
+    ["db:schema:load", "db:migrate"].map { |name| rake.task(name) }
   end
 
   def prepare_tests

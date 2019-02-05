@@ -26,18 +26,18 @@ class LanguagePack::Base
   # changes directory to the build_path
   # @param [String] the path of the build dir
   # @param [String] the path of the cache dir this is nil during detect and release
-  def initialize(build_path, cache_path=nil)
-     self.class.instrument "base.initialize" do
-      @build_path    = build_path
-      @stack         = ENV.fetch("STACK")
-      @cache         = LanguagePack::Cache.new(cache_path) if cache_path
-      @metadata      = LanguagePack::Metadata.new(@cache)
-      @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
-      @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
-      @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
+  def initialize(build_path, cache_path = nil)
+    self.class.instrument "base.initialize" do
+     @build_path    = build_path
+     @stack         = ENV.fetch("STACK")
+     @cache         = LanguagePack::Cache.new(cache_path) if cache_path
+     @metadata      = LanguagePack::Metadata.new(@cache)
+     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
+     @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
+     @fetchers      = { :buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
 
-      Dir.chdir build_path
-    end
+     Dir.chdir build_path
+   end
   end
 
   def instrument(*args, &block)
@@ -48,7 +48,7 @@ class LanguagePack::Base
     LanguagePack::Instrument.instrument(*args, &block)
   end
 
-  def self.===(build_path)
+  def self.===(_build_path)
     raise "must subclass"
   end
 
@@ -118,8 +118,6 @@ class LanguagePack::Base
     warn msg
   end
 
-
-
   # log output
   # Ex. log "some_message", "here", :someattr="value"
   def log(*args)
@@ -162,7 +160,7 @@ private ##################################
   end
 
   def set_env_override(key, val)
-    add_to_profiled %{export #{key}="#{val.gsub('"','\"')}"}
+    add_to_profiled %{export #{key}="#{val.gsub('"', '\"')}"}
   end
 
   def add_to_export(string)
@@ -177,7 +175,7 @@ private ##################################
   end
 
   def set_export_override(key, val)
-    add_to_export %{export #{key}="#{val.gsub('"','\"')}"}
+    add_to_export %{export #{key}="#{val.gsub('"', '\"')}"}
   end
 
   def log_internal(*args)
@@ -190,7 +188,7 @@ private ##################################
       case arg
         when Float then "%0.2f" % arg
         when Array then build_log_message(arg)
-        when Hash  then arg.map { |k,v| "#{k}=#{build_log_message([v])}" }.join(" ")
+        when Hash  then arg.map { |k, v| "#{k}=#{build_log_message([v])}" }.join(" ")
         else arg
       end
     end.join(" ")

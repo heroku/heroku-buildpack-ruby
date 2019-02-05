@@ -37,7 +37,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.bundler
   end
 
-  def initialize(build_path, cache_path=nil)
+  def initialize(build_path, cache_path = nil)
     super(build_path, cache_path)
     @fetchers[:mri]    = LanguagePack::Fetcher.new(VENDOR_URL, @stack)
     @fetchers[:rbx]    = LanguagePack::Fetcher.new(RBX_BASE_URL, @stack)
@@ -72,7 +72,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   def default_process_types
     instrument "ruby.default_process_types" do
       {
-        "rake"    => "bundle exec rake",
+        "rake" => "bundle exec rake",
         "console" => "bundle exec irb"
       }
     end
@@ -124,12 +124,12 @@ WARNING
 private
 
   def warn_bundler_upgrade
-    old_bundler_version  = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
+    old_bundler_version = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
 
     if old_bundler_version && old_bundler_version != BUNDLER_VERSION
       puts(<<-WARNING)
-Your app was upgraded to bundler #{ BUNDLER_VERSION }.
-Previously you had a successful deploy with bundler #{ old_bundler_version }.
+Your app was upgraded to bundler #{BUNDLER_VERSION}.
+Previously you had a successful deploy with bundler #{old_bundler_version}.
 
 If you see problems related to the bundler version please refer to:
 https://devcenter.heroku.com/articles/bundler-version
@@ -212,7 +212,7 @@ WARNING
       last_version      = @metadata.read(last_version_file).chomp if @metadata.exists?(last_version_file)
 
       @ruby_version = LanguagePack::RubyVersion.new(bundler.ruby_version,
-        is_new:       new_app,
+        is_new: new_app,
         last_version: last_version)
       return @ruby_version
     end
@@ -337,13 +337,13 @@ SHELL
   # sets up the profile.d script for this buildpack
   def setup_profiled
     instrument 'setup_profiled' do
-      profiled_path = [binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":")]
+      profiled_path = [binstubs_relative_paths.map { |path| "$HOME/#{path}" }.join(":")]
       profiled_path << "vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
       set_env_default  "LANG",     "en_US.UTF-8"
       set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
-      set_env_override "PATH",      profiled_path.join(":")
+      set_env_override "PATH", profiled_path.join(":")
 
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
 
@@ -474,7 +474,7 @@ ERROR
       ENV["PATH"] = "#{File.expand_path(ruby_install_binstub_path)}:#{ENV["PATH"]}"
 
       if ruby_version.jruby?
-        ENV['JAVA_OPTS']  = default_java_opts
+        ENV['JAVA_OPTS'] = default_java_opts
       end
     end
   end
@@ -483,7 +483,7 @@ ERROR
   def install_bundler_in_app
     instrument 'ruby.install_language_pack_gems' do
       FileUtils.mkdir_p(slug_vendor_base)
-      Dir.chdir(slug_vendor_base) do |dir|
+      Dir.chdir(slug_vendor_base) do |_dir|
         `cp -R #{bundler.bundler_path}/. .`
       end
 
@@ -502,8 +502,8 @@ ERROR
   # vendors binaries into the slug
   def install_binaries
     instrument 'ruby.install_binaries' do
-      binaries.each {|binary| install_binary(binary) }
-      Dir["bin/*"].each {|path| run("chmod +x #{path}") }
+      binaries.each { |binary| install_binary(binary) }
+      Dir["bin/*"].each { |path| run("chmod +x #{path}") }
     end
   end
 
@@ -514,8 +514,8 @@ ERROR
     topic "Installing #{name}"
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
-    Dir.chdir(bin_dir) do |dir|
-      if name.match(/^node\-/)
+    Dir.chdir(bin_dir) do |_dir|
+      if name =~ /^node\-/
         @node_installer.install
         # need to set PATH here b/c `node-gyp` can change the CWD, but still depends on executing node.
         # the current PATH is relative, but it needs to be absolute for this.
@@ -523,7 +523,7 @@ ERROR
         node_bin_path = File.absolute_path(".")
         # this needs to be set after so other binaries in bin/ don't take precedence"
         ENV["PATH"] = "#{ENV["PATH"]}:#{node_bin_path}"
-      elsif name.match(/^yarn\-/)
+      elsif name =~ /^yarn\-/
         FileUtils.mkdir_p("../vendor")
         Dir.chdir("../vendor") do |vendor_dir|
           @yarn_installer.install
@@ -552,7 +552,7 @@ ERROR
       if false # load_default_cache?
         puts "New app detected loading default bundler cache"
         patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").chomp
-        cache_name  = "#{LanguagePack::RubyVersion::DEFAULT_VERSION}-p#{patchlevel}-default-cache"
+        cache_name = "#{LanguagePack::RubyVersion::DEFAULT_VERSION}-p#{patchlevel}-default-cache"
         @fetchers[:buildpack].fetch_untar("#{cache_name}.tgz")
       end
     end
@@ -682,14 +682,14 @@ WARNING
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
           env_vars       = {
-            "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
-            "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
-            "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
-            "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
-            "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
-            "RUBYOPT"                       => syck_hack,
+            "BUNDLE_GEMFILE" => "#{pwd}/Gemfile",
+            "BUNDLE_CONFIG" => "#{pwd}/.bundle/config",
+            "CPATH" => noshellescape("#{yaml_include}:$CPATH"),
+            "CPPATH" => noshellescape("#{yaml_include}:$CPPATH"),
+            "LIBRARY_PATH" => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
+            "RUBYOPT" => syck_hack,
             "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true",
-            "BUNDLE_DISABLE_VERSION_CHECK"  => "true"
+            "BUNDLE_DISABLE_VERSION_CHECK" => "true"
           }
           env_vars["JAVA_HOME"]                    = noshellescape("#{pwd}/$JAVA_HOME") if ruby_version.jruby?
           env_vars["BUNDLER_LIB_PATH"]             = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
@@ -724,7 +724,7 @@ WARNING
           log "bundle", :status => "failure"
           error_message = "Failed to install gems via Bundler."
           puts "Bundler Output: #{bundler_output}"
-          if bundler_output.match(/An error occurred while installing sqlite3/)
+          if bundler_output =~ /An error occurred while installing sqlite3/
             mcount "fail.sqlite3"
             error_message += <<-ERROR
 
@@ -733,7 +733,7 @@ https://devcenter.heroku.com/articles/sqlite3
             ERROR
           end
 
-          if bundler_output.match(/but your Gemfile specified/)
+          if bundler_output =~ /but your Gemfile specified/
             mcount "fail.ruby_version_mismatch"
             error_message += <<-ERROR
 
@@ -785,7 +785,7 @@ https://devcenter.heroku.com/articles/ruby-versions#your-ruby-version-is-x-but-y
   def create_database_yml
     instrument 'ruby.create_database_yml' do
       return false unless File.directory?("config")
-      return false if  bundler.has_gem?('activerecord') && bundler.gem_version('activerecord') >= Gem::Version.new('4.1.0.beta1')
+      return false if bundler.has_gem?('activerecord') && bundler.gem_version('activerecord') >= Gem::Version.new('4.1.0.beta1')
 
       log("create_database_yml") do
         topic("Writing config/database.yml to read from DATABASE_URL")
@@ -876,16 +876,16 @@ params = CGI.parse(uri.query || "")
 
   # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
   # @param [block] block to be executed in the GIT_DIR free context
-  def allow_git(&blk)
+  def allow_git()
     git_dir = ENV.delete("GIT_DIR") # can mess with bundler
-    blk.call
+    yield
     ENV["GIT_DIR"] = git_dir
   end
 
   # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
   def add_dev_database_addon
-    pg_adapters.any? {|a| bundler.has_gem?(a) } ? ['heroku-postgresql'] : []
+    pg_adapters.any? { |a| bundler.has_gem?(a) } ? ['heroku-postgresql'] : []
   end
 
   def pg_adapters
@@ -957,7 +957,6 @@ params = CGI.parse(uri.query || "")
 
   def run_assets_precompile_rake_task
     instrument 'ruby.run_assets_precompile_rake_task' do
-
       precompile = rake.task("assets:precompile")
       return true unless precompile.is_defined?
 
@@ -975,7 +974,7 @@ params = CGI.parse(uri.query || "")
     mcount "fail.assets_precompile"
     log "assets_precompile", :status => "failure"
     msg = "Precompiling assets failed.\n"
-    if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
+    if output =~ /(127\.0\.0\.1)|(org\.postgresql\.util)/
       msg << "Attempted to access a nonexistent database:\n"
       msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
     end

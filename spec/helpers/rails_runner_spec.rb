@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe "Rails Runner" do
   it "config objects build propperly formatted commands" do
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new
-    local_storage = rails_runner.detect("active_storage.service")
+    rails_runner = LanguagePack::Helpers::RailsRunner.new
+    rails_runner.detect("active_storage.service")
 
     expected = 'rails runner "begin; puts %Q{heroku.detecting.config.for.active_storage.service=#{Rails.application.config.try(:active_storage).try(:service)}}; rescue => e; end;"'
     expect(rails_runner.command).to eq(expected)
@@ -15,8 +15,9 @@ describe "Rails Runner" do
   end
 
   it "calls run through child object" do
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new
+    rails_runner = LanguagePack::Helpers::RailsRunner.new
     def rails_runner.call; @called ||= 0 ; @called += 1; end
+
     def rails_runner.called; @called; end
 
     local_storage = rails_runner.detect("active_storage.service")
@@ -34,9 +35,9 @@ describe "Rails Runner" do
         mock_rails_runner
         expect(File.executable?("bin/rails")).to eq(true)
 
-        rails_runner  = LanguagePack::Helpers::RailsRunner.new
-        local_storage = rails_runner.detect("active_storage.service")
-        local_storage = rails_runner.detect("foo.bar")
+        rails_runner = LanguagePack::Helpers::RailsRunner.new
+        rails_runner.detect("active_storage.service")
+        rails_runner.detect("foo.bar")
 
         expect(rails_runner.output).to match("heroku.detecting.config.for.active_storage.service=active_storage.service")
         expect(rails_runner.output).to match("heroku.detecting.config.for.foo.bar=foo.bar")
@@ -51,8 +52,8 @@ describe "Rails Runner" do
         mock_rails_runner("pid = Process.spawn('sleep 5'); Process.wait(pid)")
 
         diff = time_it do
-          rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
-          local_storage = rails_runner.detect("active_storage.service")
+          rails_runner = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
+          rails_runner.detect("active_storage.service")
           expect(rails_runner.success?).to eq(false)
           expect(rails_runner.timeout?).to eq(true)
         end
@@ -84,7 +85,7 @@ describe "Rails Runner" do
   end
 
   def mock_rails_runner(try_code = "")
-        executable_contents = <<-FILE
+    executable_contents = <<-FILE
 #!/usr/bin/env ruby
 require 'ostruct'
 
@@ -129,4 +130,3 @@ FILE
     FileUtils.touch("buildpack.log")
   end
 end
-

@@ -67,7 +67,7 @@ class LanguagePack::Helpers::JvmInstaller
           fetch_untar(JVM_1_7_25_PATH)
         end
       else
-      fetch_env_untar('JDK_URL_1_8') || fetch_untar(JVM_1_8_PATH, "openjdk-8")
+        fetch_env_untar('JDK_URL_1_8') || fetch_untar(JVM_1_8_PATH, "openjdk-8")
       end
     else
       fetch_untar("openjdk#{jvm_version}.tar.gz", "openjdk-#{jvm_version}")
@@ -82,7 +82,7 @@ class LanguagePack::Helpers::JvmInstaller
     install_pgconfig_jar
   end
 
-  def fetch_untar(jvm_path, jvm_version=nil)
+  def fetch_untar(jvm_path, jvm_version = nil)
     topic "Installing JVM: #{jvm_version || jvm_path}"
 
     FileUtils.mkdir_p(@vendor_dir)
@@ -104,13 +104,13 @@ EOF
     path = Pathname.new(val)
     jvm_version = path.basename.to_s
     base_url = val[0, val.index(jvm_version)]
-    @fetcher =  LanguagePack::Fetcher.new(base_url)
+    @fetcher = LanguagePack::Fetcher.new(base_url)
     fetch_untar(jvm_version)
     true
   end
 
   def install_pgconfig_jar
-    jdk_ext_dir="#{@vendor_dir}/jre/lib/ext"
+    jdk_ext_dir = "#{@vendor_dir}/jre/lib/ext"
     if Dir.exist?(jdk_ext_dir)
       Dir.chdir(jdk_ext_dir) do
         @pg_config_jar_fetcher.fetch(PG_CONFIG_JAR)

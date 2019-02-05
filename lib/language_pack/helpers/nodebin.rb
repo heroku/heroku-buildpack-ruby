@@ -14,7 +14,7 @@ class LanguagePack::Helpers::Nodebin
     version = "10.14.1"
     {
       "number" => version,
-      "url"    => "https://s3.amazonaws.com/heroku-nodebin/node/release/linux-x64/node-v#{version}-linux-x64.tar.gz"
+      "url" => "https://s3.amazonaws.com/heroku-nodebin/node/release/linux-x64/node-v#{version}-linux-x64.tar.gz"
     }
   end
 
@@ -22,7 +22,7 @@ class LanguagePack::Helpers::Nodebin
     version = "1.12.3"
     {
       "number" => version,
-      "url"    => "https://s3.amazonaws.com/heroku-nodebin/yarn/release/yarn-v#{version}.tar.gz"
+      "url" => "https://s3.amazonaws.com/heroku-nodebin/yarn/release/yarn-v#{version}.tar.gz"
     }
   end
 
@@ -34,7 +34,7 @@ class LanguagePack::Helpers::Nodebin
     hardcoded_node_lts # node("latest?range=6.x")
   end
 
-  def self.yarn(q)
+  def self.yarn(_q)
     hardcoded_yarn # query("yarn/linux-x64/#{q}")
   end
 end

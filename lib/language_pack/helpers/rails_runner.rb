@@ -34,7 +34,7 @@ class LanguagePack::Helpers::RailsRunner
   #    config.to_command # => "puts %Q{heroku.detecting.config.for.active_storage.service=Rails.application.config.try(:active_storage).try(:service)}; "
   #
   class RailsConfig
-    def initialize(config, rails_runner, options={})
+    def initialize(config, rails_runner, options = {})
       @config       = config
       @rails_runner = rails_runner
       @debug        = options[:debug]
@@ -104,38 +104,37 @@ class LanguagePack::Helpers::RailsRunner
   end
 
   private
-    def call
-      topic("Detecting rails configuration")
-      puts "$ #{command}" if @debug
-      out = execute_command!
-      puts out if @debug
-      out
+
+  def call
+    topic("Detecting rails configuration")
+    puts "$ #{command}" if @debug
+    out = execute_command!
+    puts out if @debug
+    out
+  end
+
+  def execute_command!
+    process = ProcessSpawn.new(command,
+      user_env: true,
+      timeout: @timeout_val,
+      file: "./.heroku/ruby/config_detect/rails.txt")
+
+    @success      = process.success?
+    @did_time_out = process.timeout?
+    out           = process.output
+
+    if timeout?
+      message = String.new("Detecting rails configuration timeout\n")
+      message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
+      warn(message)
+      mcount("warn.rails.runner.timeout")
+    elsif !@success
+      message = String.new("Detecting rails configuration failed\n")
+      message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
+      warn(message)
+      mcount("warn.rails.runner.fail")
     end
 
-    def execute_command!
-      process = ProcessSpawn.new(command,
-        user_env: true,
-        timeout:  @timeout_val,
-        file:     "./.heroku/ruby/config_detect/rails.txt"
-      )
-
-      @success      = process.success?
-      @did_time_out = process.timeout?
-      out           = process.output
-
-      if timeout?
-        message = String.new("Detecting rails configuration timeout\n")
-        message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
-        warn(message)
-        mcount("warn.rails.runner.timeout")
-      elsif !@success
-        message = String.new("Detecting rails configuration failed\n")
-        message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
-        warn(message)
-        mcount("warn.rails.runner.fail")
-      end
-
-      return out
-    end
+    return out
+  end
 end
-

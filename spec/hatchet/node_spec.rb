@@ -28,4 +28,3 @@ describe "Node" do
     end
   end
 end
-

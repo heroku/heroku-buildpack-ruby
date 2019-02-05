@@ -30,7 +30,7 @@ def execute_command(command)
 end
 
 # $ bin/test BUILD_DIR ENV_DIR ARTIFACT_DIR
-build_dir, env_dir, artifact_dir = ARGV
+build_dir, env_dir, _artifact_dir = ARGV
 LanguagePack::ShellHelpers.initialize_env(env_dir)
 
 # The `ruby_test-compile` program installs a version of Ruby for the
@@ -63,4 +63,3 @@ execute_test(
     "rake test"
   end
 )
-

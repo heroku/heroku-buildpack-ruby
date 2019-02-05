@@ -16,7 +16,7 @@ class LanguagePack::Helpers::RakeRunner
 
     def initialize(task, options = {})
       @task            = task
-      @default_options = {user_env: true}.merge(options)
+      @default_options = { user_env: true }.merge(options)
       @status          = :nil
       @output          = ""
     end
@@ -46,8 +46,6 @@ class LanguagePack::Helpers::RakeRunner
 
       puts "Running: rake #{task}" unless quiet_option
       time = Benchmark.realtime do
-        cmd = "rake #{task}"
-
         if quiet_option
           self.output = run("rake #{task}", options)
         else
@@ -68,7 +66,7 @@ class LanguagePack::Helpers::RakeRunner
   def initialize(has_rake_gem = true)
     @has_rake_gem = has_rake_gem
     if !has_rake_installed?
-      @rake_tasks    = ""
+      @rake_tasks = ""
       @rakefile_can_load = false
     end
   end
@@ -112,7 +110,7 @@ class LanguagePack::Helpers::RakeRunner
 
   def task_defined?(task)
     return false if cannot_load_rakefile?
-    @task_available ||= Hash.new {|hash, key| hash[key] = @rake_tasks.match(/\s#{key}\s/) }
+    @task_available ||= Hash.new { |hash, key| hash[key] = @rake_tasks.match(/\s#{key}\s/) }
     @task_available[task]
   end
 
@@ -138,6 +136,6 @@ class LanguagePack::Helpers::RakeRunner
 private
 
   def has_rakefile?
-    %W{ Rakefile rakefile  rakefile.rb Rakefile.rb}.detect {|file| File.exist?(file) }
+    %W{ Rakefile rakefile  rakefile.rb Rakefile.rb}.detect { |file| File.exist?(file) }
   end
 end
