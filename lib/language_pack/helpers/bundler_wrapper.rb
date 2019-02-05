@@ -15,11 +15,22 @@ require 'language_pack/fetcher'
 #   bundler.dir_name                => "bundler-1.15.2"
 #   bundler.has_gem?("railties")    => true
 #   bundler.gem_version("railties") => "5.2.2"
+#   bundler.clean
 #
 # Also used to determine the version of Ruby that a project is using
 # based on `bundle platform --ruby`
 #
 #   bundler.ruby_version # => "ruby-2.5.1"
+#   bundler.clean
+#
+# IMPORTANT: Calling `BundlerWrapper#install` on this class mutates the environment variable
+# ENV['BUNDLE_GEMFILE']. If you're calling in a test context (or anything outside)
+# of an isolated dyno, you must call `BundlerWrapper#clean`. To reset the environment
+# variable:
+#
+#   bundler = LanguagePack::Helpers::BundlerWrapper.new
+#   bundler.install
+#   bundler.clean # <========== IMPORTANT =============
 #
 class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
@@ -44,13 +55,13 @@ class LanguagePack::Helpers::BundlerWrapper
       version_hash.keys.each do |v|
         msg << "  - `#{v}.x`\n"
       end
-      msg << "\nTo use another version of bundler, update your `Gemfile.lock` to poin\n"
-      msg << "to as supported version. For example:\n"
+      msg << "\nTo use another version of bundler, update your `Gemfile.lock` to point\n"
+      msg << "to a supported version. For example:\n"
       msg << "\n"
       msg << "```\n"
       msg << "BUNDLED WITH\n"
-      msg << "   #{version_hash["1"]}"
-      msg << "```"
+      msg << "   #{version_hash["1"]}\n"
+      msg << "```\n"
       super msg
     end
   end
@@ -67,11 +78,12 @@ class LanguagePack::Helpers::BundlerWrapper
     @bundler_path         = options[:bundler_path] || @bundler_tmp.join(dir_name)
     @bundler_tar          = options[:bundler_tar]  || "bundler/#{dir_name}.tgz"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
-    ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
     @path                 = Pathname.new("#{@bundler_path}/gems/#{dir_name}/lib")
   end
 
   def install
+    ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
+
     fetch_bundler
     $LOAD_PATH << @path
     require "bundler"
