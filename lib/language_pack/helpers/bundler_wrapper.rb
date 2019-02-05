@@ -1,5 +1,9 @@
 require 'language_pack/fetcher'
 
+# This class is responsible for installing and maintaining a
+# reference to bundler. It contains access to bundler internals
+# that are used to introspect a project such as detecting presence
+# of gems and their versions.
 class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
@@ -11,24 +15,20 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  VENDOR_URL         = LanguagePack::Base::VENDOR_URL                # coupling
-  DEFAULT_FETCHER    = LanguagePack::Fetcher.new(VENDOR_URL)         # coupling
-  BUNDLER_DIR_NAME   = LanguagePack::Ruby::BUNDLER_GEM_PATH          # coupling
-  BUNDLER_PATH       = File.expand_path("../../../../tmp/#{BUNDLER_DIR_NAME}", __FILE__)
-  GEMFILE_PATH       = Pathname.new "./Gemfile"
-
-  attr_reader   :bundler_path
+  attr_reader :bundler_path
 
   def initialize(options = {})
-    @fetcher              = options[:fetcher]      || DEFAULT_FETCHER
+    @version              = "1.15.2"
     @bundler_tmp          = Dir.mktmpdir
-    @bundler_path         = options[:bundler_path] || File.join(@bundler_tmp, "#{BUNDLER_DIR_NAME}")
-    @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
-    @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
+    @fetcher              = options[:fetcher]      || LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
+    @bundler_path         = options[:bundler_path] || File.join(@bundler_tmp, "#{dir_name}")
+    @gemfile_path         = options[:gemfile_path] || Pathname.new("./Gemfile")
+    @bundler_tar          = options[:bundler_tar]  || "#{dir_name}.tgz"
+
     @gemfile_lock_path    = "#{@gemfile_path}.lock"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
     ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
-    @path                 = Pathname.new "#{@bundler_path}/gems/#{BUNDLER_DIR_NAME}/lib"
+    @path                 = Pathname.new "#{@bundler_path}/gems/#{dir_name}/lib"
   end
 
   def install
@@ -42,7 +42,7 @@ class LanguagePack::Helpers::BundlerWrapper
     ENV['BUNDLE_GEMFILE'] = @orig_bundle_gemfile
     FileUtils.remove_entry_secure(@bundler_tmp) if Dir.exist?(@bundler_tmp)
 
-    if LanguagePack::Ruby::BUNDLER_VERSION  == "1.7.12"
+    if version  == "1.7.12"
       # Hack to cleanup after pre 1.8 versions of bundler. See https://github.com/bundler/bundler/pull/3277/
       Dir["#{Dir.tmpdir}/bundler*"].each do |dir|
         FileUtils.remove_entry_secure(dir) if Dir.exist?(dir) && File.stat(dir).writable?
@@ -71,7 +71,7 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def specs
-    @specs     ||= lockfile_parser.specs.each_with_object({}) {|spec, hash| hash[spec.name] = spec }
+    @specs ||= lockfile_parser.specs.each_with_object({}) {|spec, hash| hash[spec.name] = spec }
   end
 
   def platforms
@@ -79,7 +79,11 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def version
-    Bundler::VERSION
+    @version
+  end
+
+  def dir_name
+    "bundler-#{version}"
   end
 
   def instrument(*args, &block)
@@ -89,7 +93,7 @@ class LanguagePack::Helpers::BundlerWrapper
   def ruby_version
     instrument 'detect_ruby_version' do
       env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
-              "RUBYLIB"  => File.join(bundler_path, "gems", BUNDLER_DIR_NAME, "lib"),
+              "RUBYLIB"  => File.join(bundler_path, "gems", dir_name, "lib"),
               "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
               "BUNDLE_DISABLE_VERSION_CHECK" => "true"
             }
