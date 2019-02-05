@@ -76,6 +76,8 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.4.0)
     ruby-progressbar (1.10.0)
+    standard (0.0.26)
+      rubocop (>= 0.63)
     thor (0.20.0)
     thread_safe (0.3.6)
     threaded (0.0.4)
@@ -99,7 +101,7 @@ DEPENDENCIES
   rspec-core
   rspec-expectations
   rspec-retry
-  rubocop
+  standard
 
 BUNDLED WITH
    1.17.2

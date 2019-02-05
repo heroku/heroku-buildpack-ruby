@@ -1,7 +1,7 @@
 # module LanguagePack::Test::Ruby
 class LanguagePack::Ruby
   def compile
-    instrument 'ruby.test.compile' do
+    instrument "ruby.test.compile" do
       new_app?
       Dir.chdir(build_path)
       remove_vendor_bundle

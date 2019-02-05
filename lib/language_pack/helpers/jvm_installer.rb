@@ -37,11 +37,13 @@ class LanguagePack::Helpers::JvmInstaller
 
   def system_properties
     props = {}
-    File.read(SYS_PROPS_FILE).split("\n").each do |line|
-      key = line.split("=").first
-      val = line.split("=").last
-      props[key] = val
-    end if File.exists?(SYS_PROPS_FILE)
+    if File.exist?(SYS_PROPS_FILE)
+      File.read(SYS_PROPS_FILE).split("\n").each do |line|
+        key = line.split("=").first
+        val = line.split("=").last
+        props[key] = val
+      end
+    end
     props
   end
 
@@ -51,14 +53,14 @@ class LanguagePack::Helpers::JvmInstaller
       return
     end
 
-    jvm_version = system_properties['java.runtime.version']
+    jvm_version = system_properties["java.runtime.version"]
     case jvm_version
     when "1.9", "9"
-      fetch_env_untar('JDK_URL_1_9') || fetch_untar(JVM_1_9_PATH, "openjdk-9")
+      fetch_env_untar("JDK_URL_1_9") || fetch_untar(JVM_1_9_PATH, "openjdk-9")
     when "1.7", "7"
-      fetch_env_untar('JDK_URL_1_7') || fetch_untar(JVM_1_7_PATH, "openjdk-7")
+      fetch_env_untar("JDK_URL_1_7") || fetch_untar(JVM_1_7_PATH, "openjdk-7")
     when "1.6", "6"
-      fetch_env_untar('JDK_URL_1_6') || fetch_untar(JVM_1_6_PATH, "openjdk-6")
+      fetch_env_untar("JDK_URL_1_6") || fetch_untar(JVM_1_6_PATH, "openjdk-6")
     when "1.8", "8", nil
       if @stack == "cedar"
         if forced || Gem::Version.new(jruby_version) >= Gem::Version.new("1.7.4")
@@ -67,7 +69,7 @@ class LanguagePack::Helpers::JvmInstaller
           fetch_untar(JVM_1_7_25_PATH)
         end
       else
-        fetch_env_untar('JDK_URL_1_8') || fetch_untar(JVM_1_8_PATH, "openjdk-8")
+        fetch_env_untar("JDK_URL_1_8") || fetch_untar(JVM_1_8_PATH, "openjdk-8")
       end
     else
       fetch_untar("openjdk#{jvm_version}.tar.gz", "openjdk-#{jvm_version}")

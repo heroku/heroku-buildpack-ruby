@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Rails Runner" do
   it "config objects build propperly formatted commands" do
@@ -16,9 +16,14 @@ describe "Rails Runner" do
 
   it "calls run through child object" do
     rails_runner = LanguagePack::Helpers::RailsRunner.new
-    def rails_runner.call; @called ||= 0 ; @called += 1; end
+    def rails_runner.call
+      @called ||= 0
+      @called += 1
+    end
 
-    def rails_runner.called; @called; end
+    def rails_runner.called
+      @called
+    end
 
     local_storage = rails_runner.detect("active_storage.service")
     local_storage.success?
@@ -51,12 +56,12 @@ describe "Rails Runner" do
       Dir.chdir(tmpdir) do
         mock_rails_runner("pid = Process.spawn('sleep 5'); Process.wait(pid)")
 
-        diff = time_it do
+        diff = time_it {
           rails_runner = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
           rails_runner.detect("active_storage.service")
           expect(rails_runner.success?).to eq(false)
           expect(rails_runner.timeout?).to eq(true)
-        end
+        }
 
         expect(diff < 1).to eq(true), "expected time difference #{diff} to be less than 1 second, but was longer"
       end
@@ -81,7 +86,7 @@ describe "Rails Runner" do
   def time_it
     start = Time.now
     yield
-    return Time.now - start
+    Time.now - start
   end
 
   def mock_rails_runner(try_code = "")
@@ -119,11 +124,11 @@ end
 
 ARGV.shift           # remove "runner"
 eval(ARGV.join(" ")) # Execute command passed in
-FILE
+    FILE
     FileUtils.mkdir("bin")
     File.open("bin/rails", "w") { |f| f << executable_contents }
-    File.chmod(0777, "bin/rails")
-    ENV["PATH"] = "./bin/:#{ENV['PATH']}" unless ENV["PATH"].include?("./bin:")
+    File.chmod(0o777, "bin/rails")
+    ENV["PATH"] = "./bin/:#{ENV["PATH"]}" unless ENV["PATH"].include?("./bin:")
 
     # BUILDPACK_LOG_FILE support for logging
     FileUtils.mkdir("tmp")

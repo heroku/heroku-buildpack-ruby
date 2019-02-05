@@ -1,4 +1,4 @@
-require 'securerandom'
+require "securerandom"
 require "language_pack"
 require "language_pack/rails42"
 
@@ -6,16 +6,16 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
   # @return [Boolean] true if it's a Rails 5.x app
   def self.use?
     instrument "rails5.use" do
-      rails_version = bundler.gem_version('railties')
+      rails_version = bundler.gem_version("railties")
       return false unless rails_version
-      is_rails = rails_version >= Gem::Version.new('5.x') &&
-                 rails_version <  Gem::Version.new('6.0.0')
+      is_rails = rails_version >= Gem::Version.new("5.x") &&
+                 rails_version <  Gem::Version.new("6.0.0")
       return is_rails
     end
   end
 
   def setup_profiled
-    instrument 'setup_profiled' do
+    instrument "setup_profiled" do
       super
       set_env_default "RAILS_LOG_TO_STDOUT", "enabled"
     end
@@ -23,7 +23,7 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
 
   def default_config_vars
     super.merge({
-      "RAILS_LOG_TO_STDOUT" => "enabled"
+      "RAILS_LOG_TO_STDOUT" => "enabled",
     })
   end
 
@@ -49,7 +49,7 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
 
   def has_ffmpeg?
     run("which ffmpeg")
-    return $?.success?
+    $?.success?
   end
 
   def needs_ffmpeg?
@@ -74,7 +74,7 @@ configuration.
 For more information can be found in this article:
   https://devcenter.heroku.com/articles/active-storage-on-heroku
 
-WARNING
+    WARNING
   end
 
   def warn_no_ffmpeg
@@ -88,6 +88,6 @@ present on this system.
 For more information please see:
   https://devcenter.heroku.com/articles/active-storage-on-heroku
 
-WARNING
+    WARNING
   end
 end

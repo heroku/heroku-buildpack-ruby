@@ -8,12 +8,12 @@ group :development, :test do
   gem "excon"
   gem "rake"
   gem "parallel_tests"
-  gem 'rspec-retry'
+  gem "rspec-retry"
   gem "netrc"
   gem "git", github: "hone/ruby-git", branch: "master"
-  gem 'json', '~> 2.0.2'
-  gem 'ci-queue'
-  gem 'redis'
+  gem "json", "~> 2.0.2"
+  gem "ci-queue"
+  gem "redis"
 end
 
-gem 'rubocop'
+gem "standard"

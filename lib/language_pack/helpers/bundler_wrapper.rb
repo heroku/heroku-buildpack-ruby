@@ -1,4 +1,4 @@
-require 'language_pack/fetcher'
+require "language_pack/fetcher"
 
 class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
@@ -22,12 +22,12 @@ class LanguagePack::Helpers::BundlerWrapper
   def initialize(options = {})
     @fetcher              = options[:fetcher] || DEFAULT_FETCHER
     @bundler_tmp          = Dir.mktmpdir
-    @bundler_path         = options[:bundler_path] || File.join(@bundler_tmp, "#{BUNDLER_DIR_NAME}")
+    @bundler_path         = options[:bundler_path] || File.join(@bundler_tmp, BUNDLER_DIR_NAME.to_s)
     @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
     @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
     @gemfile_lock_path    = "#{@gemfile_path}.lock"
-    @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
-    ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
+    @orig_bundle_gemfile  = ENV["BUNDLE_GEMFILE"]
+    ENV["BUNDLE_GEMFILE"] = @gemfile_path.to_s
     @path                 = Pathname.new "#{@bundler_path}/gems/#{BUNDLER_DIR_NAME}/lib"
   end
 
@@ -39,7 +39,7 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def clean
-    ENV['BUNDLE_GEMFILE'] = @orig_bundle_gemfile
+    ENV["BUNDLE_GEMFILE"] = @orig_bundle_gemfile
     FileUtils.remove_entry_secure(@bundler_tmp) if Dir.exist?(@bundler_tmp)
 
     if LanguagePack::Ruby::BUNDLER_VERSION == "1.7.12"
@@ -87,11 +87,11 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def ruby_version
-    instrument 'detect_ruby_version' do
-      env = { "PATH" => "#{bundler_path}/bin:#{ENV['PATH']}",
-              "RUBYLIB" => File.join(bundler_path, "gems", BUNDLER_DIR_NAME, "lib"),
-              "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
-              "BUNDLE_DISABLE_VERSION_CHECK" => "true" }
+    instrument "detect_ruby_version" do
+      env = {"PATH" => "#{bundler_path}/bin:#{ENV["PATH"]}",
+             "RUBYLIB" => File.join(bundler_path, "gems", BUNDLER_DIR_NAME, "lib"),
+             "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
+             "BUNDLE_DISABLE_VERSION_CHECK" => "true",}
       command = "bundle platform --ruby"
 
       # Silently check for ruby version
@@ -102,7 +102,7 @@ class LanguagePack::Helpers::BundlerWrapper
       if output =~ /No ruby version specified/
         ""
       else
-        output.chomp.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
+        output.chomp.sub("(", "").sub(")", "").sub(/(p-?\d+)/, ' \1').split.join("-")
       end
     end
   end
@@ -114,8 +114,8 @@ class LanguagePack::Helpers::BundlerWrapper
   private
 
   def fetch_bundler
-    instrument 'fetch_bundler' do
-      return true if Dir.exists?(bundler_path)
+    instrument "fetch_bundler" do
+      return true if Dir.exist?(bundler_path)
       FileUtils.mkdir_p(bundler_path)
       Dir.chdir(bundler_path) do
         @fetcher.fetch_untar(@bundler_tar)
@@ -125,7 +125,7 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def parse_gemfile_lock
-    instrument 'parse_bundle' do
+    instrument "parse_bundle" do
       gemfile_contents = File.read(@gemfile_lock_path)
       Bundler::LockfileParser.new(gemfile_contents)
     end

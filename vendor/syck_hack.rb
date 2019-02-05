@@ -10,8 +10,8 @@
 # class no matter if the full yaml library has loaded or not.
 #
 
-$: << ENV['BUNDLER_LIB_PATH'] if ENV['BUNDLER_LIB_PATH']
-require 'bundler/psyched_yaml'
+$: << ENV["BUNDLER_LIB_PATH"] if ENV["BUNDLER_LIB_PATH"]
+require "bundler/psyched_yaml"
 
 module YAML
   # In newer 1.9.2, there is a Syck toplevel constant instead of it
@@ -35,7 +35,7 @@ module YAML
   module Syck
     class DefaultKey
       def to_s
-        '='
+        "="
       end
     end
   end
@@ -48,7 +48,7 @@ end
 # So we need to be sure that we reference Syck at the toplevel too so that
 # we can always load these kind of gemspecs.
 #
-if !defined?(Syck)
+unless defined?(Syck)
   Syck = YAML::Syck
 end
 

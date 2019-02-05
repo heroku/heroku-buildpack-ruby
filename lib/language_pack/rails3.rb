@@ -7,10 +7,10 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?
     instrument "rails3.use" do
-      rails_version = bundler.gem_version('railties')
+      rails_version = bundler.gem_version("railties")
       return false unless rails_version
-      is_rails3 = rails_version >= Gem::Version.new('3.0.0') &&
-                  rails_version <  Gem::Version.new('4.0.0')
+      is_rails3 = rails_version >= Gem::Version.new("3.0.0") &&
+                  rails_version <  Gem::Version.new("4.0.0")
       return is_rails3
     end
   end
@@ -28,7 +28,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 
       super.merge({
         "web" => web_process,
-        "console" => "bundle exec rails console"
+        "console" => "bundle exec rails console",
       })
     end
   end
@@ -85,11 +85,11 @@ This can negatively impact the performance of your application.
 For more information can be found in this article:
   https://devcenter.heroku.com/articles/rails-asset-pipeline#compile-set-to-true-in-production
 
-WARNING
+      WARNING
     end
   end
 
-private
+  private
 
   def warn_x_sendfile_use!
     return false unless @x_sendfile_config.success?
@@ -105,7 +105,7 @@ To fix this issue, please set:
 ```
 config.action_dispatch.x_sendfile_header = nil
 ```
-WARNING
+      WARNING
     end
 
     if @x_sendfile_config.did_match?("X-Accel-Redirect") && !has_nginx? # Nginx
@@ -121,25 +121,25 @@ To fix this issue, please set:
 ```
 config.action_dispatch.x_sendfile_header = nil
 ```
-WARNING
+      WARNING
     end
   end
 
   def has_apache?
     path = run("which apachectl")
     return true if path && $?.success?
-    return false
+    false
   end
 
   def has_nginx?
     path = run("which nginx")
     return true if path && $?.success?
-    return false
+    false
   end
 
   def sprocket_version_upgrade_needed
     # Due to https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-3760
-    sprockets_version = bundler.gem_version('sprockets')
+    sprockets_version = bundler.gem_version("sprockets")
     if sprockets_version < Gem::Version.new("2.12.5")
       return "2.12.5"
     elsif sprockets_version > Gem::Version.new("3") &&
@@ -160,9 +160,9 @@ WARNING
 
   def install_plugins
     instrument "rails3.install_plugins" do
-      return false if bundler.has_gem?('rails_12factor')
-      plugins = { "rails_log_stdout" => "rails_stdout_logging", "rails3_serve_static_assets" => "rails_serve_static_assets" }
-                .reject { |_plugin, gem| bundler.has_gem?(gem) }
+      return false if bundler.has_gem?("rails_12factor")
+      plugins = {"rails_log_stdout" => "rails_stdout_logging", "rails3_serve_static_assets" => "rails_serve_static_assets"}.
+        reject { |_plugin, gem| bundler.has_gem?(gem) }
       return false if plugins.empty?
       plugins.each do |plugin, _gem|
         warn "Injecting plugin '#{plugin}'"
@@ -176,7 +176,7 @@ WARNING
   def run_assets_precompile_rake_task
     instrument "rails3.run_assets_precompile_rake_task" do
       log("assets_precompile") do
-        if File.exists?("public/assets/manifest.yml")
+        if File.exist?("public/assets/manifest.yml")
           puts "Detected manifest.yml, assuming assets were compiled locally"
           return true
         end
@@ -189,7 +189,7 @@ WARNING
         precompile.invoke(env: rake_env)
 
         if precompile.success?
-          log "assets_precompile", :status => "success"
+          log "assets_precompile", status: "success"
           puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
         else
           precompile_fail(precompile.output)
@@ -204,16 +204,16 @@ WARNING
       # need to use a dummy DATABASE_URL here, so rails can load the environment
       return env("DATABASE_URL") if env("DATABASE_URL")
 
-      if bundler.has_gem?("pg") || bundler.has_gem?("jdbc-postgres")
-        scheme = "postgres"
+      scheme = if bundler.has_gem?("pg") || bundler.has_gem?("jdbc-postgres")
+        "postgres"
       elsif bundler.has_gem?("mysql")
-        scheme = "mysql"
+        "mysql"
       elsif bundler.has_gem?("mysql2")
-        scheme = "mysql2"
+        "mysql2"
       elsif bundler.has_gem?("sqlite3") || bundler.has_gem?("sqlite3-ruby")
-        scheme = "sqlite3"
+        "sqlite3"
       else
-        scheme = ""
+        ""
       end
       "#{scheme}://user:pass@127.0.0.1/dbname"
     end

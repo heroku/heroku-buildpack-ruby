@@ -10,7 +10,7 @@ class LanguagePack::Rails2
   def default_env_vars
     {
       "RAILS_ENV" => "test",
-      "RACK_ENV" => "test"
+      "RACK_ENV" => "test",
     }
   end
 
@@ -34,18 +34,18 @@ class LanguagePack::Rails2
 
   # rails test runner + rspec depend on db:test:purge which drops/creates a db which doesn't work on Heroku's DB plans
   def clear_db_test_tasks
-    FileUtils::mkdir_p 'lib/tasks'
+    FileUtils.mkdir_p "lib/tasks"
     File.open("lib/tasks/heroku_clear_tasks.rake", "w") do |file|
       file.puts "# rubocop:disable all"
-      content = db_test_tasks_to_clear.map do |task_name|
+      content = db_test_tasks_to_clear.map { |task_name|
         <<-FILE
 if Rake::Task.task_defined?('#{task_name}')
   Rake::Task['#{task_name}'].clear
   task '#{task_name}' do
   end
 end
-FILE
-      end.join("\n")
+        FILE
+      }.join("\n")
       file.print content
       file.puts "# rubocop:enable all"
     end

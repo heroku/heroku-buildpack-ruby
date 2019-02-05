@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Cleans Stale Files" do
   it "removes files if they go over the limit" do

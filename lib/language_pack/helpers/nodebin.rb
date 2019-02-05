@@ -1,11 +1,11 @@
-require 'json'
+require "json"
 
 class LanguagePack::Helpers::Nodebin
   URL = "https://nodebin.herokai.com/v1/"
 
   def self.query(q)
     response = Net::HTTP.get_response(URI("#{URL}/#{q}"))
-    if response.code == '200'
+    if response.code == "200"
       JSON.parse(response.body)
     end
   end
@@ -14,7 +14,7 @@ class LanguagePack::Helpers::Nodebin
     version = "10.14.1"
     {
       "number" => version,
-      "url" => "https://s3.amazonaws.com/heroku-nodebin/node/release/linux-x64/node-v#{version}-linux-x64.tar.gz"
+      "url" => "https://s3.amazonaws.com/heroku-nodebin/node/release/linux-x64/node-v#{version}-linux-x64.tar.gz",
     }
   end
 
@@ -22,7 +22,7 @@ class LanguagePack::Helpers::Nodebin
     version = "1.12.3"
     {
       "number" => version,
-      "url" => "https://s3.amazonaws.com/heroku-nodebin/yarn/release/yarn-v#{version}.tar.gz"
+      "url" => "https://s3.amazonaws.com/heroku-nodebin/yarn/release/yarn-v#{version}.tar.gz",
     }
   end
 

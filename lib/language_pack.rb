@@ -1,5 +1,5 @@
 require "pathname"
-require 'benchmark'
+require "benchmark"
 
 # General Language Pack module
 module LanguagePack
@@ -10,12 +10,12 @@ module LanguagePack
   # @param [Array] first argument is a String of the build directory
   # @return [LanguagePack] the {LanguagePack} detected
   def self.detect(*args)
-    Instrument.instrument 'detect' do
+    Instrument.instrument "detect" do
       Dir.chdir(args.first)
 
-      pack = [ NoLockfile, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+      pack = [NoLockfile, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby].detect { |klass|
         klass.use?
-      end
+      }
 
       return pack ? pack.new(*args) : nil
     end
@@ -25,9 +25,9 @@ end
 $:.unshift File.expand_path("../../vendor", __FILE__)
 $:.unshift File.expand_path("..", __FILE__)
 
-require 'dotenv'
-require 'language_pack/shell_helpers'
-require 'language_pack/instrument'
+require "dotenv"
+require "language_pack/shell_helpers"
+require "language_pack/instrument"
 require "language_pack/helpers/plugin_installer"
 require "language_pack/helpers/stale_file_cleaner"
 require "language_pack/helpers/rake_runner"

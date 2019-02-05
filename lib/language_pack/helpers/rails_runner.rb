@@ -44,36 +44,36 @@ class LanguagePack::Helpers::RailsRunner
       @heroku_key   = "heroku.detecting.config.for.#{config}"
 
       @rails_config = String.new('#{')
-      @rails_config << 'Rails.application.config'
-      config.split('.').each do |part|
+      @rails_config << "Rails.application.config"
+      config.split(".").each do |part|
         @rails_config << ".try(:#{part})"
       end
-      @rails_config << '}'
+      @rails_config << "}"
     end
 
     def success?
-      @rails_runner.success? && @rails_runner.output =~ %r(#{@heroku_key})
+      @rails_runner.success? && @rails_runner.output =~ %r{#{@heroku_key}}
     end
 
     def did_match?(val)
-      @rails_runner.output =~ %r(#{@heroku_key}=#{val})
+      @rails_runner.output =~ %r{#{@heroku_key}=#{val}}
     end
 
     def to_command
-      cmd = String.new('begin; ')
-      cmd << 'puts %Q{'
+      cmd = String.new("begin; ")
+      cmd << "puts %Q{"
       cmd << "#{@heroku_key}=#{@rails_config}"
-      cmd << '}; '
-      cmd << 'rescue => e; '
-      cmd << 'puts e; puts e.backtrace; ' if @debug
-      cmd << 'end;'
+      cmd << "}; "
+      cmd << "rescue => e; "
+      cmd << "puts e; puts e.backtrace; " if @debug
+      cmd << "end;"
       cmd
     end
   end
 
   include LanguagePack::ShellHelpers
 
-  def initialize(debug = env('HEROKU_DEBUG_RAILS_RUNNER'), timeout = 65)
+  def initialize(debug = env("HEROKU_DEBUG_RAILS_RUNNER"), timeout = 65)
     @command_array = []
     @output        = nil
     @success       = false
@@ -96,7 +96,7 @@ class LanguagePack::Helpers::RailsRunner
   end
 
   def command
-    %Q{rails runner "#{@command_array.join(' ')}"}
+    %(rails runner "#{@command_array.join(" ")}")
   end
 
   def timeout?
@@ -135,6 +135,6 @@ class LanguagePack::Helpers::RailsRunner
       mcount("warn.rails.runner.fail")
     end
 
-    return out
+    out
   end
 end

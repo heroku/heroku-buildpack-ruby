@@ -23,7 +23,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
           Dir.chdir(dir) do
             installer.fetch_unpack(ruby_version, dir, true)
 
-            expect(File.read("lib/ruby/1.9.1/x86_64-linux/rbconfig.rb")).to include(%q{CONFIG["prefix"] = (TOPDIR || DESTDIR + "/tmp/ruby-1.9.2")})
+            expect(File.read("lib/ruby/1.9.1/x86_64-linux/rbconfig.rb")).to include('CONFIG["prefix"] = (TOPDIR || DESTDIR + "/tmp/ruby-1.9.2")')
             expect(File).to exist("bin/ruby")
           end
         end

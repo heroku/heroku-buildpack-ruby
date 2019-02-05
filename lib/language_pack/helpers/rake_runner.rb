@@ -10,13 +10,13 @@ class LanguagePack::Helpers::RakeRunner
 
     attr_accessor :output, :time, :task, :status, :task_defined, :rakefile_can_load
 
-    alias :rakefile_can_load? :rakefile_can_load
-    alias :task_defined?      :task_defined
-    alias :is_defined?        :task_defined
+    alias rakefile_can_load? rakefile_can_load
+    alias task_defined?      task_defined
+    alias is_defined?        task_defined
 
     def initialize(task, options = {})
       @task            = task
-      @default_options = { user_env: true }.merge(options)
+      @default_options = {user_env: true}.merge(options)
       @status          = :nil
       @output          = ""
     end
@@ -35,8 +35,8 @@ class LanguagePack::Helpers::RakeRunner
 
     # Is set by RakeTask#invoke to one of the ALLOWED verbs
     def status
-      raise "Status not set for #{self.inspect}" if @status == :nil
-      raise "Not allowed status: #{@status} for #{self.inspect}" unless ALLOWED.include?(@status)
+      raise "Status not set for #{inspect}" if @status == :nil
+      raise "Not allowed status: #{@status} for #{inspect}" unless ALLOWED.include?(@status)
       @status
     end
 
@@ -45,27 +45,27 @@ class LanguagePack::Helpers::RakeRunner
       quiet_option = options.delete(:quiet)
 
       puts "Running: rake #{task}" unless quiet_option
-      time = Benchmark.realtime do
-        if quiet_option
-          self.output = run("rake #{task}", options)
+      time = Benchmark.realtime {
+        self.output = if quiet_option
+          run("rake #{task}", options)
         else
-          self.output = pipe("rake #{task}", options)
+          pipe("rake #{task}", options)
         end
-      end
+      }
       self.time = time
 
-      if $?.success?
-        self.status = :pass
+      self.status = if $?.success?
+        :pass
       else
-        self.status = :fail
+        :fail
       end
-      return self
+      self
     end
   end
 
   def initialize(has_rake_gem = true)
     @has_rake_gem = has_rake_gem
-    if !has_rake_installed?
+    unless has_rake_installed?
       @rake_tasks = ""
       @rakefile_can_load = false
     end
@@ -92,7 +92,7 @@ class LanguagePack::Helpers::RakeRunner
   end
 
   def load_rake_tasks!(options = {}, raise_on_fail = false)
-    return if !has_rake_installed?
+    return unless has_rake_installed?
 
     out = load_rake_tasks(options)
 
@@ -105,7 +105,7 @@ class LanguagePack::Helpers::RakeRunner
       puts msg
     end
 
-    return self
+    self
   end
 
   def task_defined?(task)
@@ -133,9 +133,9 @@ class LanguagePack::Helpers::RakeRunner
     @has_rake ||= (@has_rake_gem && has_rakefile?)
   end
 
-private
+  private
 
   def has_rakefile?
-    %W{ Rakefile rakefile  rakefile.rb Rakefile.rb}.detect { |file| File.exist?(file) }
+    %w[Rakefile rakefile rakefile.rb Rakefile.rb].detect { |file| File.exist?(file) }
   end
 end
