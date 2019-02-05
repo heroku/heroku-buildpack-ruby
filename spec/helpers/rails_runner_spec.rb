@@ -1,6 +1,15 @@
 require 'spec_helper'
 
 describe "Rails Runner" do
+  around(:each) do |test|
+    Dir.mktmpdir do |tmpdir|
+      @tmpdir = tmpdir
+      Dir.chdir(tmpdir) do
+        test.run
+      end
+    end
+  end
+
   it "config objects build propperly formatted commands" do
     rails_runner  = LanguagePack::Helpers::RailsRunner.new
     local_storage = rails_runner.detect("active_storage.service")
@@ -29,52 +38,40 @@ describe "Rails Runner" do
   end
 
   it "calls a mock interface" do
-    Dir.mktmpdir do |tmpdir|
-      Dir.chdir(tmpdir) do
-        mock_rails_runner
-        expect(File.executable?("bin/rails")).to eq(true)
+    mock_rails_runner
+    expect(File.executable?("bin/rails")).to eq(true)
 
-        rails_runner  = LanguagePack::Helpers::RailsRunner.new
-        local_storage = rails_runner.detect("active_storage.service")
-        local_storage = rails_runner.detect("foo.bar")
+    rails_runner  = LanguagePack::Helpers::RailsRunner.new
+    local_storage = rails_runner.detect("active_storage.service")
+    local_storage = rails_runner.detect("foo.bar")
 
-        expect(rails_runner.output).to match("heroku.detecting.config.for.active_storage.service=active_storage.service")
-        expect(rails_runner.output).to match("heroku.detecting.config.for.foo.bar=foo.bar")
-        expect(rails_runner.success?).to be(true)
-      end
-    end
+    expect(rails_runner.output).to match("heroku.detecting.config.for.active_storage.service=active_storage.service")
+    expect(rails_runner.output).to match("heroku.detecting.config.for.foo.bar=foo.bar")
+    expect(rails_runner.success?).to be(true)
   end
 
   it "timeout works as expected" do
-    Dir.mktmpdir do |tmpdir|
-      Dir.chdir(tmpdir) do
-        mock_rails_runner("pid = Process.spawn('sleep 5'); Process.wait(pid)")
+    mock_rails_runner("pid = Process.spawn('sleep 5'); Process.wait(pid)")
 
-        diff = time_it do
-          rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
-          local_storage = rails_runner.detect("active_storage.service")
-          expect(rails_runner.success?).to eq(false)
-          expect(rails_runner.timeout?).to eq(true)
-        end
-
-        expect(diff < 1).to eq(true), "expected time difference #{diff} to be less than 1 second, but was longer"
-      end
+    diff = time_it do
+      rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
+      local_storage = rails_runner.detect("active_storage.service")
+      expect(rails_runner.success?).to eq(false)
+      expect(rails_runner.timeout?).to eq(true)
     end
+
+    expect(diff < 1).to eq(true), "expected time difference #{diff} to be less than 1 second, but was longer"
   end
 
   it "failure in one task does not cause another to fail" do
-    Dir.mktmpdir do |tmpdir|
-      Dir.chdir(tmpdir) do
-        mock_rails_runner('raise "bad" if value == :bad')
+    mock_rails_runner('raise "bad" if value == :bad')
 
-        rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 1)
-        bad_value     = rails_runner.detect("bad.value")
-        local_storage = rails_runner.detect("active_storage.service")
+    rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 1)
+    bad_value     = rails_runner.detect("bad.value")
+    local_storage = rails_runner.detect("active_storage.service")
 
-        expect(!!bad_value.success?).to     eq(false)
-        expect(!!local_storage.success?).to eq(true)
-      end
-    end
+    expect(!!bad_value.success?).to     eq(false)
+    expect(!!local_storage.success?).to eq(true)
   end
 
   def time_it
