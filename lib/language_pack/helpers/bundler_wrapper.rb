@@ -188,8 +188,8 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def major_bundler_version
-    # https://rubular.com/r/uuRpai9IheL68d
-    bundler_version_match = @gemfile_lock_path.read.match(/^BUNDLED WITH$(\r?\n)   (?<major>\d*)\.\d*\.\d*/m)
+    # https://rubular.com/r/jt9yj0aY7fU3hD
+    bundler_version_match = @gemfile_lock_path.read.match(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m)
 
     if bundler_version_match
       bundler_version_match[:major]
