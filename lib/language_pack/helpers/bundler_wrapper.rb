@@ -93,13 +93,6 @@ class LanguagePack::Helpers::BundlerWrapper
   def clean
     ENV['BUNDLE_GEMFILE'] = @orig_bundle_gemfile
     @bundler_tmp.rmtree if @bundler_tmp.directory?
-
-    if version  == "1.7.12"
-      # Hack to cleanup after pre 1.8 versions of bundler. See https://github.com/bundler/bundler/pull/3277/
-      Dir["#{Dir.tmpdir}/bundler*"].each do |dir|
-        FileUtils.remove_entry_secure(dir) if Dir.exist?(dir) && File.stat(dir).writable?
-      end
-    end
   end
 
   def has_gem?(name)
