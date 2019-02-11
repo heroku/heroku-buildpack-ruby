@@ -2,12 +2,16 @@ require 'spec_helper'
 
 describe "Rails Runner" do
   around(:each) do |test|
+    original_path = ENV["PATH"]
+    ENV["PATH"] = "./bin/:#{ENV['PATH']}"
+
     Dir.mktmpdir do |tmpdir|
-      @tmpdir = tmpdir
       Dir.chdir(tmpdir) do
         test.run
       end
     end
+  ensure
+    ENV["PATH"] = original_path if original_path
   end
 
   it "config objects build propperly formatted commands" do
@@ -119,7 +123,6 @@ FILE
     FileUtils.mkdir("bin")
     File.open("bin/rails", "w") { |f| f << executable_contents }
     File.chmod(0777, "bin/rails")
-    ENV["PATH"] = "./bin/:#{ENV['PATH']}" unless ENV["PATH"].include?("./bin:")
 
     # BUILDPACK_LOG_FILE support for logging
     FileUtils.mkdir("tmp")
