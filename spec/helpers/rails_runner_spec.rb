@@ -78,6 +78,15 @@ describe "Rails Runner" do
     expect(!!local_storage.success?).to eq(true)
   end
 
+  it "does not fail when there is an invalid byte sequence" do
+    mock_rails_runner('puts "hi \255"')
+
+    rails_runner  = LanguagePack::Helpers::RailsRunner.new
+    local_storage = rails_runner.detect("active_storage.service")
+
+    expect(local_storage.success?).to be_truthy
+  end
+
   def time_it
     start = Time.now
     yield
