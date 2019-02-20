@@ -1,6 +1,8 @@
 ## Master
 
 
+* Ignore invalid byte encodings when detecting rails config (https://github.com/heroku/heroku-buildpack-ruby/pull/854)
+
 ## v199 (2/19/2019)
 
 * Add support for arbitrary Bundler major versions, most notably bundler 2 (https://github.com/heroku/heroku-buildpack-ruby/pull/850)
