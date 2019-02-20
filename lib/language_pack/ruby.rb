@@ -16,8 +16,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
   LIBYAML_VERSION      = "0.1.7"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
-  BUNDLER_VERSION      = "1.15.2"
-  BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   NODE_BP_PATH         = "vendor/node/bin"
 
@@ -127,9 +125,9 @@ private
   def warn_bundler_upgrade
     old_bundler_version  = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
 
-    if old_bundler_version && old_bundler_version != BUNDLER_VERSION
+    if old_bundler_version && old_bundler_version != bundler.version
       puts(<<-WARNING)
-Your app was upgraded to bundler #{ BUNDLER_VERSION }.
+Your app was upgraded to bundler #{ bundler.version }.
 Previously you had a successful deploy with bundler #{ old_bundler_version }.
 
 If you see problems related to the bundler version please refer to:
@@ -598,7 +596,7 @@ WARNING
   end
 
   def bundler_path
-    @bundler_path ||= "#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}"
+    @bundler_path ||= "#{slug_vendor_base}/gems/#{bundler.dir_name}"
   end
 
   def write_bundler_shim(path)
@@ -609,7 +607,7 @@ WARNING
 #!/usr/bin/env ruby
 require 'rubygems'
 
-version = "#{BUNDLER_VERSION}"
+version = "#{bundler.version}"
 
 if ARGV.first
   str = ARGV.first
@@ -680,7 +678,7 @@ WARNING
           yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
           yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
           pwd            = Dir.pwd
-          bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{BUNDLER_GEM_PATH}/lib"
+          bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{bundler.dir_name}/lib"
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
           env_vars       = {
@@ -1088,7 +1086,7 @@ params = CGI.parse(uri.query || "")
       @metadata.write(ruby_version_cache, full_ruby_version, false)
       @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
       @metadata.write(cf_buildpack_version_cache, CF_BUILDPACK_VERSION, false)
-      @metadata.write(bundler_version_cache, BUNDLER_VERSION, false)
+      @metadata.write(bundler_version_cache, bundler.version, false)
       @metadata.write(rubygems_version_cache, rubygems_version, false)
       @metadata.write(stack_cache, @stack, false)
       @metadata.save

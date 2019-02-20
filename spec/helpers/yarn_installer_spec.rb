@@ -4,10 +4,9 @@ describe LanguagePack::Helpers::YarnInstaller do
   describe "#install" do
 
     it "should extract the yarn package" do
-      installer = LanguagePack::Helpers::YarnInstaller.new
-
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
+          installer = LanguagePack::Helpers::YarnInstaller.new
           installer.install
 
           # webpacker gem checks for yarnpkg

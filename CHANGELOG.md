@@ -1,5 +1,15 @@
 ## Master
 
+
+## v199 (2/19/2019)
+
+* Add support for arbitrary Bundler major versions, most notably bundler 2 (https://github.com/heroku/heroku-buildpack-ruby/pull/850)
+
+## v198 (1/17/2019)
+
+* Rev-default Ruby version to be the latest patch release of last years Ruby version 2.5.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/846)
+* Allow apps to enable `RUBYOPT=--jit` (https://github.com/heroku/heroku-buildpack-ruby/pull/848)
+
 ## v197 (12/18/2018)
 
 * Upgrade node version (https://github.com/heroku/heroku-buildpack-ruby/pull/831)
