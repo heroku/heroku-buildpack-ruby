@@ -1,6 +1,8 @@
 ## Master
 
+## v200 (3/7/2019)
 
+* Fix: Environment variables not being exported for other buildpacks in CI (https://github.com/heroku/heroku-buildpack-ruby/pull/858)
 * Ignore invalid byte encodings when detecting rails config (https://github.com/heroku/heroku-buildpack-ruby/pull/854)
 
 ## v199 (2/19/2019)
