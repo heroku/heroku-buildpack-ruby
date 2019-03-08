@@ -1,5 +1,7 @@
 ## Master
 
+* Set memory default for Node builds (https://github.com/heroku/heroku-buildpack-ruby/pull/861)
+
 ## v200 (3/7/2019)
 
 * Fix: Environment variables not being exported for other buildpacks in CI (https://github.com/heroku/heroku-buildpack-ruby/pull/858)
