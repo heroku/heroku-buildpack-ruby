@@ -57,7 +57,14 @@ class LanguagePack::Ruby < LanguagePack::Base
   def default_config_vars
     instrument "ruby.default_config_vars" do
       vars = {
-        "LANG" => env("LANG") || "en_US.UTF-8"
+        "LANG" => env("LANG") || "en_US.UTF-8",
+        # By default Node can address 1.5GB of memory, a limitation it inherits from
+        # the underlying v8 engine. This can occasionally cause issues during frontend
+        # builds where memory use can exceed this threshold.
+        #
+        # This passes an argument to all Node processes during the build, so that they
+        # can take advantage of all available memory on the build dynos.
+        "NODE_OPTIONS" => env("NODE_OPTIONS") || "--max_old_space_size=2560"
       }
 
       ruby_version.jruby? ? vars.merge({
