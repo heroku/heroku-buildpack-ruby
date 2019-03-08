@@ -184,6 +184,8 @@ class LanguagePack::Helpers::BundlerWrapper
     # https://rubular.com/r/jt9yj0aY7fU3hD
     bundler_version_match = @gemfile_lock_path.read.match(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m)
 
+    puts "======================="
+    puts bundler_version_match.inspect
     if bundler_version_match
       bundler_version_match[:major]
     else
