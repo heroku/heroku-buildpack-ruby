@@ -16,6 +16,28 @@ describe "RubyVersion" do
     @bundler.clean
   end
 
+  it "knows the next logical version" do
+    Hatchet::App.new("ruby_25").in_directory_fork do |dir|
+      ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: true)
+      version_number = "2.5.0"
+      version        = "ruby-#{version_number}"
+
+      expect(ruby_version.version_without_patchlevel).to eq(version)
+      expect(ruby_version.next_logical_version).to eq("ruby-2.5.1")
+      expect(ruby_version.next_logical_version).to eq("ruby-2.5.1")
+      expect(ruby_version.next_logical_version(2)).to eq("ruby-2.5.2")
+      expect(ruby_version.next_logical_version(20)).to eq("ruby-2.5.20")
+
+      # Minor version
+      expect(ruby_version.next_minor_version).to eq("ruby-2.6.0")
+      expect(ruby_version.next_minor_version(2)).to eq("ruby-2.7.0")
+
+      # Major Version
+      expect(ruby_version.next_major_version).to eq("ruby-3.0.0")
+      expect(ruby_version.next_major_version(2)).to eq("ruby-4.0.0")
+    end
+  end
+
   it "correctly handles patch levels" do
     Hatchet::App.new("mri_193_p547").in_directory_fork do |dir|
       ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: true)

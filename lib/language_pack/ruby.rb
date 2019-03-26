@@ -108,9 +108,13 @@ WARNING
       end
       config_detect
       best_practice_warnings
+      warn_outdated_ruby
       cleanup
       super
     end
+  rescue => e
+    warn_outdated_ruby
+    raise e
   end
 
   def cleanup
@@ -380,18 +384,95 @@ SHELL
     end
   end
 
+  def warn_outdated_ruby
+    return unless defined?(@outdated_version_check)
+
+    @warn_outdated ||= begin
+      @outdated_version_check.join
+
+      warn_outdated_minor
+      warn_outdated_eol
+      true
+    end
+  end
+
+  def warn_outdated_eol
+    return unless @outdated_version_check.maybe_eol?
+
+    if @outdated_version_check.eol?
+      warn(<<~WARNING)
+        EOL Ruby Version
+
+        You are using a Ruby version that has reached its End of Life (EOL)
+
+        We strongly suggest you upgrade to Ruby #{@outdated_version_check.suggest_ruby_eol_version} or later
+
+        Your current Ruby version no longer receives security updates from
+        Ruby Core and may have serious vulnerabilities. While you will continue
+        to be able to deploy on Heroku with this Ruby version you must upgrade
+        to a non-EOL version to be eligable to receive support.
+
+        Upgrade your Ruby version as soon as possible.
+
+        For a list of supported Ruby versions see:
+          https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+      WARNING
+    else
+      # Maybe EOL
+      warn(<<~WARNING)
+        Potential EOL Ruby Version
+
+        You are using a Ruby version that has either reached its End of Life (EOL)
+        or will reach its End of Life on December 25th of this year.
+
+        We suggest you upgrade to Ruby #{@outdated_version_check.suggest_ruby_eol_version} or later
+
+        Once a Ruby version becomes EOL, it will no longer receive
+        security updates from Ruby core and may have serious vulnerabilities.
+
+        Please upgrade your Ruby version.
+
+        For a list of supported Ruby versions see:
+          https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+      WARNING
+    end
+  end
+
+  def warn_outdated_minor
+    return if @outdated_version_check.latest_minor_version?
+
+    warn(<<~WARNING)
+      There is a more recent Ruby version available for you to use:
+
+      #{@outdated_version_check.suggested_ruby_minor_version}
+
+      The latest version will include security and bug fixes, we always recommend
+      running the latest version of your minor release.
+
+      Please upgrade your Ruby version.
+
+      For all available Ruby versions see:
+        https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+    WARNING
+  end
+
   # install the vendored ruby
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
   def install_ruby
     instrument 'ruby.install_ruby' do
       return false unless ruby_version
-
       installer = LanguagePack::Installers::RubyInstaller.installer(ruby_version).new(@stack)
 
       if ruby_version.build?
         installer.fetch_unpack(ruby_version, build_ruby_path, true)
       end
       installer.install(ruby_version, slug_vendor_ruby)
+
+      @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
+        current_ruby_version: ruby_version,
+        fetcher: installer.fetcher
+      )
+      @outdated_version_check.call
 
       @metadata.write("buildpack_ruby_version", ruby_version.version_for_download)
 
