@@ -103,6 +103,7 @@ WARNING
       setup_profiled
       allow_git do
         install_bundler_in_app(slug_vendor_base)
+        load_bundler_cache
         build_bundler(path: "vendor/bundle", default_bundle_without: "development:test")
         post_bundler
         create_database_yml
@@ -121,10 +122,10 @@ WARNING
 
     ruby_layer = Layer.new(@layer_dir, "ruby", launch: true)
     install_ruby(ruby_layer.path)
-    ruby_layer.metadata["version"] = ruby_version.version
-    ruby_layer.metadata["patchlevel"] = ruby_version.patchlevel
-    ruby_layer.metadata["engine"] = ruby_version.engine
-    ruby_layer.metadata["engine_version"] = ruby_version.engine_version
+    ruby_layer.metadata[:version] = ruby_version.version
+    ruby_layer.metadata[:patchlevel] = ruby_version.patchlevel if ruby_version.patchlevel
+    ruby_layer.metadata[:engine] = ruby_version.engine.to_s
+    ruby_layer.metadata[:engine_version] = ruby_version.engine_version
     ruby_layer.write
 
     gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true)
@@ -133,11 +134,19 @@ WARNING
     setup_profiled(ruby_layer, gem_layer)
     allow_git do
       # TODO install bundler in separate layer
+      topic "Loading Bundler Cache"
+      gem_layer.validate! do |metadata|
+        valid_bundler_cache?(gem_layer.path, gem_layer.metadata)
+      end
       install_bundler_in_app("#{gem_layer.path}/#{slug_vendor_base}")
       build_bundler(bundle_path: "#{gem_layer.path}/vendor/bundle", default_bundle_without: "development:test")
       # TODO post_bundler might need to be done in a new layer
       bundler.clean
-      gem_layer.metadata["gems"] = Digest::SHA2.hexdigest(File.read("Gemfile.lock"))
+      gem_layer.metadata[:gems] = Digest::SHA2.hexdigest(File.read("Gemfile.lock"))
+      gem_layer.metadata[:stack] = @stack
+      gem_layer.metadata[:ruby_version] = run_stdout(%q(ruby -v)).chomp
+      gem_layer.metadata[:rubygems_version] = run_stdout(%q(gem -v)).chomp
+      gem_layer.metadata[:buildpack_version] = BUILDPACK_VERSION
       gem_layer.write
 
       create_database_yml
@@ -500,6 +509,7 @@ ERROR
     error message
   end
 
+  # TODO make this compatible with CNB
   def new_app?
     @new_app ||= !File.exist?("vendor/heroku")
   end
@@ -726,8 +736,6 @@ WARNING
         end
 
         topic("Installing dependencies using bundler #{bundler.version}")
-        # TODO handle bundler cache loading in CNB
-        #load_bundler_cache
 
         bundler_output = ""
         bundle_time    = nil
@@ -1056,6 +1064,80 @@ params = CGI.parse(uri.query || "")
     "vendor/bundle"
   end
 
+  def valid_bundler_cache?(path, metadata)
+    full_ruby_version       = run_stdout(%q(ruby -v)).chomp
+    rubygems_version        = run_stdout(%q(gem -v)).chomp
+    old_rubygems_version    = nil
+
+    old_rubygems_version = metadata[:ruby_version]
+    old_stack = metadata[:stack]
+    old_stack ||= DEFAULT_LEGACY_STACK
+
+    stack_change = old_stack != @stack
+    if !new_app? && stack_change
+      return [false, "Purging Cache. Changing stack from #{old_stack} to #{@stack}"]
+    end
+
+    # fix bug from v37 deploy
+    if File.exists?("#{path}/vendor/ruby_version")
+      puts "Broken cache detected. Purging build cache."
+      cache.clear("vendor")
+      FileUtils.rm_rf("#{path}/vendor/ruby_version")
+      return [false, "Broken cache detected. Purging build cache."]
+      # fix bug introduced in v38
+    elsif !metadata.include?(:buildpack_version) && metadata.include?(:ruby_version)
+      puts "Broken cache detected. Purging build cache."
+      return [false, "Broken cache detected. Purging build cache."]
+    elsif (@bundler_cache.exists? || @bundler_cache.old?) && full_ruby_version != metadata[:ruby_version]
+      return [false, <<-MESSAGE]
+Ruby version change detected. Clearing bundler cache.
+Old: #{metadata[:ruby_version]}
+New: #{full_ruby_version}
+MESSAGE
+    end
+
+    # fix git gemspec bug from Bundler 1.3.0+ upgrade
+    if File.exists?(bundler_cache) && !metadata.include?(:bundler_version) && !run("find #{path}/vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").include?("No such file or directory")
+      return [false, "Old bundler cache detected. Clearing bundler cache."]
+    end
+
+    # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
+    if (!metadata.include?(:rubygems_version) ||
+        (old_rubygems_version == "2.0.0" && old_rubygems_version != rubygems_version)) &&
+      metadata.include?(:ruby_version) && metadata[:ruby_version].chomp.include?("ruby 2.0.0p0")
+      return [false, "Updating to rubygems #{rubygems_version}. Clearing bundler cache."]
+    end
+
+    # fix for https://github.com/sparklemotion/nokogiri/issues/923
+    if metadata.include?(:buildpack_version) && (bv = metadata[:buildpack_version].sub('v', '').to_i) && bv != 0 && bv <= 76
+      return [false, <<-MESSAGE]
+Fixing nokogiri install. Clearing bundler cache.
+See https://github.com/sparklemotion/nokogiri/issues/923.
+MESSAGE
+    end
+
+    # recompile nokogiri to use new libyaml
+    if metadata.include?(:buildpack_version) && (bv = metadata[:buildpack_version].sub('v', '').to_i) && bv != 0 && bv <= 99 && bundler.has_gem?("psych")
+      return [false, <<-MESSAGE]
+Need to recompile psych for CVE-2013-6393. Clearing bundler cache.
+See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=737076.
+MESSAGE
+    end
+
+    # recompile gems for libyaml 0.1.7 update
+    if metadata.include?(:buildpack_version) && (bv = metadata[:buildpack_version].sub('v', '').to_i) && bv != 0 && bv <= 147 &&
+        (metadata.include?(:ruby_version) && metadata[:ruby_version].match(/ruby 2\.1\.(9|10)/) ||
+         bundler.has_gem?("psych")
+        )
+      return [false, <<-MESSAGE]
+Need to recompile gems for CVE-2014-2014-9130. Clearing bundler cache.
+See https://devcenter.heroku.com/changelog-items/1016.
+MESSAGE
+    end
+
+    true
+  end
+
   def load_bundler_cache
     instrument "ruby.load_bundler_cache" do
       cache.load "vendor"
@@ -1070,9 +1152,8 @@ params = CGI.parse(uri.query || "")
       rubygems_version_cache  = "rubygems_version"
       stack_cache             = "stack"
 
-      old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
-      old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
-      old_stack ||= DEFAULT_LEGACY_STACK
+      old_rubygems_version = @metadata.read(ruby_version_cache)
+      old_stack = @metadata.read(stack) || DEFAULT_LEGACY_STACK
 
       stack_change  = old_stack != @stack
       convert_stack = @bundler_cache.old?
@@ -1091,7 +1172,7 @@ params = CGI.parse(uri.query || "")
         FileUtils.rm_rf("vendor/ruby_version")
         purge_bundler_cache
         # fix bug introduced in v38
-      elsif !@metadata.exists?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
+      elsif !metadata.include?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
         puts "Broken cache detected. Purging build cache."
         purge_bundler_cache
       elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
