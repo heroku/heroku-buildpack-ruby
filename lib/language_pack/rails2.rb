@@ -63,6 +63,12 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     end
   end
 
+  def build
+    # TODO install plugins into separate layer
+    #install_plugins
+    super
+  end
+
   def best_practice_warnings
     if env("RAILS_ENV") != "production"
       warn(<<-WARNING)
