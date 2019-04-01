@@ -118,6 +118,7 @@ WARNING
   end
 
   def build
+    new_app?
     remove_vendor_bundle
 
     ruby_layer = Layer.new(@layer_dir, "ruby", launch: true)
