@@ -1,7 +1,6 @@
 #!/bin/sh
 
-
-if [ -z "$PACK_STACK_ID" ]; then
+if [ -z "$CNB_STACK_ID" ]; then
   # v2 API
   APP_DIR=$1
 else
