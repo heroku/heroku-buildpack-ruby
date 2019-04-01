@@ -121,7 +121,7 @@ WARNING
     remove_vendor_bundle
 
     ruby_layer = Layer.new(@layer_dir, "ruby", launch: true)
-    install_ruby(ruby_layer.path)
+    install_ruby("#{ruby_layer.path}/#{slug_vendor_ruby}")
     ruby_layer.metadata[:version] = ruby_version.version
     ruby_layer.metadata[:patchlevel] = ruby_version.patchlevel if ruby_version.patchlevel
     ruby_layer.metadata[:engine] = ruby_version.engine.to_s
@@ -131,7 +131,7 @@ WARNING
     gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true)
     setup_language_pack_environment(ruby_layer.path, gem_layer.path)
     setup_export(gem_layer)
-    setup_profiled(ruby_layer, gem_layer)
+    setup_profiled(ruby_layer.path, gem_layer.path)
     allow_git do
       # TODO install bundler in separate layer
       topic "Loading Bundler Cache"
@@ -186,7 +186,7 @@ WARNING
 
   # the base PATH environment variable to be used
   # @return [String] the resulting PATH
-  def default_path(gem_layer_path = nil)
+  def default_path(gem_layer_path = ".")
     # need to remove bin/ folder since it links
     # to the wrong --prefix ruby binstubs
     # breaking require. This only applies to Ruby 1.9.2 and 1.8.7.
@@ -335,7 +335,7 @@ EOF
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(ruby_layer_path = nil, gem_layer_path = nil)
+  def setup_language_pack_environment(ruby_layer_path = ".", gem_layer_path = ".")
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
@@ -364,7 +364,7 @@ SHELL
         ENV[key] ||= value
       end
 
-      gem_path = gem_layer_path ? "#{gem_layer_path}/#{slug_vendor_base}" : slug_vendor_base
+      gem_path = "#{gem_layer_path}/#{slug_vendor_base}"
       ENV["GEM_PATH"] = gem_path
       ENV["GEM_HOME"] = gem_path
       ENV["PATH"]     = default_path(gem_layer_path)
@@ -376,6 +376,8 @@ SHELL
   def setup_export(layer = nil)
     instrument 'ruby.setup_export' do
       paths = ENV["PATH"].split(":")
+      paths = paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":") unless layer
+
       gem_path =
         if layer
           "#{layer.path}/#{slug_vendor_base}"
@@ -385,7 +387,7 @@ SHELL
       set_export_path "GEM_PATH", gem_path, layer
       set_export_default  "LANG", "en_US.UTF-8", layer
       # TODO ensure path exported is correct
-      set_export_path "PATH", paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":"), layer
+      set_export_path "PATH", paths.join(":"), layer
 
       # TODO handle jruby
       if ruby_version.jruby?
@@ -398,17 +400,14 @@ SHELL
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled(ruby_layer_path = nil, gem_layer_path = nil)
+  def setup_profiled(ruby_layer_path = "$HOME", gem_layer_path = "$HOME")
     instrument 'setup_profiled' do
-      profiled_path_prefix = @layer_dir ? @build_path : "$HOME"
-      profiled_path = [binstubs_relative_paths(gem_layer_path).map {|path| "#{profiled_path_prefix}/#{path}" }.join(":")]
+      profiled_path = binstubs_relative_paths(gem_layer_path)
       profiled_path << "vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
-      gem_path_prefix = gem_layer_path ? gem_layer_path : "$HOME"
-
       set_env_default  "LANG",     "en_US.UTF-8"
-      set_env_override "GEM_PATH", "#{gem_path_prefix}/#{slug_vendor_base}:$GEM_PATH"
+      set_env_override "GEM_PATH", "#{gem_layer_path}/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",      profiled_path.join(":")
 
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
@@ -525,21 +524,19 @@ ERROR
 
   # find the ruby install path for its binstubs during build
   # @return [String] resulting path or empty string if ruby is not vendored
-  def ruby_install_binstub_path(ruby_layer_path = nil)
+  def ruby_install_binstub_path(ruby_layer_path = ".")
     @ruby_install_binstub_path ||=
-      if ruby_layer_path
-        "#{ruby_layer_path}/bin"
-      elsif ruby_version.build?
+      if ruby_version.build?
         "#{build_ruby_path}/bin"
       elsif ruby_version
-        "#{slug_vendor_ruby}/bin"
+        "#{ruby_layer_path}/#{slug_vendor_ruby}/bin"
       else
         ""
       end
   end
 
   # setup the environment so we can use the vendored ruby
-  def setup_ruby_install_env(ruby_layer_path = nil)
+  def setup_ruby_install_env(ruby_layer_path = ".")
     instrument 'ruby.setup_ruby_install_env' do
       ENV["PATH"] = "#{File.expand_path(ruby_install_binstub_path(ruby_layer_path))}:#{ENV["PATH"]}"
 
