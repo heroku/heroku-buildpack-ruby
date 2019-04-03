@@ -133,7 +133,7 @@ class LanguagePack::Base
     layer = LanguagePack::Helpers::Layer.new(@layer_dir, "env", launch: true)
     FileUtils.mkdir_p("#{layer.path}/env.launch")
     release["config_vars"].each do |key, value|
-      File.open("#{layer.path}/env.launch/#{key.upcase}", 'w') do |f|
+      File.open("#{layer.path}/env.launch/#{key.upcase}.override", 'w') do |f|
         f.write(value)
       end
     end
