@@ -73,6 +73,12 @@ WARNING
     FileUtils.remove_dir(default_assets_cache)
   end
 
+  def assets_compile_enabled?
+    return false unless bundler.has_gem?('sprockets-rails')
+
+    super
+  end
+
   def run_assets_precompile_rake_task
     instrument "rails4.run_assets_precompile_rake_task" do
       log("assets_precompile") do
