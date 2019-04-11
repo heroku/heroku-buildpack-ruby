@@ -10,7 +10,6 @@ $stdout.sync = true
 $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
-require 'cloud_foundry/language_pack/extensions'
 
 begin
   LanguagePack::Instrument.trace 'compile', 'app.compile' do

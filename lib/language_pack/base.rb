@@ -17,8 +17,9 @@ class LanguagePack::Base
   include LanguagePack::ShellHelpers
   extend LanguagePack::ShellHelpers
 
-  VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
-  DEFAULT_LEGACY_STACK = "cedar"
+  # VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby"
+  VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://ruby-binaries.scalingo.com"
+  DEFAULT_LEGACY_STACK = "scalingo"
   ROOT_DIR             = File.expand_path("../../..", __FILE__)
 
   attr_reader :build_path, :cache, :stack
