@@ -5,10 +5,6 @@
 BIN_DIR=$(cd $(dirname $0); pwd)
 BUILDPACK_DIR=$(dirname $BIN_DIR)
 
-if test -n "$BUILDPACK_URL" ; then
-  export STACK="cedar-14"
-fi
-
 source "$BIN_DIR/support/bash_functions.sh"
 heroku_buildpack_ruby_install_ruby "$BIN_DIR" "$BUILDPACK_DIR"
 
