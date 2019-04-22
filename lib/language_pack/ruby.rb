@@ -105,10 +105,14 @@ WARNING
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
+        run_ruby_postbuild_rake_task
       end
       config_detect
       best_practice_warnings
       cleanup
+      allow_git do
+        run_ruby_postbuild_rake_task
+      end
       super
     end
   end
@@ -954,39 +958,93 @@ params = CGI.parse(uri.query || "")
   end
 
   def run_assets_precompile_rake_task
-    instrument 'ruby.run_assets_precompile_rake_task' do
+    run_rake_task(assets_precompile_options)
+  end
 
-      precompile = rake.task("assets:precompile")
-      return true unless precompile.is_defined?
+  def assets_precompile_options
+    {
+      :instrument_name => 'ruby.run_assets_precompile_rake_task',
+      :task_to_run     => 'assets:precompile',
+      :topic_message   => 'Precompiling assets',
+      :time_message    => 'Asset precompilation',
+      :log_name        => 'assets_precompile',
+      :log_message     => 'Precompiling assets'
+    }
+  end
 
-      topic "Precompiling assets"
-      precompile.invoke(env: rake_env)
-      if precompile.success?
-        puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
-      else
-        precompile_fail(precompile.output)
+  def run_ruby_postbuild_rake_task
+    run_rake_task({
+      :instrument_name   => 'ruby.run_ruby_postbuild_rake_task',
+      :task_to_run       => 'heroku:ruby:postbuild',
+      :topic_message     => 'heroku:ruby:postbuild task detected; Running postbuild',
+      :time_message      => 'Heroku Ruby postbuild',
+      :log_name          => 'ruby_postbuild',
+      :log_message       => 'Heroku Ruby postbuild'
+    })
+  end
+
+  def run_rake_task(options)
+    instrument options[:instrument_name] do
+      log(options[:log_name]) do
+        return true if options[:should_skip] && __send__(options[:should_skip])
+
+        task_to_run = rake.task(options[:task_to_run])
+        return true unless task_to_run.is_defined?
+
+        topic options[:topic_message]
+
+        __send__(*options[:before_invoke]) if options[:before_invoke]
+
+        task_to_run.invoke({
+          env: {
+            "HEROKU_BUILD_PATH" => build_path,
+            "HEROKU_CACHE_PATH" => cache,
+          }.merge(rake_env)
+        })
+
+        if (was_success = task_to_run.success?) || options[:allow_failure]
+          if was_success
+            rake_task_log_success(task_to_run.time, options)
+          else
+            rake_task_log_failure(options)
+          end
+
+          __send__(*options[:after_success]) if options[:after_success]
+        else
+          rake_task_fail options.merge(output: task_to_run.output)
+        end
       end
     end
   end
 
-  def precompile_fail(output)
-    mcount "fail.assets_precompile"
-    log "assets_precompile", :status => "failure"
-    msg = "Precompiling assets failed.\n"
-    if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
+  def rake_task_fail(options)
+    rake_task_log_failure(options)
+
+    msg = "#{options[:log_message]} failed.\n"
+    if options[:output].match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
       msg << "Attempted to access a nonexistent database:\n"
       msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
     end
 
     sprockets_version = bundler.gem_version('sprockets')
-    if output.match(/Sprockets::FileNotFound/) && (sprockets_version < Gem::Version.new('4.0.0.beta7') && sprockets_version > Gem::Version.new('4.0.0.beta4'))
-      mcount "fail.assets_precompile.file_not_found_beta"
+    if options[:output].match(/Sprockets::FileNotFound/) && (sprockets_version < Gem::Version.new('4.0.0.beta7') && sprockets_version > Gem::Version.new('4.0.0.beta4'))
+      mcount "fail.#{options[:log_name]}.file_not_found_beta"
       msg << "If you have this file in your project\n"
       msg << "try upgrading to Sprockets 4.0.0.beta7 or later:\n"
       msg << "https://github.com/rails/sprockets/pull/547\n"
     end
 
     error msg
+  end
+
+  def rake_task_log_success(time, options)
+    log options[:log_name], :status => 'success'
+    puts "#{options[:time_message]} completed (#{"%.2f" % time}s)"
+  end
+
+  def rake_task_log_failure(options)
+    mcount "fail.#{options[:log_name]}"
+    log options[:log_name], :status => 'failure'
   end
 
   def bundler_cache

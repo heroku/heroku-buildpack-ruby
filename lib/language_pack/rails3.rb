@@ -172,29 +172,18 @@ WARNING
     end
   end
 
-  # runs the tasks for the Rails 3.1 asset pipeline
-  def run_assets_precompile_rake_task
-    instrument "rails3.run_assets_precompile_rake_task" do
-      log("assets_precompile") do
-        if File.exists?("public/assets/manifest.yml")
-          puts "Detected manifest.yml, assuming assets were compiled locally"
-          return true
-        end
+  # merge task options for the Rails 3.1 asset pipeline
+  def assets_precompile_options
+    super.merge({
+      :instrument_name => 'rails3.run_assets_precompile_rake_task',
+      :should_skip     => :assets_already_compiled
+    })
+  end
 
-        precompile = rake.task("assets:precompile")
-        return true unless precompile.is_defined?
-
-        topic("Preparing app for Rails asset pipeline")
-
-        precompile.invoke(env: rake_env)
-
-        if precompile.success?
-          log "assets_precompile", :status => "success"
-          puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
-        else
-          precompile_fail(precompile.output)
-        end
-      end
+  def assets_already_compiled
+    if File.exists?("public/assets/manifest.yml")
+      puts "Detected manifest.yml, assuming assets were compiled locally"
+      return true
     end
   end
 

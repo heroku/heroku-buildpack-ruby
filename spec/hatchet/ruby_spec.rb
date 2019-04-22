@@ -121,3 +121,32 @@ describe "Rack" do
     end
   end
 end
+
+describe "Postbuild (heroku:ruby:postbuild)" do
+  context "defined" do
+    it "passes with a valid postbuild" do
+      Hatchet::Runner.new("ruby_postbuild_pass").deploy do |app|
+        expect(app).to be_deployed
+        expect(app.output).to include("Heroku Ruby postbuild completed")
+        expect(app.output).not_to include("Heroku Ruby postbuild failed.")
+      end
+    end
+
+    it "fails with an invalid postbuild" do
+      Hatchet::Runner.new("ruby_postbuild_fail", allow_failure: true).deploy do |app|
+        expect(app).not_to be_deployed
+        expect(app.output).to include("Heroku Ruby postbuild failed.")
+        expect(app.output).not_to include("Heroku Ruby postbuild completed")
+      end
+    end
+  end
+
+  context "undefined" do
+    it "should pass" do
+      Hatchet::Runner.new("rails5").deploy do |app|
+        expect(app).to be_deployed
+        expect(app.output).not_to include("Heroku Ruby postbuild")
+      end
+    end
+  end
+end

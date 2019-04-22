@@ -127,3 +127,7 @@
   - 9fcbc184cb386abc8784e9935d52d403e35c532c
 - - "./repos/ruby/ruby_25"
   - 0cb3df80d55b61e9417f2ac00adb06e15ae37982
+- - "./repos/ruby/ruby_postbuild_fail"
+  - b20d94834186161354d678355a7d5d1ad535eeb0
+- - "./repos/ruby/ruby_postbuild_pass"
+  - ac33b2728a73b9f491754b7a1ae35aed7e7ec302
