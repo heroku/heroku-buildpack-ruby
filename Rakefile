@@ -301,8 +301,8 @@ begin
   require 'rspec/core/rake_task'
 
   desc "Run specs"
-  RSpec::Core::RakeTask.new(:spec) do |t|
-    t.rspec_opts = %w(-fs --color)
+  RSpec::Core::RakeTask.new(:spec, :pattern) do |t, args|
+    t.rspec_opts =%w[ -fd --color ]
     #t.ruby_opts  = %w(-w)
   end
   task :default => :spec

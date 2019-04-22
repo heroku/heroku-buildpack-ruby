@@ -1,6 +1,7 @@
 ## Master
 
 * Default Ruby version is now 2.5.5, was previously 2.5.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/863)
+* Added heroku:ruby:postbuild task detection
 
 ## v200 (3/7/2019)
 
