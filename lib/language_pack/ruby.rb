@@ -958,14 +958,18 @@ params = CGI.parse(uri.query || "")
   end
 
   def run_assets_precompile_rake_task
-    run_rake_task({
+    run_rake_task(assets_precompile_options)
+  end
+
+  def assets_precompile_options
+    {
       :instrument_name => 'ruby.run_assets_precompile_rake_task',
       :task_to_run     => 'assets:precompile',
       :topic_message   => 'Precompiling assets',
       :time_message    => 'Asset precompilation',
       :log_name        => 'assets_precompile',
       :log_message     => 'Precompiling assets'
-    })
+    }
   end
 
   def run_ruby_postbuild_rake_task
@@ -982,14 +986,15 @@ params = CGI.parse(uri.query || "")
   def run_rake_task(options)
     instrument options[:instrument_name] do
       log(options[:log_name]) do
-        return true if options[:allow_skip] && __send__(options[:allow_skip])
+        return true if options[:should_skip] && __send__(options[:should_skip])
 
-        p task_to_run = rake.task(options[:task_to_run])
-        log task_to_run
-        log task_to_run.is_defined?
+        task_to_run = rake.task(options[:task_to_run])
         return true unless task_to_run.is_defined?
 
         topic options[:topic_message]
+
+        __send__(*options[:before_invoke]) if options[:before_invoke]
+
         task_to_run.invoke({
           env: {
             "HEROKU_BUILD_PATH" => build_path,
@@ -1001,7 +1006,7 @@ params = CGI.parse(uri.query || "")
           log options[:log_name], :status => 'success'
           puts "#{options[:time_message]} completed (#{"%.2f" % task_to_run.time}s)"
 
-          __send__ options[:after_success] if options[:after_success]
+          __send__(*options[:after_success]) if options[:after_success]
         else
           rake_task_fail options.merge(output: task_to_run.output)
         end

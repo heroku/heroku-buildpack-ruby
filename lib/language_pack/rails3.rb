@@ -172,16 +172,11 @@ WARNING
     end
   end
 
-  # runs the tasks for the Rails 3.1 asset pipeline
-  def run_assets_precompile_rake_task
-    run_rake_task({
+  # merge task options for the Rails 3.1 asset pipeline
+  def assets_precompile_options
+    super.merge({
       :instrument_name => 'rails3.run_assets_precompile_rake_task',
-      :task_to_run     => 'assets:precompile',
-      :topic_message   => 'Preparing app for Rails asset pipeline',
-      :time_message    => 'Asset precompilation',
-      :log_name        => 'asset_preompile',
-      :log_message     => 'Precompiling assets',
-      :allow_skip      => :assets_already_compiled
+      :should_skip     => :assets_already_compiled
     })
   end
 

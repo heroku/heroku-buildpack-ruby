@@ -73,39 +73,27 @@ WARNING
     FileUtils.remove_dir(default_assets_cache)
   end
 
-  def run_assets_precompile_rake_task
-    instrument "rails4.run_assets_precompile_rake_task" do
-      log("assets_precompile") do
-        if Dir.glob("public/assets/{.sprockets-manifest-*.json,manifest-*.json}", File::FNM_DOTMATCH).any?
-          puts "Detected manifest file, assuming assets were compiled locally"
-          return true
-        end
+  # merge task options for the Rails 4 asset pipeline
+  def assets_precompile_options
+    super.merge({
+      :instrument_name => 'rails4.run_assets_precompile_rake_task',
+      :before_invoke   => :assets_before_invoke,
+      :after_success   => :assets_after_success
+    })
+  end
 
-        precompile = rake.task("assets:precompile")
-        return true unless precompile.is_defined?
+  def assets_before_invoke
+    @cache.load_without_overwrite public_assets_folder
+    @cache.load default_assets_cache
+  end
 
-        topic("Preparing app for Rails asset pipeline")
+  def assets_after_success
+    puts "Cleaning assets"
+    rake.task("assets:clean").invoke(env: rake_env)
 
-        @cache.load_without_overwrite public_assets_folder
-        @cache.load default_assets_cache
-
-        precompile.invoke(env: rake_env)
-
-        if precompile.success?
-          log "assets_precompile", :status => "success"
-          puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
-
-          puts "Cleaning assets"
-          rake.task("assets:clean").invoke(env: rake_env)
-
-          cleanup_assets_cache
-          @cache.store public_assets_folder
-          @cache.store default_assets_cache
-        else
-          precompile_fail(precompile.output)
-        end
-      end
-    end
+    cleanup_assets_cache
+    @cache.store public_assets_folder
+    @cache.store default_assets_cache
   end
 
   def cleanup_assets_cache
