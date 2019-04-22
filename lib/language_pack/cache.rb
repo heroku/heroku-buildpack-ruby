@@ -69,4 +69,9 @@ class LanguagePack::Cache
   def exists?(path)
     File.exists?(@cache_base + path)
   end
+
+  # return cache_base for postbuild access
+  def to_s
+    @cache_base.to_s
+  end
 end
