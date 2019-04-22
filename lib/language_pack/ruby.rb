@@ -992,8 +992,8 @@ params = CGI.parse(uri.query || "")
         topic options[:topic_message]
         task_to_run.invoke({
           env: {
-            "BUILD_PATH" => build_path,
-            "CACHE"      => cache
+            "HEROKU_BUILD_PATH" => build_path,
+            "HEROKU_CACHE_PATH" => cache,
           }.merge(rake_env)
         })
 
