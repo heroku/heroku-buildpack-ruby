@@ -74,4 +74,8 @@ class LanguagePack::Cache
   def to_s
     @cache_base.to_s
   end
+
+  def shellescape
+    to_s.shellescape
+  end
 end
