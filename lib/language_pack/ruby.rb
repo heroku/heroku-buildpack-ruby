@@ -219,34 +219,46 @@ WARNING
   # default JAVA_OPTS
   # return [String] string of JAVA_OPTS
   def default_java_opts
-    "-Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
+    '-Dfile.encoding=UTF-8'
+  end
+
+  def set_jvm_stack_size
+    ENV['JVM_STACK_SIZE'] = env('JVM_STACK_SIZE') || 512
   end
 
   def set_jvm_max_heap
     <<-EOF
 case $(ulimit -u) in
-256)   # 1X Dyno
-  JVM_MAX_HEAP=384
+512)   # 2X, private-s: memory.limit_in_bytes=1073741824
+  JVM_MAX_HEAP=671
   ;;
-512)   # 2X Dyno
-  JVM_MAX_HEAP=768
-  ;;
-16384) # IX Dyno
+16384) # perf-m, private-m: memory.limit_in_bytes=2684354560
   JVM_MAX_HEAP=2048
   ;;
-32768) # PX Dyno
-  JVM_MAX_HEAP=5120
+32768) # perf-l, private-l: memory.limit_in_bytes=15032385536
+  JVM_MAX_HEAP=12288
+  ;;
+*) # Free, Hobby, 1X: memory.limit_in_bytes=536870912
+  JVM_MAX_HEAP=300
   ;;
 esac
-EOF
+    EOF
+  end
+
+  def set_java_stack_size
+    <<-EOF
+if ! [[ "${JAVA_OPTS}" == *-Xss* ]]; then
+  export JAVA_OPTS="${JAVA_OPTS} ${JAVA_STACK:--Xss${JVM_STACK_SIZE:-512}k}"
+fi
+    EOF
   end
 
   def set_java_mem
     <<-EOF
 if ! [[ "${JAVA_OPTS}" == *-Xmx* ]]; then
-  export JAVA_MEM=${JAVA_MEM:--Xmx${JVM_MAX_HEAP:-384}m}
+  export JAVA_OPTS="${JAVA_OPTS} ${JAVA_MEM:--Xmx${JVM_MAX_HEAP:-300}m}"
 fi
-EOF
+    EOF
   end
 
   def set_default_web_concurrency
@@ -268,8 +280,6 @@ case $(ulimit -u) in
   export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-6144}
   export WEB_CONCURRENCY=${WEB_CONCURRENCY:-16}
   ;;
-*)
-  ;;
 esac
 EOF
   end
@@ -278,6 +288,12 @@ EOF
   # return [String] string of JRUBY_OPTS
   def default_jruby_opts
     "-Xcompile.invokedynamic=false"
+  end
+
+  # default Java Xss
+  # return [String] string of Java Xss
+  def default_java_stack_mem
+    "-Xss${JVM_STACK_SIZE:-512}k"
   end
 
   # default Java Xmx
@@ -294,6 +310,10 @@ EOF
         ENV["JAVA_MEM"] = run(<<-SHELL).chomp
 #{set_jvm_max_heap}
 echo #{default_java_mem}
+SHELL
+        ENV["JAVA_STACK"] = run(<<-SHELL).chomp
+#{set_jvm_stack_size}
+echo #{default_java_stack_mem}
 SHELL
         ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
         ENV["JAVA_HOME"] = @jvm_installer.java_home
@@ -326,6 +346,8 @@ SHELL
       if ruby_version.jruby?
         add_to_export set_jvm_max_heap
         add_to_export set_java_mem
+        add_to_export set_jvm_stack_size
+        add_to_export set_java_stack_size
         set_export_default "JAVA_OPTS",  default_java_opts
         set_export_default "JRUBY_OPTS", default_jruby_opts
       end
@@ -348,6 +370,8 @@ SHELL
       if ruby_version.jruby?
         add_to_profiled set_jvm_max_heap
         add_to_profiled set_java_mem
+        add_to_profiled set_jvm_stack_size
+        add_to_profiled set_java_stack_size
         set_env_default "JAVA_OPTS", default_java_opts
         set_env_default "JRUBY_OPTS", default_jruby_opts
       end
