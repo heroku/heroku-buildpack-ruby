@@ -84,5 +84,8 @@ DEPENDENCIES
   rspec-expectations
   rspec-retry
 
+RUBY VERSION
+   ruby 2.5.5p157
+
 BUNDLED WITH
    1.16.4
