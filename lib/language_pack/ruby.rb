@@ -308,7 +308,7 @@ SHELL
       #
       # This passes an argument to all Node processes during the build, so that they
       # can take advantage of all available memory on the build dynos.
-      ENV["NODE_OPTIONS"] ||= "--max_old_space_size=2560"
+      ENV["NODE_OPTIONS"] = env("NODE_OPTIONS") || "--max_old_space_size=2560"
 
       # TODO when buildpack-env-args rolls out, we can get rid of
       # ||= and the manual setting below
