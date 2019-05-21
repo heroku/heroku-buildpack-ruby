@@ -50,5 +50,12 @@ describe "BundlerWrapper" do
         expect(@bundler.ruby_version).to eq("ruby-1.9.3-p547")
       end
     end
+
+    it "handles app with output in their Gemfile" do
+      Hatchet::App.new("problem_gemfile_version").in_directory do |dir|
+        run!(%{echo '\nputs "some output"\n' >> Gemfile})
+        expect(@bundler.ruby_version).to eq("ruby-2.5.1-p0")
+      end
+    end
   end
 end
