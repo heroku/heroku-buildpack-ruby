@@ -1,0 +1,15 @@
+fix: true               # default: false
+parallel: true          # default: false
+ruby_version: 2.5.0     # default: RUBY_VERSION
+default_ignores: false  # default: true
+
+ignore:                 # default: []
+  - 'repos/**/*'
+  - 'vendor/**/*'
+  - '**/*':
+    - Lint/InterpolationCheck
+  - 'spec/**/*':
+    - Style/TrivialAccessors
+  - 'bin/**/*':
+    - Style/MixinUsage
+    - Lint/RescueException
