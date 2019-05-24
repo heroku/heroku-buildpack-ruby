@@ -404,6 +404,7 @@ SHELL
   def setup_profiled(ruby_layer_path = "$HOME", gem_layer_path = "$HOME")
     instrument 'setup_profiled' do
       profiled_path = binstubs_relative_paths(gem_layer_path)
+      profiled_path << File.expand_path(ruby_install_binstub_path(ruby_layer_path))
       profiled_path << "vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
