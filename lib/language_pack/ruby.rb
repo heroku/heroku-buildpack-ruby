@@ -57,7 +57,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   def default_config_vars
     instrument "ruby.default_config_vars" do
       vars = {
-        "LANG" => env("LANG") || "en_US.UTF-8"
+        "LANG" => env("LANG") || "en_US.UTF-8",
       }
 
       ruby_version.jruby? ? vars.merge({
@@ -301,6 +301,14 @@ SHELL
       setup_ruby_install_env
       ENV["PATH"] += ":#{node_preinstall_bin_path}" if node_js_installed?
       ENV["PATH"] += ":#{yarn_preinstall_bin_path}" if !yarn_not_preinstalled?
+
+      # By default Node can address 1.5GB of memory, a limitation it inherits from
+      # the underlying v8 engine. This can occasionally cause issues during frontend
+      # builds where memory use can exceed this threshold.
+      #
+      # This passes an argument to all Node processes during the build, so that they
+      # can take advantage of all available memory on the build dynos.
+      ENV["NODE_OPTIONS"] ||= "--max_old_space_size=2560"
 
       # TODO when buildpack-env-args rolls out, we can get rid of
       # ||= and the manual setting below
