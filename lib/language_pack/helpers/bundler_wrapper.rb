@@ -145,7 +145,7 @@ class LanguagePack::Helpers::BundlerWrapper
       command = "bundle platform --ruby"
 
       # Silently check for ruby version
-      output  = run_stdout(command, user_env: true, env: env)
+      output  = run_stdout(command, user_env: true, env: env).strip.lines.last
 
       # If there's a gem in the Gemfile (i.e. syntax error) emit error
       raise GemfileParseError.new(run("bundle check", user_env: true, env: env)) unless $?.success?
