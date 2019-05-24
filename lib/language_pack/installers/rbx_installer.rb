@@ -2,7 +2,8 @@ require "language_pack/installers/ruby_installer"
 require "language_pack/shell_helpers"
 
 class LanguagePack::Installers::RbxInstaller
-  include LanguagePack::ShellHelpers, LanguagePack::Installers::RubyInstaller
+  include LanguagePack::Installers::RubyInstaller
+  include LanguagePack::ShellHelpers
 
   BASE_URL = "https://rubinius-binaries-rubinius-com.s3.amazonaws.com/ubuntu/14.04/x86_64/"
 
@@ -17,4 +18,3 @@ class LanguagePack::Installers::RbxInstaller
     FileUtils.rm_rf("rubinius")
   end
 end
-

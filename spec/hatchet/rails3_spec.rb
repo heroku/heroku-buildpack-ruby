@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe "Rails 3.x" do
   it "should deploy on ruby 1.9.3" do
@@ -33,7 +33,6 @@ describe "Rails 3.x" do
       expect(app.output).to match("Add 'rails_12factor' gem to your Gemfile to skip plugin injection")
     end
   end
-
 
   it "fails if rake tasks cannot be detected" do
     Hatchet::Runner.new("rails3-fail-rakefile", allow_failure: true).deploy do |app|

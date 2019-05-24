@@ -5,7 +5,6 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
   let(:ruby_version) { LanguagePack::RubyVersion.new("ruby-2.3.3") }
 
   describe "#fetch_unpack" do
-
     it "should fetch and unpack mri" do
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
@@ -24,17 +23,15 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
           Dir.chdir(dir) do
             installer.fetch_unpack(ruby_version, dir, true)
 
-            expect(File.read("lib/ruby/1.9.1/x86_64-linux/rbconfig.rb")).to include(%q{CONFIG["prefix"] = (TOPDIR || DESTDIR + "/tmp/ruby-1.9.2")})
+            expect(File.read("lib/ruby/1.9.1/x86_64-linux/rbconfig.rb")).to include('CONFIG["prefix"] = (TOPDIR || DESTDIR + "/tmp/ruby-1.9.2")')
             expect(File).to exist("bin/ruby")
           end
         end
       end
-
     end
   end
 
   describe "#install" do
-
     it "should install ruby and setup binstubs" do
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
@@ -46,6 +43,5 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
         end
       end
     end
-
   end
 end

@@ -1,19 +1,18 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "BundlerWrapper" do
-
   before(:each) do
-    if ENV['RUBYOPT']
-      @original_rubyopt = ENV['RUBYOPT']
-      ENV['RUBYOPT'] = ENV['RUBYOPT'].sub('-rbundler/setup', '')
+    if ENV["RUBYOPT"]
+      @original_rubyopt = ENV["RUBYOPT"]
+      ENV["RUBYOPT"] = ENV["RUBYOPT"].sub("-rbundler/setup", "")
     end
 
     @bundler = LanguagePack::Helpers::BundlerWrapper.new
   end
 
   after(:each) do
-    if ENV['RUBYOPT']
-      ENV['RUBYOPT'] = @original_rubyopt
+    if ENV["RUBYOPT"]
+      ENV["RUBYOPT"] = @original_rubyopt
     end
 
     @bundler.clean
@@ -53,7 +52,7 @@ describe "BundlerWrapper" do
 
     it "handles app with output in their Gemfile" do
       Hatchet::App.new("problem_gemfile_version").in_directory do |dir|
-        run!(%{echo '\nputs "some output"\n' >> Gemfile})
+        run!(%(echo '\nputs "some output"\n' >> Gemfile))
         expect(@bundler.ruby_version).to eq("ruby-2.5.1-p0")
       end
     end

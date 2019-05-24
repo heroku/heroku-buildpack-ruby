@@ -46,3 +46,4 @@ EOF
 }
 
 tar xzf "$RUBY_BOOTSTRAP_DIR/ruby.tgz" -C "$RUBY_BOOTSTRAP_DIR"
+

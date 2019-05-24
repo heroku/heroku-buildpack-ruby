@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.5.5'
+ruby "2.5.5"
 
 group :development, :test do
   gem "toml-rb"
@@ -11,11 +11,11 @@ group :development, :test do
   gem "excon"
   gem "rake"
   gem "parallel_tests"
-  gem 'rspec-retry'
+  gem "rspec-retry"
   gem "netrc"
   gem "git", github: "hone/ruby-git", branch: "master"
-  gem 'json', '~> 2.0.2'
-  gem 'ci-queue'
-  gem 'redis'
+  gem "json", "~> 2.0.2"
+  gem "ci-queue"
+  gem "redis"
   gem "standard"
 end

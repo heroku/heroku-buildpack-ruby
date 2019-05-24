@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe "Rails 4.x" do
   it "set RAILS_SERVE_STATIC_FILES" do
@@ -18,7 +18,7 @@ describe "Rails 4.x" do
   it "should handle secrets.yml properly" do
     Hatchet::Runner.new("rails41_scaffold").deploy do |app, heroku|
       ReplRunner.new(:rails_console, "heroku run bin/rails console -a #{app.name}").run do |console|
-        console.run("ENV['SECRET_KEY_BASE'] == Rails.application.config.secrets.secret_key_base") {|result| expect(result).not_to eq("true") }
+        console.run("ENV['SECRET_KEY_BASE'] == Rails.application.config.secrets.secret_key_base") { |result| expect(result).not_to eq("true") }
       end
     end
   end
@@ -29,28 +29,28 @@ describe "Rails 4.x" do
 
     Hatchet::Runner.new("rails41_scaffold").deploy do |app, heroku|
       # First Deploy
-      run!(%Q{mkdir public/assets})
-      run!(%Q{echo #{string} > public/assets/file.txt})
-      run!(%Q{git add -A; git commit -m 'adding file.txt'})
+      run!(%(mkdir public/assets))
+      run!(%(echo #{string} > public/assets/file.txt))
+      run!(%(git add -A; git commit -m 'adding file.txt'))
       app.push!
 
       # Second Deploy
-      run!(%Q{echo #{new_string} > public/assets/file.txt})
-      run!(%Q{git add -A; git commit -m 'updating file.txt'})
+      run!(%(echo #{new_string} > public/assets/file.txt))
+      run!(%(git add -A; git commit -m 'updating file.txt'))
       app.push!
 
       # Asserts
-      result = app.run('cat public/assets/file.txt')
+      result = app.run("cat public/assets/file.txt")
       expect(result).not_to match(string)
       expect(result).to match(new_string)
     end
   end
 
   it "should detect rails successfully" do
-    Hatchet::App.new('rails4-manifest').in_directory do
+    Hatchet::App.new("rails4-manifest").in_directory do
       expect(LanguagePack::Rails4.use?).to eq(true)
     end
-    Hatchet::App.new('rails4-manifest').in_directory do
+    Hatchet::App.new("rails4-manifest").in_directory do
       expect(LanguagePack::Rails3.use?).to eq(false)
     end
   end
@@ -76,7 +76,7 @@ describe "Rails 4.x" do
       expect(app.output).to match("Include 'rails_12factor' gem to enable all platform features")
 
       output = app.run("rails runner 'puts %Q{hello} + %Q{world}'")
-      expect(output).to match('helloworld')
+      expect(output).to match("helloworld")
     end
   end
 

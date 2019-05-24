@@ -26,11 +26,11 @@ def execute_command(command)
   # having no whitespace before output. To avoid adding whitespace
   # for the original Kernel.puts to be used by passing in the
   # Kernel object.
-  pipe(command, :user_env => true, :output_object => Kernel)
+  pipe(command, user_env: true, output_object: Kernel)
 end
 
 # $ bin/test BUILD_DIR ENV_DIR ARTIFACT_DIR
-build_dir, env_dir, artifact_dir = ARGV
+build_dir, env_dir, _ = ARGV
 LanguagePack::ShellHelpers.initialize_env(env_dir)
 
 # The `ruby_test-compile` program installs a version of Ruby for the
@@ -63,4 +63,3 @@ execute_test(
     "rake test"
   end
 )
-

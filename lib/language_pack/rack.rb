@@ -3,12 +3,11 @@ require "language_pack/ruby"
 
 # Rack Language Pack. This is for any non-Rails Rack apps like Sinatra.
 class LanguagePack::Rack < LanguagePack::Ruby
-
   # detects if this is a valid Rack app by seeing if "config.ru" exists
   # @return [Boolean] true if it's a Rack app
   def self.use?
     instrument "rack.use" do
-      bundler.gem_version('rack')
+      bundler.gem_version("rack")
     end
   end
 
@@ -19,7 +18,7 @@ class LanguagePack::Rack < LanguagePack::Ruby
   def default_config_vars
     instrument "rack.default_config_vars" do
       super.merge({
-        "RACK_ENV" => env("RACK_ENV") || "production"
+        "RACK_ENV" => env("RACK_ENV") || "production",
       })
     end
   end
@@ -32,18 +31,16 @@ class LanguagePack::Rack < LanguagePack::Ruby
         "bundle exec rackup config.ru -p $PORT"
 
       super.merge({
-        "web" => web_process
+        "web" => web_process,
       })
     end
   end
 
-private
+  private
 
   # sets up the profile.d script for this buildpack
   def setup_profiled
     super
     set_env_default "RACK_ENV", "production"
   end
-
 end
-

@@ -48,11 +48,11 @@ module LanguagePack
     end
 
     def self.blacklist?(key)
-      %w(PATH GEM_PATH GEM_HOME GIT_DIR JRUBY_OPTS JAVA_OPTS JAVA_TOOL_OPTIONS RUBYOPT).include?(key)
+      %w[PATH GEM_PATH GEM_HOME GIT_DIR JRUBY_OPTS JAVA_OPTS JAVA_TOOL_OPTIONS RUBYOPT].include?(key)
     end
 
     def self.initialize_env(path)
-      env_dir = Pathname.new("#{path}")
+      env_dir = Pathname.new(path.to_s)
       if env_dir.exist? && env_dir.directory?
         env_dir.each_child do |file|
           key   = file.basename.to_s
@@ -103,7 +103,7 @@ module LanguagePack
     # @param [String] command to be run
     # @return [String] output of stdout
     def run_no_pipe(command, options = {})
-      run(command, options.merge({:out => ""}))
+      run(command, options.merge({out: ""}))
     end
 
     # run a shell command and pipe stderr to stdout
@@ -112,14 +112,14 @@ module LanguagePack
     # @option options [Hash] :env explicit environment to run command in
     # @option options [Boolean] :user_env whether or not a user's environment variables will be loaded
     def run(command, options = {})
-      %x{ #{command_options_to_string(command, options)} }
+      `#{command_options_to_string(command, options)}`
     end
 
     # run a shell command and pipe stderr to /dev/null
     # @param [String] command to be run
     # @return [String] output of stdout
     def run_stdout(command, options = {})
-      options[:out] ||= '2>/dev/null'
+      options[:out] ||= "2>/dev/null"
       run(command, options)
     end
 
@@ -127,7 +127,7 @@ module LanguagePack
       options[:env] ||= {}
       options[:out] ||= "2>&1"
       options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
-      env = options[:env].map {|key, value| "#{key.shellescape}=#{value.shellescape}" }.join(" ")
+      env = options[:env].map { |key, value| "#{key.shellescape}=#{value.shellescape}" }.join(" ")
       "/usr/bin/env #{env} bash -c #{command.shellescape} #{options[:out]} "
     end
 
@@ -177,7 +177,7 @@ module LanguagePack
       def output
         raise "no file name given" if @file.nil?
         exec_once
-        @file.read.encode('UTF-8', invalid: :replace)
+        @file.read.encode("UTF-8", invalid: :replace)
       end
 
       def timeout?
@@ -190,7 +190,8 @@ module LanguagePack
         @success
       end
 
-    private
+      private
+
       def exec_once
         return if @exec_once
         @exec_once = true
@@ -283,16 +284,17 @@ module LanguagePack
     end
 
     private
-      def private_log(name, key_value_hash)
-        File.open(ENV["BUILDPACK_LOG_FILE"] || "/dev/null", "a+") do |f|
-          key_value_hash.each do |key, value|
-            metric = String.new("#{name}#")
-            metric << "#{ENV["BPLOG_PREFIX"]}"
-            metric << "." unless metric.end_with?('.')
-            metric << "#{key}=#{value}"
-            f.puts metric
-          end
+
+    def private_log(name, key_value_hash)
+      File.open(ENV["BUILDPACK_LOG_FILE"] || "/dev/null", "a+") do |f|
+        key_value_hash.each do |key, value|
+          metric = +"#{name}#"
+          metric << (ENV["BPLOG_PREFIX"]).to_s
+          metric << "." unless metric.end_with?(".")
+          metric << "#{key}=#{value}"
+          f.puts metric
         end
       end
+    end
   end
 end

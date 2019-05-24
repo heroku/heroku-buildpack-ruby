@@ -42,15 +42,15 @@ class LanguagePack::Cache
     copy (@cache_base + path), dest
   end
 
-  def load_without_overwrite(path, dest=nil)
+  def load_without_overwrite(path, dest = nil)
     dest ||= path
-    copy (@cache_base + path), dest, '-a -n'
+    copy (@cache_base + path), dest, "-a -n"
   end
 
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
-  def copy(from, to, options='-a')
+  def copy(from, to, options = "-a")
     return false unless File.exist?(from)
     FileUtils.mkdir_p File.dirname(to)
     system("cp #{options} #{from}/. #{to}")
@@ -59,7 +59,7 @@ class LanguagePack::Cache
   # copy contents between to places in the cache
   # @param [String] source cache directory
   # @param [String] destination directory
-  def cache_copy(from,to)
+  def cache_copy(from, to)
     copy(@cache_base + from, @cache_base + to)
   end
 
@@ -67,6 +67,6 @@ class LanguagePack::Cache
   # @param [String] relative path of the cache contents
   # @param [Boolean] true if the path exists in the cache and false if otherwise
   def exists?(path)
-    File.exists?(@cache_base + path)
+    File.exist?(@cache_base + path)
   end
 end

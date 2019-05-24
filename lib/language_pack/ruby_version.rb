@@ -35,14 +35,14 @@ module LanguagePack
       set_version
       parse_version
 
-      @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
+      @version_without_patchlevel = @version.sub(/-p-?\d+/, "")
     end
 
     # https://github.com/bundler/bundler/issues/4621
     def version_for_download
       if rbx?
         "rubinius-#{engine_version}"
-      elsif patchlevel_is_significant? && @patchlevel && @patchlevel.sub(/p/, '').to_i >= 0
+      elsif patchlevel_is_significant? && @patchlevel && @patchlevel.sub(/p/, "").to_i >= 0
         @version
       else
         version_without_patchlevel
@@ -52,11 +52,11 @@ module LanguagePack
     # Before Ruby 2.1 patch releases were done via patchlevel i.e. 1.9.3-p426 versus 1.9.3-p448
     # With 2.1 and above patches are released in the "minor" version instead i.e. 2.1.0 versus 2.1.1
     def patchlevel_is_significant?
-      !jruby? && Gem::Version.new(self.ruby_version) <= Gem::Version.new("2.1")
+      !jruby? && Gem::Version.new(ruby_version) <= Gem::Version.new("2.1")
     end
 
     def rake_is_vendored?
-      Gem::Version.new(self.ruby_version) >= Gem::Version.new("1.9")
+      Gem::Version.new(ruby_version) >= Gem::Version.new("1.9")
     end
 
     def default?
@@ -78,7 +78,7 @@ module LanguagePack
     # determines if a build ruby is required
     # @return [Boolean] true if a build ruby is required
     def build?
-      engine == :ruby && %w(1.8.7 1.9.2).include?(ruby_version)
+      engine == :ruby && %w[1.8.7 1.9.2].include?(ruby_version)
     end
 
     # convert to a Gemfile ruby DSL incantation

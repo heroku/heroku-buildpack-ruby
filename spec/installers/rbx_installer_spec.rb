@@ -5,7 +5,6 @@ describe LanguagePack::Installers::RbxInstaller do
   let(:ruby_version) { LanguagePack::RubyVersion.new("ruby-2.3.1-rbx-3.69") }
 
   describe "#fetch_unpack" do
-
     it "should fetch and unpack rbx" do
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
@@ -15,6 +14,5 @@ describe LanguagePack::Installers::RbxInstaller do
         end
       end
     end
-
   end
 end

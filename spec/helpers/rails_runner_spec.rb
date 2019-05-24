@@ -1,9 +1,9 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Rails Runner" do
   around(:each) do |test|
     original_path = ENV["PATH"]
-    ENV["PATH"] = "./bin/:#{ENV['PATH']}"
+    ENV["PATH"] = "./bin/:#{ENV["PATH"]}"
 
     Dir.mktmpdir do |tmpdir|
       Dir.chdir(tmpdir) do
@@ -15,8 +15,8 @@ describe "Rails Runner" do
   end
 
   it "config objects build propperly formatted commands" do
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new
-    local_storage = rails_runner.detect("active_storage.service")
+    rails_runner = LanguagePack::Helpers::RailsRunner.new
+    rails_runner.detect("active_storage.service")
 
     expected = 'rails runner "begin; puts %Q{heroku.detecting.config.for.active_storage.service=#{Rails.application.config.try(:active_storage).try(:service)}}; rescue => e; end;"'
     expect(rails_runner.command).to eq(expected)
@@ -28,9 +28,15 @@ describe "Rails Runner" do
   end
 
   it "calls run through child object" do
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new
-    def rails_runner.call; @called ||= 0 ; @called += 1; end
-    def rails_runner.called; @called; end
+    rails_runner = LanguagePack::Helpers::RailsRunner.new
+    def rails_runner.call
+      @called ||= 0
+      @called += 1
+    end
+
+    def rails_runner.called
+      @called
+    end
 
     local_storage = rails_runner.detect("active_storage.service")
     local_storage.success?
@@ -45,9 +51,9 @@ describe "Rails Runner" do
     mock_rails_runner
     expect(File.executable?("bin/rails")).to eq(true)
 
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new
-    local_storage = rails_runner.detect("active_storage.service")
-    local_storage = rails_runner.detect("foo.bar")
+    rails_runner = LanguagePack::Helpers::RailsRunner.new
+    rails_runner.detect("active_storage.service")
+    rails_runner.detect("foo.bar")
 
     expect(rails_runner.output).to match("heroku.detecting.config.for.active_storage.service=active_storage.service")
     expect(rails_runner.output).to match("heroku.detecting.config.for.foo.bar=foo.bar")
@@ -57,12 +63,12 @@ describe "Rails Runner" do
   it "timeout works as expected" do
     mock_rails_runner("pid = Process.spawn('sleep 5'); Process.wait(pid)")
 
-    diff = time_it do
-      rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
-      local_storage = rails_runner.detect("active_storage.service")
+    diff = time_it {
+      rails_runner = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
+      rails_runner.detect("active_storage.service")
       expect(rails_runner.success?).to eq(false)
       expect(rails_runner.timeout?).to eq(true)
-    end
+    }
 
     expect(diff < 1).to eq(true), "expected time difference #{diff} to be less than 1 second, but was longer"
   end
@@ -90,52 +96,51 @@ describe "Rails Runner" do
   def time_it
     start = Time.now
     yield
-    return Time.now - start
+    Time.now - start
   end
 
   def mock_rails_runner(try_code = "")
-        executable_contents = <<-FILE
-#!/usr/bin/env ruby
-require 'ostruct'
+    executable_contents = <<~FILE
+      #!/usr/bin/env ruby
+      require 'ostruct'
 
-module Rails; end
-def Rails.application
-  OpenStruct.new(config: TryMock.new) # Rails.application.config #=> TryMock instance
-end
+      module Rails; end
+      def Rails.application
+        OpenStruct.new(config: TryMock.new) # Rails.application.config #=> TryMock instance
+      end
 
-# Mock object used to record calls
-# for example:
-#
-#   obj = Try.new
-#   obj.try(:active_storage).try(:service)
-#   puts obj.to_s # => "active_storage.service"
-#
-class TryMock
-  def initialize(array = [])
-    @try_array = array
-  end
+      # Mock object used to record calls
+      # for example:
+      #
+      #   obj = Try.new
+      #   obj.try(:active_storage).try(:service)
+      #   puts obj.to_s # => "active_storage.service"
+      #
+      class TryMock
+        def initialize(array = [])
+          @try_array = array
+        end
 
-  def try(value)
-    @try_array << value
-    #{try_code}
-    return TryMock.new(@try_array)
-  end
+        def try(value)
+          @try_array << value
+          #{try_code}
+          return TryMock.new(@try_array)
+        end
 
-  def to_s
-    @try_array.join(".")
-  end
-end
+        def to_s
+          @try_array.join(".")
+        end
+      end
 
-ARGV.shift           # remove "runner"
-eval(ARGV.join(" ")) # Execute command passed in
-FILE
+      ARGV.shift           # remove "runner"
+      eval(ARGV.join(" ")) # Execute command passed in
+    FILE
     FileUtils.mkdir("bin")
     File.open("bin/rails", "w") { |f| f << executable_contents }
-    File.chmod(0777, "bin/rails")
+    File.chmod(0o777, "bin/rails")
 
     # BUILDPACK_LOG_FILE support for logging
     FileUtils.mkdir("tmp")
     FileUtils.touch("buildpack.log")
   end
 end
-

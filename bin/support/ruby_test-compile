@@ -19,8 +19,8 @@ require "language_pack/test"
 include LanguagePack::ShellHelpers
 
 begin
-  LanguagePack::Instrument.trace 'test_compile', 'app.test_compile' do
-    if pack = LanguagePack.detect(ARGV[0], ARGV[1])
+  LanguagePack::Instrument.trace "test_compile", "app.test_compile" do
+    if (pack = LanguagePack.detect(ARGV[0], ARGV[1]))
       LanguagePack::ShellHelpers.initialize_env(ARGV[2])
       pack.topic("Setting up Test for #{pack.name}")
       pack.log("test_compile") do

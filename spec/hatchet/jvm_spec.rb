@@ -1,10 +1,10 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "JvmInstaller" do
   it "JVM is installed by jvm-common only" do
     buildpacks = ["heroku/jvm",
-                  Hatchet::App.default_buildpack] # default is heroku-ruby-buildpack here
-    app = Hatchet::Runner.new("ruby_193_jruby_17161", stack: 'cedar-14', buildpacks: buildpacks)
+                  Hatchet::App.default_buildpack,] # default is heroku-ruby-buildpack here
+    app = Hatchet::Runner.new("ruby_193_jruby_17161", stack: "cedar-14", buildpacks: buildpacks)
     app.setup!
 
     app.deploy do |app|

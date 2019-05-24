@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Node" do
   it "works with node buildpack" do
@@ -28,4 +28,3 @@ describe "Node" do
     end
   end
 end
-

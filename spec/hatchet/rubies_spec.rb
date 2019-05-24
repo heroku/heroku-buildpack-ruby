@@ -1,43 +1,43 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe "Ruby Versions on cedar-14" do
   it "should allow patchlevels" do
-    app = Hatchet::Runner.new('mri_193_p547', stack: "cedar-14")
+    app = Hatchet::Runner.new("mri_193_p547", stack: "cedar-14")
     app.setup!
     app.deploy do |app|
-      version = '1.9.3p547'
+      version = "1.9.3p547"
       expect(app.output).to match("ruby-1.9.3-p547")
-      expect(app.run('ruby -v')).to match(version)
+      expect(app.run("ruby -v")).to match(version)
     end
   end
 
   it "should deploy ruby 1.9.2 properly" do
-    app = Hatchet::Runner.new('mri_192', stack: "cedar-14")
+    app = Hatchet::Runner.new("mri_192", stack: "cedar-14")
     app.setup!
     app.deploy do |app|
-      version = '1.9.2'
+      version = "1.9.2"
       expect(app.output).to match(version)
-      expect(app.run('ruby -v')).to match(version)
+      expect(app.run("ruby -v")).to match(version)
     end
   end
 
   it "should deploy ruby 1.9.3 properly" do
-    app = Hatchet::Runner.new('mri_193', stack: "cedar-14")
+    app = Hatchet::Runner.new("mri_193", stack: "cedar-14")
     app.setup!
     app.deploy do |app|
-      version = '1.9.3'
+      version = "1.9.3"
       expect(app.output).to match(version)
-      expect(app.run('ruby -v')).to match(version)
+      expect(app.run("ruby -v")).to match(version)
     end
   end
 
   it "should deploy ruby 2.0.0 properly" do
-    app = Hatchet::Runner.new('mri_200', stack: "cedar-14")
+    app = Hatchet::Runner.new("mri_200", stack: "cedar-14")
     app.setup!
     app.deploy do |app|
-      version = '2.0.0'
+      version = "2.0.0"
       expect(app.output).to match(version)
-      expect(app.run('ruby -v')).to match(version)
+      expect(app.run("ruby -v")).to match(version)
 
       expect(app.output).to match("devcenter.heroku.com/articles/ruby-default-web-server")
     end
@@ -79,13 +79,12 @@ describe "Ruby Versions on cedar-14" do
   end
 end
 
-
 describe "Upgrading ruby apps" do
   it "works when changing from default version" do
     app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)
     app.setup!
     app.deploy do |app|
-      run!(%Q{echo "ruby '2.5.1'" >> Gemfile})
+      run!(%(echo "ruby '2.5.1'" >> Gemfile))
       run!("git add -A; git commit -m update-ruby")
       app.push!
       expect(app.output).to match("2.5.1")
