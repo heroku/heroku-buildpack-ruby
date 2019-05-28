@@ -1,14 +1,48 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env bash
 
-# This script will download a version of Ruby for the buildpack to use
-# and put it in the `ARGV.first` location.
-$stdout.sync = true
+# Downloads a bootstrap copy of Ruby for execution of the buildpack
+# this is needed so we can totally control the Ruby version and are
+# not dependant on the Ruby version of the stack image
 
-$:.unshift File.expand_path("../../../lib", __FILE__)
-require "language_pack"
+# fail hard
+set -o pipefail
+# fail harder
+set -eu
 
-DEFAULT_STACK = "cedar-14"
+BIN_DIR=$1
+RUBY_BOOTSTRAP_DIR=$2
 
-installer    = LanguagePack::Installers::HerokuRubyInstaller.new(ENV['STACK'] || DEFAULT_STACK)
-ruby_version = LanguagePack::RubyVersion.new("ruby-#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}")
-installer.fetch_unpack(ruby_version, ARGV[0])
+curl_retry_on_18() {
+  local ec=18;
+  local attempts=0;
+  while (( ec == 18 && attempts++ < 3 )); do
+    curl "$@" # -C - would return code 33 if unsupported by server
+    ec=$?
+  done
+  return $ec
+}
+
+# Pull ruby version out of buildpack.toml to be used with bootstrapping
+regex=".*ruby_version = [\'\"]([0-9]+\.[0-9]+\.[0-9]+)[\'\"].*"
+if [[ $(cat "$BIN_DIR/../buildpack.toml") =~ $regex ]]
+  then
+    heroku_buildpack_ruby_url="https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/$STACK/ruby-${BASH_REMATCH[1]}.tgz"
+  else
+    echo "Could not detect ruby version to bootstrap"
+    exit 1
+fi
+
+mkdir -p "$RUBY_BOOTSTRAP_DIR"
+
+curl_retry_on_18 --fail --silent --location -o "$RUBY_BOOTSTRAP_DIR/ruby.tgz" "$heroku_buildpack_ruby_url" || {
+cat<<EOF
+  Failed to download a Ruby executable for bootstrapping!
+
+  This is most likely a temporary internal error. If the problem
+  persists, make sure that you are not running a custom or forked
+  version of the Heroku Ruby buildpack which may need updating.
+EOF
+  exit 1
+}
+
+tar xzf "$RUBY_BOOTSTRAP_DIR/ruby.tgz" -C "$RUBY_BOOTSTRAP_DIR"
