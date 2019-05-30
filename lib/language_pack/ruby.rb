@@ -676,6 +676,7 @@ WARNING
 
         bundler_output = ""
         bundle_time    = nil
+        env_vars = {}
         Dir.mktmpdir("libyaml-") do |tmpdir|
           libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
           install_libyaml(libyaml_dir)
@@ -685,18 +686,17 @@ WARNING
           yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
           pwd            = Dir.pwd
           bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{bundler.dir_name}/lib"
+
           # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
           # codon since it uses bundler.
-          env_vars       = {
-            "BUNDLE_GEMFILE"                => "#{pwd}/Gemfile",
-            "BUNDLE_CONFIG"                 => "#{pwd}/.bundle/config",
-            "CPATH"                         => noshellescape("#{yaml_include}:$CPATH"),
-            "CPPATH"                        => noshellescape("#{yaml_include}:$CPPATH"),
-            "LIBRARY_PATH"                  => noshellescape("#{yaml_lib}:$LIBRARY_PATH"),
-            "RUBYOPT"                       => syck_hack,
-            "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true",
-            "BUNDLE_DISABLE_VERSION_CHECK"  => "true"
-          }
+         env_vars["BUNDLE_GEMFILE"] = "#{pwd}/Gemfile"
+          env_vars["BUNDLE_CONFIG"] = "#{pwd}/.bundle/config"
+          env_vars["CPATH"] = noshellescape("#{yaml_include}:$CPATH")
+          env_vars["CPPATH"] = noshellescape("#{yaml_include}:$CPPATH")
+          env_vars["LIBRARY_PATH"] = noshellescape("#{yaml_lib}:$LIBRARY_PATH")
+          env_vars["RUBYOPT"] = syck_hack
+          env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
+          env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
           env_vars["JAVA_HOME"]                    = noshellescape("#{pwd}/$JAVA_HOME") if ruby_version.jruby?
           env_vars["BUNDLER_LIB_PATH"]             = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
           env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
@@ -716,9 +716,9 @@ WARNING
           instrument "ruby.bundle_clean" do
             # Only show bundle clean output when not using default cache
             if load_default_cache?
-              run("#{bundle_bin} clean > /dev/null", user_env: true)
+              run("#{bundle_bin} clean > /dev/null", user_env: true, env: env_vars)
             else
-              pipe("#{bundle_bin} clean", out: "2> /dev/null", user_env: true)
+              pipe("#{bundle_bin} clean", out: "2> /dev/null", user_env: true, env: env_vars)
             end
           end
           @bundler_cache.store
