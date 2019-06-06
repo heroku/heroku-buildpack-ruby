@@ -32,7 +32,7 @@ heroku_buildpack_ruby_install_ruby()
   if [ ! -d "$heroku_buildpack_ruby_dir" ]; then
     heroku_buildpack_ruby_dir=$(mktemp -d)
     # bootstrap ruby
-    $bin_dir/support/download_ruby $heroku_buildpack_ruby_dir
+    $bin_dir/support/download_ruby "$BIN_DIR" "$heroku_buildpack_ruby_dir"
     function atexit {
       rm -rf $heroku_buildpack_ruby_dir
     }
