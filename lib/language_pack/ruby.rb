@@ -219,11 +219,11 @@ WARNING
   # default JAVA_OPTS
   # return [String] string of JAVA_OPTS
   def default_java_opts
-    '-Dfile.encoding=UTF-8'
+    "-Dfile.encoding=UTF-8"
   end
 
   def set_jvm_stack_size
-    ENV['JVM_STACK_SIZE'] = env('JVM_STACK_SIZE') || 512
+    ENV['JVM_STACK_SIZE'] = env("JVM_STACK_SIZE") || "512"
   end
 
   def set_jvm_max_heap
