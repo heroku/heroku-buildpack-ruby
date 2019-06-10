@@ -168,7 +168,9 @@ WARNING
 
   def self.slug_vendor_base
     command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
+    puts "running command #{command}"
     slug_vendor_base = run_no_pipe(command, user_env: true).chomp
+    puts "done running command #{slug_vendor_base}"
     error "Problem detecting bundler vendor directory: #{slug_vendor_base}" unless $?.success?
     return slug_vendor_base
   end
@@ -337,6 +339,9 @@ SHELL
       default_config_vars.each do |key, value|
         ENV[key] ||= value
       end
+
+      puts "JAVA_MEM: #{ENV["JAVA_MEM"]}"
+      puts "JAVA_STACVK: #{ENV["JAVA_STACK"]}"
 
       ENV["GEM_PATH"] = slug_vendor_base
       ENV["GEM_HOME"] = slug_vendor_base
