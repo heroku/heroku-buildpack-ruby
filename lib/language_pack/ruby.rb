@@ -307,11 +307,11 @@ EOF
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
-        ENV["JAVA_MEM"] = run(<<-SHELL).chomp
+        ENV["JAVA_MEM"] = run!(<<-SHELL).chomp
 #{set_jvm_max_heap}
 echo #{default_java_mem}
 SHELL
-        ENV["JAVA_STACK"] = run(<<-SHELL).chomp
+        ENV["JAVA_STACK"] = run!(<<-SHELL).chomp
 #{set_jvm_stack_size}
 echo #{default_java_stack_mem}
 SHELL
