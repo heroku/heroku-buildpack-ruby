@@ -242,7 +242,7 @@ case $(ulimit -u) in
   JVM_MAX_HEAP=300
   ;;
 esac
-    EOF
+ EOF
   end
 
   def set_java_stack_size
@@ -250,7 +250,7 @@ esac
 if ! [[ "${JAVA_OPTS}" == *-Xss* ]]; then
   export JAVA_OPTS="${JAVA_OPTS} ${JAVA_STACK:--Xss${JVM_STACK_SIZE:-512}k}"
 fi
-    EOF
+EOF
   end
 
   def set_java_mem
@@ -258,7 +258,7 @@ fi
 if ! [[ "${JAVA_OPTS}" == *-Xmx* ]]; then
   export JAVA_OPTS="${JAVA_OPTS} ${JAVA_MEM:--Xmx${JVM_MAX_HEAP:-300}m}"
 fi
-    EOF
+EOF
   end
 
   def set_default_web_concurrency
