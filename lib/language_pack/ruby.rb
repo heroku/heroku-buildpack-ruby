@@ -169,7 +169,7 @@ WARNING
   def self.slug_vendor_base
     command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
     slug_vendor_base = run_no_pipe(command, user_env: true).chomp
-    error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
+    error "Problem detecting bundler vendor directory: #{slug_vendor_base}" unless $?.success?
     return slug_vendor_base
   end
 
