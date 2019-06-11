@@ -4,7 +4,7 @@ class LanguagePack::Helpers::YarnInstaller
   def initialize
     # Grab latest yarn, until release practice stabilizes
     # https://github.com/yarnpkg/yarn/issues/376#issuecomment-253366910
-    nodebin  = LanguagePack::Helpers::Nodebin.yarn("latest")
+    nodebin  = LanguagePack::Helpers::Nodebin.yarn
     @version = nodebin["number"]
     @url     = nodebin["url"]
     @fetcher = LanguagePack::Fetcher.new("")

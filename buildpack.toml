@@ -1,5 +1,6 @@
 [buildpack]
 name = "Ruby"
+ruby_version = "2.5.5"
 
   [publish.Ignore]
   files = [
