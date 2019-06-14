@@ -54,7 +54,7 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
     end
 
     def load_asset_cache
-      puts "Loading asset cache."
+      puts "Loading asset cache"
       @cache.load_without_overwrite public_assets_folder
       @cache.load default_assets_cache
       @cache.load NODE_MODULES_PATH
@@ -64,7 +64,7 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
     end
 
     def store_asset_cache
-      puts "Storing asset cache."
+      puts "Storing asset cache"
       @cache.store public_assets_folder
       @cache.store default_assets_cache
       @cache.store NODE_MODULES_PATH
@@ -77,7 +77,7 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
       # does not call super because it would return if default_assets_cache was missing
       return if assets_compile_enabled?
 
-      puts "Removing non-essential asset cache directories."
+      puts "Removing non-essential asset cache directories"
       FileUtils.remove_dir(default_assets_cache) if Dir.exist?(default_assets_cache)
       FileUtils.remove_dir(NODE_MODULES_PATH) if Dir.exist?(NODE_MODULES_PATH)
       FileUtils.remove_dir(WEBPACKER_CACHE_PATH) if Dir.exist?(WEBPACKER_CACHE_PATH)
