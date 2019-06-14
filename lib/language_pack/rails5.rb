@@ -1,6 +1,9 @@
 require 'securerandom'
 require "language_pack"
 require "language_pack/rails42"
+require "language_pack/helpers/node_cache"
+require "language_pack/helpers/yarn_cache"
+require "language_pack/helpers/webpacker_cache"
 
 class LanguagePack::Rails5 < LanguagePack::Rails42
   # @return [Boolean] true if it's a Rails 5.x app
@@ -12,6 +15,13 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
                  rails_version <  Gem::Version.new('6.0.0')
       return is_rails
     end
+  end
+
+  def initialize(build_path, cache_path=nil)
+    super(build_path, cache_path)
+    @node_cache = LanguagePack::NodeCache.new(@cache, @stack)
+    @yarn_cache = LanguagePack::YarnCache.new(@cache, @stack)
+    @webpacker_cache = LanguagePack::WebpackerCache.new(@cache, @stack)
   end
 
   def setup_profiled
