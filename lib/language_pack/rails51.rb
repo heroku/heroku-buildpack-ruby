@@ -74,9 +74,10 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
     end
 
     def cleanup
-      puts "Cleaning up asset cache."
       # does not call super because it would return if default_assets_cache was missing
       return if assets_compile_enabled?
+
+      puts "Removing non-essential asset cache directories."
       FileUtils.remove_dir(default_assets_cache) if Dir.exist?(default_assets_cache)
       FileUtils.remove_dir(NODE_MODULES_PATH) if Dir.exist?(NODE_MODULES_PATH)
       FileUtils.remove_dir(WEBPACKER_CACHE_PATH) if Dir.exist?(WEBPACKER_CACHE_PATH)
