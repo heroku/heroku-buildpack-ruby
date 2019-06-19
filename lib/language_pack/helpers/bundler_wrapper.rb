@@ -37,7 +37,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   BLESSED_BUNDLER_VERSIONS = {}
   BLESSED_BUNDLER_VERSIONS["1"] = "1.15.2"
-  BLESSED_BUNDLER_VERSIONS["2"] = "2.0.1"
+  BLESSED_BUNDLER_VERSIONS["2"] = "2.0.2"
   private_constant :BLESSED_BUNDLER_VERSIONS
 
   class GemfileParseError < BuildpackError
