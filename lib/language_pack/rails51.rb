@@ -13,7 +13,7 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
     instrument "rails51.use" do
       rails_version = bundler.gem_version('railties')
       return false unless rails_version
-      is_rails = rails_version >= Gem::Version.new('5.1.x') && rails_version < Gem::Version.new('6.0.0')
+      is_rails = rails_version >= Gem::Version.new('5.1.x')
       return is_rails
     end
   end
