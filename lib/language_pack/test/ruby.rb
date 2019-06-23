@@ -8,6 +8,7 @@ class LanguagePack::Ruby
       install_ruby
       install_jvm
       setup_language_pack_environment
+      setup_export
       setup_profiled
       allow_git do
         install_bundler_in_app

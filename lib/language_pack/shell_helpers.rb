@@ -177,7 +177,7 @@ module LanguagePack
       def output
         raise "no file name given" if @file.nil?
         exec_once
-        @file.read
+        @file.read.encode('UTF-8', invalid: :replace)
       end
 
       def timeout?
