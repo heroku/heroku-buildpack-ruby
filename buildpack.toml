@@ -1,5 +1,6 @@
 [buildpack]
 name = "Ruby"
+ruby_version = "2.5.5"
 
   [publish.Ignore]
   files = [
@@ -12,11 +13,11 @@ name = "Ruby"
   dir = "."
   files = ["./.env"]
   [[publish.Vendor]]
-  url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/ruby-2.5.1.tgz"
+  url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/ruby-2.5.5.tgz"
   dir = "vendor/ruby/cedar-14"
   [[publish.Vendor]]
-  url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-16/ruby-2.5.1.tgz"
+  url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-16/ruby-2.5.5.tgz"
   dir = "vendor/ruby/heroku-16"
   [[publish.Vendor]]
-  url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-18/ruby-2.5.1.tgz"
+  url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-18/ruby-2.5.5.tgz"
   dir = "vendor/ruby/heroku-18"

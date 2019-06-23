@@ -2,9 +2,10 @@ require "language_pack"
 require "language_pack/base"
 
 class LanguagePack::Metadata
-  FOLDER = "vendor/heroku"
+  FOLDER = 'vendor/scalingo'
 
   def initialize(cache)
+    ensure_sc_compat
     if cache
       @cache = cache
       @cache.load FOLDER
@@ -31,5 +32,13 @@ class LanguagePack::Metadata
 
   def save
     @cache ? @cache.add(FOLDER) : false
+  end
+
+  protected
+
+  def ensure_sc_compat
+    if File.exist?('vendor/heroku') && !File.exist?(FOLDER)
+      FileUtils.mv('vendor/heroku', FOLDER)
+    end
   end
 end
