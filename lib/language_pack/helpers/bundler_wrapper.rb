@@ -37,7 +37,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   BLESSED_BUNDLER_VERSIONS = {}
   BLESSED_BUNDLER_VERSIONS["1"] = "1.15.2"
-  BLESSED_BUNDLER_VERSIONS["2"] = "2.0.1"
+  BLESSED_BUNDLER_VERSIONS["2"] = "2.0.2"
   private_constant :BLESSED_BUNDLER_VERSIONS
 
   class GemfileParseError < BuildpackError
@@ -145,7 +145,7 @@ class LanguagePack::Helpers::BundlerWrapper
       command = "bundle platform --ruby"
 
       # Silently check for ruby version
-      output  = run_stdout(command, user_env: true, env: env)
+      output  = run_stdout(command, user_env: true, env: env).strip.lines.last
 
       # If there's a gem in the Gemfile (i.e. syntax error) emit error
       raise GemfileParseError.new(run("bundle check", user_env: true, env: env)) unless $?.success?
