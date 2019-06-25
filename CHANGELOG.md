@@ -1,11 +1,29 @@
 ## Master
 
+
 ## v201 (6/23/2019)
 
+* Ruby apps with Bundler 2.x now receive version 2.0.2
+
+The [Ruby Buildpack](https://devcenter.heroku.com/articles/ruby-support#libraries) now includes Bundler 2.0.2. Applications specifying Bundler 2.x in their `Gemfile.lock` will now receive bundler: 2.0.2.
+
+[PR](https://github.com/heroku/heroku-buildpack-ruby/pull/894)
+
+* Ruby apps now default to Node version 10.15.3 and Yarn version 1.16.0
+
+Applications using the `heroku/ruby` buildpack that do not have a version of Node installed by another buildpack (such as the `heroku/nodejs` buildpack) will now receive Node version 10.15.3  and Yarn version 1.16.0.
+
+These versions and instructions on how to specify a specific version of these binaries can be found on the [installed binaries section of the Heroku Ruby Support page](https://devcenter.heroku.com/articles/ruby-support#installed-binaries).
+
+[PR](https://github.com/heroku/heroku-buildpack-ruby/pull/884)
+
+* Default Ruby version for new apps is now 2.5.5
+
+The [default Ruby version for new Ruby applications is 2.5.5](https://devcenter.heroku.com/articles/ruby-support). You’ll only get the default if the application does not specify a ruby version.
+
+[PR](https://github.com/heroku/heroku-buildpack-ruby/pull/863)
+
 * Set memory default for Node builds (https://github.com/heroku/heroku-buildpack-ruby/pull/861)
-* Default Ruby version is now 2.5.5, was previously 2.5.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/863)
-* Default Node version is now 10.15.3 and default Yarn version is now 1.16.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/884)
-* Bundler 2 now uses 2.0.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/894)
 
 ## v200 (3/7/2019)
 
