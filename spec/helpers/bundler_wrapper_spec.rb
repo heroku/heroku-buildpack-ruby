@@ -19,6 +19,12 @@ describe "BundlerWrapper" do
     @bundler.clean
   end
 
+  it "handles windows BUNDLED WITH" do
+    wrapper = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: fixture_path("windows_lockfile/Gemfile"))
+
+    expect(wrapper.version).to eq(LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS["2"])
+  end
+
   it "detects windows gemfiles" do
     Hatchet::App.new("rails4_windows_mri193").in_directory do |dir|
       expect(@bundler.install.windows_gemfile_lock?).to be_truthy

@@ -1,5 +1,7 @@
 ## Master
 
+* Fix windows Gemfile.lock BUNDLED WITH support (https://github.com/heroku/heroku-buildpack-ruby/pull/898)
+
 ## v201 (6/23/2019)
 
 * Set memory default for Node builds (https://github.com/heroku/heroku-buildpack-ruby/pull/861)
