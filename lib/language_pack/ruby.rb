@@ -125,12 +125,12 @@ private
     old_bundler_version  = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
 
     if old_bundler_version && old_bundler_version != bundler.version
-      puts(<<-WARNING)
+      warn(<<-WARNING, inline: true)
 Your app was upgraded to bundler #{ bundler.version }.
 Previously you had a successful deploy with bundler #{ old_bundler_version }.
 
 If you see problems related to the bundler version please refer to:
-https://devcenter.heroku.com/articles/bundler-version
+https://devcenter.heroku.com/articles/bundler-version#known-upgrade-issues
 
 WARNING
     end
