@@ -219,23 +219,24 @@ WARNING
   # default JAVA_OPTS
   # return [String] string of JAVA_OPTS
   def default_java_opts
-    "-Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
+    "-Dfile.encoding=UTF-8"
   end
 
   def set_jvm_max_heap
     <<-EOF
-case $(ulimit -u) in
-256)   # 1X Dyno
-  JVM_MAX_HEAP=384
+limit=$(ulimit -u)
+case $limit in
+512)   # 2X, private-s: memory.limit_in_bytes=1073741824
+  echo "$opts -Xmx671m -XX:CICompilerCount=2"
   ;;
-512)   # 2X Dyno
-  JVM_MAX_HEAP=768
+16384) # perf-m, private-m: memory.limit_in_bytes=2684354560
+  echo "$opts -Xmx2g"
   ;;
-16384) # IX Dyno
-  JVM_MAX_HEAP=2048
+32768) # perf-l, private-l: memory.limit_in_bytes=15032385536
+  echo "$opts -Xmx12g"
   ;;
-32768) # PX Dyno
-  JVM_MAX_HEAP=5120
+*) # Free, Hobby, 1X: memory.limit_in_bytes=536870912
+  echo "$opts -Xmx300m -Xss512k -XX:CICompilerCount=2"
   ;;
 esac
 EOF
