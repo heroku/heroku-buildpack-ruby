@@ -37,8 +37,8 @@ class LanguagePack::Metadata
   protected
 
   def ensure_sc_compat
-    if File.exists?('vendor/heroku') && !File.exists?(FOLDER)
-      File.mv('vendor/heroku', FOLDER)
+    if File.exist?('vendor/heroku') && !File.exist?(FOLDER)
+      FileUtils.mv('vendor/heroku', FOLDER)
     end
   end
 end
