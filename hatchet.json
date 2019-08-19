@@ -79,6 +79,9 @@
     "sharpstone/active_storage_local",
     "sharpstone/sprockets_asset_compile_true"
   ],
+  "rails6": [
+    "sharpstone/rails6-basic"
+  ],
   "heroku": [
     "heroku/ruby-getting-started"
   ],
