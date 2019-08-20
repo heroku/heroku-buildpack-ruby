@@ -13,4 +13,11 @@ class LanguagePack::Rails6 < LanguagePack::Rails5
       return is_rails
     end
   end
+
+  def compile
+    instrument "rails6.compile" do
+      FileUtils.mkdir_p("tmp/pids")
+      super
+    end
+  end
 end

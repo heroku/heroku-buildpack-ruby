@@ -85,6 +85,8 @@
   - cba59b7559f1f806684b65654228d44fcda91a82
 - - "./repos/rails52/sprockets_asset_compile_true"
   - 98c6675cf97059278709cf75030e28063e0228d2
+- - "./repos/rails6/rails6-basic"
+  - b633fb14a58880bc21ccec4918af454fd5423843
 - - "./repos/rake/asset_precompile_fail"
   - 16f7834331d6bb3fc5c284130b14eb1ff74d99d5
 - - "./repos/rake/asset_precompile_not_found"
