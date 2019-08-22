@@ -1,5 +1,13 @@
 ## Master
 
+## v203 (8/20/2019)
+
+* Make sure Rails 6 apps have a `tmp/pids` folder so they can boot (https://github.com/heroku/heroku-buildpack-ruby/pull/909)
+
+## v202 (8/20/2019)
+
+* Add support class for Rails 6 (https://github.com/heroku/heroku-buildpack-ruby/pull/908)
+
 ## v201 (6/23/2019)
 
 * Set memory default for Node builds (https://github.com/heroku/heroku-buildpack-ruby/pull/861)
