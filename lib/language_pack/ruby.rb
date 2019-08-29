@@ -964,7 +964,7 @@ params = CGI.parse(uri.query || "")
   def run_assets_precompile_rake_task
     instrument 'ruby.run_assets_precompile_rake_task' do
 
-      precompile = rake.task("assets:precompile")
+      precompile = rake.task("assets:precompile --trace")
       return true unless precompile.is_defined?
 
       topic "Precompiling assets"
@@ -993,6 +993,9 @@ params = CGI.parse(uri.query || "")
       msg << "try upgrading to Sprockets 4.0.0.beta7 or later:\n"
       msg << "https://github.com/rails/sprockets/pull/547\n"
     end
+
+    msg << "Complete output:\n"
+    msg << output
 
     error msg
   end
