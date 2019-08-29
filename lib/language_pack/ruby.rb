@@ -981,17 +981,17 @@ params = CGI.parse(uri.query || "")
     mcount "fail.assets_precompile"
     log "assets_precompile", :status => "failure"
     msg = "Precompiling assets failed.\n"
+    sprockets_version = bundler.gem_version('sprockets')
     if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
       msg << "Attempted to access a nonexistent database:\n"
       msg << "https://devcenter.heroku.com/articles/pre-provision-database\n"
-    end
-
-    sprockets_version = bundler.gem_version('sprockets')
-    if output.match(/Sprockets::FileNotFound/) && (sprockets_version < Gem::Version.new('4.0.0.beta7') && sprockets_version > Gem::Version.new('4.0.0.beta4'))
+    elsif output.match(/Sprockets::FileNotFound/) && (sprockets_version < Gem::Version.new('4.0.0.beta7') && sprockets_version > Gem::Version.new('4.0.0.beta4'))
       mcount "fail.assets_precompile.file_not_found_beta"
       msg << "If you have this file in your project\n"
       msg << "try upgrading to Sprockets 4.0.0.beta7 or later:\n"
       msg << "https://github.com/rails/sprockets/pull/547\n"
+    else
+      msg << output
     end
 
     error msg
