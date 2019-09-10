@@ -1015,6 +1015,9 @@ params = CGI.parse(uri.query || "")
       rubygems_version_cache  = "rubygems_version"
       stack_cache             = "stack"
 
+      # bundle clean does not remove binstubs
+      FileUtils.rm_rf("vendor/bundler/bin")
+
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
       old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
       old_stack ||= DEFAULT_LEGACY_STACK
