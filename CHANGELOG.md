@@ -1,8 +1,19 @@
 ## Master
 
+## v203 (8/20/2019)
+
+* Make sure Rails 6 apps have a `tmp/pids` folder so they can boot (https://github.com/heroku/heroku-buildpack-ruby/pull/909)
+
+## v202 (8/20/2019)
+
+* Add support class for Rails 6 (https://github.com/heroku/heroku-buildpack-ruby/pull/908)
+
+## v201 (6/23/2019)
+
 * Set memory default for Node builds (https://github.com/heroku/heroku-buildpack-ruby/pull/861)
 * Default Ruby version is now 2.5.5, was previously 2.5.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/863)
 * Default Node version is now 10.15.3 and default Yarn version is now 1.16.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/884)
+* Bundler 2 now uses 2.0.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/894)
 
 ## v200 (3/7/2019)
 
