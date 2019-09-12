@@ -7,3 +7,4 @@ vendor/bundle/*
 buildpacks/*
 .anvil/
 tmp/*.log
+log/*.log
