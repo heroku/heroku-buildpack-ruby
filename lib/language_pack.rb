@@ -13,7 +13,7 @@ module LanguagePack
     Instrument.instrument 'detect' do
       Dir.chdir(args.first)
 
-      pack = [ NoLockfile, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+      pack = [ NoLockfile, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
         klass.use?
       end
 
@@ -32,6 +32,7 @@ require 'language_pack/instrument'
 require "language_pack/helpers/plugin_installer"
 require "language_pack/helpers/stale_file_cleaner"
 require "language_pack/helpers/rake_runner"
+require "language_pack/helpers/rails_runner"
 require "language_pack/helpers/bundler_wrapper"
 require "language_pack/installers/ruby_installer"
 require "language_pack/installers/heroku_ruby_installer"
@@ -46,4 +47,5 @@ require "language_pack/rails4"
 require "language_pack/rails41"
 require "language_pack/rails42"
 require "language_pack/rails5"
+require "language_pack/rails6"
 require "language_pack/no_lockfile"

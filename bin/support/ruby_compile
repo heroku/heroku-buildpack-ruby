@@ -22,14 +22,5 @@ begin
     end
   end
 rescue Exception => e
-  Kernel.puts " !"
-  e.message.split("\n").each do |line|
-    Kernel.puts " !     #{line.strip}"
-  end
-  Kernel.puts " !"
-  if e.is_a?(BuildpackError)
-    exit 1
-  else
-    raise e
-  end
+  LanguagePack::ShellHelpers.display_error_and_exit(e)
 end
