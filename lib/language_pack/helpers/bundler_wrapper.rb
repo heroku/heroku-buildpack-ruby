@@ -38,7 +38,7 @@ class LanguagePack::Helpers::BundlerWrapper
   BLESSED_BUNDLER_VERSIONS = {}
   BLESSED_BUNDLER_VERSIONS["1"] = "1.15.2"
   BLESSED_BUNDLER_VERSIONS["2"] = "2.0.2"
-  private_constant :BLESSED_BUNDLER_VERSIONS
+  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m
 
   class GemfileParseError < BuildpackError
     def initialize(error)
@@ -182,7 +182,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def major_bundler_version
     # https://rubular.com/r/jt9yj0aY7fU3hD
-    bundler_version_match = @gemfile_lock_path.read.match(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m)
+    bundler_version_match = @gemfile_lock_path.read(mode: "rt").match(BUNDLED_WITH_REGEX)
 
     if bundler_version_match
       bundler_version_match[:major]
