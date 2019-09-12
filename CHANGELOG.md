@@ -1,5 +1,6 @@
 ## Master
 
+* Ensure that old binstubs are removed before new ones are generated (https://github.com/heroku/heroku-buildpack-ruby/pull/914)
 * Fix windows Gemfile.lock BUNDLED WITH support (https://github.com/heroku/heroku-buildpack-ruby/pull/898)
 
 ## v203 (8/20/2019)
