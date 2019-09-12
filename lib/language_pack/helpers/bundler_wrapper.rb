@@ -1,37 +1,89 @@
+# frozen_string_literal: true
+
 require 'language_pack/fetcher'
 
+# This class is responsible for installing and maintaining a
+# reference to bundler. It contains access to bundler internals
+# that are used to introspect a project such as detecting presence
+# of gems and their versions.
+#
+# Example:
+#
+#   bundler = LanguagePack::Helpers::BundlerWrapper.new
+#   bundler.install
+#   bundler.version                 => "1.15.2"
+#   bundler.dir_name                => "bundler-1.15.2"
+#   bundler.has_gem?("railties")    => true
+#   bundler.gem_version("railties") => "5.2.2"
+#   bundler.clean
+#
+# Also used to determine the version of Ruby that a project is using
+# based on `bundle platform --ruby`
+#
+#   bundler.ruby_version # => "ruby-2.5.1"
+#   bundler.clean
+#
+# IMPORTANT: Calling `BundlerWrapper#install` on this class mutates the environment variable
+# ENV['BUNDLE_GEMFILE']. If you're calling in a test context (or anything outside)
+# of an isolated dyno, you must call `BundlerWrapper#clean`. To reset the environment
+# variable:
+#
+#   bundler = LanguagePack::Helpers::BundlerWrapper.new
+#   bundler.install
+#   bundler.clean # <========== IMPORTANT =============
+#
 class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
+  BLESSED_BUNDLER_VERSIONS = {}
+  BLESSED_BUNDLER_VERSIONS["1"] = "1.15.2"
+  BLESSED_BUNDLER_VERSIONS["2"] = "2.0.2"
+  private_constant :BLESSED_BUNDLER_VERSIONS
+
   class GemfileParseError < BuildpackError
     def initialize(error)
-      msg = "There was an error parsing your Gemfile, we cannot continue\n"
+      msg = String.new("There was an error parsing your Gemfile, we cannot continue\n")
       msg << error
       super msg
     end
   end
 
-  VENDOR_URL         = LanguagePack::Base::VENDOR_URL                # coupling
-  DEFAULT_FETCHER    = LanguagePack::Fetcher.new(VENDOR_URL)         # coupling
-  BUNDLER_DIR_NAME   = LanguagePack::Ruby::BUNDLER_GEM_PATH          # coupling
-  BUNDLER_PATH       = File.expand_path("../../../../tmp/#{BUNDLER_DIR_NAME}", __FILE__)
-  GEMFILE_PATH       = Pathname.new "./Gemfile"
+  class UnsupportedBundlerVersion < BuildpackError
+    def initialize(version_hash, major)
+      msg = String.new("Your Gemfile.lock indicates you need bundler `#{major}.x`\n")
+      msg << "which is not currently supported. You can deploy with bundler version:\n"
+      version_hash.keys.each do |v|
+        msg << "  - `#{v}.x`\n"
+      end
+      msg << "\nTo use another version of bundler, update your `Gemfile.lock` to point\n"
+      msg << "to a supported version. For example:\n"
+      msg << "\n"
+      msg << "```\n"
+      msg << "BUNDLED WITH\n"
+      msg << "   #{version_hash["1"]}\n"
+      msg << "```\n"
+      super msg
+    end
+  end
 
-  attr_reader   :bundler_path
+  attr_reader :bundler_path
 
   def initialize(options = {})
-    @fetcher              = options[:fetcher]      || DEFAULT_FETCHER
-    @bundler_tmp          = Dir.mktmpdir
-    @bundler_path         = options[:bundler_path] || File.join(@bundler_tmp, "#{BUNDLER_DIR_NAME}")
-    @gemfile_path         = options[:gemfile_path] || GEMFILE_PATH
-    @bundler_tar          = options[:bundler_tar]  || "#{BUNDLER_DIR_NAME}.tgz"
-    @gemfile_lock_path    = "#{@gemfile_path}.lock"
+    @bundler_tmp          = Pathname.new(Dir.mktmpdir)
+    @fetcher              = options[:fetcher]      || LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
+    @gemfile_path         = options[:gemfile_path] || Pathname.new("./Gemfile")
+    @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
+    detect_bundler_version_and_dir_name!
+
+    @bundler_path         = options[:bundler_path] || @bundler_tmp.join(dir_name)
+    @bundler_tar          = options[:bundler_tar]  || "bundler/#{dir_name}.tgz"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
-    ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
-    @path                 = Pathname.new "#{@bundler_path}/gems/#{BUNDLER_DIR_NAME}/lib"
+    @path                 = Pathname.new("#{@bundler_path}/gems/#{dir_name}/lib")
   end
 
   def install
+    ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
+
     fetch_bundler
     $LOAD_PATH << @path
     require "bundler"
@@ -40,14 +92,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def clean
     ENV['BUNDLE_GEMFILE'] = @orig_bundle_gemfile
-    FileUtils.remove_entry_secure(@bundler_tmp) if Dir.exist?(@bundler_tmp)
-
-    if LanguagePack::Ruby::BUNDLER_VERSION  == "1.7.12"
-      # Hack to cleanup after pre 1.8 versions of bundler. See https://github.com/bundler/bundler/pull/3277/
-      Dir["#{Dir.tmpdir}/bundler*"].each do |dir|
-        FileUtils.remove_entry_secure(dir) if Dir.exist?(dir) && File.stat(dir).writable?
-      end
-    end
+    @bundler_tmp.rmtree if @bundler_tmp.directory?
   end
 
   def has_gem?(name)
@@ -71,7 +116,7 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def specs
-    @specs     ||= lockfile_parser.specs.each_with_object({}) {|spec, hash| hash[spec.name] = spec }
+    @specs ||= lockfile_parser.specs.each_with_object({}) {|spec, hash| hash[spec.name] = spec }
   end
 
   def platforms
@@ -79,7 +124,11 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def version
-    Bundler::VERSION
+    @version
+  end
+
+  def dir_name
+    "bundler-#{version}"
   end
 
   def instrument(*args, &block)
@@ -89,14 +138,14 @@ class LanguagePack::Helpers::BundlerWrapper
   def ruby_version
     instrument 'detect_ruby_version' do
       env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
-              "RUBYLIB"  => File.join(bundler_path, "gems", BUNDLER_DIR_NAME, "lib"),
+              "RUBYLIB"  => File.join(bundler_path, "gems", dir_name, "lib"),
               "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
               "BUNDLE_DISABLE_VERSION_CHECK" => "true"
             }
       command = "bundle platform --ruby"
 
       # Silently check for ruby version
-      output  = run_stdout(command, user_env: true, env: env)
+      output  = run_stdout(command, user_env: true, env: env).strip.lines.last
 
       # If there's a gem in the Gemfile (i.e. syntax error) emit error
       raise GemfileParseError.new(run("bundle check", user_env: true, env: env)) unless $?.success?
@@ -128,6 +177,29 @@ class LanguagePack::Helpers::BundlerWrapper
     instrument 'parse_bundle' do
       gemfile_contents = File.read(@gemfile_lock_path)
       Bundler::LockfileParser.new(gemfile_contents)
+    end
+  end
+
+  def major_bundler_version
+    # https://rubular.com/r/jt9yj0aY7fU3hD
+    bundler_version_match = @gemfile_lock_path.read.match(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m)
+
+    if bundler_version_match
+      bundler_version_match[:major]
+    else
+      "1"
+    end
+  end
+
+  # You cannot use Bundler 2.x with a Gemfile.lock that points to a 1.x bundler
+  # version. The solution here is to read in the value set in the Gemfile.lock
+  # and download the "blessed" version with the same major version.
+  def detect_bundler_version_and_dir_name!
+    major = major_bundler_version
+    if BLESSED_BUNDLER_VERSIONS.key?(major)
+      @version = BLESSED_BUNDLER_VERSIONS[major]
+    else
+      raise UnsupportedBundlerVersion.new(BLESSED_BUNDLER_VERSIONS, major)
     end
   end
 end
