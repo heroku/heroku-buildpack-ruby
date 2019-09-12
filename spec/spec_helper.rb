@@ -56,3 +56,22 @@ end
 def fixture_path(path)
   Pathname.new(__FILE__).join("../fixtures").expand_path.join(path)
 end
+
+def dyno_status(app, ps_name = "web")
+  app
+    .api_rate_limit.call
+    .dyno
+    .list(app.name)
+    .detect {|x| x["type"] == ps_name }
+end
+
+def wait_for_dyno_boot(app, ps_name = "web", sleep_val = 1)
+  while ["starting", "restarting"].include?(dyno_status(app, ps_name)["state"])
+    sleep sleep_val
+  end
+  dyno_status(app, ps_name)
+end
+
+def web_boot_status(app)
+  wait_for_dyno_boot(app)["state"]
+end
