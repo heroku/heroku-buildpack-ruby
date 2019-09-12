@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe "Rails 6" do
   it "should detect successfully" do
-    Hatchet::App.new('rails6-basic').in_directory do
+    Hatchet::App.new('rails6-basic').in_directory_fork do
       expect(LanguagePack::Rails5.use?).to eq(false)
       expect(LanguagePack::Rails6.use?).to eq(true)
     end
