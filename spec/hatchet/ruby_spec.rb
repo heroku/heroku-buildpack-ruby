@@ -26,7 +26,7 @@ describe "Ruby apps" do
 
   describe "2.5.0" do
     it "works" do
-      Hatchet::Runner.new("ruby_25").deploy do
+      Hatchet::Runner.new("ruby_25").deploy do |app|
         expect(app.output).to include("There is a more recent Ruby version available")
       end
     end
