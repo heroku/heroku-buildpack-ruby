@@ -53,6 +53,9 @@ if ENV['TRAVIS']
   exit 0 if ENV['TRAVIS_PULL_REQUEST'] != 'false' && ENV['TRAVIS_BRANCH'] == 'master'
 end
 
+def fixture_path(path)
+  Pathname.new(__FILE__).join("../fixtures").expand_path.join(path)
+end
 
 def dyno_status(app, ps_name = "web")
   app
