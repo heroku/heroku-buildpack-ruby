@@ -121,8 +121,6 @@
   - 130cbe4bc2d8325ecb6d450fb7f5f2248390f0f8
 - - "./repos/ruby/ruby_193_jruby_17161_jdk7"
   - c1b632f8a96cf9b902f5cdcd7a190d46544a8144
-- - "./repos/ruby/ruby_193_jruby_17161_jdk8"
-  - 01d90df2547488151f3add3b237f15e47e62a4e9
 - - "./repos/ruby/ruby_193_jruby_173"
   - a08e8b2cc61d08bd611accaa455dbcbfff80f831
 - - "./repos/ruby/ruby_193_jruby_176"
