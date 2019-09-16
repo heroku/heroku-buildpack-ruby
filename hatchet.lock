@@ -117,13 +117,13 @@
   - 39f4753b620f9ff427c547fd19f04c89f8441f6f
 - - "./repos/ruby/ruby_193_bad_patch_cedar_14"
   - 6948c1460c596f08c4642d616ae73a45dc0ae51a
-- - "./repos/ruby/ruby_193_jruby_17161"
-  - 130cbe4bc2d8325ecb6d450fb7f5f2248390f0f8
 - - "./repos/ruby/ruby_193_jruby_17161_jdk7"
   - c1b632f8a96cf9b902f5cdcd7a190d46544a8144
 - - "./repos/ruby/ruby_193_jruby_173"
   - a08e8b2cc61d08bd611accaa455dbcbfff80f831
 - - "./repos/ruby/ruby_193_jruby_176"
   - 9fcbc184cb386abc8784e9935d52d403e35c532c
+- - "./repos/ruby/ruby_193_jruby_1_7_27"
+  - 289fb2c94ebfc69e77f95b6c9640da6e009505bd
 - - "./repos/ruby/ruby_25"
   - 0cb3df80d55b61e9417f2ac00adb06e15ae37982
