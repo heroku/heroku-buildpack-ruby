@@ -4,6 +4,7 @@ require "language_pack/rails5"
 
 class LanguagePack::Rails51 < LanguagePack::Rails5
   NODE_MODULES_PATH = 'node_modules'
+  WEBPACKER_PACKS_PATH = 'public/packs'
   WEBPACKER_CACHE_PATH = 'tmp/cache/webpacker'
   YARN_CACHE_PATH = '~/.yarn-cache'
 
@@ -59,6 +60,7 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
       @cache.load NODE_MODULES_PATH
       @cache.load YARN_CACHE_PATH
       @cache.load WEBPACKER_CACHE_PATH
+      @cache.load WEBPACKER_PACKS_PATH
     end
 
     def store_asset_cache
@@ -68,6 +70,7 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
       @cache.store NODE_MODULES_PATH
       @cache.store YARN_CACHE_PATH
       @cache.store WEBPACKER_CACHE_PATH
+      @cache.store WEBPACKER_PACKS_PATH
     end
 
     def cleanup
@@ -77,7 +80,6 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
       puts "Removing non-essential asset cache directories"
       FileUtils.remove_dir(default_assets_cache) if Dir.exist?(default_assets_cache)
       FileUtils.remove_dir(NODE_MODULES_PATH) if Dir.exist?(NODE_MODULES_PATH)
-      FileUtils.remove_dir(YARN_CACHE_PATH) if Dir.exist?(YARN_CACHE_PATH)
       FileUtils.remove_dir(WEBPACKER_CACHE_PATH) if Dir.exist?(WEBPACKER_CACHE_PATH)
     end
 end
