@@ -1,4 +1,18 @@
-## Master
+## v205 (unreleased)
+
+## v204 (9/12/2019)
+
+* Default Ruby version for new apps is now 2.5.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/919)
+* Ensure that old binstubs are removed before new ones are generated (https://github.com/heroku/heroku-buildpack-ruby/pull/914)
+* Fix windows Gemfile.lock BUNDLED WITH support (https://github.com/heroku/heroku-buildpack-ruby/pull/898)
+
+## v203 (8/20/2019)
+
+* Make sure Rails 6 apps have a `tmp/pids` folder so they can boot (https://github.com/heroku/heroku-buildpack-ruby/pull/909)
+
+## v202 (8/20/2019)
+
+* Add support class for Rails 6 (https://github.com/heroku/heroku-buildpack-ruby/pull/908)
 
 ## v201 (6/23/2019)
 

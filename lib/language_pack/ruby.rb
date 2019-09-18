@@ -125,12 +125,12 @@ private
     old_bundler_version  = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
 
     if old_bundler_version && old_bundler_version != bundler.version
-      puts(<<-WARNING)
+      warn(<<-WARNING, inline: true)
 Your app was upgraded to bundler #{ bundler.version }.
 Previously you had a successful deploy with bundler #{ old_bundler_version }.
 
 If you see problems related to the bundler version please refer to:
-https://devcenter.heroku.com/articles/bundler-version
+https://devcenter.heroku.com/articles/bundler-version#known-upgrade-issues
 
 WARNING
     end
@@ -219,23 +219,24 @@ WARNING
   # default JAVA_OPTS
   # return [String] string of JAVA_OPTS
   def default_java_opts
-    "-Xss512k -XX:+UseCompressedOops -Dfile.encoding=UTF-8"
+    "-Dfile.encoding=UTF-8"
   end
 
   def set_jvm_max_heap
     <<-EOF
-case $(ulimit -u) in
-256)   # 1X Dyno
-  JVM_MAX_HEAP=384
+limit=$(ulimit -u)
+case $limit in
+512)   # 2X, private-s: memory.limit_in_bytes=1073741824
+  echo "$opts -Xmx671m -XX:CICompilerCount=2"
   ;;
-512)   # 2X Dyno
-  JVM_MAX_HEAP=768
+16384) # perf-m, private-m: memory.limit_in_bytes=2684354560
+  echo "$opts -Xmx2g"
   ;;
-16384) # IX Dyno
-  JVM_MAX_HEAP=2048
+32768) # perf-l, private-l: memory.limit_in_bytes=15032385536
+  echo "$opts -Xmx12g"
   ;;
-32768) # PX Dyno
-  JVM_MAX_HEAP=5120
+*) # Free, Hobby, 1X: memory.limit_in_bytes=536870912
+  echo "$opts -Xmx300m -Xss512k -XX:CICompilerCount=2"
   ;;
 esac
 EOF
@@ -1014,6 +1015,9 @@ params = CGI.parse(uri.query || "")
       bundler_version_cache   = "bundler_version"
       rubygems_version_cache  = "rubygems_version"
       stack_cache             = "stack"
+
+      # bundle clean does not remove binstubs
+      FileUtils.rm_rf("vendor/bundler/bin")
 
       old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
       old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
