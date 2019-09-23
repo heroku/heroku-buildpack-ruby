@@ -1,5 +1,7 @@
 ## v205 (unreleased)
 
+* Default `MALLOC_ARENA_MAX=2` for new applications (https://github.com/heroku/heroku-buildpack-ruby/pull/752)
+
 ## v204 (9/12/2019)
 
 * Default Ruby version for new apps is now 2.5.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/919)
