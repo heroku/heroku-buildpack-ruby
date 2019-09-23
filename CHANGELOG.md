@@ -1,5 +1,6 @@
 ## v205 (unreleased)
 
+* Update bundler 1.x to 1.17.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/845)
 * Default `MALLOC_ARENA_MAX=2` for new applications (https://github.com/heroku/heroku-buildpack-ruby/pull/752)
 
 ## v204 (9/12/2019)
