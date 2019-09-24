@@ -1,6 +1,7 @@
 ## v206 (unreleased)
 
 * Default Ruby version for new apps is now 2.5.7 (https://github.com/heroku/heroku-buildpack-ruby/pull/926)
+* Using old and EOL versions of Ruby now generate warnings (https://github.com/heroku/heroku-buildpack-ruby/pull/864)
 
 ## v205 (9/24/2019)
 
