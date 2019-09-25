@@ -36,7 +36,7 @@ class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
   BLESSED_BUNDLER_VERSIONS = {}
-  BLESSED_BUNDLER_VERSIONS["1"] = "1.15.2"
+  BLESSED_BUNDLER_VERSIONS["1"] = "1.17.3"
   BLESSED_BUNDLER_VERSIONS["2"] = "2.0.2"
   BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m
 
