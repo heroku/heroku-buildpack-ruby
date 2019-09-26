@@ -20,7 +20,7 @@
       },
       "scripts": {
         "test-setup": "bundle exec rake hatchet:setup_ci",
-        "test":       "bundle exec rspec-queue --max-requeues=3 --timeout 180 --queue $REDIS_URL"
+        "test":       "bundle exec rspec-queue --max-requeues=3 --timeout 180 --queue $REDIS_URL || { cat log/test_order.log;  $(exit 1); }"
       },
       "buildpacks": [
         { "url": "https://github.com/heroku/heroku-buildpack-apt" },

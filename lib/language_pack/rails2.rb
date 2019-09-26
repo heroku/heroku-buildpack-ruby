@@ -48,11 +48,11 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
         "bundle exec thin start -e $RAILS_ENV -p $PORT" :
         "bundle exec ruby script/server -p $PORT"
 
-      super.merge({
-        "web" => web_process,
-        "worker" => "bundle exec rake jobs:work",
-        "console" => "bundle exec script/console"
-      })
+      process_types = super
+      process_types["web"]     = web_process
+      process_types["worker"]  = "bundle exec rake jobs:work" if has_jobs_work_task?
+      process_types["console"] = "bundle exec script/console"
+      process_types
     end
   end
 
@@ -75,6 +75,14 @@ WARNING
   end
 
 private
+  def has_jobs_work_task?
+    if result = rake.task("jobs:work").is_defined?
+      mcount("task.jobs:work.enabled")
+    else
+      mcount("task.jobs:work.disabled")
+    end
+    result
+  end
 
   def install_plugins
     instrument "rails2.install_plugins" do

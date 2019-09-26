@@ -23,9 +23,8 @@
     "sharpstone/mri_193_p547",
     "sharpstone/ruby_193_jruby_173",
     "sharpstone/ruby_193_jruby_176",
-    "sharpstone/ruby_193_jruby_17161",
+    "sharpstone/ruby_193_jruby_1_7_27",
     "sharpstone/ruby_193_jruby_17161_jdk7",
-    "sharpstone/ruby_193_jruby_17161_jdk8",
     "sharpstone/ruby_193_bad_patch_cedar_14",
     "sharpstone/ruby_25",
     "sharpstone/jruby-minimal",
@@ -59,7 +58,6 @@
     "sharpstone/rails4-manifest",
     "sharpstone/rails3-to-4-no-bin",
     "sharpstone/rails4_windows_mri193",
-    "sharpstone/rails4-env-assets-compile",
     "sharpstone/rails4-fail-assets-compile"
   ],
   "rails41": [
@@ -79,6 +77,12 @@
     "sharpstone/active_storage_non_local",
     "sharpstone/active_storage_local",
     "sharpstone/sprockets_asset_compile_true"
+  ],
+  "rails6": [
+    "sharpstone/rails6-basic"
+  ],
+  "heroku": [
+    "heroku/ruby-getting-started"
   ],
   "multibuildpack": [
     "sharpstone/node_multi"

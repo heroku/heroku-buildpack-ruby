@@ -44,7 +44,7 @@ describe "Ruby Versions on cedar-14" do
   end
 
   it "should deploy jdk 8 on cedar-14 by default" do
-    app = Hatchet::Runner.new("ruby_193_jruby_17161", stack: "cedar-14")
+    app = Hatchet::Runner.new("ruby_193_jruby_1_7_27", stack: "heroku-18")
     app.setup!
     app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk-8")
@@ -70,7 +70,7 @@ describe "Ruby Versions on cedar-14" do
   end
 
   it "should deploy jruby with the naether gem" do
-    app = Hatchet::Runner.new("jruby_naether")
+    app = Hatchet::Runner.new("jruby_naether", stack: DEFAULT_STACK)
     app.setup!
     app.deploy do |app|
       expect(app.output).to match("Installing naether")
@@ -81,15 +81,17 @@ end
 
 
 describe "Upgrading ruby apps" do
-  it "works when changing from default version", stack: :cedar do
-    app = Hatchet::Runner.new("default_ruby")
+  it "works when changing from default version" do
+    app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)
     app.setup!
     app.deploy do |app|
-      run!(%Q{echo "ruby '2.4.1'" >> Gemfile})
+      expect(app.run(%Q{echo 'MALLOC_ARENA_MAX_is=$MALLOC_ARENA_MAX'})).to match("MALLOC_ARENA_MAX_is=2")
+
+      run!(%Q{echo "ruby '2.5.1'" >> Gemfile})
       run!("git add -A; git commit -m update-ruby")
       app.push!
-      expect(app.output).to match("2.4.1")
-      expect(app.run("ruby -v")).to match("2.4.1")
+      expect(app.output).to match("2.5.1")
+      expect(app.run("ruby -v")).to match("2.5.1")
       expect(app.output).to match("Ruby version change detected")
     end
   end

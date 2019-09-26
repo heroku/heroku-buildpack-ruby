@@ -1,4 +1,69 @@
-## Master
+## v206 (unreleased)
+
+## v205 (9/24/2019)
+
+* Update bundler 1.x to 1.17.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/845)
+* Default `MALLOC_ARENA_MAX=2` for new applications (https://github.com/heroku/heroku-buildpack-ruby/pull/752)
+
+## v204 (9/12/2019)
+
+* Default Ruby version for new apps is now 2.5.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/919)
+* Ensure that old binstubs are removed before new ones are generated (https://github.com/heroku/heroku-buildpack-ruby/pull/914)
+* Fix windows Gemfile.lock BUNDLED WITH support (https://github.com/heroku/heroku-buildpack-ruby/pull/898)
+
+## v203 (8/20/2019)
+
+* Make sure Rails 6 apps have a `tmp/pids` folder so they can boot (https://github.com/heroku/heroku-buildpack-ruby/pull/909)
+
+## v202 (8/20/2019)
+
+* Add support class for Rails 6 (https://github.com/heroku/heroku-buildpack-ruby/pull/908)
+
+## v201 (6/23/2019)
+
+* Set memory default for Node builds (https://github.com/heroku/heroku-buildpack-ruby/pull/861)
+* Default Ruby version is now 2.5.5, was previously 2.5.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/863)
+* Default Node version is now 10.15.3 and default Yarn version is now 1.16.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/884)
+* Bundler 2 now uses 2.0.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/894)
+
+## v200 (3/7/2019)
+
+* Fix: Environment variables not being exported for other buildpacks in CI (https://github.com/heroku/heroku-buildpack-ruby/pull/858)
+* Ignore invalid byte encodings when detecting rails config (https://github.com/heroku/heroku-buildpack-ruby/pull/854)
+
+## v199 (2/19/2019)
+
+* Add support for arbitrary Bundler major versions, most notably bundler 2 (https://github.com/heroku/heroku-buildpack-ruby/pull/850)
+
+## v198 (1/17/2019)
+
+* Rev-default Ruby version to be the latest patch release of last years Ruby version 2.5.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/846)
+* Allow apps to enable `RUBYOPT=--jit` (https://github.com/heroku/heroku-buildpack-ruby/pull/848)
+
+## v197 (12/18/2018)
+
+* Upgrade node version (https://github.com/heroku/heroku-buildpack-ruby/pull/831)
+* Upgrade yarn version (https://github.com/heroku/heroku-buildpack-ruby/pull/832)
+
+## v196 (10/31/2018)
+
+* Delete the sprockets temp directory for a smaller runtime slug if they are not building assets at runtime (https://github.com/heroku/heroku-buildpack-ruby/pull/812)
+
+## v195 (10/18/2018)
+
+* Default Ruby version is now 2.4.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/821)
+
+## v194 (10/16/2018)
+
+* Do not add the `jobs:work` command if an app does not have that rake task available (https://github.com/heroku/heroku-buildpack-ruby/pull/810)
+
+## v193 (9/14/2018)
+
+* Fix link (https://github.com/heroku/heroku-buildpack-ruby/pull/811)
+
+## v192 (9/14/2018)
+
+* Add error messages when using unsupported Ruby versions on the Heroku-18 stack (https://github.com/heroku/heroku-buildpack-ruby/pull/809)
 
 ## v191 (8/23/2018)
 
