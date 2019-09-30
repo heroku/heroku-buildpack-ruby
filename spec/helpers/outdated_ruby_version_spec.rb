@@ -12,7 +12,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     )
 
     outdated.call
-    expect(outdated.suggested_ruby_minor_version).to eq("ruby-2.2.10")
+    expect(outdated.suggested_ruby_minor_version).to eq("2.2.10")
     expect(outdated.eol?).to eq(true)
     expect(outdated.maybe_eol?).to eq(true)
   end
@@ -25,7 +25,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     )
 
     outdated.call
-    expect(outdated.suggested_ruby_minor_version).to eq(ruby_version)
+    expect(outdated.suggested_ruby_minor_version).to eq("2.2.10")
     expect(outdated.latest_minor_version?).to be_truthy
   end
 

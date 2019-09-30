@@ -20,15 +20,20 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   def initialize(current_ruby_version: , fetcher:)
     @current_ruby_version = current_ruby_version
     @fetcher      = fetcher
+    @already_joined = false
 
-    @minor_versions = [current_ruby_version]
+    @minor_versions = [current_ruby_version.ruby_version]
     @eol_versions = []
-    @threads = []
+
+    @minor_verison_threads = []
+    @eol_versions_threads = []
   end
 
   # Enqueues checks in the background
   def call
-    return unless can_check?
+    return false if current_ruby_version.patchlevel_is_significant?
+    return false if current_ruby_version.rbx?
+    return false if current_ruby_version.jruby?
 
     check_minor_versions
     check_eol_versions_major
@@ -41,22 +46,29 @@ class LanguagePack::Helpers::OutdatedRubyVersion
     return false if current_ruby_version.rbx?
     return false if current_ruby_version.jruby?
 
-    @threads.each(&:join)
+    return true if @already_joined
 
-    true
+    @minor_verison_threads.each(&:join)
+    @eol_versions_threads.each(&:join)
+
+    @minor_versions += @minor_verison_threads.map(&:value).compact
+    @eol_versions += @eol_versions_threads.map(&:value).compact
+
+    @already_joined = true
   end
   alias :can_check? :join
 
   def suggested_ruby_minor_version
     return current_ruby_version unless can_check?
 
-    @minor_versions.reverse_each do |version|
-      return version if version
-    end
+    @minor_versions
+      .map { |v| v.sub('ruby-', '') }
+      .sort_by { |v| Gem::Version.new(v) }
+      .last
   end
 
   def latest_minor_version?
-    suggested_ruby_minor_version == current_ruby_version
+    suggested_ruby_minor_version == current_ruby_version.ruby_version
   end
 
   def eol?
@@ -96,13 +108,18 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   # value in the series is found
   private def check_minor_versions(range: DEFAULT_RANGE, base_version: current_ruby_version, &block)
     range.each do |i|
-      @threads << Thread.new do
+      @minor_verison_threads << Thread.new do
         version = base_version.next_logical_version(i)
         next if !@fetcher.exists?("#{version}.tgz")
 
-        @minor_versions[i] = version
+        if i == range.last
+          check_minor_versions(
+            range: Range.new(i+1, i+i),
+            base_version: base_version
+          )
+        end
 
-        check_minor_versions(range: Range.new(i+1, i+i), base_version: base_version) if i == range.last
+        version
       end
     end
   end
@@ -116,13 +133,19 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   #   - 2.8.0
   private def check_eol_versions_minor(range: DEFAULT_RANGE, base_version: current_ruby_version)
     range.each do |i|
-      @threads << Thread.new do
+      @eol_versions_threads << Thread.new do
         version = base_version.next_minor_version(i)
+
         next if !@fetcher.exists?("#{version}.tgz")
 
-        @eol_versions << version
+        if i == range.last
+          check_eol_versions_minor(
+            range: Range.new(i+1, i+i),
+            base_version: base_version
+          )
+        end
 
-        check_eol_versions_minor(range: Range.new(i+1, i+i), base_version: base_version) if i == range.last
+        version
       end
     end
   end
@@ -137,14 +160,16 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   #   - 3.2.0
   #   - 3.3.0
   private def check_eol_versions_major
-    @threads << Thread.new do
+    @eol_versions_threads << Thread.new do
       version = current_ruby_version.next_major_version(1)
 
       next if !@fetcher.exists?("#{version}.tgz")
 
-      @eol_versions << version
+      check_eol_versions_minor(
+        base_version: RubyVersion.new(version)
+      )
 
-      check_eol_versions_minor(base_version: RubyVersion.new(version))
+      version
     end
   end
 end
