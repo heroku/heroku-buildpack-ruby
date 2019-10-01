@@ -37,8 +37,8 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     )
 
     outdated.call
-    expect(outdated.suggested_ruby_minor_version).to eq(ruby_version)
     expect(outdated.can_check?).to eq(false)
+    expect(outdated.suggested_ruby_minor_version).to eq(nil)
   end
 
   it "recommends a non EOL version of Ruby" do
@@ -88,6 +88,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
       current_ruby_version: ruby_version,
       fetcher: fetcher
     )
+    outdated.call
 
     expect(outdated.eol?).to be_falsey
     expect(outdated.maybe_eol?).to be_falsey
