@@ -85,7 +85,8 @@ module LanguagePack
     # @option options [Integer] :max_attempts Number of times to attempt command before raising
     def run!(command, options = {})
       max_attempts = options[:max_attempts] || 1
-      error_class = options[:error_class] || StandardError
+      error_class  = options[:error_class] || StandardError
+      silent       = options.key?(:silent) ? options[:silent] : false
       max_attempts.times do |attempt_number|
         result = run(command, options)
         if $?.success?
@@ -94,6 +95,7 @@ module LanguagePack
         if attempt_number == max_attempts - 1
           raise error_class, "Command: '#{command}' failed unexpectedly:\n#{result}"
         else
+          next if silent
           puts "Command: '#{command}' failed on attempt #{attempt_number + 1} of #{max_attempts}."
         end
       end
