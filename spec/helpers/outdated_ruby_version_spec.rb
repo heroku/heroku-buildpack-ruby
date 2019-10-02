@@ -93,5 +93,23 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     expect(outdated.eol?).to be_falsey
     expect(outdated.maybe_eol?).to be_falsey
   end
+
+  it "can call eol? on the latest Ruby version" do
+    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.0")
+
+    new_fetcher = fetcher.dup
+    def new_fetcher.exists?(value); false; end
+
+    outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
+      current_ruby_version: ruby_version,
+      fetcher: new_fetcher
+    )
+
+    outdated.call
+
+    expect(outdated.eol?).to be_falsey
+    expect(outdated.maybe_eol?).to be_falsey
+  end
+
 end
 

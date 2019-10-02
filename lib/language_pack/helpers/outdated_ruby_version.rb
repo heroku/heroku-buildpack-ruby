@@ -71,7 +71,6 @@ class LanguagePack::Helpers::OutdatedRubyVersion
       .sort_by { |v| Gem::Version.new(v) }
       .last(3)
       .first
-      .sub(/0$/, 'x')
 
     @already_joined = true
   end
@@ -102,6 +101,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   def suggest_ruby_eol_version
     return false unless maybe_eol?
     @suggested_eol_version
+      .sub(/0$/, 'x')
   end
 
   # Checks for a range of "tiny" versions in parallel
