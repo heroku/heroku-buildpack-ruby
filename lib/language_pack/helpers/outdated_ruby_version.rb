@@ -22,7 +22,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
     @fetcher      = fetcher
     @already_joined = false
 
-    @minor_versions = [current_ruby_version.ruby_version]
+    @minor_versions = []
     @eol_versions = []
 
     @minor_version_threads = []
@@ -56,22 +56,22 @@ class LanguagePack::Helpers::OutdatedRubyVersion
     return true if @already_joined
     raise "Must initalize threads with `call()` before joining" if @minor_version_threads.empty?
 
-    @minor_version_threads.each(&:join)
-    @eol_version_threads.each(&:join)
+    @eol_versions = @eol_version_threads.map(&:value).compact
+    @minor_versions = @minor_version_threads.map(&:value).compact
+    @minor_versions << current_ruby_version.ruby_version
 
-    @minor_versions += @minor_version_threads.map(&:value).compact
-    @eol_versions += @eol_version_threads.map(&:value).compact
 
     @suggested_minor_version = @minor_versions
       .map { |v| v.sub('ruby-', '') }
       .sort_by { |v| Gem::Version.new(v) }
       .last
 
-    eol_versions = @eol_versions
+    @suggested_eol_version = @eol_versions
       .map { |v| v.sub('ruby-', '') }
       .sort_by { |v| Gem::Version.new(v) }
-
-    @suggested_eol_version = eol_versions.last(3).first.sub(/0$/, 'x')
+      .last(3)
+      .first
+      .sub(/0$/, 'x')
 
     @already_joined = true
   end
