@@ -87,6 +87,7 @@ class LanguagePack::Base
         Kernel.puts ""
         puts warning
         Kernel.puts ""
+        Kernel.puts ""
       end
       if deprecations.any?
         topic "DEPRECATIONS:"

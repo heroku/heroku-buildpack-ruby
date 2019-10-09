@@ -44,7 +44,7 @@ describe "Ruby Versions on cedar-14" do
   end
 
   it "should deploy jdk 8 on cedar-14 by default" do
-    app = Hatchet::Runner.new("ruby_193_jruby_17161", stack: "cedar-14")
+    app = Hatchet::Runner.new("ruby_193_jruby_1_7_27", stack: "heroku-18")
     app.setup!
     app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk-8")
@@ -85,6 +85,8 @@ describe "Upgrading ruby apps" do
     app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)
     app.setup!
     app.deploy do |app|
+      expect(app.run("env | grep MALLOC_ARENA_MAX")).to match("MALLOC_ARENA_MAX=2")
+
       run!(%Q{echo "ruby '2.5.1'" >> Gemfile})
       run!("git add -A; git commit -m update-ruby")
       app.push!
