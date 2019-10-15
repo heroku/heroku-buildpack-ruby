@@ -176,7 +176,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
       next if !@fetcher.exists?("#{version}.tgz")
 
       check_eol_versions_minor(
-        base_version: RubyVersion.new(version)
+        base_version: LanguagePack::RubyVersion.new(version)
       )
 
       version
