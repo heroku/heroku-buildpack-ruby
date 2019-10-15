@@ -592,6 +592,7 @@ SHELL
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
   def install_ruby(install_path, build_ruby_path = nil)
     instrument 'ruby.install_ruby' do
+      # Could do a compare operation to avoid re-downloading ruby
       return false unless ruby_version
       installer = LanguagePack::Installers::RubyInstaller.installer(ruby_version).new(@stack)
 

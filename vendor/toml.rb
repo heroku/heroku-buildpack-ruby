@@ -1,6 +1,11 @@
 require "ostruct"
 require "date"
 
+# From charlie Somerville
+# https://github.com/charliesome/toml2
+# https://github.com/hone/toml2
+#
+# Cloned and patched
 module TOML
   def self.safe_load
     raise NotImplementedError, "whoops"

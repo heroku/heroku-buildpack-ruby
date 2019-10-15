@@ -4,6 +4,12 @@ require 'toml'
 class LanguagePack::Helpers::Layer
   attr_reader :path
 
+  # Launch: True if you want the layer to exist in the final image, for example
+  # if you want maven for building an app but don't want it to boot the image.
+  # Build: True if you want to make the results of this buildpack available to other
+  # buildpacks in the compilation process.
+  # Cache: True if you want the layer to be pulled back in on the next build. False
+  # means the layer dir for this component will be empty on the next time.
   def initialize(layer_dir, name, launch: false, build: false, cache: false)
     @layer_dir = layer_dir
     @name = name
@@ -26,6 +32,7 @@ class LanguagePack::Helpers::Layer
     write
   end
 
+  # Key value store per layer
   def metadata
     @toml[:metadata]
   end
