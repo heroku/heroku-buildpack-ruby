@@ -1,4 +1,8 @@
-## v206 (unreleased)
+## v207 (unreleased)
+
+* Remove possibilities of false exceptions being raised by removing `BUNDLED WITH` from the `Gemfile.lock` (https://github.com/heroku/heroku-buildpack-ruby/pull/928)
+
+## v206 (10/15/2019)
 
 * Default Ruby version for new apps is now 2.5.7 (https://github.com/heroku/heroku-buildpack-ruby/pull/926)
 * Using old and EOL versions of Ruby now generate warnings (https://github.com/heroku/heroku-buildpack-ruby/pull/864)
