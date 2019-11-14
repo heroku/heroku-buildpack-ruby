@@ -1,6 +1,7 @@
 ## v207 (unreleased)
 
 * Remove possibilities of false exceptions being raised by removing `BUNDLED WITH` from the `Gemfile.lock` (https://github.com/heroku/heroku-buildpack-ruby/pull/928)
+* Add webpacker support for Rails >= 5.1 (https://github.com/heroku/heroku-buildpack-ruby/pull/892)
 
 ## v206 (10/15/2019)
 
