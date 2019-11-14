@@ -1,12 +1,18 @@
 require 'securerandom'
-require "language_pack"
-require "language_pack/rails5"
+require 'language_pack'
+require 'language_pack/rails5'
 
 class LanguagePack::Rails51 < LanguagePack::Rails5
-  NODE_MODULES_PATH = 'node_modules'
-  WEBPACKER_PACKS_PATH = 'public/packs'
-  WEBPACKER_CACHE_PATH = 'tmp/cache/webpacker'
-  YARN_CACHE_PATH = '~/.yarn-cache'
+  ASSET_PATHS = %w[
+    public/packs
+    ~/.yarn-cache
+    ~/.cache/yarn
+  ]
+
+  ASSET_CACHE_PATHS = %w[
+    node_modules
+    tmp/cache/webpacker
+  ]
 
   # @return [Boolean] true if it's a Rails 5.1.x app
   def self.use?
@@ -57,29 +63,31 @@ class LanguagePack::Rails51 < LanguagePack::Rails5
       puts "Loading asset cache"
       @cache.load_without_overwrite public_assets_folder
       @cache.load default_assets_cache
-      @cache.load NODE_MODULES_PATH
-      @cache.load YARN_CACHE_PATH
-      @cache.load WEBPACKER_CACHE_PATH
-      @cache.load WEBPACKER_PACKS_PATH
+
+      paths = (self.class::ASSET_PATHS + self.class::ASSET_CACHE_PATHS)
+      paths.each { |path| @cache.load path }
     end
 
     def store_asset_cache
       puts "Storing asset cache"
       @cache.store public_assets_folder
       @cache.store default_assets_cache
-      @cache.store NODE_MODULES_PATH
-      @cache.store YARN_CACHE_PATH
-      @cache.store WEBPACKER_CACHE_PATH
-      @cache.store WEBPACKER_PACKS_PATH
+
+      paths = (self.class::ASSET_PATHS + self.class::ASSET_CACHE_PATHS)
+      paths.each { |path| @cache.store path }
     end
 
     def cleanup
       # does not call super because it would return if default_assets_cache was missing
+      #   child classes should call super and should not use a return statement
       return if assets_compile_enabled?
 
       puts "Removing non-essential asset cache directories"
+
       FileUtils.remove_dir(default_assets_cache) if Dir.exist?(default_assets_cache)
-      FileUtils.remove_dir(NODE_MODULES_PATH) if Dir.exist?(NODE_MODULES_PATH)
-      FileUtils.remove_dir(WEBPACKER_CACHE_PATH) if Dir.exist?(WEBPACKER_CACHE_PATH)
+
+      self.class::ASSET_CACHE_PATHS.each do |path|
+        FileUtils.remove_dir(path) if Dir.exist?(path)
+      end
     end
 end
