@@ -147,7 +147,8 @@ WARNING
       This version includes a bug fix that can cause an exception
       on boot for applications with incorrectly configured connection
       values. For more information see:
-        <url>
+
+        https://devcenter.heroku.com/articles/libpq-5-12-1-breaking-connection-behavior
 
       If your application breaks you can rollback to your last build.
       You can also temporarially opt out of this behavior by setting:
@@ -158,7 +159,8 @@ WARNING
 
       In the future libpq 5.12 will be the default on the platform and
       you will not be able to opt-out of the library. For more information see:
-        <url>
+
+        https://devcenter.heroku.com/articles/libpq-5-12-1-breaking-connection-behavior
     EOF
 
     Dir.chdir("vendor") do
