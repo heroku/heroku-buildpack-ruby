@@ -99,6 +99,7 @@ WARNING
       setup_export
       setup_profiled
       allow_git do
+        patch_libpq
         install_bundler_in_app
         build_bundler("development:test")
         post_bundler
@@ -115,6 +116,63 @@ WARNING
   rescue => e
     warn_outdated_ruby
     raise e
+  end
+
+  def patch_libpq
+    # Check for existing libraries
+    out = run!("ls /usr/lib/x86_64-linux-gnu/ | grep libpq")
+    out.each_line do |line|
+      version = line.sub(/libpq\.so\./, '')
+      return if Gem::Version.new(version) >= Gem::Version("5.12")
+    end
+
+    case ENV['STACK']
+    when 'heroku-16'
+      pkg = "libpq5_12.1-1.pgdg16.04+1_amd64.deb"
+    when 'heroku-18'
+      pkg = "libpq5_12.1-1.pgdg18.04+1_amd64.deb"
+    when 'cedar-14'
+      return
+    else
+      return
+    end
+
+    @metadata.touch("patched_libpq12")
+
+    topic("Vendoring libpq 5.12.1")
+    warn(<<~EOF)
+      Replacing libpq with version libpq 5.12.1
+
+      This version includes a bug fix that can cause an exception
+      on boot for applications with incorrectly configured connection
+      values. For more information see:
+        <url>
+
+      If your application breaks you can rollback to your last build.
+      You can also temporarially opt out of this behavior by setting:
+
+      ```
+      $ heroku config:set HEROKU_SKIP_LIBPQ12=1
+      ```
+
+      In the future libpq 5.12 will be the default on the platform and
+      you will not be able to opt-out of the library. For more information see:
+        <url>
+    EOF
+
+    Dir.chdir("vendor") do
+      run!("curl --remote-name-all http://apt.postgresql.org/pub/repos/apt/pool/main/p/postgresql-12/#{pkg}")
+      run!("dpkg -x #{pkg} .")
+
+      load_libpq_12_unless_env_var = <<~EOF
+        if [ "$HEROKU_SKIP_LIBPQ12" == "" ]; then
+          export LD_LIBRARY_PATH="$HOME/vendor/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH"
+        fi
+      EOF
+      add_to_export load_libpq_12_unless_env_var
+      add_to_profiled load_libpq_12_unless_env_var
+      ENV["LD_LIBRARY_PATH"] = Dir.pwd + "/usr/lib/x86_64-linux-gnu:#{ENV["LD_LIBRARY_PATH"]}"
+    end
   end
 
   def cleanup
