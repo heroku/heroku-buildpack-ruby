@@ -121,7 +121,6 @@ WARNING
   def patch_libpq
     # Check for existing libraries
     out = run!("ls /usr/lib/x86_64-linux-gnu/ | grep libpq")
-    puts out
     out.each_line do |line|
       version = line.sub(/libpq\.so\./, '')
       next unless version.match?(/\Ad/) # avoid libpq.so.libpq.a
