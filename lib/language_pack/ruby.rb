@@ -121,8 +121,10 @@ WARNING
   def patch_libpq
     # Check for existing libraries
     out = run!("ls /usr/lib/x86_64-linux-gnu/ | grep libpq")
+    puts out
     out.each_line do |line|
       version = line.sub(/libpq\.so\./, '')
+      next unless version.match?(/\Ad/) # avoid libpq.so.libpq.a
       return if Gem::Version.new(version) >= Gem::Version("5.12")
     end
 
