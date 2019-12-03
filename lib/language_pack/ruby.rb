@@ -164,7 +164,7 @@ WARNING
     EOF
 
     Dir.chdir("vendor") do
-      run!("curl --remote-name-all http://apt.postgresql.org/pub/repos/apt/pool/main/p/postgresql-12/#{pkg}")
+      run!("curl --remote-name-all https://apt.postgresql.org/pub/repos/apt/pool/main/p/postgresql-12/#{pkg}")
       run!("dpkg -x #{pkg} .")
 
       load_libpq_12_unless_env_var = <<~EOF
