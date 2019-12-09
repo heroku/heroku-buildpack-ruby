@@ -149,7 +149,7 @@ WARNING
     EOF
 
     Dir.chdir("vendor") do
-      @fetchers[:mri].fetch_untar("libpq5_12.1-1.deb.tgz")
+      @fetchers[:mri].fetch("libpq5_12.1-1.deb")
       run!("dpkg -x libpq5_12.1-1.deb .")
       run!("rm libpq5_12.1-1.deb")
 
