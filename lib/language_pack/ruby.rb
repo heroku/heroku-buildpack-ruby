@@ -120,23 +120,8 @@ WARNING
 
   def vendor_libpq
     # Check for existing libraries
-    out = run!("ls /usr/lib/x86_64-linux-gnu/ | grep libpq")
-    out.each_line do |line|
-      version = line.sub(/libpq\.so\./, '')
-      next unless version.match?(/\Ad/) # avoid libpq.so.libpq.a
-      return if Gem::Version.new(version) >= Gem::Version("5.12")
-    end
-
-    case ENV['STACK']
-    when 'heroku-16'
-      pkg = "libpq5_12.1-1.pgdg16.04+1_amd64.deb"
-    when 'heroku-18'
-      pkg = "libpq5_12.1-1.pgdg18.04+1_amd64.deb"
-    when 'cedar-14'
-      return
-    else
-      return
-    end
+    return unless File.exist?("/usr/lib/x86_64-linux-gnu/libpq.so.5.11")
+    return unless ENV['STACK'] == 'heroku-18'
 
     @metadata.touch("patched_libpq12")
 
