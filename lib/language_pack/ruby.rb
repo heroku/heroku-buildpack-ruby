@@ -99,7 +99,7 @@ WARNING
       setup_export
       setup_profiled
       allow_git do
-        patch_libpq
+        vendor_libpq
         install_bundler_in_app
         build_bundler("development:test")
         post_bundler
@@ -118,7 +118,7 @@ WARNING
     raise e
   end
 
-  def patch_libpq
+  def vendor_libpq
     # Check for existing libraries
     out = run!("ls /usr/lib/x86_64-linux-gnu/ | grep libpq")
     out.each_line do |line|
