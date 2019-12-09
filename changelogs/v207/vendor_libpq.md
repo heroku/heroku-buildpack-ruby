@@ -1,6 +1,6 @@
-## Postgresql client library libpq version 5.12.1 now vendored into Ruby applications
+## Postgresql client library libpq version 5.12.1 now vendored into Ruby applications on Heroku-18
 
-Ruby applications will get a vendored version of the libpq client library version 5.12.1 starting today. For more information about the reasons for this change and the possible effects see:
+Ruby applications deploying to Heroku-18 will get a vendored version of the libpq client library version 5.12.1 starting today. For more information about the reasons for this change and the possible effects see:
 
 https://devcenter.heroku.com/articles/libpq-5-12-1-breaking-connection-behavior
 
