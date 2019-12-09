@@ -149,8 +149,9 @@ WARNING
     EOF
 
     Dir.chdir("vendor") do
-      run!("curl --remote-name-all https://apt.postgresql.org/pub/repos/apt/pool/main/p/postgresql-12/#{pkg}")
-      run!("dpkg -x #{pkg} .")
+      @fetchers[:mri].fetch_untar("libpq5_12.1-1.deb.tgz")
+      run!("dpkg -x libpq5_12.1-1.deb .")
+      run!("rm libpq5_12.1-1.deb")
 
       load_libpq_12_unless_env_var = <<~EOF
         if [ "$HEROKU_SKIP_LIBPQ12" == "" ]; then
