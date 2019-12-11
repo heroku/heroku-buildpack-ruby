@@ -111,6 +111,8 @@
   - 7cae0aae424c2028b81b5d37ee24d42db8e545b9
 - - "./repos/ruby/jruby-minimal"
   - f79860bc2866449fe065484f1542aaadd3f7cfd2
+- - "./repos/ruby/libpq_connection_error"
+  - c211c245f09d8335a520cd7a0b5360897d4988eb
 - - "./repos/ruby/mri_187"
   - 43cecfacbedda64f09310a4408ce73c5dc3a9c44
 - - "./repos/ruby/mri_193_p547"

@@ -30,7 +30,8 @@
     "sharpstone/jruby-minimal",
     "sharpstone/empty-procfile",
     "sharpstone/bad_ruby_version",
-    "sharpstone/activerecord41_scaffold"
+    "sharpstone/activerecord41_scaffold",
+    "sharpstone/libpq_connection_error"
   ],
   "jruby": [
     "sharpstone/jruby_naether"
