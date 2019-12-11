@@ -123,30 +123,33 @@ WARNING
     return unless File.exist?("/usr/lib/x86_64-linux-gnu/libpq.so.5.11")
     return unless ENV['STACK'] == 'heroku-18'
 
-    @metadata.touch("patched_libpq12")
-
     topic("Vendoring libpq 5.12.1")
-    warn(<<~EOF)
-      Replacing libpq with version libpq 5.12.1
 
-      This version includes a bug fix that can cause an exception
-      on boot for applications with incorrectly configured connection
-      values. For more information see:
+    @metadata.fetch("vendor_libpq12") do
+      warn(<<~EOF)
+        Replacing libpq with version libpq 5.12.1
 
-        https://devcenter.heroku.com/articles/libpq-5-12-1-breaking-connection-behavior
+        This version includes a bug fix that can cause an exception
+        on boot for applications with incorrectly configured connection
+        values. For more information see:
 
-      If your application breaks you can rollback to your last build.
-      You can also temporarially opt out of this behavior by setting:
+          https://devcenter.heroku.com/articles/libpq-5-12-1-breaking-connection-behavior
 
-      ```
-      $ heroku config:set HEROKU_SKIP_LIBPQ12=1
-      ```
+        If your application breaks you can rollback to your last build.
+        You can also temporarially opt out of this behavior by setting:
 
-      In the future libpq 5.12 will be the default on the platform and
-      you will not be able to opt-out of the library. For more information see:
+        ```
+        $ heroku config:set HEROKU_SKIP_LIBPQ12=1
+        ```
 
-        https://devcenter.heroku.com/articles/libpq-5-12-1-breaking-connection-behavior
-    EOF
+        In the future libpq 5.12 will be the default on the platform and
+        you will not be able to opt-out of the library. For more information see:
+
+          https://devcenter.heroku.com/articles/libpq-5-12-1-breaking-connection-behavior
+      EOF
+
+      "true" # Set future cache value
+    end
 
     Dir.chdir("vendor") do
       @fetchers[:mri].fetch("libpq5_12.1-1.deb")
