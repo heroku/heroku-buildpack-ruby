@@ -45,8 +45,8 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   def default_process_types
     instrument "rails2.default_process_types" do
       web_process = bundler.has_gem?("thin") ?
-        "bundle exec thin start -e $RAILS_ENV -p $PORT" :
-        "bundle exec ruby script/server -p $PORT"
+        "bundle exec thin start -e $RAILS_ENV -p ${PORT:-5000}" :
+        "bundle exec ruby script/server -p ${PORT:-5000}"
 
       process_types = super
       process_types["web"]     = web_process
