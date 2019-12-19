@@ -106,6 +106,7 @@ WARNING
         create_database_yml
         install_binaries
         run_assets_precompile_rake_task
+        run_swagger
       end
       config_detect
       best_practice_warnings
@@ -1253,6 +1254,13 @@ params = CGI.parse(uri.query || "")
       @bundler_cache.clear(stack)
       # need to reinstall language pack gems
       install_bundler_in_app
+    end
+  end
+
+  def run_swagger
+    instrument 'ruby.run_swagger' do
+      topic 'Generating Swagger specification files'
+      run('bundle exec rails rswag:specs:swaggerize')
     end
   end
 end
