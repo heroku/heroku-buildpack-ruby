@@ -1,5 +1,6 @@
 ## v207 (unreleased)
 
+* Vendor in libpq 5.12.1 for Heroku-18 (https://github.com/heroku/heroku-buildpack-ruby/pull/936)
 * Remove possibilities of false exceptions being raised by removing `BUNDLED WITH` from the `Gemfile.lock` (https://github.com/heroku/heroku-buildpack-ruby/pull/928)
 * Add webpacker support for Rails >= 5.1 (https://github.com/heroku/heroku-buildpack-ruby/pull/892)
 

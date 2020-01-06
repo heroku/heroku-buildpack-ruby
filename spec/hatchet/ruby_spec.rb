@@ -1,6 +1,24 @@
 require_relative '../spec_helper'
 
 describe "Ruby apps" do
+  describe "vendoring libpq" do
+    it "works on heroku-16" do
+      skip "Blocked on getting heroku-16 docker example to work https://github.com/schneems/libpq_heroku_16_reproduction/tree/schneems/manually-download-install"
+
+      Hatchet::Runner.new("libpq_connection_error", stack: "heroku-16").deploy do |app|
+        out = app.run("ruby reproduce_error.rb")
+        expect(out).to match(%Q{invalid integer value "15s"})
+      end
+    end
+
+    it "works on heroku-18" do
+      Hatchet::Runner.new("libpq_connection_error", stack: "heroku-18").deploy do |app|
+        out = app.run("ruby reproduce_error.rb")
+        expect(out).to match(%Q{invalid integer value "15s"})
+      end
+    end
+  end
+
   describe "running Ruby from outside the default dir" do
     it "works" do
       Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK).deploy do |app|

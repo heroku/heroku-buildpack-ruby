@@ -35,6 +35,15 @@ class LanguagePack::Metadata
     write(key, "true")
   end
 
+  def fetch(key)
+    return read(key) if exists?(key)
+
+    value = yield
+
+    write(key, value.to_s)
+    return value
+  end
+
   def save
     @cache ? @cache.add(FOLDER) : false
   end
