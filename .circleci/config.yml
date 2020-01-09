@@ -1,0 +1,76 @@
+version: 2
+
+references:
+  default_docker_ruby_executor: &default_docker_ruby_executor
+    image: circleci/ruby:2.5.7-stretch
+    environment:
+      BUNDLE_JOBS: 3
+      BUNDLE_RETRY: 3
+      BUNDLE_PATH: vendor/bundle
+      GEM_HOME: vendor/bundle
+      HATCHET_APP_LIMIT: 80
+      HATCHET_DEPLOY_STRATEGY: git
+      HATCHET_RETRIES: 3
+      HATCHET_BUILDPACK_BASE: https://github.com/Kajabi/heroku-buildpack-ruby.git
+jobs:
+  build:
+    docker:
+      - *default_docker_ruby_executor
+    steps:
+      - checkout
+      - run: echo "export PATH=\"$(pwd)/vendor/bundle/bin:$PATH\"" >> $BASH_ENV
+      - restore_cache:
+          keys:
+            - kajabi-buildpack-ruby-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: Install correct bundler version
+          command: gem install --conservative --install-dir vendor/bundle bundler:2.0.2
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+      - save_cache:
+          key: kajabi-buildpack-ruby-bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      # hatchet ci:setup installs apt packages (mostly the heroku CLI) and
+      # downloads `repos` from `hatchet.json`.
+      - run:
+          name: Setup Hatchet
+          command: bundle exec hatchet ci:setup
+      - save_cache:
+          key: kajabi-buildpack-ruby-hatchet-{{ checksum "hatchet.lock" }}
+          paths:
+            - repos
+  test:
+    parallelism: 10
+    docker:
+      - *default_docker_ruby_executor
+    steps:
+      - checkout
+      - run: echo "export PATH=\"$(pwd)/vendor/bundle/bin:$PATH\"" >> $BASH_ENV
+      - restore_cache:
+          keys:
+            - kajabi-buildpack-ruby-bundle-{{ checksum "Gemfile.lock" }}
+            - kajabi-buildpack-ruby-hatchet-{{ checksum "hatchet.lock" }}
+      - run:
+          name: Install correct bundler version
+          command: gem install --conservative --install-dir vendor/bundle bundler:2.0.2
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+      - run:
+          name: Setup Hatchet
+          command: bundle exec hatchet ci:setup
+      - run:
+          command: |
+            mkdir /tmp/test-results
+            TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec rspec $TESTFILES --format progress
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
