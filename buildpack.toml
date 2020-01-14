@@ -28,3 +28,6 @@ ruby_version = "2.5.7"
 
 [[stacks]]
 id = "heroku-18"
+
+[[stacks]]
+id = "io.buildpacks.stacks.bionic"
