@@ -93,7 +93,7 @@ module LanguagePack
 
     # does this vendor bundler
     def vendored_bundler?
-      false
+      Gem::Version.new(self.ruby_version) >= Gem::Version.new("2.6.0-dev")
     end
 
     # Returns the next logical version in the minor series

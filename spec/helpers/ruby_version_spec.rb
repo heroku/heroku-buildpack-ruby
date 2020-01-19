@@ -131,4 +131,12 @@ describe "RubyVersion" do
       expect { LanguagePack::RubyVersion.new(@bundler.ruby_version) }.to raise_error(error_klass, /#{Regexp.escape(bundle_error_msg)}/)
     end
   end
+
+  it "detects vendored bundler" do
+    ruby_version = LanguagePack::RubyVersion.new("ruby-2.5.7-p-206")
+    expect(ruby_version.vendored_bundler?).to be false
+
+    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.5-p-114")
+    expect(ruby_version.vendored_bundler?).to be true
+  end
 end
