@@ -50,21 +50,6 @@ describe "Ruby apps" do
     end
   end
 
-  # describe "default WEB_CONCURRENCY" do
-  #   it "auto scales WEB_CONCURRENCY" do
-  #     pending("https://github.com/heroku/api/issues/4426")
-  #     app = Hatchet::Runner.new("default_ruby")
-  #     app.setup!
-  #     app.set_config("SENSIBLE_DEFAULTS" => "enabled")
-  #     app.deploy do |app|
-  #       app.run('echo "loaded"')
-  #       expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "1X" } )).to match("value: 2")
-  #       expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "2X" } )).to match("value: 4")
-  #       expect(app.run(:bash, 'echo "value: $WEB_CONCURRENCY"', heroku: { size: "PX" } )).to match("value: 16")
-  #     end
-  #   end
-  # end
-
   describe "Rake detection" do
     context "default" do
       # it "adds default process types" do
@@ -137,6 +122,9 @@ describe "Rack" do
 
     app.deploy do |app|
       expect(app.run("env")).to match(custom_env)
+
+      # Testing default WEB_CONCURRENCY value
+      expect(app.run('env | grep WEB_CONCURRENCY')).to match("WEB_CONCURRENCY=1")
     end
   end
 end

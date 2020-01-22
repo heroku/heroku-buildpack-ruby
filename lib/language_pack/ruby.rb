@@ -321,28 +321,49 @@ EOF
   end
 
   def set_default_web_concurrency
-    <<-EOF
-case $(ulimit -u) in
-256)
-  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-512}
-  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
-  ;;
-512)
-  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-1024}
-  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
-  ;;
-16384)
-  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-2560}
-  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-8}
-  ;;
-32768)
-  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-6144}
-  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-16}
-  ;;
-*)
-  ;;
-esac
-EOF
+    @metadata.touch("default_web_concurrency") if new_app?
+
+    if @metadata.exists?("default_web_concurrency") || env("SENSIBLE_DEFAULTS")
+      topic("Setting default WEB_CONCURRENCY")
+
+      default_concurrency = <<~EOF
+        export RAILS_MAX_THREADS=${RAILS_MAX_THREADS:-5}
+
+        case $(ulimit -u) in
+        256)
+          # 1x dyno
+          export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-512}
+          export HEROKU_CORES=${HEROKU_CORES:-1}
+          export WEB_CONCURRENCY=${WEB_CONCURRENCY:-1}
+          ;;
+        512)
+          # 2x dyno
+          export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-1024}
+          export HEROKU_CORES=${HEROKU_CORES:-1}
+          export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+          ;;
+        16384)
+          # perf-m dyno
+          export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-2560}
+          export HEROKU_CORES=${HEROKU_CORES:-1}
+          export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+          ;;
+        32768)
+          # perf-l dyno
+          export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-14336}
+          export HEROKU_CORES=${HEROKU_CORES:-4}
+          export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
+          ;;
+        *)
+          ;;
+        esac
+      EOF
+      FileUtils.mkdir_p("#{build_path}/.profile.d")
+
+      File.open("#{build_path}/.profile.d/WEB_CONCURRENCY.sh", "w") do |file|
+        file.puts default_concurrency
+      end
+    end
   end
 
   # default JRUBY_OPTS
@@ -423,7 +444,7 @@ SHELL
       set_env_override "PATH",      profiled_path.join(":")
 
       set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
-      add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
+      set_default_web_concurrency
 
       if ruby_version.jruby?
         add_to_profiled set_jvm_max_heap

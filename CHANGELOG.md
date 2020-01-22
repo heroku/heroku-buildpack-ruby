@@ -1,4 +1,8 @@
-## v207 (unreleased)
+## Master (unreleased)
+
+* Set default values for WEB_CONCURRENCY for new applications based on dyno type and size (https://github.com/heroku/heroku-buildpack-ruby/pull/946)
+
+## v207 (12/16/2019)
 
 * Vendor in libpq 5.12.1 for Heroku-18 (https://github.com/heroku/heroku-buildpack-ruby/pull/936)
 * Remove possibilities of false exceptions being raised by removing `BUNDLED WITH` from the `Gemfile.lock` (https://github.com/heroku/heroku-buildpack-ruby/pull/928)
