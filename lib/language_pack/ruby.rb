@@ -783,12 +783,6 @@ BUNDLE
   # runs bundler to install the dependencies
   def build_bundler(default_bundle_without)
     instrument 'ruby.build_bundler' do
-      topic("Removing BUNDLED WITH version in the Gemfile.lock")
-      contents = File.read("Gemfile.lock")
-      File.open("Gemfile.lock", "w") do |f|
-        f.write contents.sub(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m, '')
-      end
-
       log("bundle") do
         bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
         bundle_bin     = "bundle"
