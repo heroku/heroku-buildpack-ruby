@@ -105,7 +105,7 @@ WARNING
         vendor_libpq
         install_bundler_in_app(slug_vendor_base)
         load_bundler_cache
-        build_bundler(path: "vendor/bundle", default_bundle_without: "development:test")
+        build_bundler(bundle_path: "vendor/bundle", default_bundle_without: "development:test")
         post_bundler
         create_database_yml
         install_binaries
@@ -447,19 +447,24 @@ SHELL
   # muiltibuildpack. We can't use profile.d because $HOME isn't set up
   def setup_export(layer = nil)
     instrument 'ruby.setup_export' do
-      paths = ENV["PATH"].split(":")
-      paths = paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":") unless layer
+      if layer
+        paths = ENV["PATH"]
+      else
+        paths = ENV["PATH"].split(":").map do |path|
+          /^\/.*/ !~ path ? "#{build_path}/#{path}" : path
+        end.join(":")
+      end
 
-      gem_path =
-        if layer
-          "#{layer.path}/#{slug_vendor_base}"
-        else
-          "#{build_path}/#{slug_vendor_base}"
-        end
+      # TODO ensure path exported is correct
+      set_export_path "PATH", paths, layer
+
+      if layer
+        gem_path = "#{layer.path}/#{slug_vendor_base}"
+      else
+        gem_path = "#{build_path}/#{slug_vendor_base}"
+      end
       set_export_path "GEM_PATH", gem_path, layer
       set_export_default  "LANG", "en_US.UTF-8", layer
-      # TODO ensure path exported is correct
-      set_export_path "PATH", paths.join(":"), layer
 
       # TODO handle jruby
       if ruby_version.jruby?
@@ -1326,7 +1331,7 @@ MESSAGE
         FileUtils.rm_rf("vendor/ruby_version")
         purge_bundler_cache
         # fix bug introduced in v38
-      elsif !metadata.include?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
+      elsif !@metadata.include?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
         puts "Broken cache detected. Purging build cache."
         purge_bundler_cache
       elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
