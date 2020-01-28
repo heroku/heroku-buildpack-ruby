@@ -230,7 +230,7 @@ private ##################################
     end
   end
 
-  def export(key, value, layer: nil, option: nil)
+  def export(key, val, layer: nil, option: nil)
     if layer
       # don't replace if the key is already set
       return if ENV[key] && option == :default
@@ -246,7 +246,7 @@ private ##################################
 
       FileUtils.mkdir_p("#{layer.path}/env.build")
       File.open("#{layer.path}/env.build/#{filename}", "w") do |f|
-        f.write(value)
+        f.write(val)
       end
     else
       string =
