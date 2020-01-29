@@ -1393,7 +1393,7 @@ MESSAGE
     instrument "ruby.purge_bundler_cache" do
       @bundler_cache.clear(stack)
       # need to reinstall language pack gems
-      install_bundler_in_app
+      install_bundler_in_app(slug_vendor_base)
     end
   end
 end
