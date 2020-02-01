@@ -1042,7 +1042,7 @@ params = CGI.parse(uri.query || "")
   # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
   def add_dev_database_addon
-    []
+    ["heroku-postgresql:hobby-basic"]
   end
 
   def pg_adapters
