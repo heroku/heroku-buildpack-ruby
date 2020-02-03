@@ -4,6 +4,9 @@ describe "Rails Runner" do
   around(:each) do |test|
     original_path = ENV["PATH"]
     ENV["PATH"] = "./bin/:#{ENV['PATH']}"
+    # bash subprocesses (e.g. as set by CircleCI) will source $BASH_ENV, which
+    # could clobber our change to $PATH
+    ENV["BASH_ENV"] = nil
 
     Dir.mktmpdir do |tmpdir|
       Dir.chdir(tmpdir) do
