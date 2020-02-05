@@ -22,7 +22,7 @@
 - - "./repos/ci/rails5_sql_schema_format"
   - df48237c57f89bb3629937ae6b1d6af070100ed3
 - - "./repos/ci/rails_31_ruby_schema_format"
-  - 4dfec62253a2a09e004e396a8849c3bf11c3f68a
+  - 76dacc65e0483c7c0b659504d8d56e6cfaee4bf1
 - - "./repos/ci/rails_31_sql_schema_format"
   - 540ec776eff3111ad9bb01af204c62725c94a11d
 - - "./repos/ci/ruby_no_rails_test"
