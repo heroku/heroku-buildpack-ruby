@@ -165,6 +165,10 @@ class LanguagePack::Helpers::BundlerWrapper
   def fetch_bundler
     instrument 'fetch_bundler' do
       return true if Dir.exists?(bundler_path)
+
+      topic("Installing bundler #{@version}")
+      bundler_version_escape_valve!
+
       FileUtils.mkdir_p(bundler_path)
       Dir.chdir(bundler_path) do
         @fetcher.fetch_untar(@bundler_tar)
@@ -200,6 +204,14 @@ class LanguagePack::Helpers::BundlerWrapper
       @version = BLESSED_BUNDLER_VERSIONS[major]
     else
       raise UnsupportedBundlerVersion.new(BLESSED_BUNDLER_VERSIONS, major)
+    end
+  end
+
+  def bundler_version_escape_valve!
+    topic("Removing BUNDLED WITH version in the Gemfile.lock")
+    contents = File.read("Gemfile.lock")
+    File.open("Gemfile.lock", "w") do |f|
+      f.write contents.sub(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m, '')
     end
   end
 end
