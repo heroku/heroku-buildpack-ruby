@@ -1,6 +1,7 @@
 ## Master (unreleased)
 
 * Set default values for WEB_CONCURRENCY for new applications based on dyno type and size (https://github.com/heroku/heroku-buildpack-ruby/pull/946)
+* Update default Ruby version to 2.6.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/947)
 
 ## v207 (12/16/2019)
 

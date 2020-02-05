@@ -71,14 +71,14 @@ describe "Ruby versions" do
     end
   end
 
-  # it "should deploy jruby with the naether gem" do
-  #   app = Hatchet::Runner.new("jruby_naether", stack: DEFAULT_STACK)
-  #   app.setup!
-  #   app.deploy do |app|
-  #     expect(app.output).to match("Installing naether")
-  #     expect(app.output).not_to include("An error occurred while installing naether")
-  #   end
-  # end
+  it "should deploy jruby with the naether gem" do
+    app = Hatchet::Runner.new("jruby_naether", stack: DEFAULT_STACK)
+    app.setup!
+    app.deploy do |app|
+      expect(app.output).to match("Installing naether")
+      expect(app.output).not_to include("An error occurred while installing naether")
+    end
+  end
 end
 
 
