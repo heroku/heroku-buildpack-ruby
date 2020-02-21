@@ -16,8 +16,7 @@ class LanguagePack::Installers::HerokuRubyInstaller
     Dir.chdir(install_dir) do
       file = "#{ruby_version.version_for_download}.tgz"
       if build
-        ruby_vm = "ruby"
-        file.sub!(ruby_vm, "#{ruby_vm}-build")
+        file.sub!("ruby", "ruby-build")
       end
       @fetcher.fetch_untar(file)
     end

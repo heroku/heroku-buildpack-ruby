@@ -1,5 +1,6 @@
 ## Master (unreleased)
 
+* Improve Ruby version download error messages (https://github.com/heroku/heroku-buildpack-ruby/pull/953)
 * Update default Ruby version to 2.6.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/947)
 
 ## v207 (12/16/2019)
