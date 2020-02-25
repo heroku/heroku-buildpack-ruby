@@ -9,7 +9,7 @@ group :development, :test do
   gem "rspec-core"
   gem "rspec-expectations"
   gem "excon"
-  gem "rake"
+  gem "rake", ">= 12.3.3"
   gem "parallel_tests"
   gem 'rspec-retry'
   gem "netrc"

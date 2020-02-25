@@ -56,7 +56,7 @@ GEM
     platform-api (2.2.0)
       heroics (~> 0.0.25)
       moneta (~> 1.0.0)
-    rake (12.3.2)
+    rake (13.0.1)
     redis (4.1.2)
     repl_runner (0.0.3)
       activesupport
@@ -89,7 +89,7 @@ DEPENDENCIES
   json (~> 2.0.2)
   netrc
   parallel_tests
-  rake
+  rake (>= 12.3.3)
   redis
   rspec-core
   rspec-expectations
@@ -100,4 +100,4 @@ RUBY VERSION
    ruby 2.6.5p114
 
 BUNDLED WITH
-   2.0.2
+   1.17.3
