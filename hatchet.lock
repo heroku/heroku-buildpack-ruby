@@ -129,3 +129,5 @@
   - 06d5e86180ff0e5b6894f823736cd649dcfebed4
 - - "./repos/ruby/ruby_25"
   - 0cb3df80d55b61e9417f2ac00adb06e15ae37982
+- - "./repos/ruby/ruby_version_does_not_exist"
+  - 9b6ad8e3b4fa7850393a5f232bb40ff3cd414d8b

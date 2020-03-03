@@ -442,8 +442,29 @@ SHELL
 
       warn_outdated_minor
       warn_outdated_eol
+      warn_stack_upgrade
       true
     end
+  end
+
+  def warn_stack_upgrade
+    return unless defined?(@ruby_download_check)
+    return unless @ruby_download_check.next_stack(stack)
+    return unless @ruby_download_check.exists_on_next_stack?(stack)
+
+    warn(<<~WARNING)
+      Your Ruby version is not present on the next stack
+
+      You are currently using #{ruby_version.version_for_download} on #{stack} stack.
+      This version does not exist on #{@ruby_download_check.next_stack(stack)}. In order to upgrade your stack you will
+      need to upgrade to a supported Ruby version.
+
+      For a list of supported Ruby versions see:
+        https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+
+      For a list of the oldest Ruby versions present on a given stack see:
+        https://devcenter.heroku.com/articles/ruby-support#oldest-available-runtimes
+    WARNING
   end
 
   def warn_outdated_eol
@@ -513,9 +534,13 @@ SHELL
       return false unless ruby_version
       installer = LanguagePack::Installers::RubyInstaller.installer(ruby_version).new(@stack)
 
+      @ruby_download_check = LanguagePack::Helpers::DownloadPresence.new(ruby_version.file_name)
+      @ruby_download_check.call
+
       if ruby_version.build?
         installer.fetch_unpack(ruby_version, build_ruby_path, true)
       end
+
       installer.install(ruby_version, slug_vendor_ruby)
 
       @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
@@ -538,61 +563,42 @@ WARNING
     end
 
     true
-  rescue LanguagePack::Fetcher::FetchError => error
-    if stack == "heroku-18" && ruby_version.version_for_download.match?(/ruby-2\.(2|3)/)
-      message = <<ERROR
-An error occurred while installing #{ruby_version.version_for_download}
+  rescue LanguagePack::Fetcher::FetchError
+    if @ruby_download_check.does_not_exist?
+      message = <<~ERROR
+        The Ruby version you are trying to install does not exist: #{ruby_version.version_for_download}
+      ERROR
+    else
+      message = <<~ERROR
+        The Ruby version you are trying to install does not exist on this stack.
 
-This version of Ruby is not available on Heroku-18. The minimum supported version
-of Ruby on the Heroku-18 stack can found at:
+        You are trying to install #{ruby_version.version_for_download} on #{stack}.
 
-  https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+        Ruby #{ruby_version.version_for_download} is present on the following stacks:
 
-ERROR
-
-      ci_message = <<ERROR
-
-If you did not intend to build your app for CI on the Heroku-18 stack
-please set your stack version manually in the `app.json`:
-
-```
-"stack": "heroku-16"
-```
-
-More information about this change in behavior can be found at:
-  https://help.heroku.com/3Y1HEXGJ/why-doesn-t-ruby-2-3-7-work-in-my-ci-tests
-
-ERROR
+          - #{@ruby_download_check.valid_stack_list.join("\n  - ")}
+      ERROR
 
       if env("CI")
-        mcount "fail.bad_version_fetch.heroku-18.ci"
-        message << ci_message
-      else
-        mcount "fail.bad_version_fetch.heroku-18"
+        message << <<~ERROR
+
+          On Heroku CI you can set your stack in the `app.json`. For example:
+
+          ```
+          "stack": "heroku-16"
+          ```
+        ERROR
       end
-
-      error message
     end
 
-    mcount "fail.bad_version_fetch"
-    mcount "fail.bad_version_fetch.#{ruby_version.version_for_download}"
-    message = <<ERROR
-An error occurred while installing #{ruby_version.version_for_download}
+    message << <<~ERROR
 
-Heroku recommends you use the latest supported Ruby version listed here:
-  https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+      Heroku recommends you use the latest supported Ruby version listed here:
+        https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
 
-For more information on syntax for declaring a Ruby version see:
-  https://devcenter.heroku.com/articles/ruby-versions
-
-ERROR
-
-    if ruby_version.jruby?
-      message << "Note: Only JRuby 1.7.13 and newer are supported on Cedar-14"
-    end
-
-    message << "\nDebug Information"
-    message << error.message
+      For more information on syntax for declaring a Ruby version see:
+        https://devcenter.heroku.com/articles/ruby-versions
+    ERROR
 
     error message
   end

@@ -19,6 +19,15 @@ describe "Ruby apps" do
     end
   end
 
+
+  describe "bad ruby version" do
+    it "gives a helpful error" do
+      Hatchet::Runner.new('ruby_version_does_not_exist', allow_failure: true, stack: DEFAULT_STACK).deploy do |app|
+        expect(app.output).to match("The Ruby version you are trying to install does not exist: ruby-2.9.0.lol")
+      end
+    end
+  end
+
   describe "running Ruby from outside the default dir" do
     it "works" do
       Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK).deploy do |app|
