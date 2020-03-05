@@ -28,14 +28,14 @@ class LanguagePack::Helpers::DownloadPresence
     end
   end
 
-  def next_stack(stack)
-    next_index = @stacks.index(stack) + 1
+  def next_stack(current_stack: )
+    next_index = @stacks.index(current_stack) + 1
 
     @stacks[next_index]
   end
 
-  def exists_on_next_stack?(stack)
-    next_index = @stacks.index(stack) + 1
+  def exists_on_next_stack?(current_stack: )
+    next_index = @stacks.index(current_stack) + 1
     @threads[next_index]
   end
 
@@ -60,7 +60,7 @@ class LanguagePack::Helpers::DownloadPresence
   def call
     @fetchers.map do |fetcher|
       @threads << Thread.new do
-        fetcher.exists?(@path)
+        fetcher.exists?(@path, 3)
       end
     end
   end

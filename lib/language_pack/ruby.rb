@@ -449,14 +449,14 @@ SHELL
 
   def warn_stack_upgrade
     return unless defined?(@ruby_download_check)
-    return unless @ruby_download_check.next_stack(stack)
-    return unless @ruby_download_check.exists_on_next_stack?(stack)
+    return unless @ruby_download_check.next_stack(current_stack: stack)
+    return unless @ruby_download_check.exists_on_next_stack?(current_stack: stack)
 
     warn(<<~WARNING)
       Your Ruby version is not present on the next stack
 
       You are currently using #{ruby_version.version_for_download} on #{stack} stack.
-      This version does not exist on #{@ruby_download_check.next_stack(stack)}. In order to upgrade your stack you will
+      This version does not exist on #{@ruby_download_check.next_stack(current_stack: stack)}. In order to upgrade your stack you will
       need to upgrade to a supported Ruby version.
 
       For a list of supported Ruby versions see:
