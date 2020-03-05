@@ -1,5 +1,9 @@
 ## Master (unreleased)
 
+## v209 (3/5/2020)
+
+* Fix bug in version download error message logic (https://github.com/heroku/heroku-buildpack-ruby/pull/957)
+
 ## v208 (3/4/2020)
 
 * Improve Ruby version download error messages (https://github.com/heroku/heroku-buildpack-ruby/pull/953)

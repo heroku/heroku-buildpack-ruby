@@ -9,13 +9,27 @@ describe LanguagePack::Helpers::DownloadPresence do
 
     download.call
 
-    expect(download.next_stack("cedar-14")).to eq("heroku-16")
-    expect(download.next_stack("heroku-16")).to eq("heroku-18")
-    expect(download.next_stack("heroku-18")).to be_falsey
+    expect(download.next_stack(current_stack: "cedar-14")).to eq("heroku-16")
+    expect(download.next_stack(current_stack: "heroku-16")).to eq("heroku-18")
+    expect(download.next_stack(current_stack: "heroku-18")).to be_falsey
 
-    expect(download.exists_on_next_stack?("cedar-14")).to be_truthy
+    expect(download.exists_on_next_stack?(current_stack:"cedar-14")).to be_truthy
   end
 
+  it "detects when a package is present on higher stacks" do
+    download = LanguagePack::Helpers::DownloadPresence.new(
+      'ruby-2.6.5.tgz',
+      stacks: ['cedar-14', 'heroku-16', 'heroku-18']
+    )
+
+    download.call
+
+    expect(download.exists?).to eq(true)
+    expect(download.valid_stack_list).to eq(['cedar-14', 'heroku-16', 'heroku-18'])
+
+    expect(download.exists_on_next_stack?(current_stack: "heroku-16")).to be_truthy
+    expect(download.next_stack(current_stack: "heroku-16")).to eq("heroku-18")
+  end
 
   it "detects when a package is not present on higher stacks" do
     download = LanguagePack::Helpers::DownloadPresence.new(
