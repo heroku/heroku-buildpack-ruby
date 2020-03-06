@@ -1,5 +1,10 @@
 ## Master (unreleased)
 
+
+## v210 (3/6/2020)
+
+* Fix version download error warning inversion logic (https://github.com/heroku/heroku-buildpack-ruby/pull/958)
+
 ## v209 (3/5/2020)
 
 * Fix bug in version download error message logic (https://github.com/heroku/heroku-buildpack-ruby/pull/957)

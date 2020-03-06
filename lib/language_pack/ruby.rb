@@ -450,7 +450,7 @@ SHELL
   def warn_stack_upgrade
     return unless defined?(@ruby_download_check)
     return unless @ruby_download_check.next_stack(current_stack: stack)
-    return unless @ruby_download_check.exists_on_next_stack?(current_stack: stack)
+    return if @ruby_download_check.exists_on_next_stack?(current_stack: stack)
 
     warn(<<~WARNING)
       Your Ruby version is not present on the next stack
