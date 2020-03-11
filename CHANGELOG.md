@@ -1,5 +1,6 @@
 ## Master (unreleased)
 
+* Remove libpq external dependency (https://github.com/heroku/heroku-buildpack-ruby/pull/959)
 
 ## v210 (3/6/2020)
 
