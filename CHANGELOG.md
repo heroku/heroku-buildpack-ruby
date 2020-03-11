@@ -1,5 +1,6 @@
 ## Master (unreleased)
 
+* Fix issue where the wrong version of bundler is used on CI apps (https://github.com/heroku/heroku-buildpack-ruby/pull/961)
 * Remove libpq external dependency (https://github.com/heroku/heroku-buildpack-ruby/pull/959)
 
 ## v210 (3/6/2020)
