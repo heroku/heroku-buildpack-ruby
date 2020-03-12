@@ -15,6 +15,8 @@
   - 116db685f54dae18f703b3beb90e64fdbddb048d
 - - "./repos/ci/activerecord_rake_tasks_does_not_exist"
   - a6b711be6921cf7a0aa4e31269c37965799ea110
+- - "./repos/ci/ci_fails_ruby_default_bundler"
+  - 43cbf196245957be6242b1e1bc56b8f1bfa00004
 - - "./repos/ci/heroku-ci-json-example"
   - 4e5410a7381f486ba3df7739e02e52f32fdd4dda
 - - "./repos/ci/rails5_ruby_schema_format"

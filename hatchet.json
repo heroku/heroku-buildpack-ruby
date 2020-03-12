@@ -99,6 +99,7 @@
     "sharpstone/rails_31_ruby_schema_format",
     "sharpstone/rails_31_sql_schema_format",
     "sharpstone/ruby_no_rails_test",
-    "sharpstone/activerecord_rake_tasks_does_not_exist"
+    "sharpstone/activerecord_rake_tasks_does_not_exist",
+    "sharpstone/ci_fails_ruby_default_bundler"
   ]
 }

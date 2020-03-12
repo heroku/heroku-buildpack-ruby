@@ -38,4 +38,10 @@ describe "CI" do
       expect(test_run.output).to_not match("db:migrate")
     end
   end
+
+  it "works when using a Ruby version different from default with an older version of bundler and not declaring a test script" do
+    Hatchet::Runner.new("ci_fails_ruby_default_bundler").run_ci do |test_run|
+      expect(test_run.output).to match("rspec")
+    end
+  end
 end
