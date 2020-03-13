@@ -230,6 +230,8 @@ private ##################################
     end
   end
 
+  # option can be :path, :default, :override
+  # https://github.com/buildpacks/spec/blob/366ac1aa0be59d11010cc21aa06c16d81d8d43e7/buildpack.md#environment-variable-modification-rules
   def export(key, val, layer: nil, option: nil)
     if layer
       # don't replace if the key is already set
@@ -264,14 +266,6 @@ private ##################################
       end
     end
   end
-
-  #def set_export_default(key, val, layer = nil)
-  #  add_to_export "export #{key}=${#{key}:-#{val}}"
-  #end
-
-  #def set_export_override(key, val)
-  #  add_to_export %{export #{key}="#{val.gsub('"','\"')}"}
-  #end
 
   def set_export_default(key, val, layer = nil)
     export key, val, layer: layer, option: :default

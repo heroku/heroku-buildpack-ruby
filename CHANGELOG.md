@@ -1,5 +1,7 @@
 ## Master (unreleased)
 
+* Cloud Native Buildpack support (https://github.com/heroku/heroku-buildpack-ruby/pull/888)
+
 ## v211 (3/12/2020)
 
 * Fix issue where the wrong version of bundler is used on CI apps (https://github.com/heroku/heroku-buildpack-ruby/pull/961)
@@ -17,7 +19,6 @@
 
 * Improve Ruby version download error messages (https://github.com/heroku/heroku-buildpack-ruby/pull/953)
 * Update default Ruby version to 2.6.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/947)
-* Cloud Native Buildpack support (https://github.com/heroku/heroku-buildpack-ruby/pull/888)
 
 ## v207 (12/16/2019)
 

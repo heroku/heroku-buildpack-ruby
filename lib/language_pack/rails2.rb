@@ -65,7 +65,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
 
   def build
     # TODO install plugins into separate layer
-    #install_plugins
+    install_plugins
     super
   end
 
