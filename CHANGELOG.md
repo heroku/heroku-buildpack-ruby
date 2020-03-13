@@ -1,5 +1,20 @@
 ## Master (unreleased)
 
+## v211 (3/12/2020)
+
+* Fix issue where the wrong version of bundler is used on CI apps (https://github.com/heroku/heroku-buildpack-ruby/pull/961)
+* Remove libpq external dependency (https://github.com/heroku/heroku-buildpack-ruby/pull/959)
+
+## v210 (3/6/2020)
+
+* Fix version download error warning inversion logic (https://github.com/heroku/heroku-buildpack-ruby/pull/958)
+
+## v209 (3/5/2020)
+
+* Fix bug in version download error message logic (https://github.com/heroku/heroku-buildpack-ruby/pull/957)
+
+## v208 (3/4/2020)
+
 * Improve Ruby version download error messages (https://github.com/heroku/heroku-buildpack-ruby/pull/953)
 * Update default Ruby version to 2.6.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/947)
 * Cloud Native Buildpack support (https://github.com/heroku/heroku-buildpack-ruby/pull/888)

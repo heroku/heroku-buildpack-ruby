@@ -102,7 +102,6 @@ WARNING
       setup_export
       setup_profiled
       allow_git do
-        vendor_libpq
         install_bundler_in_app(slug_vendor_base)
         load_bundler_cache
         build_bundler(bundle_path: "vendor/bundle", default_bundle_without: "development:test")
@@ -120,55 +119,6 @@ WARNING
   rescue => e
     warn_outdated_ruby
     raise e
-  end
-
-  def vendor_libpq
-    # Check for existing libraries
-    return unless File.exist?("/usr/lib/x86_64-linux-gnu/libpq.so.5.11")
-    return unless ENV['STACK'] == 'heroku-18'
-
-    topic("Vendoring libpq 5.12.1")
-
-    @metadata.fetch("vendor_libpq12") do
-      warn(<<~EOF)
-        Replacing libpq with version libpq 5.12.1
-
-        This version includes a bug fix that can cause an exception
-        on boot for applications with incorrectly configured connection
-        values. For more information see:
-
-          https://devcenter.heroku.com/articles/libpq-5-12-1-breaking-connection-behavior
-
-        If your application breaks you can rollback to your last build.
-        You can also temporarially opt out of this behavior by setting:
-
-        ```
-        $ heroku config:set HEROKU_SKIP_LIBPQ12=1
-        ```
-
-        In the future libpq 5.12 will be the default on the platform and
-        you will not be able to opt-out of the library. For more information see:
-
-          https://devcenter.heroku.com/articles/libpq-5-12-1-breaking-connection-behavior
-      EOF
-
-      "true" # Set future cache value
-    end
-
-    Dir.chdir("vendor") do
-      @fetchers[:mri].fetch("libpq5_12.1-1.deb")
-      run!("dpkg -x libpq5_12.1-1.deb .")
-      run!("rm libpq5_12.1-1.deb")
-
-      load_libpq_12_unless_env_var = <<~EOF
-        if [ "$HEROKU_SKIP_LIBPQ12" == "" ]; then
-          export LD_LIBRARY_PATH="$HOME/vendor/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH"
-        fi
-      EOF
-      add_to_export load_libpq_12_unless_env_var
-      add_to_profiled load_libpq_12_unless_env_var
-      ENV["LD_LIBRARY_PATH"] = Dir.pwd + "/usr/lib/x86_64-linux-gnu:#{ENV["LD_LIBRARY_PATH"]}"
-    end
   end
 
   def build
@@ -515,14 +465,14 @@ SHELL
 
   def warn_stack_upgrade
     return unless defined?(@ruby_download_check)
-    return unless @ruby_download_check.next_stack(stack)
-    return unless @ruby_download_check.exists_on_next_stack?(stack)
+    return unless @ruby_download_check.next_stack(current_stack: stack)
+    return if @ruby_download_check.exists_on_next_stack?(current_stack: stack)
 
     warn(<<~WARNING)
       Your Ruby version is not present on the next stack
 
       You are currently using #{ruby_version.version_for_download} on #{stack} stack.
-      This version does not exist on #{@ruby_download_check.next_stack(stack)}. In order to upgrade your stack you will
+      This version does not exist on #{@ruby_download_check.next_stack(current_stack: stack)}. In order to upgrade your stack you will
       need to upgrade to a supported Ruby version.
 
       For a list of supported Ruby versions see:
