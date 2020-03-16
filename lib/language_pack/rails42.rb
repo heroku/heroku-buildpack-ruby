@@ -14,9 +14,9 @@ class LanguagePack::Rails42 < LanguagePack::Rails41
     end
   end
 
-  def setup_profiled
+  def setup_profiled(*args)
     instrument 'setup_profiled' do
-      super
+      super(*args)
       set_env_default "RAILS_SERVE_STATIC_FILES", "enabled"
     end
   end
