@@ -1,5 +1,7 @@
 ## Master (unreleased)
 
+* Cloud Native Buildpack support (https://github.com/heroku/heroku-buildpack-ruby/pull/888)
+
 ## v211 (3/12/2020)
 
 * Fix issue where the wrong version of bundler is used on CI apps (https://github.com/heroku/heroku-buildpack-ruby/pull/961)

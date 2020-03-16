@@ -53,8 +53,16 @@ if ENV['TRAVIS']
   exit 0 if ENV['TRAVIS_PULL_REQUEST'] != 'false' && ENV['TRAVIS_BRANCH'] == 'master'
 end
 
+def buildpack_path
+  File.expand_path(File.join("../.."), __FILE__)
+end
+
 def fixture_path(path)
   Pathname.new(__FILE__).join("../fixtures").expand_path.join(path)
+end
+
+def hatchet_path(path = "")
+  Pathname.new(__FILE__).join("../../repos").expand_path.join(path)
 end
 
 def dyno_status(app, ps_name = "web")

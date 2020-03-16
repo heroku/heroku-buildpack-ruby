@@ -9,6 +9,7 @@ require "language_pack/helpers/nodebin"
 require "language_pack/helpers/node_installer"
 require "language_pack/helpers/yarn_installer"
 require "language_pack/helpers/jvm_installer"
+require "language_pack/helpers/layer"
 require "language_pack/version"
 
 # base Ruby Language Pack. This is for any base ruby app.
@@ -18,6 +19,8 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   NODE_BP_PATH         = "vendor/node/bin"
+
+  Layer = LanguagePack::Helpers::Layer
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -35,8 +38,8 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.bundler
   end
 
-  def initialize(build_path, cache_path=nil)
-    super(build_path, cache_path)
+  def initialize(*args)
+    super(*args)
     @fetchers[:mri]    = LanguagePack::Fetcher.new(VENDOR_URL, @stack)
     @fetchers[:rbx]    = LanguagePack::Fetcher.new(RBX_BASE_URL, @stack)
     @node_installer    = LanguagePack::Helpers::NodeInstaller.new
@@ -93,14 +96,15 @@ WARNING
       Dir.chdir(build_path)
       remove_vendor_bundle
       warn_bundler_upgrade
-      install_ruby
+      install_ruby(slug_vendor_ruby, build_ruby_path)
       install_jvm
       setup_language_pack_environment
       setup_export
       setup_profiled
       allow_git do
-        install_bundler_in_app
-        build_bundler("development:test")
+        install_bundler_in_app(slug_vendor_base)
+        load_bundler_cache
+        build_bundler(bundle_path: "vendor/bundle", default_bundle_without: "development:test")
         post_bundler
         create_database_yml
         install_binaries
@@ -115,6 +119,51 @@ WARNING
   rescue => e
     warn_outdated_ruby
     raise e
+  end
+
+  def build
+    new_app?
+    remove_vendor_bundle
+
+    ruby_layer = Layer.new(@layer_dir, "ruby", launch: true)
+    install_ruby("#{ruby_layer.path}/#{slug_vendor_ruby}")
+    ruby_layer.metadata[:version] = ruby_version.version
+    ruby_layer.metadata[:patchlevel] = ruby_version.patchlevel if ruby_version.patchlevel
+    ruby_layer.metadata[:engine] = ruby_version.engine.to_s
+    ruby_layer.metadata[:engine_version] = ruby_version.engine_version
+    ruby_layer.write
+
+    gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true)
+    setup_language_pack_environment(ruby_layer.path, gem_layer.path)
+    setup_export(gem_layer)
+    setup_profiled(ruby_layer.path, gem_layer.path)
+    allow_git do
+      # TODO install bundler in separate layer
+      topic "Loading Bundler Cache"
+      gem_layer.validate! do |metadata|
+        valid_bundler_cache?(gem_layer.path, gem_layer.metadata)
+      end
+      install_bundler_in_app("#{gem_layer.path}/#{slug_vendor_base}")
+      build_bundler(bundle_path: "#{gem_layer.path}/vendor/bundle", default_bundle_without: "development:test")
+      # TODO post_bundler might need to be done in a new layer
+      bundler.clean
+      gem_layer.metadata[:gems] = Digest::SHA2.hexdigest(File.read("Gemfile.lock"))
+      gem_layer.metadata[:stack] = @stack
+      gem_layer.metadata[:ruby_version] = run_stdout(%q(ruby -v)).chomp
+      gem_layer.metadata[:rubygems_version] = run_stdout(%q(gem -v)).chomp
+      gem_layer.metadata[:buildpack_version] = BUILDPACK_VERSION
+      gem_layer.write
+
+      create_database_yml
+      # TODO replace this with multibuildpack stuff? put binaries in their own layer?
+      install_binaries
+      run_assets_precompile_rake_task
+    end
+    config_detect
+    best_practice_warnings
+    cleanup
+
+    super
   end
 
   def cleanup
@@ -158,11 +207,11 @@ WARNING
 
   # the base PATH environment variable to be used
   # @return [String] the resulting PATH
-  def default_path
+  def default_path(gem_layer_path = ".")
     # need to remove bin/ folder since it links
     # to the wrong --prefix ruby binstubs
     # breaking require. This only applies to Ruby 1.9.2 and 1.8.7.
-    safe_binstubs = binstubs_relative_paths - ["bin"]
+    safe_binstubs = binstubs_relative_paths(gem_layer_path) - ["bin"]
     paths         = [
       ENV["PATH"],
       "bin",
@@ -174,11 +223,11 @@ WARNING
     paths.join(":")
   end
 
-  def binstubs_relative_paths
+  def binstubs_relative_paths(gem_layer_path = ".")
     [
       "bin",
-      bundler_binstubs_path,
-      "#{slug_vendor_base}/bin"
+      "#{gem_layer_path}/#{bundler_binstubs_path}",
+      "#{gem_layer_path}/#{slug_vendor_base}/bin"
     ]
   end
 
@@ -308,7 +357,7 @@ EOF
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment
+  def setup_language_pack_environment(ruby_layer_path = ".", gem_layer_path = ".")
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
@@ -319,7 +368,7 @@ SHELL
         ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
         ENV["JAVA_HOME"] = @jvm_installer.java_home
       end
-      setup_ruby_install_env
+      setup_ruby_install_env(ruby_layer_path)
       ENV["PATH"] += ":#{node_preinstall_bin_path}" if node_js_installed?
       ENV["PATH"] += ":#{yarn_preinstall_bin_path}" if !yarn_not_preinstalled?
 
@@ -337,21 +386,37 @@ SHELL
         ENV[key] ||= value
       end
 
-      ENV["GEM_PATH"] = slug_vendor_base
-      ENV["GEM_HOME"] = slug_vendor_base
-      ENV["PATH"]     = default_path
+      gem_path = "#{gem_layer_path}/#{slug_vendor_base}"
+      ENV["GEM_PATH"] = gem_path
+      ENV["GEM_HOME"] = gem_path
+      ENV["PATH"]     = default_path(gem_layer_path)
     end
   end
 
   # Sets up the environment variables for subsequent processes run by
   # muiltibuildpack. We can't use profile.d because $HOME isn't set up
-  def setup_export
+  def setup_export(layer = nil)
     instrument 'ruby.setup_export' do
-      paths = ENV["PATH"].split(":")
-      set_export_override "GEM_PATH", "#{build_path}/#{slug_vendor_base}:$GEM_PATH"
-      set_export_default  "LANG",     "en_US.UTF-8"
-      set_export_override "PATH",     paths.map { |path| /^\/.*/ !~ path ? "#{build_path}/#{path}" : path }.join(":")
+      if layer
+        paths = ENV["PATH"]
+      else
+        paths = ENV["PATH"].split(":").map do |path|
+          /^\/.*/ !~ path ? "#{build_path}/#{path}" : path
+        end.join(":")
+      end
 
+      # TODO ensure path exported is correct
+      set_export_path "PATH", paths, layer
+
+      if layer
+        gem_path = "#{layer.path}/#{slug_vendor_base}"
+      else
+        gem_path = "#{build_path}/#{slug_vendor_base}"
+      end
+      set_export_path "GEM_PATH", gem_path, layer
+      set_export_default  "LANG", "en_US.UTF-8", layer
+
+      # TODO handle jruby
       if ruby_version.jruby?
         add_to_export set_jvm_max_heap
         add_to_export set_java_mem
@@ -362,19 +427,20 @@ SHELL
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled
+  def setup_profiled(ruby_layer_path = "$HOME", gem_layer_path = "$HOME")
     instrument 'setup_profiled' do
-      profiled_path = [binstubs_relative_paths.map {|path| "$HOME/#{path}" }.join(":")]
+      profiled_path = binstubs_relative_paths(gem_layer_path)
       profiled_path << "vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
       set_env_default  "LANG",     "en_US.UTF-8"
-      set_env_override "GEM_PATH", "$HOME/#{slug_vendor_base}:$GEM_PATH"
+      set_env_override "GEM_PATH", "#{gem_layer_path}/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",      profiled_path.join(":")
 
       set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
 
+      # TODO handle JRUBY
       if ruby_version.jruby?
         add_to_profiled set_jvm_max_heap
         add_to_profiled set_java_mem
@@ -479,8 +545,9 @@ SHELL
 
   # install the vendored ruby
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
-  def install_ruby
+  def install_ruby(install_path, build_ruby_path = nil)
     instrument 'ruby.install_ruby' do
+      # Could do a compare operation to avoid re-downloading ruby
       return false unless ruby_version
       installer = LanguagePack::Installers::RubyInstaller.installer(ruby_version).new(@stack)
 
@@ -491,7 +558,7 @@ SHELL
         installer.fetch_unpack(ruby_version, build_ruby_path, true)
       end
 
-      installer.install(ruby_version, slug_vendor_ruby)
+      installer.install(ruby_version, install_path)
 
       @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
         current_ruby_version: ruby_version,
@@ -553,6 +620,7 @@ WARNING
     error message
   end
 
+  # TODO make this compatible with CNB
   def new_app?
     @new_app ||= !File.exist?("vendor/heroku")
   end
@@ -568,21 +636,21 @@ WARNING
 
   # find the ruby install path for its binstubs during build
   # @return [String] resulting path or empty string if ruby is not vendored
-  def ruby_install_binstub_path
+  def ruby_install_binstub_path(ruby_layer_path = ".")
     @ruby_install_binstub_path ||=
       if ruby_version.build?
         "#{build_ruby_path}/bin"
       elsif ruby_version
-        "#{slug_vendor_ruby}/bin"
+        "#{ruby_layer_path}/#{slug_vendor_ruby}/bin"
       else
         ""
       end
   end
 
   # setup the environment so we can use the vendored ruby
-  def setup_ruby_install_env
+  def setup_ruby_install_env(ruby_layer_path = ".")
     instrument 'ruby.setup_ruby_install_env' do
-      ENV["PATH"] = "#{File.expand_path(ruby_install_binstub_path)}:#{ENV["PATH"]}"
+      ENV["PATH"] = "#{File.expand_path(ruby_install_binstub_path(ruby_layer_path))}:#{ENV["PATH"]}"
 
       if ruby_version.jruby?
         ENV['JAVA_OPTS']  = default_java_opts
@@ -591,10 +659,10 @@ WARNING
   end
 
   # installs vendored gems into the slug
-  def install_bundler_in_app
+  def install_bundler_in_app(bundler_dir)
     instrument 'ruby.install_language_pack_gems' do
-      FileUtils.mkdir_p(slug_vendor_base)
-      Dir.chdir(slug_vendor_base) do |dir|
+      FileUtils.mkdir_p(bundler_dir)
+      Dir.chdir(bundler_dir) do |dir|
         `cp -R #{bundler.bundler_path}/. .`
       end
 
@@ -737,12 +805,12 @@ BUNDLE
   end
 
   # runs bundler to install the dependencies
-  def build_bundler(default_bundle_without)
+  def build_bundler(bundle_path:, default_bundle_without:)
     instrument 'ruby.build_bundler' do
       log("bundle") do
         bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
         bundle_bin     = "bundle"
-        bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
+        bundle_command = "#{bundle_bin} install --without #{bundle_without} --path #{bundle_path} --binstubs #{bundler_binstubs_path}"
         bundle_command << " -j4"
 
         if File.exist?("#{Dir.pwd}/.bundle/config")
@@ -773,7 +841,6 @@ WARNING
         end
 
         topic("Installing dependencies using bundler #{bundler.version}")
-        load_bundler_cache
 
         bundler_output = ""
         bundle_time    = nil
@@ -1102,6 +1169,80 @@ params = CGI.parse(uri.query || "")
     "vendor/bundle"
   end
 
+  def valid_bundler_cache?(path, metadata)
+    full_ruby_version       = run_stdout(%q(ruby -v)).chomp
+    rubygems_version        = run_stdout(%q(gem -v)).chomp
+    old_rubygems_version    = nil
+
+    old_rubygems_version = metadata[:ruby_version]
+    old_stack = metadata[:stack]
+    old_stack ||= DEFAULT_LEGACY_STACK
+
+    stack_change = old_stack != @stack
+    if !new_app? && stack_change
+      return [false, "Purging Cache. Changing stack from #{old_stack} to #{@stack}"]
+    end
+
+    # fix bug from v37 deploy
+    if File.exists?("#{path}/vendor/ruby_version")
+      puts "Broken cache detected. Purging build cache."
+      cache.clear("vendor")
+      FileUtils.rm_rf("#{path}/vendor/ruby_version")
+      return [false, "Broken cache detected. Purging build cache."]
+      # fix bug introduced in v38
+    elsif !metadata.include?(:buildpack_version) && metadata.include?(:ruby_version)
+      puts "Broken cache detected. Purging build cache."
+      return [false, "Broken cache detected. Purging build cache."]
+    elsif (@bundler_cache.exists? || @bundler_cache.old?) && full_ruby_version != metadata[:ruby_version]
+      return [false, <<-MESSAGE]
+Ruby version change detected. Clearing bundler cache.
+Old: #{metadata[:ruby_version]}
+New: #{full_ruby_version}
+MESSAGE
+    end
+
+    # fix git gemspec bug from Bundler 1.3.0+ upgrade
+    if File.exists?(bundler_cache) && !metadata.include?(:bundler_version) && !run("find #{path}/vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").include?("No such file or directory")
+      return [false, "Old bundler cache detected. Clearing bundler cache."]
+    end
+
+    # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
+    if (!metadata.include?(:rubygems_version) ||
+        (old_rubygems_version == "2.0.0" && old_rubygems_version != rubygems_version)) &&
+      metadata.include?(:ruby_version) && metadata[:ruby_version].chomp.include?("ruby 2.0.0p0")
+      return [false, "Updating to rubygems #{rubygems_version}. Clearing bundler cache."]
+    end
+
+    # fix for https://github.com/sparklemotion/nokogiri/issues/923
+    if metadata.include?(:buildpack_version) && (bv = metadata[:buildpack_version].sub('v', '').to_i) && bv != 0 && bv <= 76
+      return [false, <<-MESSAGE]
+Fixing nokogiri install. Clearing bundler cache.
+See https://github.com/sparklemotion/nokogiri/issues/923.
+MESSAGE
+    end
+
+    # recompile nokogiri to use new libyaml
+    if metadata.include?(:buildpack_version) && (bv = metadata[:buildpack_version].sub('v', '').to_i) && bv != 0 && bv <= 99 && bundler.has_gem?("psych")
+      return [false, <<-MESSAGE]
+Need to recompile psych for CVE-2013-6393. Clearing bundler cache.
+See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=737076.
+MESSAGE
+    end
+
+    # recompile gems for libyaml 0.1.7 update
+    if metadata.include?(:buildpack_version) && (bv = metadata[:buildpack_version].sub('v', '').to_i) && bv != 0 && bv <= 147 &&
+        (metadata.include?(:ruby_version) && metadata[:ruby_version].match(/ruby 2\.1\.(9|10)/) ||
+         bundler.has_gem?("psych")
+        )
+      return [false, <<-MESSAGE]
+Need to recompile gems for CVE-2014-2014-9130. Clearing bundler cache.
+See https://devcenter.heroku.com/changelog-items/1016.
+MESSAGE
+    end
+
+    true
+  end
+
   def load_bundler_cache
     instrument "ruby.load_bundler_cache" do
       cache.load "vendor"
@@ -1140,7 +1281,7 @@ params = CGI.parse(uri.query || "")
         FileUtils.rm_rf("vendor/ruby_version")
         purge_bundler_cache
         # fix bug introduced in v38
-      elsif !@metadata.exists?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
+      elsif !@metadata.include?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
         puts "Broken cache detected. Purging build cache."
         purge_bundler_cache
       elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
@@ -1202,7 +1343,7 @@ params = CGI.parse(uri.query || "")
     instrument "ruby.purge_bundler_cache" do
       @bundler_cache.clear(stack)
       # need to reinstall language pack gems
-      install_bundler_in_app
+      install_bundler_in_app(slug_vendor_base)
     end
   end
 end

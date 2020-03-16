@@ -23,8 +23,8 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     instrument "rails3.default_process_types" do
       # let's special case thin here
       web_process = bundler.has_gem?("thin") ?
-        "bundle exec thin start -R config.ru -e $RAILS_ENV -p $PORT" :
-        "bundle exec rails server -p $PORT"
+        "bundle exec thin start -R config.ru -e $RAILS_ENV -p ${PORT:-5000}" :
+        "bundle exec rails server -p ${PORT:-5000}"
 
       super.merge({
         "web" => web_process,
