@@ -1099,7 +1099,7 @@ params = CGI.parse(uri.query || "")
     return @node_preinstall_bin_path if defined?(@node_preinstall_bin_path)
 
     legacy_path = "#{Dir.pwd}/#{NODE_BP_PATH}"
-    path        = run("which node")
+    path        = run("which node").chomp
     if path && $?.success?
       @node_preinstall_bin_path = path
     elsif run("#{legacy_path}/node -v") && $?.success?
@@ -1117,7 +1117,7 @@ params = CGI.parse(uri.query || "")
   def yarn_preinstall_bin_path
     return @yarn_preinstall_bin_path if defined?(@yarn_preinstall_bin_path)
 
-    path = run("which yarn")
+    path = run("which yarn").chomp
     if path && $?.success?
       @yarn_preinstall_bin_path = path
     else
