@@ -253,9 +253,9 @@ private ##################################
     else
       string =
         if option == :default
-          "export #{key}=${#{key}:-#{val}}"
+          %{export #{key}="${#{key}:-#{val}}"}
         elsif option == :path
-          "export #{key}=#{val}:$#{key}"
+          %{export #{key}="#{val}:$#{key}"}
         else
           %{export #{key}="#{val.gsub('"','\"')}"}
         end
