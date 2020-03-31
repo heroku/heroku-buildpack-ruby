@@ -1,5 +1,9 @@
 ## Master (unreleased)
 
+## v213 (4/1/2020)
+
+* Fix regression. PATH value at runtime was relative instead of absolute (https://github.com/heroku/heroku-buildpack-ruby/pull/973)
+
 ## v212 (3/26/2020)
 
 * Cloud Native Buildpack support (https://github.com/heroku/heroku-buildpack-ruby/pull/888)

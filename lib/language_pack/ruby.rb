@@ -211,7 +211,7 @@ WARNING
     # need to remove bin/ folder since it links
     # to the wrong --prefix ruby binstubs
     # breaking require. This only applies to Ruby 1.9.2 and 1.8.7.
-    safe_binstubs = binstubs_relative_paths(gem_layer_path) - ["bin"]
+    safe_binstubs = binstubs_relative_paths(gem_layer_path) - ["bin", "#{gem_layer_path}/bin"]
     paths         = [
       ENV["PATH"],
       "bin",
@@ -225,7 +225,7 @@ WARNING
 
   def binstubs_relative_paths(gem_layer_path = ".")
     [
-      "bin",
+      "#{gem_layer_path}/bin",
       "#{gem_layer_path}/#{bundler_binstubs_path}",
       "#{gem_layer_path}/#{slug_vendor_base}/bin"
     ]
