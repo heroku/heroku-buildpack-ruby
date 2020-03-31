@@ -1,5 +1,7 @@
 ## Master (unreleased)
 
+* Default Ruby version is now 2.6.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/974)
+
 ## v213 (4/1/2020)
 
 * Fix regression. PATH value at runtime was relative instead of absolute (https://github.com/heroku/heroku-buildpack-ruby/pull/973)

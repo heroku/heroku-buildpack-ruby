@@ -97,7 +97,7 @@ DEPENDENCIES
   toml-rb
 
 RUBY VERSION
-   ruby 2.6.5p114
+   ruby 2.6.6p146
 
 BUNDLED WITH
-   2.0.2
+   2.1.4
