@@ -32,6 +32,8 @@ describe "Ruby apps" do
     it "works" do
       Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK).deploy do |app|
         expect(app.output).to match("cd version ruby 2.5.1")
+
+        expect(app.run("which ruby").chomp).to eq("/app/bin/ruby")
       end
     end
   end
