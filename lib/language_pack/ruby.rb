@@ -429,13 +429,14 @@ SHELL
   # sets up the profile.d script for this buildpack
   def setup_profiled(ruby_layer_path = "$HOME", gem_layer_path = "$HOME")
     instrument 'setup_profiled' do
-      profiled_path = binstubs_relative_paths(gem_layer_path)
+      profiled_path = ["$HOME/bin"]
+      profiled_path << binstubs_relative_paths(gem_layer_path)
       profiled_path << "vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
       set_env_default  "LANG",     "en_US.UTF-8"
       set_env_override "GEM_PATH", "#{gem_layer_path}/#{slug_vendor_base}:$GEM_PATH"
-      set_env_override "PATH",      profiled_path.join(":")
+      set_env_override "PATH",      profiled_path.uniq.join(":")
 
       set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
