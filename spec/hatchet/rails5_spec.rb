@@ -69,7 +69,9 @@ describe "Rails 5.1" do
     Hatchet::Runner.new("rails51_webpacker").deploy do |app, heroku|
       expect(app.output).to include("Installing yarn")
       expect(app.output).to include("yarn install")
-      expect(app.run("rails -v")).to match("")
+
+      expect(app.run("which -a node")).to match("/app/bin/node")
+      expect(app.run("which -a yarn")).to match("/app/vendor/yarn-")
     end
   end
 end

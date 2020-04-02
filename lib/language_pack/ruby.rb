@@ -431,7 +431,7 @@ SHELL
     instrument 'setup_profiled' do
       profiled_path = ["$HOME/bin"]
       profiled_path << binstubs_relative_paths(gem_layer_path)
-      profiled_path << "vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
+      profiled_path << "$HOME/vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
       set_env_default  "LANG",     "en_US.UTF-8"

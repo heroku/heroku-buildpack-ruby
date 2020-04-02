@@ -1,10 +1,13 @@
 ## Master (unreleased)
 
+## v214 (4/2/2020)
+
 * Default Ruby version is now 2.6.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/974)
+* Fix regression. PATH value for `yarn` at runtime was relative instead of absolute (https://github.com/heroku/heroku-buildpack-ruby/pull/975)
 
 ## v213 (4/1/2020)
 
-* Fix regression. PATH value at runtime was relative instead of absolute (https://github.com/heroku/heroku-buildpack-ruby/pull/973)
+* Fix regression. PATH value for `ruby` at runtime was relative instead of absolute (https://github.com/heroku/heroku-buildpack-ruby/pull/973)
 
 ## v212 (3/26/2020)
 
