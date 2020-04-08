@@ -11,7 +11,11 @@ describe "Ruby apps" do
 
   describe "running Ruby from outside the default dir" do
     it "works" do
-      Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK).deploy do |app|
+      buildpacks = [
+        Hatchet::App.default_buildpack,
+        "https://github.com/sharpstone/force_absolute_paths_buildpack"
+      ]
+      Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK, buildpacks: buildpacks).deploy do |app|
         expect(app.output).to match("cd version ruby 2.5.1")
 
         expect(app.run("which ruby").chomp).to eq("/app/bin/ruby")

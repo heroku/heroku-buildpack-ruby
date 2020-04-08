@@ -208,33 +208,27 @@ WARNING
   # the base PATH environment variable to be used
   # @return [String] the resulting PATH
   def default_path(gem_layer_path = ".")
-    # need to remove bin/ folder since it links
+    # Need to remove bin/ folder since it links
     # to the wrong --prefix ruby binstubs
     # breaking require. This only applies to Ruby 1.9.2 and 1.8.7.
-    safe_binstubs = binstubs_relative_paths(gem_layer_path) - ["bin", "#{gem_layer_path}/bin"]
-    paths         = [
-      ENV["PATH"],
-      "bin",
-      system_paths,
-    ]
-    paths.unshift("#{slug_vendor_jvm}/bin") if ruby_version.jruby?
-    paths.unshift(safe_binstubs)
-
+    #
+    # Because for 1.9.2 and 1.8.7 there is a "build" ruby and a non-"build" Ruby
+    paths = binstubs_relative_paths(gem_layer_path)
+    paths << "#{slug_vendor_jvm}/bin" if ruby_version.jruby?
+    paths << ENV["PATH"]
+    paths << "$HOME/bin"
+    paths << "/usr/local/bin:/usr/bin:/bin"
     paths.join(":")
   end
 
   def binstubs_relative_paths(gem_layer_path = ".")
     [
-      "#{gem_layer_path}/bin",
-      "#{gem_layer_path}/#{bundler_binstubs_path}",
-      "#{gem_layer_path}/#{slug_vendor_base}/bin"
+      "#{gem_layer_path}/#{bundler_binstubs_path}", # Binstubs from bundler, eg. vendor/bundle/bin
+      "#{gem_layer_path}/#{slug_vendor_base}/bin"   # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     ]
   end
 
-  def system_paths
-    "/usr/local/bin:/usr/bin:/bin"
-  end
-
+  # For example "vendor/bundle/ruby/2.6.0"
   def self.slug_vendor_base
     command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
     slug_vendor_base = run_no_pipe(command, user_env: true).chomp
@@ -414,7 +408,7 @@ SHELL
         gem_path = "#{build_path}/#{slug_vendor_base}"
       end
       set_export_path "GEM_PATH", gem_path, layer
-      set_export_default  "LANG", "en_US.UTF-8", layer
+      set_export_default "LANG", "en_US.UTF-8", layer
 
       # TODO handle jruby
       if ruby_version.jruby?
@@ -436,7 +430,7 @@ SHELL
 
       set_env_default  "LANG",     "en_US.UTF-8"
       set_env_override "GEM_PATH", "#{gem_layer_path}/#{slug_vendor_base}:$GEM_PATH"
-      set_env_override "PATH",      profiled_path.uniq.join(":")
+      set_env_override "PATH",      profiled_path.join(":")
 
       set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
