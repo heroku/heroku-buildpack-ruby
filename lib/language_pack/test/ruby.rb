@@ -12,6 +12,7 @@ class LanguagePack::Ruby
       setup_profiled
       allow_git do
         install_bundler_in_app(slug_vendor_base)
+        load_bundler_cache
         build_bundler(bundle_path: "vendor/bundle", default_bundle_without: "development")
         post_bundler
         create_database_yml

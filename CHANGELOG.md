@@ -1,5 +1,9 @@
 ## Master (unreleased)
 
+## v215 (4/9/2020)
+
+* Fix bundler cache not being used in CI builds (https://github.com/heroku/heroku-buildpack-ruby/pull/978)
+
 ## v214 (4/2/2020)
 
 * Default Ruby version is now 2.6.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/974)
