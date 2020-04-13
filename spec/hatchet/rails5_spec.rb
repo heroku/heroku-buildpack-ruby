@@ -42,7 +42,7 @@ describe "Rails 5" do
         "active_storage_local",
         buildpacks: [
           "https://github.com/heroku/heroku-buildpack-activestorage-preview",
-          Hatchet::App.default_buildpack
+          :default
         ]
       )
       app.setup!
@@ -67,7 +67,7 @@ end
 describe "Rails 5.1" do
   it "works with webpacker + yarn (js friends)" do
     buildpacks = [
-      Hatchet::App.default_buildpack,
+      :default,
       "https://github.com/sharpstone/force_absolute_paths_buildpack"
     ]
     Hatchet::Runner.new("rails51_webpacker", buildpacks: buildpacks).deploy do |app, heroku|

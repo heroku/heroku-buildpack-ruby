@@ -12,7 +12,7 @@ describe "Ruby apps" do
   describe "running Ruby from outside the default dir" do
     it "works" do
       buildpacks = [
-        Hatchet::App.default_buildpack,
+        :default,
         "https://github.com/sharpstone/force_absolute_paths_buildpack"
       ]
       Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK, buildpacks: buildpacks).deploy do |app|
