@@ -460,13 +460,16 @@ SHELL
 
         Your current Ruby version no longer receives security updates from
         Ruby Core and may have serious vulnerabilities. While you will continue
-        to be able to deploy on Heroku with this Ruby version you must upgrade
-        to a non-EOL version to be eligable to receive support.
+        to be able to deploy on Scalingo with this Ruby version you must upgrade
+        to a non-EOL version to be eligible to receive support.
 
         Upgrade your Ruby version as soon as possible.
 
         For a list of supported Ruby versions see:
-          https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+          https://doc.scalingo.com/languages/ruby/start#list-of-the-compatible-runtimes
+
+        For more information on syntax for declaring a Ruby version see:
+          https://doc.scalingo.com/languages/ruby/start#specifying-a-custom-ruby-runtime
       WARNING
     else
       # Maybe EOL
@@ -484,7 +487,10 @@ SHELL
         Please upgrade your Ruby version.
 
         For a list of supported Ruby versions see:
-          https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+          https://doc.scalingo.com/languages/ruby/start#list-of-the-compatible-runtimes
+
+        For more information on syntax for declaring a Ruby version see:
+          https://doc.scalingo.com/languages/ruby/start#specifying-a-custom-ruby-runtime
       WARNING
     end
   end
@@ -503,7 +509,10 @@ SHELL
       Please upgrade your Ruby version.
 
       For all available Ruby versions see:
-        https://devcenter.heroku.com/articles/ruby-support#supported-runtimes
+        https://doc.scalingo.com/languages/ruby/start#list-of-the-compatible-runtimes
+
+      For more information on syntax for declaring a Ruby version see:
+        https://doc.scalingo.com/languages/ruby/start#specifying-a-custom-ruby-runtime
     WARNING
   end
 
@@ -564,10 +573,10 @@ ERROR
 An error occurred while installing #{ruby_version.version_for_download}
 
 Scalingo recommends you use the latest supported Ruby version listed here:
-  http://doc.scalingo.com/languages/ruby#list-of-the-compatible-runtimes
+  https://doc.scalingo.com/languages/ruby/start#list-of-the-compatible-runtimes
 
 For more information on syntax for declaring a Ruby version see:
-  http://doc.scalingo.com/languages/ruby#declaring-version
+  https://doc.scalingo.com/languages/ruby/start#specifying-a-custom-ruby-runtime
 
 ERROR
 
@@ -791,7 +800,7 @@ You have the `.bundle/config` file checked into your repository
  as well as configured git local gems, and other settings that should
 not be shared between multiple checkouts of a single repo. Please
 remove the `.bundle/` folder from your repo and add it to your `.gitignore` file.
-http://doc.scalingo.com/languages/ruby/bundle-configuration
+https://doc.scalingo.com/languages/ruby/bundle-configuration
 WARNING
         end
 
@@ -801,7 +810,7 @@ Removing `Gemfile.lock` because it was generated on Windows.
 Bundler will do a full resolve so native gems are handled properly.
 This may result in unexpected gem versions being used in your app.
 In rare occasions Bundler may not be able to resolve your dependencies at all.
-http://doc.scalingo.com/languages/ruby/bundle-gemfile-on-windows
+https://doc.scalingo.com/languages/ruby/bundle-gemfile-on-windows
 WARNING
 
           log("bundle", "has_windows_gemfile_lock")
@@ -876,7 +885,7 @@ WARNING
             error_message += <<-ERROR
 
 Detected sqlite3 gem which is not supported on Scalingo.
-http://doc.scalingo.com/databases/sqlite3
+https://doc.scalingo.com/platform/databases/sqlite
             ERROR
           end
 
