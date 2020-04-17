@@ -1,4 +1,68 @@
-## Master
+## Master (unreleased)
+
+## v215 (4/9/2020)
+
+* Fix bundler cache not being used in CI builds (https://github.com/heroku/heroku-buildpack-ruby/pull/978)
+
+## v214 (4/2/2020)
+
+* Default Ruby version is now 2.6.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/974)
+* Fix regression. PATH value for `yarn` at runtime was relative instead of absolute (https://github.com/heroku/heroku-buildpack-ruby/pull/975)
+
+## v213 (4/1/2020)
+
+* Fix regression. PATH value for `ruby` at runtime was relative instead of absolute (https://github.com/heroku/heroku-buildpack-ruby/pull/973)
+
+## v212 (3/26/2020)
+
+* Cloud Native Buildpack support (https://github.com/heroku/heroku-buildpack-ruby/pull/888)
+
+## v211 (3/12/2020)
+
+* Fix issue where the wrong version of bundler is used on CI apps (https://github.com/heroku/heroku-buildpack-ruby/pull/961)
+* Remove libpq external dependency (https://github.com/heroku/heroku-buildpack-ruby/pull/959)
+
+## v210 (3/6/2020)
+
+* Fix version download error warning inversion logic (https://github.com/heroku/heroku-buildpack-ruby/pull/958)
+
+## v209 (3/5/2020)
+
+* Fix bug in version download error message logic (https://github.com/heroku/heroku-buildpack-ruby/pull/957)
+
+## v208 (3/4/2020)
+
+* Improve Ruby version download error messages (https://github.com/heroku/heroku-buildpack-ruby/pull/953)
+* Update default Ruby version to 2.6.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/947)
+
+## v207 (12/16/2019)
+
+* Vendor in libpq 5.12.1 for Heroku-18 (https://github.com/heroku/heroku-buildpack-ruby/pull/936)
+* Remove possibilities of false exceptions being raised by removing `BUNDLED WITH` from the `Gemfile.lock` (https://github.com/heroku/heroku-buildpack-ruby/pull/928)
+
+## v206 (10/15/2019)
+
+* Default Ruby version for new apps is now 2.5.7 (https://github.com/heroku/heroku-buildpack-ruby/pull/926)
+* Using old and EOL versions of Ruby now generate warnings (https://github.com/heroku/heroku-buildpack-ruby/pull/864)
+
+## v205 (9/24/2019)
+
+* Update bundler 1.x to 1.17.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/845)
+* Default `MALLOC_ARENA_MAX=2` for new applications (https://github.com/heroku/heroku-buildpack-ruby/pull/752)
+
+## v204 (9/12/2019)
+
+* Default Ruby version for new apps is now 2.5.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/919)
+* Ensure that old binstubs are removed before new ones are generated (https://github.com/heroku/heroku-buildpack-ruby/pull/914)
+* Fix windows Gemfile.lock BUNDLED WITH support (https://github.com/heroku/heroku-buildpack-ruby/pull/898)
+
+## v203 (8/20/2019)
+
+* Make sure Rails 6 apps have a `tmp/pids` folder so they can boot (https://github.com/heroku/heroku-buildpack-ruby/pull/909)
+
+## v202 (8/20/2019)
+
+* Add support class for Rails 6 (https://github.com/heroku/heroku-buildpack-ruby/pull/908)
 
 ## v201 (6/23/2019)
 

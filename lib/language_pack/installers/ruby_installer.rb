@@ -1,8 +1,13 @@
 require "language_pack/shell_helpers"
 module LanguagePack::Installers; end
 
+# This is a base module that is later included by other
+# classes such as LanguagePack::Installers::HerokuRubyInstaller
+#
 module LanguagePack::Installers::RubyInstaller
   include LanguagePack::ShellHelpers
+
+  attr_reader :fetcher
 
   DEFAULT_BIN_DIR = "bin"
 
@@ -23,10 +28,15 @@ module LanguagePack::Installers::RubyInstaller
     FileUtils.mkdir_p DEFAULT_BIN_DIR
     run("ln -s ruby #{install_dir}/bin/ruby.exe")
 
+    install_pathname = Pathname.new(install_dir)
     Dir["#{install_dir}/bin/*"].each do |vendor_bin|
       # for Ruby 2.6.0+ don't symlink the Bundler bin so our shim works
       next if vendor_bin.include?("bundle")
-      run("ln -s ../#{vendor_bin} #{DEFAULT_BIN_DIR}")
+      if install_pathname.absolute?
+        run("ln -s #{vendor_bin} #{DEFAULT_BIN_DIR}")
+      else
+        run("ln -s ../#{vendor_bin} #{DEFAULT_BIN_DIR}")
+      end
     end
   end
 end

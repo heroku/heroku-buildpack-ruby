@@ -11,5 +11,7 @@ describe "Boot Strap Config" do
     urls.each do |url|
       expect(url.include?(bootstrap_version)).to be_truthy, "expected #{url.inspect} to include #{bootstrap_version.inspect} but it did not"
     end
+
+    expect(`ruby -v`).to match(Regexp.escape(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER))
   end
 end

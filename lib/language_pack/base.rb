@@ -5,6 +5,7 @@ require "digest/sha1"
 require "language_pack/shell_helpers"
 require "language_pack/cache"
 require "language_pack/helpers/bundler_cache"
+require "language_pack/helpers/layer"
 require "language_pack/metadata"
 require "language_pack/fetcher"
 require "language_pack/instrument"
@@ -26,15 +27,16 @@ class LanguagePack::Base
   # changes directory to the build_path
   # @param [String] the path of the build dir
   # @param [String] the path of the cache dir this is nil during detect and release
-  def initialize(build_path, cache_path=nil)
+  def initialize(build_path, cache_path = nil, layer_dir=nil)
      self.class.instrument "base.initialize" do
       @build_path    = build_path
       @stack         = ENV.fetch("STACK")
-      @cache         = LanguagePack::Cache.new(cache_path) if cache_path
+      @cache         = LanguagePack::Cache.new(cache_path)
       @metadata      = LanguagePack::Metadata.new(@cache)
       @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
       @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
       @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
+      @layer_dir     = layer_dir
 
       Dir.chdir build_path
     end
@@ -97,17 +99,71 @@ class LanguagePack::Base
     mcount "success"
   end
 
-  def write_release_yaml
+  def build
+    write_release_toml
+    instrument 'base.compile' do
+      Kernel.puts ""
+      warnings.each do |warning|
+        Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m"# Bold yellow
+        Kernel.puts ""
+        puts warning
+        Kernel.puts ""
+        Kernel.puts ""
+      end
+      if deprecations.any?
+        topic "DEPRECATIONS:"
+        puts @deprecations.join("\n")
+      end
+      Kernel.puts ""
+    end
+    mcount "success"
+  end
+
+  def build_release
     release = {}
     release["addons"]                = default_addons
     release["config_vars"]           = default_config_vars
     release["default_process_types"] = default_process_types
+
+    release
+  end
+
+  def write_release_toml
+    release = build_release
+
+    layer = LanguagePack::Helpers::Layer.new(@layer_dir, "env", launch: true)
+    FileUtils.mkdir_p("#{layer.path}/env.launch")
+    release["config_vars"].each do |key, value|
+      File.open("#{layer.path}/env.launch/#{key.upcase}.override", 'w') do |f|
+        f.write(value)
+      end
+    end
+
+    release_toml = release["default_process_types"].map do |type, command|
+      <<PROCESSES
+[[processes]]
+type = "#{type}"
+command = "#{command}"
+PROCESSES
+    end
+    File.open("#{@layer_dir}/launch.toml", 'a') do |f|
+      f.write(release_toml.join("\n"))
+    end
+  end
+
+  def write_release_yaml
+    release = build_release
     FileUtils.mkdir("tmp") unless File.exists?("tmp")
     File.open("tmp/heroku-buildpack-release-step.yml", 'w') do |f|
       f.write(release.to_yaml)
     end
 
     warn_webserver
+  end
+
+  # write out the release. Pick v2a or v3 release format
+  def write_release
+    @layer_dir ? write_release_toml : write_release_yaml
   end
 
   def warn_webserver
@@ -151,8 +207,10 @@ private ##################################
   end
 
   def add_to_profiled(string)
-    FileUtils.mkdir_p "#{build_path}/.profile.d"
-    File.open("#{build_path}/.profile.d/ruby.sh", "a") do |file|
+    profiled_path = @layer_dir ? "#{@layer_dir}/ruby/profile.d/" : "#{build_path}/.profile.d/"
+
+    FileUtils.mkdir_p profiled_path
+    File.open("#{profiled_path}/ruby.sh", "a") do |file|
       file.puts string
     end
   end
@@ -172,12 +230,53 @@ private ##################################
     end
   end
 
-  def set_export_default(key, val)
-    add_to_export "export #{key}=${#{key}:-#{val}}"
+  # option can be :path, :default, :override
+  # https://github.com/buildpacks/spec/blob/366ac1aa0be59d11010cc21aa06c16d81d8d43e7/buildpack.md#environment-variable-modification-rules
+  def export(key, val, layer: nil, option: nil)
+    if layer
+      # don't replace if the key is already set
+      return if ENV[key] && option == :default
+
+      filename =
+        if option.nil? || option == :path
+          key
+        elsif option == :default
+          "#{key}.override"
+        else
+          "#{key}.#{option}"
+        end
+
+      FileUtils.mkdir_p("#{layer.path}/env.build")
+      File.open("#{layer.path}/env.build/#{filename}", "w") do |f|
+        f.write(val)
+      end
+    else
+      string =
+        if option == :default
+          %{export #{key}="${#{key}:-#{val}}"}
+        elsif option == :path
+          %{export #{key}="#{val}:$#{key}"}
+        else
+          %{export #{key}="#{val.gsub('"','\"')}"}
+        end
+
+      export = File.join(ROOT_DIR, "export")
+      File.open(export, "a") do |file|
+        file.puts string
+      end
+    end
   end
 
-  def set_export_override(key, val)
-    add_to_export %{export #{key}="#{val.gsub('"','\"')}"}
+  def set_export_default(key, val, layer = nil)
+    export key, val, layer: layer, option: :default
+  end
+
+  def set_export_override(key, val, layer = nil)
+    export key, val, layer: layer, option: :override
+  end
+
+  def set_export_path(key, val, layer = nil)
+    export key, val, layer: layer, option: :path
   end
 
   def log_internal(*args)

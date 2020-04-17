@@ -1,10 +1,39 @@
 require_relative '../spec_helper'
 
 describe "Ruby apps" do
+  describe "vendoring libpq" do
+    it "works on heroku-16" do
+      skip "Blocked on getting heroku-16 docker example to work https://github.com/schneems/libpq_heroku_16_reproduction/tree/schneems/manually-download-install"
+
+      Hatchet::Runner.new("libpq_connection_error", stack: "heroku-16").deploy do |app|
+        out = app.run("ruby reproduce_error.rb")
+        expect(out).to match(%Q{invalid integer value "15s"})
+      end
+    end
+
+    it "works on heroku-18" do
+      Hatchet::Runner.new("libpq_connection_error", stack: "heroku-18").deploy do |app|
+        out = app.run("ruby reproduce_error.rb")
+        expect(out).to match(%Q{invalid integer value "15s"})
+      end
+    end
+  end
+
+
+  describe "bad ruby version" do
+    it "gives a helpful error" do
+      Hatchet::Runner.new('ruby_version_does_not_exist', allow_failure: true, stack: DEFAULT_STACK).deploy do |app|
+        expect(app.output).to match("The Ruby version you are trying to install does not exist: ruby-2.9.0.lol")
+      end
+    end
+  end
+
   describe "running Ruby from outside the default dir" do
     it "works" do
       Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK).deploy do |app|
         expect(app.output).to match("cd version ruby 2.5.1")
+
+        expect(app.run("which ruby").chomp).to eq("/app/bin/ruby")
       end
     end
   end
@@ -26,8 +55,8 @@ describe "Ruby apps" do
 
   describe "2.5.0" do
     it "works" do
-      Hatchet::Runner.new("ruby_25").deploy do
-        # works
+      Hatchet::Runner.new("ruby_25").deploy do |app|
+        expect(app.output).to include("There is a more recent Ruby version available")
       end
     end
   end
@@ -73,6 +102,7 @@ describe "Ruby apps" do
         Hatchet::Runner.new("default_ruby").deploy do |app, heroku|
           expect(app.output).to     include("Writing config/database.yml to read from DATABASE_URL")
           expect(app.output).not_to include("Your app was upgraded to bundler")
+          expect(app.output).not_to include("Your Ruby version is not present on the next stack")
         end
       end
     end
@@ -89,7 +119,8 @@ end
 
 describe "Raise errors on specific gems" do
   it "should should raise on sqlite3" do
-    Hatchet::Runner.new("sqlite3_gemfile", allow_failure: true).deploy do |app|
+    before_deploy = -> { run!(%Q{echo "ruby '2.5.4' >> Gemfile"}) }
+    Hatchet::Runner.new("sqlite3_gemfile", allow_failure: true, before_deploy: before_deploy).deploy do |app|
       expect(app).not_to be_deployed
       expect(app.output).to include("Detected sqlite3 gem which is not supported")
       expect(app.output).to include("devcenter.heroku.com/articles/sqlite3")
