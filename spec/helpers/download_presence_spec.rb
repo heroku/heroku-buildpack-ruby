@@ -77,4 +77,16 @@ describe LanguagePack::Helpers::DownloadPresence do
     expect(download.exists?).to eq(true)
     expect(download.valid_stack_list).to include(LanguagePack::Helpers::DownloadPresence::STACKS.last)
   end
+
+  it "handles the current stack not being in the known stacks list" do
+    download = LanguagePack::Helpers::DownloadPresence.new(
+      "#{LanguagePack::RubyVersion::DEFAULT_VERSION}.tgz",
+    )
+
+    download.call
+    
+    expect(download.supported_stack?(current_stack: "unknown-stack")).to be_falsey
+    expect(download.next_stack(current_stack: "unknown-stack")).to be_nil
+    expect(download.exists_on_next_stack?(current_stack:"unknown-stack")).to be_falsey
+  end
 end

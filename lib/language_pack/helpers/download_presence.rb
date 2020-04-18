@@ -28,13 +28,20 @@ class LanguagePack::Helpers::DownloadPresence
     end
   end
 
-  def next_stack(current_stack: )
-    next_index = @stacks.index(current_stack) + 1
+  def supported_stack?(current_stack: )
+    @stacks.include?(current_stack)
+  end
 
+  def next_stack(current_stack: )
+    return unless supported_stack?(current_stack: current_stack)
+
+    next_index = @stacks.index(current_stack) + 1
     @stacks[next_index]
   end
 
   def exists_on_next_stack?(current_stack: )
+    return false unless supported_stack?(current_stack: current_stack)
+
     next_index = @stacks.index(current_stack) + 1
     @threads[next_index]
   end
