@@ -25,6 +25,9 @@ ruby_version = "2.6.6"
   [[publish.Vendor]]
   url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-18/ruby-2.6.6.tgz"
   dir = "vendor/ruby/heroku-18"
+  [[publish.Vendor]]
+  url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-20/ruby-2.6.6.tgz"
+  dir = "vendor/ruby/heroku-20"
 
 [[stacks]]
 id = "heroku-18"
