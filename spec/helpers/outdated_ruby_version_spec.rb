@@ -110,6 +110,4 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     expect(outdated.eol?).to be_falsey
     expect(outdated.maybe_eol?).to be_falsey
   end
-
 end
-

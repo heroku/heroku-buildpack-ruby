@@ -38,10 +38,9 @@ describe "CI" do
     runner.run_ci do |test_run|
       expect(test_run.output).to match("Fetching rake")
 
-      test_run.instance_variable_set(:"@status", false)
-      test_run.create_test_run
-      test_run.wait! {  }
+      test_run.run_again
 
+      expect(test_run.output).to match("Using rake")
       expect(test_run.output).to_not match("Fetching rake")
     end
   end

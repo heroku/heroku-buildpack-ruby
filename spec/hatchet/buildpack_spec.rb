@@ -12,4 +12,3 @@ describe "Buildpack internals" do
     end
   end
 end
-
