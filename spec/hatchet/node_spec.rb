@@ -2,17 +2,7 @@ require 'spec_helper'
 
 describe "Node" do
   it "works with node buildpack" do
-    before_deploy = Proc.new do
-      run!("rm .buildpacks")
-      run!("echo https://github.com/heroku/heroku-buildpack-nodejs.git >> .buildpacks")
-      run!("echo #{Hatchet::App.default_buildpack} >> .buildpacks")
-    end
-
-    Hatchet::Runner.new(
-      "node_multi",
-      before_deploy: before_deploy,
-      buildpack_url: "https://github.com/heroku/heroku-buildpack-multi.git"
-    ).deploy do |app|
+    Hatchet::Runner.new("node_multi", buildpacks: ["heroku/nodejs", :default]).deploy do |app|
       expect(app.output).to match("Node Version in Ruby buildpack is: v4.1.2")
       expect(app.run("node -v")).to match("v4.1.2")
     end
@@ -38,4 +28,3 @@ describe "Node" do
     end
   end
 end
-
