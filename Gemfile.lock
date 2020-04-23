@@ -37,7 +37,7 @@ GEM
       threaded (~> 0)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
-    json (2.0.4)
+    json (2.3.0)
     minitest (5.14.0)
     minitest-retry (0.1.9)
       minitest (>= 5.0)
@@ -80,7 +80,7 @@ DEPENDENCIES
   excon
   git!
   heroku_hatchet
-  json (~> 2.0.2)
+  json (~> 2.3.0)
   netrc
   parallel_tests
   rake
