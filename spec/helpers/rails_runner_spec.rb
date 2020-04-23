@@ -138,4 +138,3 @@ FILE
     FileUtils.touch("buildpack.log")
   end
 end
-
