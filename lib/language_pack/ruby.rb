@@ -224,7 +224,8 @@ WARNING
   def binstubs_relative_paths(gem_layer_path = ".")
     [
       "#{gem_layer_path}/#{bundler_binstubs_path}", # Binstubs from bundler, eg. vendor/bundle/bin
-      "#{gem_layer_path}/#{slug_vendor_base}/bin"   # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+      "#{gem_layer_path}/#{slug_vendor_base}/bin",  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+      "#{gem_layer_path}/bin"
     ]
   end
 
