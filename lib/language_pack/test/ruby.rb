@@ -5,14 +5,15 @@ class LanguagePack::Ruby
       new_app?
       Dir.chdir(build_path)
       remove_vendor_bundle
-      install_ruby
+      install_ruby(slug_vendor_ruby, build_ruby_path)
       install_jvm
       setup_language_pack_environment
       setup_export
       setup_profiled
       allow_git do
-        install_bundler_in_app
-        build_bundler("development")
+        install_bundler_in_app(slug_vendor_base)
+        load_bundler_cache
+        build_bundler(bundle_path: "vendor/bundle", default_bundle_without: "development")
         post_bundler
         create_database_yml
         install_binaries

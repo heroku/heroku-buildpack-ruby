@@ -15,6 +15,8 @@
   - 116db685f54dae18f703b3beb90e64fdbddb048d
 - - "./repos/ci/activerecord_rake_tasks_does_not_exist"
   - a6b711be6921cf7a0aa4e31269c37965799ea110
+- - "./repos/ci/ci_fails_ruby_default_bundler"
+  - 43cbf196245957be6242b1e1bc56b8f1bfa00004
 - - "./repos/ci/heroku-ci-json-example"
   - 4e5410a7381f486ba3df7739e02e52f32fdd4dda
 - - "./repos/ci/rails5_ruby_schema_format"
@@ -22,15 +24,15 @@
 - - "./repos/ci/rails5_sql_schema_format"
   - df48237c57f89bb3629937ae6b1d6af070100ed3
 - - "./repos/ci/rails_31_ruby_schema_format"
-  - 4dfec62253a2a09e004e396a8849c3bf11c3f68a
+  - 76dacc65e0483c7c0b659504d8d56e6cfaee4bf1
 - - "./repos/ci/rails_31_sql_schema_format"
   - 540ec776eff3111ad9bb01af204c62725c94a11d
 - - "./repos/ci/ruby_no_rails_test"
   - 3916137106d59b008b67d738abe6a1438f8fbde6
 - - "./repos/heroku/ruby-getting-started"
-  - 7abd8af85c7ba6486bb03a4964da9cea98766b06
+  - 9ddca7b694875499165eb56adffd3e29b38405c5
 - - "./repos/jruby/jruby_naether"
-  - c5081c07de64dcd4b480923e4b7e2a98a9b4a431
+  - 4a11f8af5a3cca21f3659394e5bbac3cca9b6a2c
 - - "./repos/multibuildpack/node_multi"
   - c8f822a0cdd3b7ed92f19bd1112bd9e301bc4a5e
 - - "./repos/node/webpacker_no_execjs"
@@ -129,3 +131,5 @@
   - 06d5e86180ff0e5b6894f823736cd649dcfebed4
 - - "./repos/ruby/ruby_25"
   - 0cb3df80d55b61e9417f2ac00adb06e15ae37982
+- - "./repos/ruby/ruby_version_does_not_exist"
+  - 9b6ad8e3b4fa7850393a5f232bb40ff3cd414d8b

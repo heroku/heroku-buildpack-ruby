@@ -8,7 +8,7 @@ describe "Stack Changes" do
       run!('git commit --allow-empty -m "heroku-16 migrate"')
 
       app.push!
-      puts app.output
+
       expect(app.output).to match("Installing rack 1.5.0")
       expect(app.output).to match("Changing stack")
     end
