@@ -98,9 +98,8 @@ WARNING
       warn_bundler_upgrade
       install_ruby(slug_vendor_ruby, build_ruby_path)
       install_jvm
-      setup_language_pack_environment
-      setup_export
-      setup_profiled
+      setup_language_pack_environment(ruby_layer_path: File.expand_path("."), gem_layer_path: File.expand_path("."))
+      setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
       allow_git do
         install_bundler_in_app(slug_vendor_base)
         load_bundler_cache
@@ -113,6 +112,7 @@ WARNING
       config_detect
       best_practice_warnings
       warn_outdated_ruby
+      setup_export
       cleanup
       super
     end
@@ -134,9 +134,9 @@ WARNING
     ruby_layer.write
 
     gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true)
-    setup_language_pack_environment(ruby_layer.path, gem_layer.path)
+    setup_language_pack_environment(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
     setup_export(gem_layer)
-    setup_profiled(ruby_layer.path, gem_layer.path)
+    setup_profiled(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
     allow_git do
       # TODO install bundler in separate layer
       topic "Loading Bundler Cache"
@@ -205,28 +205,6 @@ WARNING
     end
   end
 
-  # the base PATH environment variable to be used
-  # @return [String] the resulting PATH
-  def default_path(gem_layer_path = ".")
-    # Need to remove bin/ folder since it links
-    # to the wrong --prefix ruby binstubs
-    # breaking require. This only applies to Ruby 1.9.2 and 1.8.7.
-    #
-    # Because for 1.9.2 and 1.8.7 there is a "build" ruby and a non-"build" Ruby
-    paths = binstubs_relative_paths(gem_layer_path)
-    paths << "#{slug_vendor_jvm}/bin" if ruby_version.jruby?
-    paths << ENV["PATH"]
-    paths << "$HOME/bin"
-    paths << "/usr/local/bin:/usr/bin:/bin"
-    paths.join(":")
-  end
-
-  def binstubs_relative_paths(gem_layer_path = ".")
-    [
-      "#{gem_layer_path}/#{bundler_binstubs_path}", # Binstubs from bundler, eg. vendor/bundle/bin
-      "#{gem_layer_path}/#{slug_vendor_base}/bin"   # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
-    ]
-  end
 
   # For example "vendor/bundle/ruby/2.6.0"
   def self.slug_vendor_base
@@ -351,7 +329,7 @@ EOF
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(ruby_layer_path = ".", gem_layer_path = ".")
+  def setup_language_pack_environment(ruby_layer_path:, gem_layer_path:)
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
@@ -383,7 +361,15 @@ SHELL
       gem_path = "#{gem_layer_path}/#{slug_vendor_base}"
       ENV["GEM_PATH"] = gem_path
       ENV["GEM_HOME"] = gem_path
-      ENV["PATH"]     = default_path(gem_layer_path)
+
+      paths = []
+      paths << "#{ruby_layer_path}/bin" unless ruby_version.ruby_192_or_lower? # For Ruby 1.9.2 and lower there is a "build" and non-"build" Ruby
+      paths << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
+      paths << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+      paths << "#{slug_vendor_jvm}/bin" if ruby_version.jruby?
+      paths << ENV["PATH"]
+
+      ENV["PATH"] = paths.join(":")
     end
   end
 
@@ -421,11 +407,13 @@ SHELL
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled(ruby_layer_path = "$HOME", gem_layer_path = "$HOME")
+  def setup_profiled(ruby_layer_path: , gem_layer_path: )
     instrument 'setup_profiled' do
-      profiled_path = ["$HOME/bin"]
-      profiled_path << binstubs_relative_paths(gem_layer_path)
-      profiled_path << "$HOME/vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
+      profiled_path = []
+      profiled_path << "$HOME/bin" # /app in production
+      profiled_path << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
+      profiled_path << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+      profiled_path << "#{ruby_layer_path}/vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
       set_env_default  "LANG",     "en_US.UTF-8"
