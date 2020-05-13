@@ -135,7 +135,6 @@ WARNING
 
     gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true)
     setup_language_pack_environment(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
-    setup_export(gem_layer)
     setup_profiled(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
     allow_git do
       # TODO install bundler in separate layer
@@ -159,6 +158,7 @@ WARNING
       install_binaries
       run_assets_precompile_rake_task
     end
+    setup_export(gem_layer)
     config_detect
     best_practice_warnings
     cleanup
@@ -363,7 +363,7 @@ SHELL
       ENV["GEM_HOME"] = gem_path
 
       paths = []
-      paths << "#{ruby_layer_path}/bin" unless ruby_version.ruby_192_or_lower? # For Ruby 1.9.2 and lower there is a "build" and non-"build" Ruby
+      paths << "#{File.expand_path(".")}/bin" unless ruby_version.ruby_192_or_lower? # For Ruby 1.9.2 and lower there is a "build" and non-"build" Ruby
       paths << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
       paths << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
       paths << "#{slug_vendor_jvm}/bin" if ruby_version.jruby?
