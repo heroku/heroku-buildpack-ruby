@@ -358,12 +358,15 @@ SHELL
         ENV[key] ||= value
       end
 
+      paths = []
       gem_path = "#{gem_layer_path}/#{slug_vendor_base}"
       ENV["GEM_PATH"] = gem_path
       ENV["GEM_HOME"] = gem_path
 
-      paths = []
-      paths << "#{File.expand_path(".")}/bin" unless ruby_version.ruby_192_or_lower? # For Ruby 1.9.2 and lower there is a "build" and non-"build" Ruby
+      # Need to remove `./bin` folder since it links to the wrong --prefix ruby binstubs breaking require in Ruby 1.9.2 and 1.8.7.
+      # Because for 1.9.2 and 1.8.7 there is a "build" ruby and a non-"build" Ruby
+      paths << "#{File.expand_path(".")}/bin" unless ruby_version.ruby_192_or_lower?
+
       paths << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
       paths << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
       paths << "#{slug_vendor_jvm}/bin" if ruby_version.jruby?
