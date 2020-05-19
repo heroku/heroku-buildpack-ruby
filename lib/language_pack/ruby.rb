@@ -519,7 +519,7 @@ SHELL
 
       #{@outdated_version_check.suggested_ruby_minor_version}
 
-      The latest version will include security and bug fixes, we always recommend
+      The latest version will include security and bug fixes. We always recommend
       running the latest version of your minor release.
 
       Please upgrade your Ruby version.
