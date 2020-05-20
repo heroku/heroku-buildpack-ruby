@@ -5,7 +5,7 @@ ruby '2.6.6'
 
 group :development, :test do
   gem "toml-rb"
-  gem "heroku_hatchet"
+  gem "heroku_hatchet", ">= 6.0.0"
   gem "rspec-core"
   gem "rspec-expectations"
   gem "excon"
