@@ -341,8 +341,6 @@ EOF
         ENV["JAVA_HOME"] = @jvm_installer.java_home
       end
       setup_ruby_install_env(ruby_layer_path)
-      ENV["PATH"] += ":#{node_preinstall_bin_path}" if node_js_installed?
-      ENV["PATH"] += ":#{yarn_preinstall_bin_path}" if !yarn_not_preinstalled?
 
       # By default Node can address 1.5GB of memory, a limitation it inherits from
       # the underlying v8 engine. This can occasionally cause issues during frontend
@@ -362,6 +360,10 @@ EOF
       gem_path = "#{gem_layer_path}/#{slug_vendor_base}"
       ENV["GEM_PATH"] = gem_path
       ENV["GEM_HOME"] = gem_path
+
+      # Rails has a binstub for yarn that doesn't work for all applications
+      # we need to ensure that yarn comes before local bin dir for that case
+      paths << yarn_preinstall_bin_path if yarn_preinstalled?
 
       # Need to remove `./bin` folder since it links to the wrong --prefix ruby binstubs breaking require in Ruby 1.9.2 and 1.8.7.
       # Because for 1.9.2 and 1.8.7 there is a "build" ruby and a non-"build" Ruby
@@ -413,10 +415,17 @@ EOF
   def setup_profiled(ruby_layer_path: , gem_layer_path: )
     instrument 'setup_profiled' do
       profiled_path = []
+
+      # Rails has a binstub for yarn that doesn't work for all applications
+      # we need to ensure that yarn comes before local bin dir for that case
+      if yarn_preinstalled?
+        profiled_path << yarn_preinstall_bin_path.gsub(File.expand_path("."), "$HOME")
+      elsif has_yarn_binary?
+        profiled_path << "#{ruby_layer_path}/vendor/#{@yarn_installer.binary_path}"
+      end
       profiled_path << "$HOME/bin" # /app in production
       profiled_path << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
       profiled_path << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
-      profiled_path << "#{ruby_layer_path}/vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
       profiled_path << "$PATH"
 
       set_env_default  "LANG",     "en_US.UTF-8"
@@ -1094,25 +1103,35 @@ params = CGI.parse(uri.query || "")
       @node_preinstall_bin_path = false
     end
   end
-  alias :node_js_installed? :node_preinstall_bin_path
+  alias :node_js_preinstalled? :node_preinstall_bin_path
 
   def node_not_preinstalled?
-    !node_js_installed?
+    !node_js_preinstalled?
   end
 
+  # Example: tmp/build_8523f77fb96a956101d00988dfeed9d4/.heroku/yarn/bin/ (without the `yarn` at the end)
   def yarn_preinstall_bin_path
-    return @yarn_preinstall_bin_path if defined?(@yarn_preinstall_bin_path)
+    (yarn_preinstall_binary_path || "").chomp("/yarn")
+  end
+
+  # Example `tmp/build_8523f77fb96a956101d00988dfeed9d4/.heroku/yarn/bin/yarn`
+  def yarn_preinstall_binary_path
+    return @yarn_preinstall_binary_path if defined?(@yarn_preinstall_binary_path)
 
     path = run("which yarn").chomp
     if path && $?.success?
-      @yarn_preinstall_bin_path = path
+      @yarn_preinstall_binary_path = path
     else
-      @yarn_preinstall_bin_path = false
+      @yarn_preinstall_binary_path = false
     end
   end
 
+  def yarn_preinstalled?
+    yarn_preinstall_binary_path
+  end
+
   def yarn_not_preinstalled?
-    !yarn_preinstall_bin_path
+    !yarn_preinstalled?
   end
 
   def run_assets_precompile_rake_task

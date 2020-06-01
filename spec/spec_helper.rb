@@ -19,6 +19,7 @@ RSpec.configure do |config|
   config.default_retry_count = 2 if ENV['IS_RUNNING_ON_CI'] # retry all tests that fail again
 
   config.expect_with :rspec do |c|
+    c.max_formatted_output_length = Float::INFINITY
     c.syntax = :expect
   end
   config.mock_with :nothing

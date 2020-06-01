@@ -64,18 +64,27 @@ describe "Rails 5" do
   end
 end
 
-describe "Rails 5.1" do
-  it "works with webpacker + yarn (js friends)" do
-    buildpacks = [
-      :default,
-      "https://github.com/sharpstone/force_absolute_paths_buildpack"
-    ]
-    Hatchet::Runner.new("rails51_webpacker", buildpacks: buildpacks).deploy do |app, heroku|
-      expect(app.output).to include("Installing yarn")
-      expect(app.output).to include("yarn install")
+describe "Rails 5.1 with webpacker" do
+  it "calls bin/yarn no matter what is on the path" do
+    Hatchet::Runner.new("rails51_webpacker").tap do |app|
+      # We put our version of yarn first on the path ahead of bin/yarn
+      # however webpacker explicitly calls bin/yarn instead of calling
+      # `yarn install`
+      app.before_deploy do
+        File.open("bin/yarn", "w") do |f|
+          f.write <<~EOM
+          #! /usr/bin/env bash
 
-      expect(app.run("which -a node")).to match("/app/bin/node")
-      expect(app.run("which -a yarn")).to match("/app/vendor/yarn-")
+          echo "Called bin/yarn binstub"
+          `yarn install`
+          EOM
+        end
+        run("chmod +x bin/yarn")
+      end
+
+      app.deploy do
+        expect(app.output).to include("Called bin/yarn binstub")
+      end
     end
   end
 end
