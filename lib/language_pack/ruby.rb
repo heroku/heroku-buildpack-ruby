@@ -333,10 +333,10 @@ EOF
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
-        ENV["JAVA_MEM"] = run(<<-SHELL).chomp
-#{set_jvm_max_heap}
-echo #{default_java_mem}
-SHELL
+        ENV["JAVA_MEM"] = run(<<~SHELL).chomp
+          #{set_jvm_max_heap}
+          echo #{default_java_mem}
+        SHELL
         ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
         ENV["JAVA_HOME"] = @jvm_installer.java_home
       end
