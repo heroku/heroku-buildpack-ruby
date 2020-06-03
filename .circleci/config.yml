@@ -1,13 +1,13 @@
 version: 2.1
 orbs:
-  buildpacks: jkutner/buildpacks@0.0.7
+  buildpacks: jkutner/buildpacks@0.1.0
   ruby: circleci/ruby@0.2.1
 jobs:
   build:
     machine: true
     steps:
       - buildpacks/install-pack:
-          version: "0.7.0"
+          version: "0.11.0"
       - checkout
       - run:
           command: |
@@ -19,6 +19,7 @@ jobs:
             gem install bundler -v 2.1.0
             bundle install
             bundle exec rake hatchet:setup_ci
+            echo "pack version: $(pack --version)"
             rspec spec/cnb/
 
 workflows:
