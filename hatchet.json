@@ -86,11 +86,8 @@
   "heroku": [
     "heroku/ruby-getting-started"
   ],
-  "multibuildpack": [
-    "sharpstone/node_multi"
-  ],
   "node": [
-    "sharpstone/webpacker_no_execjs"
+    "sharpstone/minimal_webpacker"
   ],
   "ci": [
     "sharpstone/rails5_ruby_schema_format",
