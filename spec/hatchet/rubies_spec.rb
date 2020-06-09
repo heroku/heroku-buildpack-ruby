@@ -81,13 +81,13 @@ describe "Ruby versions" do
   end
 end
 
-
 describe "Upgrading ruby apps" do
   it "works when changing from default version" do
     app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)
     app.setup!
     app.deploy do |app|
       expect(app.run("env | grep MALLOC_ARENA_MAX")).to match("MALLOC_ARENA_MAX=2")
+      expect(app.run("env | grep DISABLE_SPRING")).to match("DISABLE_SPRING=1")
 
       run!(%Q{echo "ruby '2.5.1'" >> Gemfile})
       run!("git add -A; git commit -m update-ruby")
