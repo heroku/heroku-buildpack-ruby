@@ -361,6 +361,8 @@ EOF
       ENV["GEM_PATH"] = gem_path
       ENV["GEM_HOME"] = gem_path
 
+      ENV["DISABLE_SPRING"] = "1"
+
       # Rails has a binstub for yarn that doesn't work for all applications
       # we need to ensure that yarn comes before local bin dir for that case
       paths << yarn_preinstall_bin_path if yarn_preinstalled?
@@ -431,6 +433,7 @@ EOF
       set_env_default  "LANG",     "en_US.UTF-8"
       set_env_override "GEM_PATH", "#{gem_layer_path}/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",      profiled_path.join(":")
+      set_env_override "DISABLE_SPRING", "1"
 
       set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
