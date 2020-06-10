@@ -578,6 +578,20 @@ EOF
             https://devcenter.heroku.com/articles/ruby-versions
         WARNING
       end
+
+      if ruby_version.warn_ruby_26_bundler?
+        warn(<<~WARNING, inline: true)
+          There is a known bundler bug with your version of Ruby
+
+          Your version of Ruby contains a problem with the built-in integration of bundler. If
+          you encounter a bundler error you need to upgrade your Ruby version. We suggest you upgrade to:
+
+          #{@outdated_version_check.suggested_ruby_minor_version}
+
+          For more information see:
+            https://devcenter.heroku.com/articles/bundler-version#known-upgrade-issues
+        WARNING
+      end
     end
 
     true
