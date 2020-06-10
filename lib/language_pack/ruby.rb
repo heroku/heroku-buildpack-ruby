@@ -565,12 +565,18 @@ EOF
 
       topic "Using Ruby version: #{ruby_version.version_for_download}"
       if !ruby_version.set
-        warn(<<-WARNING)
-You have not declared a Ruby version in your Gemfile.
-To set your Ruby version add this line to your Gemfile:
-#{ruby_version.to_gemfile}
-# See https://devcenter.heroku.com/articles/ruby-versions for more information.
-WARNING
+        warn(<<~WARNING)
+          You have not declared a Ruby version in your Gemfile.
+
+          To declare a Ruby version add this line to your Gemfile:
+
+          ```
+          ruby "#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}"
+          ```
+
+          For more information see:
+            https://devcenter.heroku.com/articles/ruby-versions
+        WARNING
       end
 
       if ruby_version.warn_ruby_26_bundler?
