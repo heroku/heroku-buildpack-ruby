@@ -1,5 +1,7 @@
 ## Master (unreleased)
 
+* Rake task "assets:clean" will not get called if it does not exist (https://github.com/heroku/heroku-buildpack-ruby/pull/1018)
+
 ## v218 (7/13/2020)
 
 * The rake binstub generated from compiling Ruby will no longer be placed in the local `bin/rake` location (https://github.com/heroku/heroku-buildpack-ruby/pull/1031)
