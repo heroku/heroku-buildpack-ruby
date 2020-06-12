@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+require 'language_pack/helpers/binstub_wrapper'
 # This class is designed to check for binstubs for validity
 #
 # Example:
 #
-#   check = LanguagePack::Helpers::BinstubCheck.new(Dir.pwd, self)
+#   check = LanguagePack::Helpers::BinstubCheck.new(app_root_dir: Dir.pwd, warn_object: self)
 #   check.call
 class LanguagePack::Helpers::BinstubCheck
   attr_reader :bad_binstubs
@@ -15,22 +16,28 @@ class LanguagePack::Helpers::BinstubCheck
     @bad_binstubs = []
   end
 
+  # Checks all binstubs in the directory for a
+  # bad shebang line. If any are present
+  # a warning is created on the passed in `warn_object`
   def call
     return unless @bin_dir.directory?
 
-    @bin_dir.entries.each do |basename|
-      binstub = @bin_dir.join(basename)
-      next unless binstub.file?
-
-      shebang = binstub.open(&:readline)
-
-      if shebang.match?(/^#!\s*\/usr\/bin\/env\s*ruby(\d.*)$/) # https://rubular.com/r/ozbNEPVInc3sSN
-        @bad_binstubs << binstub
-      end
-      rescue EOFError
+    each_binstub do |binstub|
+      @bad_binstubs << binstub if binstub.bad_shebang?
     end
 
     warn unless @bad_binstubs.empty?
+  end
+
+  # Iterates and yields each binstub in a directory
+  # as a BinstubWrapper
+  private def each_binstub
+    @bin_dir.entries.each do |basename|
+      binstub = LanguagePack::Helpers::BinstubWrapper.new(@bin_dir.join(basename))
+
+      next unless binstub.file? # Needed since "." and ".." are returned by Pathname#entries
+      yield binstub
+    end
   end
 
   private def warn
