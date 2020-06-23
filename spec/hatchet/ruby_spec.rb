@@ -1,6 +1,25 @@
 require_relative '../spec_helper'
 
 describe "Ruby apps" do
+  it "has an executable bin/rake with a good binstub" do
+    # https://github.com/heroku/heroku-buildpack-ruby/issues/1005
+    Hatchet::Runner.new("default_ruby", stack: "heroku-18").tap do |app|
+      app.before_deploy do
+        run!(%Q{echo "ruby '2.4.9'" >> Gemfile})
+
+        File.open("Rakefile", "a") do |f|
+          f.puts(<<~EOF)
+          task "assets:precompile" do
+          end
+          EOF
+        end
+      end
+      app.deploy do
+        expect(app.output).to match("rake assets:precompile")
+      end
+    end
+  end
+
   describe "bad ruby version" do
     it "gives a helpful error" do
       Hatchet::Runner.new('ruby_version_does_not_exist', allow_failure: true, stack: DEFAULT_STACK).deploy do |app|

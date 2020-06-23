@@ -36,7 +36,7 @@
 - - "./repos/node/minimal_webpacker"
   - bca8b8169c553a0f62f0263b621cf3a5813e4023
 - - "./repos/rack/default_ruby"
-  - da748a59340be8b950e7bbbfb32077eb67d70c3c
+  - master
 - - "./repos/rack/mri_187_nokogiri"
   - 3fcce9c85bf560dba285cc385ae9845729195826
 - - "./repos/rack/mri_192"
