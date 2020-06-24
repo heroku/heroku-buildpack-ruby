@@ -15,6 +15,16 @@ describe LanguagePack::Helpers::BinstubCheck do
     return ruby_bin_dir
   end
 
+  it "handles empty binstubs" do
+    Tempfile.create("foo.txt") do |f|
+      expect { Pathname.new(f).open(&:readline) }.to raise_error(EOFError)
+
+      binstub = LanguagePack::Helpers::BinstubWrapper.new(f.path)
+      expect(binstub.bad_shebang?).to be_falsey
+      expect(binstub.binary?).to be_falsey
+    end
+  end
+
   it "can determine if a file is binary or not" do
     binstub = LanguagePack::Helpers::BinstubWrapper.new(get_ruby_path!)
 
