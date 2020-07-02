@@ -1,6 +1,5 @@
 require_relative '../spec_helper'
 
-
 class CnbRun
   attr_accessor :image_name, :output, :repo_path, :buildpack_path, :builder
 
@@ -14,8 +13,7 @@ class CnbRun
 
   def call
     command = "pack build #{image_name} --path #{repo_path} --buildpack #{buildpack_path} --builder heroku/buildpacks:18"
-    @output = `#{command}`
-    raise "Command #{command.inspect} failed. Output: #{out}" unless $?.success?
+    @output = run_local!(command)
     yield self
   ensure
     teardown
@@ -23,9 +21,10 @@ class CnbRun
 
   def teardown
     return unless image_name
+    repo_name, tag_name = image_name.split(":")
 
-    docker_list = run("docker images | grep #{image_name}").chomp
-    run!("docker rmi #{image_name}") if !docker_list.empty?
+    docker_list = run_local!("docker images --no-trunc | grep #{repo_name} | grep #{tag_name}").chomp
+    run_local!("docker rmi #{image_name} --force") if !docker_list.empty?
     @image_name = nil
   end
 
@@ -35,6 +34,12 @@ class CnbRun
 
   def run!(cmd)
     out = run(cmd)
+    raise "Command #{cmd.inspect} failed. Output: #{out}" unless $?.success?
+    out
+  end
+
+  private def run_local!(cmd)
+    out = `#{cmd}`
     raise "Command #{cmd.inspect} failed. Output: #{out}" unless $?.success?
     out
   end

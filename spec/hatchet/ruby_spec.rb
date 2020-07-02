@@ -9,6 +9,39 @@ describe "Ruby apps" do
     end
   end
 
+  describe "exporting path" do
+    it "puts local bin dir in path" do
+      before_deploy = Proc.new do
+        run!("mkdir bin")
+        File.open("bin/bloop", "w+") do |f|
+          f.puts(<<~EOF)
+          #!/usr/bin/env bash
+
+          echo "bloop"
+          EOF
+        end
+        run!("chmod +x bin/bloop")
+
+        File.open("Rakefile", "a") do |f|
+          f.puts(<<~EOF)
+          task "run:bloop" do
+            puts `bloop`
+            raise "Could not bloop" unless $?.success?
+          end
+          EOF
+        end
+      end
+      buildpacks = [
+        :default,
+        "https://github.com/schneems/buildpack-ruby-rake-deploy-tasks"
+      ]
+      config = { "DEPLOY_TASKS" => "run:bloop"}
+      Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK, buildpacks: buildpacks, config: config, before_deploy: before_deploy).deploy do |app|
+        expect(app.output).to match("bloop")
+      end
+    end
+  end
+
   describe "running Ruby from outside the default dir" do
     it "works" do
       buildpacks = [

@@ -10,6 +10,7 @@ require "language_pack/helpers/node_installer"
 require "language_pack/helpers/yarn_installer"
 require "language_pack/helpers/jvm_installer"
 require "language_pack/helpers/layer"
+require "language_pack/helpers/binstub_check"
 require "language_pack/version"
 
 # base Ruby Language Pack. This is for any base ruby app.
@@ -96,11 +97,11 @@ WARNING
       Dir.chdir(build_path)
       remove_vendor_bundle
       warn_bundler_upgrade
+      warn_bad_binstubs
       install_ruby(slug_vendor_ruby, build_ruby_path)
       install_jvm
-      setup_language_pack_environment
-      setup_export
-      setup_profiled
+      setup_language_pack_environment(ruby_layer_path: File.expand_path("."), gem_layer_path: File.expand_path("."))
+      setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
       allow_git do
         install_bundler_in_app(slug_vendor_base)
         load_bundler_cache
@@ -113,6 +114,7 @@ WARNING
       config_detect
       best_practice_warnings
       warn_outdated_ruby
+      setup_export
       cleanup
       super
     end
@@ -121,10 +123,11 @@ WARNING
     raise e
   end
 
+
   def build
     new_app?
     remove_vendor_bundle
-
+    warn_bad_binstubs
     ruby_layer = Layer.new(@layer_dir, "ruby", launch: true)
     install_ruby("#{ruby_layer.path}/#{slug_vendor_ruby}")
     ruby_layer.metadata[:version] = ruby_version.version
@@ -134,9 +137,8 @@ WARNING
     ruby_layer.write
 
     gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true)
-    setup_language_pack_environment(ruby_layer.path, gem_layer.path)
-    setup_export(gem_layer)
-    setup_profiled(ruby_layer.path, gem_layer.path)
+    setup_language_pack_environment(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
+    setup_profiled(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
     allow_git do
       # TODO install bundler in separate layer
       topic "Loading Bundler Cache"
@@ -159,6 +161,7 @@ WARNING
       install_binaries
       run_assets_precompile_rake_task
     end
+    setup_export(gem_layer)
     config_detect
     best_practice_warnings
     cleanup
@@ -173,6 +176,19 @@ WARNING
   end
 
 private
+
+  # A bad shebang line looks like this:
+  #
+  # ```
+  # #!/usr/bin/env ruby2.5
+  # ```
+  #
+  # Since `ruby2.5` is not a valid binary name
+  #
+  def warn_bad_binstubs
+    check = LanguagePack::Helpers::BinstubCheck.new(app_root_dir: Dir.pwd, warn_object: self)
+    check.call
+  end
 
   def default_malloc_arena_max?
     return true if @metadata.exists?("default_malloc_arena_max")
@@ -205,28 +221,6 @@ WARNING
     end
   end
 
-  # the base PATH environment variable to be used
-  # @return [String] the resulting PATH
-  def default_path(gem_layer_path = ".")
-    # Need to remove bin/ folder since it links
-    # to the wrong --prefix ruby binstubs
-    # breaking require. This only applies to Ruby 1.9.2 and 1.8.7.
-    #
-    # Because for 1.9.2 and 1.8.7 there is a "build" ruby and a non-"build" Ruby
-    paths = binstubs_relative_paths(gem_layer_path)
-    paths << "#{slug_vendor_jvm}/bin" if ruby_version.jruby?
-    paths << ENV["PATH"]
-    paths << "$HOME/bin"
-    paths << "/usr/local/bin:/usr/bin:/bin"
-    paths.join(":")
-  end
-
-  def binstubs_relative_paths(gem_layer_path = ".")
-    [
-      "#{gem_layer_path}/#{bundler_binstubs_path}", # Binstubs from bundler, eg. vendor/bundle/bin
-      "#{gem_layer_path}/#{slug_vendor_base}/bin"   # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
-    ]
-  end
 
   # For example "vendor/bundle/ruby/2.6.0"
   def self.slug_vendor_base
@@ -351,20 +345,18 @@ EOF
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(ruby_layer_path = ".", gem_layer_path = ".")
+  def setup_language_pack_environment(ruby_layer_path:, gem_layer_path:)
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
-        ENV["JAVA_MEM"] = run(<<-SHELL).chomp
-#{set_jvm_max_heap}
-echo #{default_java_mem}
-SHELL
+        ENV["JAVA_MEM"] = run(<<~SHELL).chomp
+          #{set_jvm_max_heap}
+          echo #{default_java_mem}
+        SHELL
         ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
         ENV["JAVA_HOME"] = @jvm_installer.java_home
       end
       setup_ruby_install_env(ruby_layer_path)
-      ENV["PATH"] += ":#{node_preinstall_bin_path}" if node_js_installed?
-      ENV["PATH"] += ":#{yarn_preinstall_bin_path}" if !yarn_not_preinstalled?
 
       # By default Node can address 1.5GB of memory, a limitation it inherits from
       # the underlying v8 engine. This can occasionally cause issues during frontend
@@ -380,10 +372,27 @@ SHELL
         ENV[key] ||= value
       end
 
+      paths = []
       gem_path = "#{gem_layer_path}/#{slug_vendor_base}"
       ENV["GEM_PATH"] = gem_path
       ENV["GEM_HOME"] = gem_path
-      ENV["PATH"]     = default_path(gem_layer_path)
+
+      ENV["DISABLE_SPRING"] = "1"
+
+      # Rails has a binstub for yarn that doesn't work for all applications
+      # we need to ensure that yarn comes before local bin dir for that case
+      paths << yarn_preinstall_bin_path if yarn_preinstalled?
+
+      # Need to remove `./bin` folder since it links to the wrong --prefix ruby binstubs breaking require in Ruby 1.9.2 and 1.8.7.
+      # Because for 1.9.2 and 1.8.7 there is a "build" ruby and a non-"build" Ruby
+      paths << "#{File.expand_path(".")}/bin" unless ruby_version.ruby_192_or_lower?
+
+      paths << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
+      paths << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+      paths << "#{slug_vendor_jvm}/bin" if ruby_version.jruby?
+      paths << ENV["PATH"]
+
+      ENV["PATH"] = paths.join(":")
     end
   end
 
@@ -421,16 +430,26 @@ SHELL
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled(ruby_layer_path = "$HOME", gem_layer_path = "$HOME")
+  def setup_profiled(ruby_layer_path: , gem_layer_path: )
     instrument 'setup_profiled' do
-      profiled_path = ["$HOME/bin"]
-      profiled_path << binstubs_relative_paths(gem_layer_path)
-      profiled_path << "$HOME/vendor/#{@yarn_installer.binary_path}" if has_yarn_binary?
+      profiled_path = []
+
+      # Rails has a binstub for yarn that doesn't work for all applications
+      # we need to ensure that yarn comes before local bin dir for that case
+      if yarn_preinstalled?
+        profiled_path << yarn_preinstall_bin_path.gsub(File.expand_path("."), "$HOME")
+      elsif has_yarn_binary?
+        profiled_path << "#{ruby_layer_path}/vendor/#{@yarn_installer.binary_path}"
+      end
+      profiled_path << "$HOME/bin" # /app in production
+      profiled_path << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
+      profiled_path << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
       profiled_path << "$PATH"
 
       set_env_default  "LANG",     "en_US.UTF-8"
       set_env_override "GEM_PATH", "#{gem_layer_path}/#{slug_vendor_base}:$GEM_PATH"
       set_env_override "PATH",      profiled_path.join(":")
+      set_env_override "DISABLE_SPRING", "1"
 
       set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
       add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
@@ -528,7 +547,7 @@ SHELL
 
       #{@outdated_version_check.suggested_ruby_minor_version}
 
-      The latest version will include security and bug fixes, we always recommend
+      The latest version will include security and bug fixes. We always recommend
       running the latest version of your minor release.
 
       Please upgrade your Ruby version.
@@ -565,12 +584,32 @@ SHELL
 
       topic "Using Ruby version: #{ruby_version.version_for_download}"
       if !ruby_version.set
-        warn(<<-WARNING)
-You have not declared a Ruby version in your Gemfile.
-To set your Ruby version add this line to your Gemfile:
-#{ruby_version.to_gemfile}
-# See https://devcenter.heroku.com/articles/ruby-versions for more information.
-WARNING
+        warn(<<~WARNING)
+          You have not declared a Ruby version in your Gemfile.
+
+          To declare a Ruby version add this line to your Gemfile:
+
+          ```
+          ruby "#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}"
+          ```
+
+          For more information see:
+            https://devcenter.heroku.com/articles/ruby-versions
+        WARNING
+      end
+
+      if ruby_version.warn_ruby_26_bundler?
+        warn(<<~WARNING, inline: true)
+          There is a known bundler bug with your version of Ruby
+
+          Your version of Ruby contains a problem with the built-in integration of bundler. If
+          you encounter a bundler error you need to upgrade your Ruby version. We suggest you upgrade to:
+
+          #{@outdated_version_check.suggested_ruby_minor_version}
+
+          For more information see:
+            https://devcenter.heroku.com/articles/bundler-version#known-upgrade-issues
+        WARNING
       end
     end
 
@@ -1103,25 +1142,35 @@ params = CGI.parse(uri.query || "")
       @node_preinstall_bin_path = false
     end
   end
-  alias :node_js_installed? :node_preinstall_bin_path
+  alias :node_js_preinstalled? :node_preinstall_bin_path
 
   def node_not_preinstalled?
-    !node_js_installed?
+    !node_js_preinstalled?
   end
 
+  # Example: tmp/build_8523f77fb96a956101d00988dfeed9d4/.heroku/yarn/bin/ (without the `yarn` at the end)
   def yarn_preinstall_bin_path
-    return @yarn_preinstall_bin_path if defined?(@yarn_preinstall_bin_path)
+    (yarn_preinstall_binary_path || "").chomp("/yarn")
+  end
+
+  # Example `tmp/build_8523f77fb96a956101d00988dfeed9d4/.heroku/yarn/bin/yarn`
+  def yarn_preinstall_binary_path
+    return @yarn_preinstall_binary_path if defined?(@yarn_preinstall_binary_path)
 
     path = run("which yarn").chomp
     if path && $?.success?
-      @yarn_preinstall_bin_path = path
+      @yarn_preinstall_binary_path = path
     else
-      @yarn_preinstall_bin_path = false
+      @yarn_preinstall_binary_path = false
     end
   end
 
+  def yarn_preinstalled?
+    yarn_preinstall_binary_path
+  end
+
   def yarn_not_preinstalled?
-    !yarn_preinstall_bin_path
+    !yarn_preinstalled?
   end
 
   def run_assets_precompile_rake_task
