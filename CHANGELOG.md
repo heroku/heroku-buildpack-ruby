@@ -1,6 +1,10 @@
 ## Master (unreleased)
 
+## v217 (7/2/2020)
+
 * Gracefully handle unrecognised stacks ([#982](https://github.com/heroku/heroku-buildpack-ruby/pull/982))
+
+## v216 (rolled back)
 
 ## v215 (4/9/2020)
 
