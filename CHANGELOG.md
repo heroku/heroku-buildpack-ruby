@@ -1,5 +1,6 @@
 ## Master (unreleased)
 
+* The rake binstub generated from compiling Ruby will no longer be placed in the local `bin/rake` location (https://github.com/heroku/heroku-buildpack-ruby/pull/1031)
 * A bug in 2.6.0, 2.6.1, 2.6.3 require a Ruby upgrade, a warning has been added (https://github.com/heroku/heroku-buildpack-ruby/pull/1015)
 * The spring library is now disabled by setting the enviornment variable DISABLE_SPRING=1 (https://github.com/heroku/heroku-buildpack-ruby/pull/1017)
 * Warn when a bad "shebang" line in a binstub is detected (https://github.com/heroku/heroku-buildpack-ruby/pull/1014)
