@@ -1,5 +1,11 @@
 ## Master (unreleased)
 
+## v217 (7/2/2020)
+
+* Gracefully handle unrecognised stacks ([#982](https://github.com/heroku/heroku-buildpack-ruby/pull/982))
+
+## v216 (rolled back)
+
 ## v215 (4/9/2020)
 
 * Fix bundler cache not being used in CI builds (https://github.com/heroku/heroku-buildpack-ruby/pull/978)
