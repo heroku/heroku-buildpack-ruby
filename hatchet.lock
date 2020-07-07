@@ -4,7 +4,7 @@
 - - "./repos/bundler/bundle-ruby-version-not-in-lockfile"
   - 5c8219d8bbdc8faa6a98781867b9fce25a6f2abb
 - - "./repos/bundler/git_gemspec"
-  - 19fc9a51a5c36c81c926bf8e16d07399e0e514aa
+  - 7755e19caf122e1373bce73ffe9b333e9411d732
 - - "./repos/bundler/no_lockfile"
   - 1947ce9a9c276d5df1c323b2ad78d1d85c7ab4c0
 - - "./repos/bundler/nokogiri_160"
@@ -36,7 +36,7 @@
 - - "./repos/node/minimal_webpacker"
   - bca8b8169c553a0f62f0263b621cf3a5813e4023
 - - "./repos/rack/default_ruby"
-  - da748a59340be8b950e7bbbfb32077eb67d70c3c
+  - master
 - - "./repos/rack/mri_187_nokogiri"
   - 3fcce9c85bf560dba285cc385ae9845729195826
 - - "./repos/rack/mri_192"

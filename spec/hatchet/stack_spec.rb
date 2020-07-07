@@ -9,7 +9,7 @@ describe "Stack Changes" do
 
       app.push!
 
-      expect(app.output).to match("Installing rack 1.5.0")
+      expect(app.output).to match("Installing rack")
       expect(app.output).to match("Changing stack")
     end
   end
@@ -22,7 +22,7 @@ describe "Stack Changes" do
 
       app.push!
       puts app.output
-      expect(app.output).to match("Using rack 1.5.0")
+      expect(app.output).to match("Using rack")
     end
   end
 end
