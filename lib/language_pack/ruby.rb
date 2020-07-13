@@ -10,6 +10,7 @@ require "language_pack/helpers/node_installer"
 require "language_pack/helpers/yarn_installer"
 require "language_pack/helpers/jvm_installer"
 require "language_pack/helpers/layer"
+require "language_pack/helpers/binstub_check"
 require "language_pack/version"
 
 # base Ruby Language Pack. This is for any base ruby app.
@@ -96,6 +97,7 @@ WARNING
       Dir.chdir(build_path)
       remove_vendor_bundle
       warn_bundler_upgrade
+      warn_bad_binstubs
       install_ruby(slug_vendor_ruby, build_ruby_path)
       install_jvm
       setup_language_pack_environment(ruby_layer_path: File.expand_path("."), gem_layer_path: File.expand_path("."))
@@ -121,10 +123,11 @@ WARNING
     raise e
   end
 
+
   def build
     new_app?
     remove_vendor_bundle
-
+    warn_bad_binstubs
     ruby_layer = Layer.new(@layer_dir, "ruby", launch: true)
     install_ruby("#{ruby_layer.path}/#{slug_vendor_ruby}")
     ruby_layer.metadata[:version] = ruby_version.version
@@ -173,6 +176,19 @@ WARNING
   end
 
 private
+
+  # A bad shebang line looks like this:
+  #
+  # ```
+  # #!/usr/bin/env ruby2.5
+  # ```
+  #
+  # Since `ruby2.5` is not a valid binary name
+  #
+  def warn_bad_binstubs
+    check = LanguagePack::Helpers::BinstubCheck.new(app_root_dir: Dir.pwd, warn_object: self)
+    check.call
+  end
 
   def default_malloc_arena_max?
     return true if @metadata.exists?("default_malloc_arena_max")
