@@ -84,6 +84,9 @@ describe "Rails 5.1 with webpacker" do
 
       app.deploy do
         expect(app.output).to include("Called bin/yarn binstub")
+
+        expect(app.output).to match("rake assets:precompile")
+        expect(app.output).to match("rake assets:clean")
       end
     end
   end
