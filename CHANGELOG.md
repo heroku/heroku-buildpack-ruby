@@ -1,6 +1,7 @@
 ## Master (unreleased)
 
 * Rake task "assets:clean" will not get called if it does not exist (https://github.com/heroku/heroku-buildpack-ruby/pull/1018)
+* CNB: Fix the `gems` layer not being made accessible by subsequent buildpacks (https://github.com/heroku/heroku-buildpack-ruby/pull/1033)
 
 ## v218 (7/13/2020)
 

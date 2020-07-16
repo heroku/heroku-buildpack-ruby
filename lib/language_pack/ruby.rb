@@ -136,7 +136,7 @@ WARNING
     ruby_layer.metadata[:engine_version] = ruby_version.engine_version
     ruby_layer.write
 
-    gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true)
+    gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true, build: true)
     setup_language_pack_environment(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
     setup_profiled(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
     allow_git do
