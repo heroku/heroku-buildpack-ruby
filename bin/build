@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+LAYERS_DIR=$1
+PLATFORM_DIR=$2
+ENV_DIR="$PLATFORM_DIR/env"
+PLAN=$3
+APP_DIR=$(pwd)
+BIN_DIR=$(cd $(dirname $0); pwd)
+BUILDPACK_DIR=$(dirname $BIN_DIR)
+
+# legacy buildpack uses $STACK 
+export STACK=$CNB_STACK_ID
+
+source "$BIN_DIR/support/bash_functions.sh"
+heroku_buildpack_ruby_install_ruby "$BIN_DIR" "$BUILDPACK_DIR"
+
+$heroku_buildpack_ruby_dir/bin/ruby $BIN_DIR/support/ruby_build $APP_DIR $LAYERS_DIR $PLATFORM_DIR $PLAN

@@ -24,7 +24,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   def default_process_types
     instrument "rails4.default_process_types" do
       super.merge({
-        "web"     => "bin/rails server -p $PORT -e $RAILS_ENV",
+        "web"     => "bin/rails server -p ${PORT:-5000} -e $RAILS_ENV",
         "console" => "bin/rails console"
       })
     end
@@ -82,7 +82,7 @@ WARNING
         end
 
         precompile = rake.task("assets:precompile")
-        return true unless precompile.is_defined?
+        return true if precompile.not_defined?
 
         topic("Preparing app for Rails asset pipeline")
 
@@ -95,12 +95,15 @@ WARNING
           log "assets_precompile", :status => "success"
           puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
 
-          puts "Cleaning assets"
-          rake.task("assets:clean").invoke(env: rake_env)
+          clean_task = rake.task("assets:clean")
+          if clean_task.task_defined?
+            puts "Cleaning assets"
+            clean_task.invoke(env: rake_env)
 
-          cleanup_assets_cache
-          @cache.store public_assets_folder
-          @cache.store default_assets_cache
+            cleanup_assets_cache
+            @cache.store public_assets_folder
+            @cache.store default_assets_cache
+          end
         else
           precompile_fail(precompile.output)
         end

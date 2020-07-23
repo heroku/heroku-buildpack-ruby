@@ -18,20 +18,21 @@
     "sharpstone/bundle-ruby-version-not-in-lockfile"
   ],
   "ruby": [
+    "sharpstone/ruby_version_does_not_exist",
     "sharpstone/cd_ruby",
     "sharpstone/mri_187",
     "sharpstone/mri_193_p547",
     "sharpstone/ruby_193_jruby_173",
     "sharpstone/ruby_193_jruby_176",
-    "sharpstone/ruby_193_jruby_17161",
+    "sharpstone/ruby_193_jruby_1_7_27",
     "sharpstone/ruby_193_jruby_17161_jdk7",
-    "sharpstone/ruby_193_jruby_17161_jdk8",
     "sharpstone/ruby_193_bad_patch_cedar_14",
     "sharpstone/ruby_25",
     "sharpstone/jruby-minimal",
     "sharpstone/empty-procfile",
     "sharpstone/bad_ruby_version",
-    "sharpstone/activerecord41_scaffold"
+    "sharpstone/activerecord41_scaffold",
+    "sharpstone/libpq_connection_error"
   ],
   "jruby": [
     "sharpstone/jruby_naether"
@@ -79,14 +80,14 @@
     "sharpstone/active_storage_local",
     "sharpstone/sprockets_asset_compile_true"
   ],
+  "rails6": [
+    "sharpstone/rails6-basic"
+  ],
   "heroku": [
     "heroku/ruby-getting-started"
   ],
-  "multibuildpack": [
-    "sharpstone/node_multi"
-  ],
   "node": [
-    "sharpstone/webpacker_no_execjs"
+    "sharpstone/minimal_webpacker"
   ],
   "ci": [
     "sharpstone/rails5_ruby_schema_format",
@@ -95,6 +96,7 @@
     "sharpstone/rails_31_ruby_schema_format",
     "sharpstone/rails_31_sql_schema_format",
     "sharpstone/ruby_no_rails_test",
-    "sharpstone/activerecord_rake_tasks_does_not_exist"
+    "sharpstone/activerecord_rake_tasks_does_not_exist",
+    "sharpstone/ci_fails_ruby_default_bundler"
   ]
 }

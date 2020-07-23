@@ -30,19 +30,20 @@ def execute_command(command)
 end
 
 # $ bin/test BUILD_DIR ENV_DIR ARTIFACT_DIR
-build_dir, env_dir, artifact_dir = ARGV
+build_dir, env_dir, _ = ARGV
 LanguagePack::ShellHelpers.initialize_env(env_dir)
+
+bundler = LanguagePack::Helpers::BundlerWrapper.new(
+  gemfile_path: "#{build_dir}/Gemfile"
+)
 
 # The `ruby_test-compile` program installs a version of Ruby for the
 # user's application. It needs the propper `PATH`, where ever Ruby is installed
 # we always add a symlink to the `bin/ruby` file so that is always valid.
 # We calculate the gem path the same way we do when compiling.
-LanguagePack::ShellHelpers.user_env_hash["PATH"] = "#{build_dir}/bin:#{ENV["PATH"]}"
+LanguagePack::ShellHelpers.user_env_hash["PATH"] = "#{build_dir}/bin:#{bundler.bundler_path}/bin:#{ENV["PATH"]}"
 LanguagePack::ShellHelpers.user_env_hash["GEM_PATH"] = LanguagePack::Ruby.slug_vendor_base
 
-bundler = LanguagePack::Helpers::BundlerWrapper.new(
-  gemfile_path: "#{build_dir}/Gemfile"
-)
 # load bundler
 bundler.install
 
