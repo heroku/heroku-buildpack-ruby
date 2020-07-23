@@ -1,7 +1,7 @@
 #module LanguagePack::Test::Rails2
 class LanguagePack::Rails2
   # sets up the profile.d script for this buildpack
-  def setup_profiled
+  def setup_profiled(ruby_layer_path: , gem_layer_path: )
     super
     set_env_default "RACK_ENV",  "test"
     set_env_default "RAILS_ENV", "test"

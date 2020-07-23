@@ -19,14 +19,11 @@ RSpec.configure do |config|
   config.default_retry_count = 2 if ENV['IS_RUNNING_ON_CI'] # retry all tests that fail again
 
   config.expect_with :rspec do |c|
+    c.max_formatted_output_length = Float::INFINITY
     c.syntax = :expect
   end
   config.mock_with :nothing
   config.include LanguagePack::ShellHelpers
-end
-
-def git_repo
-  "https://github.com/heroku/heroku-buildpack-ruby.git"
 end
 
 def successful_body(app, options = {})
@@ -41,14 +38,38 @@ def create_file_with_size_in(size, dir)
   Pathname.new name
 end
 
-ReplRunner.register_commands(:console)  do |config|
-  config.terminate_command "exit"          # the command you use to end the 'rails console'
-  config.startup_timeout 60                # seconds to boot
-  config.return_char "\n"                  # the character that submits the command
-  config.sync_stdout "STDOUT.sync = true"  # force REPL to not buffer standard out
-end
-
 if ENV['TRAVIS']
   # Don't execute tests against "merge" commits
   exit 0 if ENV['TRAVIS_PULL_REQUEST'] != 'false' && ENV['TRAVIS_BRANCH'] == 'master'
+end
+
+def buildpack_path
+  File.expand_path(File.join("../.."), __FILE__)
+end
+
+def fixture_path(path)
+  Pathname.new(__FILE__).join("../fixtures").expand_path.join(path)
+end
+
+def hatchet_path(path = "")
+  Pathname.new(__FILE__).join("../../repos").expand_path.join(path)
+end
+
+def dyno_status(app, ps_name = "web")
+  app
+    .api_rate_limit.call
+    .dyno
+    .list(app.name)
+    .detect {|x| x["type"] == ps_name }
+end
+
+def wait_for_dyno_boot(app, ps_name = "web", sleep_val = 1)
+  while ["starting", "restarting"].include?(dyno_status(app, ps_name)["state"])
+    sleep sleep_val
+  end
+  dyno_status(app, ps_name)
+end
+
+def web_boot_status(app)
+  wait_for_dyno_boot(app)["state"]
 end

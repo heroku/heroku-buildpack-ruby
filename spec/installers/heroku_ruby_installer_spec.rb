@@ -5,7 +5,6 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
   let(:ruby_version) { LanguagePack::RubyVersion.new("ruby-2.3.3") }
 
   describe "#fetch_unpack" do
-
     it "should fetch and unpack mri" do
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do

@@ -1,6 +1,17 @@
 #!/bin/sh
 
-if [ -f "$1/Gemfile" ]; then
+if [ -z "$CNB_STACK_ID" ]; then
+  # v2 API
+  APP_DIR=$1
+else
+  PLATFORM_DIR=$1
+  PLAN=$2
+  # working is the cwd now
+  # v3 API
+  APP_DIR=$(pwd)
+fi
+
+if [ -f "$APP_DIR/Gemfile" ]; then
   echo "Ruby"
   exit 0
 else
