@@ -16,7 +16,7 @@ Example Usage:
 
     $ heroku create --buildpack heroku/ruby
 
-    $ git push heroku master
+    $ git push heroku main
     ...
     -----> Heroku receiving push
     -----> Fetching custom buildpack
