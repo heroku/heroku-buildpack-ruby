@@ -56,6 +56,42 @@ def install_gem(gem_name, version)
   end
 end
 
+namespace :buildpack do
+  desc "stage a tarball of the buildpack"
+  task :tarball do
+
+    Dir.mktmpdir("heroku-buildpack-ruby") do |tmpdir|
+      sh "git clone https://github.com/heroku/heroku-buildpack-ruby #{tmpdir}/heroku-buildpack-ruby"
+
+      Dir.chdir(tmpdir) do
+        Dir.chdir("heroku-buildpack-ruby") do |buildpack_dir|
+          $:.unshift File.expand_path("../lib", __FILE__)
+          require "language_pack/installers/heroku_ruby_installer"
+          require "language_pack/ruby_version"
+          require "language_pack/version"
+
+          %w(cedar-14 heroku-16 heroku-18).each do |stack|
+            installer    = LanguagePack::Installers::HerokuRubyInstaller.new(stack)
+            ruby_version = LanguagePack::RubyVersion.new("ruby-#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}")
+            installer.fetch_unpack(ruby_version, "vendor/ruby/#{stack}")
+          end
+
+          sh "tar czf ../buildpack.tgz *"
+        end
+
+        @digest = Digest::MD5.hexdigest(File.read("buildpack.tgz"))
+      end
+
+
+      filename = "buildpacks/heroku-buildpack-ruby-#{LanguagePack::Base::BUILDPACK_VERSION}.tgz"
+      puts "Writing to #{filename}"
+
+      FileUtils.mkdir_p("buildpacks/")
+      FileUtils.cp("#{tmpdir}/buildpack.tgz", filename)
+    end
+  end
+end
+
 desc "update plugins"
 task "plugins:update" do
   vendor_plugin "https://github.com/heroku/rails_log_stdout.git", "legacy"
