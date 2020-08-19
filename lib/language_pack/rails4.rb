@@ -30,6 +30,12 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
     end
   end
 
+  def build_bundler(default_bundle_without)
+    instrument "rails4.build_bundler" do
+      super
+    end
+  end
+
   def compile
     instrument "rails4.compile" do
       super
