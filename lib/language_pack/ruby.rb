@@ -20,6 +20,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   NODE_BP_PATH         = "vendor/node/bin"
+  GSL_VENDOR_URL       = "https://s3.amazonaws.com/gsl_bin/gsl-1.15.tgz"
 
   Layer = LanguagePack::Helpers::Layer
 
@@ -62,6 +63,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     instrument "ruby.default_config_vars" do
       vars = {
         "LANG" => env("LANG") || "en_US.UTF-8",
+        "LD_LIBRARY_PATH" => "./app/vendor/gsl/lib",
       }
 
       ruby_version.jruby? ? vars.merge({
@@ -103,6 +105,9 @@ WARNING
       setup_language_pack_environment(ruby_layer_path: File.expand_path("."), gem_layer_path: File.expand_path("."))
       setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
       allow_git do
+        install_gsl
+        FileUtils.mkdir_p "./app/vendor"
+        run("cp -R ./vendor/gsl ./app/vendor/gsl")
         install_bundler_in_app(slug_vendor_base)
         load_bundler_cache
         build_bundler(bundle_path: "vendor/bundle", default_bundle_without: "development:test")
@@ -378,6 +383,9 @@ EOF
       ENV["GEM_HOME"] = gem_path
 
       ENV["DISABLE_SPRING"] = "1"
+
+      # include the gsl directory
+      paths << "./app/vendor/gsl/bin"
 
       # Rails has a binstub for yarn that doesn't work for all applications
       # we need to ensure that yarn comes before local bin dir for that case
@@ -753,6 +761,15 @@ EOF
   # @param [String] relative path of the binary on the slug
   def uninstall_binary(path)
     FileUtils.rm File.join('bin', File.basename(path)), :force => true
+  end
+
+  def install_gsl
+    topic("Installing gsl")
+    bin_dir = "vendor/gsl"
+    FileUtils.mkdir_p bin_dir
+    Dir.chdir(bin_dir) do |dir|
+      run("curl #{GSL_VENDOR_URL} -s -o - | tar xzf -")
+    end
   end
 
   def load_default_cache?
