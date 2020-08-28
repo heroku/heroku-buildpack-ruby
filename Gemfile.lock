@@ -19,7 +19,7 @@ GEM
       rrrretry (~> 1)
       thor (~> 0)
       threaded (~> 0)
-    json (2.3.0)
+    json (2.3.1)
     moneta (1.0.0)
     multi_json (1.15.0)
     parallel (1.19.1)
@@ -53,7 +53,7 @@ DEPENDENCIES
   ci-queue
   excon
   heroku_hatchet
-  json (~> 2.3.0)
+  json (~> 2.3.1)
   parallel_tests
   rake
   redis
