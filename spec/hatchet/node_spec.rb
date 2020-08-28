@@ -6,7 +6,9 @@ describe "Node and Yarn" do
       :default,
       "https://github.com/sharpstone/force_absolute_paths_buildpack"
     ]
-    Hatchet::Runner.new("minimal_webpacker", buildpacks: buildpacks).deploy do |app, heroku|
+    config = {FORCE_ABSOLUTE_PATHS_BUILDPACK_IGNORE_PATHS: "BUNDLE_PATH"}
+
+    Hatchet::Runner.new("minimal_webpacker", buildpacks: buildpacks, config: config).deploy do |app, heroku|
       # https://rubular.com/r/4bkL8fYFTQwt0Q
       expect(app.output).to match(/vendor\/yarn-v\d+\.\d+\.\d+\/bin\/yarn is the yarn directory/)
       expect(app.output).to_not include(".heroku/yarn/bin/yarn is the yarn directory")
@@ -25,8 +27,9 @@ describe "Node and Yarn" do
       :default,
       "https://github.com/sharpstone/force_absolute_paths_buildpack"
     ]
+    config = {FORCE_ABSOLUTE_PATHS_BUILDPACK_IGNORE_PATHS: "BUNDLE_PATH"}
 
-    Hatchet::Runner.new("minimal_webpacker", buildpacks: buildpacks).deploy do |app, heroku|
+    Hatchet::Runner.new("minimal_webpacker", buildpacks: buildpacks, config: config).deploy do |app, heroku|
       expect(app.output).to include("yarn install")
       expect(app.output).to include(".heroku/yarn/bin/yarn is the yarn directory")
       expect(app.output).to include(".heroku/node/bin/node is the node directory")
