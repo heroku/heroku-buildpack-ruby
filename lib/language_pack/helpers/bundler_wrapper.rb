@@ -37,7 +37,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   BLESSED_BUNDLER_VERSIONS = {}
   BLESSED_BUNDLER_VERSIONS["1"] = "1.17.3"
-  BLESSED_BUNDLER_VERSIONS["2"] = "2.0.2"
+  BLESSED_BUNDLER_VERSIONS["2"] = "2.1.4"
   BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m
 
   class GemfileParseError < BuildpackError
@@ -159,6 +159,13 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def lockfile_parser
     @lockfile_parser ||= parse_gemfile_lock
+  end
+
+  # Some bundler versions have different behavior
+  # if config is global versus local. These versions need
+  # the environment variable BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=1
+  def needs_ruby_global_append_path?
+    Gem::Version.new(@version) < Gem::Version.new("2.1.4")
   end
 
   private
