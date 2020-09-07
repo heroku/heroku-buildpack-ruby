@@ -12,6 +12,14 @@ class LanguagePack::Metadata
     end
   end
 
+  def [](key)
+    read(key)
+  end
+
+  def []=(key, value)
+    write(key, value)
+  end
+
   def read(key)
     full_key = "#{FOLDER}/#{key}"
     File.read(full_key).chomp if exists?(key)
@@ -21,6 +29,7 @@ class LanguagePack::Metadata
     full_key = "#{FOLDER}/#{key}"
     File.exists?(full_key) && !Dir.exists?(full_key)
   end
+  alias_method :include?, :exists?
 
   def write(key, value, isave = true)
     FileUtils.mkdir_p(FOLDER)
@@ -45,8 +54,8 @@ class LanguagePack::Metadata
     return value
   end
 
-  def save
-    @cache ? @cache.add(FOLDER) : false
+  def save(file = FOLDER)
+    @cache ? @cache.add(file) : false
   end
 
   protected

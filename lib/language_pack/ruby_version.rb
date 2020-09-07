@@ -12,7 +12,7 @@ module LanguagePack
       end
     end
 
-    DEFAULT_VERSION_NUMBER = "2.5.7"
+    DEFAULT_VERSION_NUMBER = "2.6.6"
     DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}"
     LEGACY_VERSION_NUMBER  = "1.9.2"
     LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}"
@@ -38,6 +38,17 @@ module LanguagePack
       @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
     end
 
+    def warn_ruby_26_bundler?
+      return false if Gem::Version.new(self.ruby_version) >= Gem::Version.new("2.6.3")
+      return false if Gem::Version.new(self.ruby_version) < Gem::Version.new("2.6.0")
+
+      return true
+    end
+
+    def ruby_192_or_lower?
+      Gem::Version.new(self.ruby_version) <= Gem::Version.new("1.9.2")
+    end
+
     # https://github.com/bundler/bundler/issues/4621
     def version_for_download
       if rbx?
@@ -47,6 +58,12 @@ module LanguagePack
       else
         version_without_patchlevel
       end
+    end
+
+    def file_name
+      file = "#{version_for_download}.tgz"
+      file.sub!("ruby", "ruby-build") if build?
+      file
     end
 
     # Before Ruby 2.1 patch releases were done via patchlevel i.e. 1.9.3-p426 versus 1.9.3-p448

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # The actual `bin/test-compile` code lives in `bin/ruby_test-compile`. This file instead
 # bootstraps the ruby needed and then executes `bin/ruby_test-compile`
 

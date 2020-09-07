@@ -15,14 +15,6 @@ describe "Rails 4.x" do
     end
   end
 
-  it "should handle secrets.yml properly" do
-    Hatchet::Runner.new("rails41_scaffold").deploy do |app, heroku|
-      ReplRunner.new(:rails_console, "heroku run bin/rails console -a #{app.name}").run do |console|
-        console.run("ENV['SECRET_KEY_BASE'] == Rails.application.config.secrets.secret_key_base") {|result| expect(result).not_to eq("true") }
-      end
-    end
-  end
-
   it "should not overwrite existing files with cached files" do
     string = SecureRandom.hex(13)
     new_string = SecureRandom.hex(13)

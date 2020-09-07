@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # basic amazon s3 operations
 # Licensed under the terms of the GNU GPL v2
 # Copyright 2007 Victor Lowther <victor.lowther@gmail.com>

@@ -58,6 +58,22 @@ describe "RubyVersion" do
     expect(ruby_version.version_for_download).to eq("ruby-2.4.0")
   end
 
+  it "detects Ruby 2.6.0, 2.6.1 and 2.6.2 as needing a warning" do
+    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.0")
+    expect(ruby_version.warn_ruby_26_bundler?).to be true
+    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.1")
+    expect(ruby_version.warn_ruby_26_bundler?).to be true
+    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.2")
+    expect(ruby_version.warn_ruby_26_bundler?).to be true
+
+    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.3")
+    expect(ruby_version.warn_ruby_26_bundler?).to be false
+    ruby_version = LanguagePack::RubyVersion.new("ruby-2.5.3")
+    expect(ruby_version.warn_ruby_26_bundler?).to be false
+    ruby_version = LanguagePack::RubyVersion.new("ruby-2.7.1")
+    expect(ruby_version.warn_ruby_26_bundler?).to be false
+  end
+
   it "correctly sets ruby version for bundler specified versions" do
     Hatchet::App.new("mri_193").in_directory_fork do |dir|
       ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: true)
