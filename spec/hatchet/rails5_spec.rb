@@ -43,10 +43,9 @@ describe "Rails 5" do
         buildpacks: [
           "https://github.com/heroku/heroku-buildpack-activestorage-preview",
           :default
-        ]
+        ],
+        config: {'HEROKU_DEBUG_RAILS_RUNNER' => 'true'}
       )
-      app.setup!
-      app.set_config('HEROKU_DEBUG_RAILS_RUNNER' => 'true')
       app.deploy do |app, heroku|
         expect(app.output).to_not match('binary dependencies required')
         expect(app.output).to     match('config.active_storage.service')

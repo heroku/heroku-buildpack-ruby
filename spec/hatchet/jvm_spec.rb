@@ -7,10 +7,7 @@ describe "JvmInstaller" do
       :default # default is heroku-ruby-buildpack here
 
     ]
-    app = Hatchet::Runner.new("ruby_193_jruby_1_7_27", stack: 'heroku-18', buildpacks: buildpacks)
-    app.setup!
-
-    app.deploy do |app|
+    Hatchet::Runner.new("ruby_193_jruby_1_7_27", stack: 'heroku-18', buildpacks: buildpacks).deploy do |app|
       expect(app.output).to match("Using pre-installed JDK")
       expect(app.run("java -version")).to match("1.8.0")
       sleep 3
