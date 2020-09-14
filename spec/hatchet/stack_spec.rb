@@ -2,8 +2,7 @@ require_relative "../spec_helper"
 
 describe "Stack Changes" do
   xit "should reinstall gems on stack change" do
-    app = Hatchet::Runner.new('default_ruby', stack: "heroku-18").setup!
-    app.deploy do |app, heroku|
+    Hatchet::Runner.new('default_ruby', stack: "heroku-18").deploy do |app|
       app.update_stack("heroku-16")
       run!('git commit --allow-empty -m "heroku-16 migrate"')
 
@@ -15,8 +14,7 @@ describe "Stack Changes" do
   end
 
   it "should not reinstall gems if the stack did not change" do
-    app = Hatchet::Runner.new('default_ruby', stack: "heroku-16").setup!
-    app.deploy do |app, heroku|
+    Hatchet::Runner.new('default_ruby', stack: "heroku-16").deploy do |app|
       app.update_stack("heroku-16")
       run!(%Q{git commit --allow-empty -m "cedar migrate"})
 
