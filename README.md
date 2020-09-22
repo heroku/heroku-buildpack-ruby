@@ -133,3 +133,8 @@ $ bundle exec rake spec
 ```
 
 Now go take a nap or do something for a really long time.
+
+## Credits
+
+*This buildpack is maintained by Heroku. Upstream Repository: [heroku-ruby-buildpack](https://github.com/heroku/heroku-buildpack-ruby)*
+
