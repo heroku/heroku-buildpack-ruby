@@ -7,5 +7,5 @@ updates:
       interval: "weekly"
     labels:
       - "dependencies"
-    commit_message:
+    commit-message:
       prefix: "[changelog skip]"
