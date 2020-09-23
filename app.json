@@ -4,7 +4,7 @@
   "environments": {
     "test": {
       "addons":[
-        "heroku-redis:hobby-dev"
+        "heroku-redis:premium-1"
       ],
       "env": {
           "HATCHET_RETRIES":    "3",
@@ -14,8 +14,7 @@
       },
       "formation": {
         "test": {
-          "size":     "performance-l",
-          "quantity": 16
+          "quantity": 32
         }
       },
       "scripts": {
