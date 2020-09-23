@@ -59,3 +59,7 @@ $ bundle exec hatchet install
 ```sh
 $ bundle exec rake spec
 ```
+
+## Credits
+
+*This buildpack is maintained by Heroku. Upstream Repository: [heroku-ruby-buildpack](https://github.com/heroku/heroku-buildpack-ruby)*
