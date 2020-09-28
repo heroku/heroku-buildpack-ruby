@@ -56,12 +56,60 @@ def install_gem(gem_name, version)
   end
 end
 
+namespace :deploy do
+
+  task :buildpack
+end
+
 namespace :buildpack do
-  desc "stage a tarball of the buildpack"
+  task :check_unstaged do
+    `git diff --quiet HEAD`
+    raise "Must have all changes committed. There are unstaged commits locally" unless $?.success?
+  end
+
+  task :check_branch do
+    out = `git rev-parse --abbrev-ref HEAD`.strip
+    raise "Must be on main branch. Branch: #{out}" unless out == "main"
+  end
+
+  task :next_release_version do
+    ENV["RELEASE_VERSION"] ||= begin
+      string_tag_array = `git tag --list`.strip.each_line.map.select {|line| line.match?(/^v\d+$/) } # https://rubular.com/r/8eFB9r8nOVrM7H
+      integer_tag_array = string_tag_array.map {|line| line.sub(/^v/, '').to_i }.sort # Ascending order
+      last_version = integer_tag_array.last
+      "v#{last_version.next}"
+    end
+    puts "Next buildpack release version: #{ENV["RELEASE_VERSION"]}"
+  end
+
+  task :check_changelog => [:next_release_version] do
+    if !File.read("CHANGELOG.md").include?("## #{ENV['RELEASE_VERSION']}")
+      raise "Expected CHANGELOG.md to include #{ENV['RELEASE_VERSION']} but it did not"
+    end
+  end
+
+  task :check_synced_with_github do
+    out = `git rev-parse HEAD`.strip
+    raise "Could not get commit SHA via 'git rev-parse HEAD'. output: #{out}" unless $?.success?
+
+  end
+
+  task :release => [:next_release_version, :check_unstaged, :check_branch, :check_changelog, :check_synced_with_github] do
+    # Check head is latest
+    sh("git tag", version) do |out, status|
+      raise "Could not `git tag #{version}: #{out}" unless status.success?
+    end
+    sh("git push --tags") do |out, status|
+      raise "Could not `git push --tags" unless status.success?
+    end
+  end
+
+  desc "stage a tarball of the buildpack, runs on github actions"
   task :tarball do
 
     Dir.mktmpdir("heroku-buildpack-ruby") do |tmpdir|
-      sh "git clone https://github.com/heroku/heroku-buildpack-ruby #{tmpdir}/heroku-buildpack-ruby"
+
+      sh "cp #{__dir__} #{tmpdir}/heroku-buildpack-ruby"
 
       Dir.chdir(tmpdir) do
         Dir.chdir("heroku-buildpack-ruby") do |buildpack_dir|
