@@ -8,6 +8,7 @@ require "tmpdir"
 require 'hatchet/tasks'
 ENV["BUILDPACK_LOG_FILE"] ||= "tmp/buildpack.log"
 
+require_relative 'lib/rake/deploy_check'
 require_relative 'lib/rake/tarballer'
 
 S3_BUCKET_NAME  = "heroku-buildpack-ruby"
@@ -64,7 +65,25 @@ def install_gem(gem_name, version)
 end
 
 namespace :buildpack do
+  desc "releases the next version of the buildpack"
+  task :release do
+    deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby")
+    puts "Attempting to deploy #{deploy.next_version}, overwrite with RELEASE_VERSION env var"
+    deploy.check!
 
+    if deploy.push_tag?
+      sh("git tag -f ", deploy.next_version) do |out, status|
+        raise "Could not `git tag -f #{deploy.version}`: #{out}" unless status.success?
+      end
+      sh("git push --tags") do |out, status|
+        raise "Could not `git push --tags`: #{out}" unless status.success?
+      end
+    end
+
+    command = "heroku buildpacks:publish heroku/ruby #{deploy.next_version}"
+    puts "Releasing to heroku: `#{command}`"
+    exec(command)
+  end
   desc "stage a tarball of the buildpack, this runs on github actions to deploy CNB"
   task :tarball do
     tarballer = Tarballer.new(name: "heroku-buildpack-ruby", directory: __dir__)
