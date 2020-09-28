@@ -1,6 +1,7 @@
 require 'rspec/core'
 require 'hatchet'
 require 'fileutils'
+require 'stringio'
 require 'hatchet'
 require 'rspec/retry'
 require 'language_pack'
