@@ -176,6 +176,14 @@ class LanguagePack::Helpers::BundlerWrapper
       topic("Installing bundler #{@version}")
       bundler_version_escape_valve!
 
+      # Install directory structure (as of Bundler 2.1.4):
+      # - cache
+      # - bin
+      # - gems
+      # - specifications
+      # - build_info
+      # - extensions
+      # - doc
       FileUtils.mkdir_p(bundler_path)
       Dir.chdir(bundler_path) do
         @fetcher.fetch_untar(@bundler_tar)
