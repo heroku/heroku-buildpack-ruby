@@ -63,7 +63,7 @@ class LanguagePack::Helpers::BinstubCheck
       A malformed shebang line may cause your program to crash.
 
       For more information about binstubs and "shebang" lines see:
-        https://devcenter.heroku.com/articles/bad-ruby-binstub-shebang
+        https://doc.scalingo.com/languages/ruby/common-mistakes
     EOM
 
     @warn_object.warn(message, inline: true)
