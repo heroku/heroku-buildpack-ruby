@@ -1,5 +1,6 @@
 # Main (unreleased)
 
+* Fix double installation of bundler on CI runs when no test script is specified (https://github.com/heroku/heroku-buildpack-ruby/pull/1073)
 * Bundler 2.x is now 2.1.4 (https://github.com/heroku/heroku-buildpack-ruby/pull/1052)
 * Persistent bundler config is now being set using the `BUNDLE_*` env vars (https://github.com/heroku/heroku-buildpack-ruby/pull/1039)
 * Rake task "assets:clean" will not get called if it does not exist (https://github.com/heroku/heroku-buildpack-ruby/pull/1018)
