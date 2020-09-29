@@ -24,7 +24,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   def default_process_types
     instrument "rails4.default_process_types" do
       super.merge({
-        "web"     => "bin/rails server -p $PORT -e $RAILS_ENV",
+        "web"     => "bin/rails server -p ${PORT:-5000} -e $RAILS_ENV",
         "console" => "bin/rails console"
       })
     end

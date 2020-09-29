@@ -1,30 +1,38 @@
 require 'spec_helper'
 
-describe "Node" do
-  it "works with node buildpack" do
-    Hatchet::Runner.new("node_multi", buildpack_url: "https://github.com/heroku/heroku-buildpack-multi.git").deploy do |app|
-      expect(app.output).to match("Node Version in Ruby buildpack is: v4.1.2")
-      expect(app.run("node -v")).to match("v4.1.2")
+describe "Node and Yarn" do
+  it "works without the node buildpack" do
+    buildpacks = [
+      :default,
+      "https://github.com/sharpstone/force_absolute_paths_buildpack"
+    ]
+    Hatchet::Runner.new("minimal_webpacker", buildpacks: buildpacks).deploy do |app, heroku|
+      # https://rubular.com/r/4bkL8fYFTQwt0Q
+      expect(app.output).to match(/vendor\/yarn-v\d+\.\d+\.\d+\/bin\/yarn is the yarn directory/)
+      expect(app.output).to_not include(".heroku/yarn/bin/yarn is the yarn directory")
+
+      expect(app.output).to include("bin/node is the node directory")
+      expect(app.output).to_not include(".heroku/node/bin/node is the node directory")
+
+      expect(app.run("which node")).to match("/app/bin/node")     # We put node in bin/node
+      expect(app.run("which yarn")).to match("/app/vendor/yarn-") # We put yarn in /app/vendor/yarn-
     end
   end
 
-  it "node is installed by default without multi buildpack" do
-    default_node_version = LanguagePack::Helpers::NodeInstaller.new.version
-    Hatchet::Runner.new("node_multi").deploy do |app|
-      expect(app.output).to match("Node Version in Ruby buildpack is: v#{default_node_version}")
-      expect(app.run("node -v")).to match(default_node_version)
-    end
-  end
+  it "works with the node buildpack" do
+    buildpacks = [
+      "heroku/nodejs",
+      :default,
+      "https://github.com/sharpstone/force_absolute_paths_buildpack"
+    ]
 
-  it "doesn't install node without execjs or webpacker" do
-    Hatchet::Runner.new("default_ruby").deploy do |app|
-      expect(app.run("node -v")).to match("node: command not found")
-    end
-  end
+    Hatchet::Runner.new("minimal_webpacker", buildpacks: buildpacks).deploy do |app, heroku|
+      expect(app.output).to include("yarn install")
+      expect(app.output).to include(".heroku/yarn/bin/yarn is the yarn directory")
+      expect(app.output).to include(".heroku/node/bin/node is the node directory")
 
-  it "installs node when webpacker is detected but no execjs" do
-    Hatchet::Runner.new("webpacker_no_execjs").deploy do |app|
-      expect(app.output).to match("Installing node-v")
+      expect(app.run("which node")).to match("/app/.heroku/node/bin")
+      expect(app.run("which yarn")).to match("/app/.heroku/yarn/bin")
     end
   end
 end
