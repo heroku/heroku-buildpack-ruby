@@ -1,7 +1,15 @@
+# CAREFUL! Changes made to this file aren't tested
+#
+# If you need new functionality, consider putting it in lib/rake
+# and also adding tests, then calling that code from here
+#
 require "fileutils"
 require "tmpdir"
 require 'hatchet/tasks'
 ENV["BUILDPACK_LOG_FILE"] ||= "tmp/buildpack.log"
+
+require_relative 'lib/rake/deploy_check'
+require_relative 'lib/rake/tarballer'
 
 S3_BUCKET_NAME  = "heroku-buildpack-ruby"
 
@@ -57,38 +65,29 @@ def install_gem(gem_name, version)
 end
 
 namespace :buildpack do
-  desc "stage a tarball of the buildpack"
-  task :tarball do
+  desc "releases the next version of the buildpack"
+  task :release do
+    deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby")
+    puts "Attempting to deploy #{deploy.next_version}, overwrite with RELEASE_VERSION env var"
+    deploy.check!
 
-    Dir.mktmpdir("heroku-buildpack-ruby") do |tmpdir|
-      sh "git clone https://github.com/heroku/heroku-buildpack-ruby #{tmpdir}/heroku-buildpack-ruby"
-
-      Dir.chdir(tmpdir) do
-        Dir.chdir("heroku-buildpack-ruby") do |buildpack_dir|
-          $:.unshift File.expand_path("../lib", __FILE__)
-          require "language_pack/installers/heroku_ruby_installer"
-          require "language_pack/ruby_version"
-          require "language_pack/version"
-
-          %w(cedar-14 heroku-16 heroku-18).each do |stack|
-            installer    = LanguagePack::Installers::HerokuRubyInstaller.new(stack)
-            ruby_version = LanguagePack::RubyVersion.new("ruby-#{LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER}")
-            installer.fetch_unpack(ruby_version, "vendor/ruby/#{stack}")
-          end
-
-          sh "tar czf ../buildpack.tgz *"
-        end
-
-        @digest = Digest::MD5.hexdigest(File.read("buildpack.tgz"))
+    if deploy.push_tag?
+      sh("git tag -f ", deploy.next_version) do |out, status|
+        raise "Could not `git tag -f #{deploy.version}`: #{out}" unless status.success?
       end
-
-
-      filename = "buildpacks/heroku-buildpack-ruby-#{LanguagePack::Base::BUILDPACK_VERSION}.tgz"
-      puts "Writing to #{filename}"
-
-      FileUtils.mkdir_p("buildpacks/")
-      FileUtils.cp("#{tmpdir}/buildpack.tgz", filename)
+      sh("git push --tags") do |out, status|
+        raise "Could not `git push --tags`: #{out}" unless status.success?
+      end
     end
+
+    command = "heroku buildpacks:publish heroku/ruby #{deploy.next_version}"
+    puts "Releasing to heroku: `#{command}`"
+    exec(command)
+  end
+  desc "stage a tarball of the buildpack, this runs on github actions to deploy CNB"
+  task :tarball do
+    tarballer = Tarballer.new(name: "heroku-buildpack-ruby", directory: __dir__)
+    tarballer.call
   end
 end
 
