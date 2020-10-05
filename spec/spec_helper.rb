@@ -7,6 +7,8 @@ require 'rspec/retry'
 require 'language_pack'
 require 'language_pack/shell_helpers'
 
+ENV["HATCHET_BUILDPACK_BASE"] = "https://github.com/heroku/heroku-buildpack-ruby"
+
 ENV['RACK_ENV'] = 'test'
 
 DEFAULT_STACK = 'heroku-18'

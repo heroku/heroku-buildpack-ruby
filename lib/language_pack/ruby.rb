@@ -231,13 +231,14 @@ WARNING
     end
   end
 
-
   # For example "vendor/bundle/ruby/2.6.0"
   def self.slug_vendor_base
-    command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
-    slug_vendor_base = run_no_pipe(command, user_env: true).chomp
-    error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
-    return slug_vendor_base
+    @slug_vendor_base ||= begin
+      command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
+      out = run_no_pipe(command, user_env: true).chomp
+      error "Problem detecting bundler vendor directory: #{out}" unless $?.success?
+      out
+    end
   end
 
   # the relative path to the bundler directory of gems
