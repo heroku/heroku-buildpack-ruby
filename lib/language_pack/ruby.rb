@@ -160,8 +160,8 @@ WARNING
       bundler.clean
       gem_layer.metadata[:gems] = Digest::SHA2.hexdigest(File.read("Gemfile.lock"))
       gem_layer.metadata[:stack] = @stack
-      gem_layer.metadata[:ruby_version] = run_stdout(%q(ruby -v)).chomp
-      gem_layer.metadata[:rubygems_version] = run_stdout(%q(gem -v)).chomp
+      gem_layer.metadata[:ruby_version] = run_stdout(%q(ruby -v)).strip
+      gem_layer.metadata[:rubygems_version] = run_stdout(%q(gem -v)).strip
       gem_layer.metadata[:buildpack_version] = BUILDPACK_VERSION
       gem_layer.write
 
@@ -217,7 +217,7 @@ private
   end
 
   def warn_bundler_upgrade
-    old_bundler_version  = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
+    old_bundler_version  = @metadata.read("bundler_version").strip if @metadata.exists?("bundler_version")
 
     if old_bundler_version && old_bundler_version != bundler.version
       warn(<<-WARNING, inline: true)
@@ -235,7 +235,7 @@ WARNING
   def self.slug_vendor_base
     @slug_vendor_base ||= begin
       command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
-      out = run_no_pipe(command, user_env: true).chomp
+      out = run_no_pipe(command, user_env: true).strip
       error "Problem detecting bundler vendor directory: #{out}" unless $?.success?
       out
     end
@@ -275,7 +275,7 @@ WARNING
       new_app           = !File.exist?("vendor/heroku")
       last_version_file = "buildpack_ruby_version"
       last_version      = nil
-      last_version      = @metadata.read(last_version_file).chomp if @metadata.exists?(last_version_file)
+      last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
 
       @ruby_version = LanguagePack::RubyVersion.new(bundler.ruby_version,
         is_new:       new_app,
@@ -360,7 +360,7 @@ EOF
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
-        ENV["JAVA_MEM"] = run(<<~SHELL).chomp
+        ENV["JAVA_MEM"] = run(<<~SHELL).strip
           #{set_jvm_max_heap}
           echo #{default_java_mem}
         SHELL
@@ -798,7 +798,7 @@ EOF
     instrument "ruby.load_default_cache" do
       if false # load_default_cache?
         puts "New app detected loading default bundler cache"
-        patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").chomp
+        patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").strip
         cache_name  = "#{LanguagePack::RubyVersion::DEFAULT_VERSION}-p#{patchlevel}-default-cache"
         @fetchers[:buildpack].fetch_untar("#{cache_name}.tgz")
       end
@@ -1017,7 +1017,7 @@ BUNDLE
   def syck_hack
     instrument "ruby.syck_hack" do
       syck_hack_file = File.expand_path(File.join(File.dirname(__FILE__), "../../vendor/syck_hack"))
-      rv             = run_stdout('ruby -e "puts RUBY_VERSION"').chomp
+      rv             = run_stdout('ruby -e "puts RUBY_VERSION"').strip
       # < 1.9.3 includes syck, so we need to use the syck hack
       if Gem::Version.new(rv) < Gem::Version.new("1.9.3")
         "-r#{syck_hack_file}"
@@ -1171,7 +1171,7 @@ params = CGI.parse(uri.query || "")
     return @node_preinstall_bin_path if defined?(@node_preinstall_bin_path)
 
     legacy_path = "#{Dir.pwd}/#{NODE_BP_PATH}"
-    path        = run("which node").chomp
+    path        = run("which node").strip
     if path && $?.success?
       @node_preinstall_bin_path = path
     elsif run("#{legacy_path}/node -v") && $?.success?
@@ -1195,7 +1195,7 @@ params = CGI.parse(uri.query || "")
   def yarn_preinstall_binary_path
     return @yarn_preinstall_binary_path if defined?(@yarn_preinstall_binary_path)
 
-    path = run("which yarn").chomp
+    path = run("which yarn").strip
     if path && $?.success?
       @yarn_preinstall_binary_path = path
     else
@@ -1252,8 +1252,8 @@ params = CGI.parse(uri.query || "")
   end
 
   def valid_bundler_cache?(path, metadata)
-    full_ruby_version       = run_stdout(%q(ruby -v)).chomp
-    rubygems_version        = run_stdout(%q(gem -v)).chomp
+    full_ruby_version       = run_stdout(%q(ruby -v)).strip
+    rubygems_version        = run_stdout(%q(gem -v)).strip
     old_rubygems_version    = nil
 
     old_rubygems_version = metadata[:ruby_version]
@@ -1291,7 +1291,7 @@ MESSAGE
     # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
     if (!metadata.include?(:rubygems_version) ||
         (old_rubygems_version == "2.0.0" && old_rubygems_version != rubygems_version)) &&
-      metadata.include?(:ruby_version) && metadata[:ruby_version].chomp.include?("ruby 2.0.0p0")
+      metadata.include?(:ruby_version) && metadata[:ruby_version].strip.include?("ruby 2.0.0p0")
       return [false, "Updating to rubygems #{rubygems_version}. Clearing bundler cache."]
     end
 
@@ -1329,8 +1329,8 @@ MESSAGE
     instrument "ruby.load_bundler_cache" do
       cache.load "vendor"
 
-      full_ruby_version       = run_stdout(%q(ruby -v)).chomp
-      rubygems_version        = run_stdout(%q(gem -v)).chomp
+      full_ruby_version       = run_stdout(%q(ruby -v)).strip
+      rubygems_version        = run_stdout(%q(gem -v)).strip
       heroku_metadata         = "vendor/heroku"
       old_rubygems_version    = nil
       ruby_version_cache      = "ruby_version"
@@ -1342,8 +1342,8 @@ MESSAGE
       # bundle clean does not remove binstubs
       FileUtils.rm_rf("vendor/bundler/bin")
 
-      old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
-      old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
+      old_rubygems_version = @metadata.read(ruby_version_cache).strip if @metadata.exists?(ruby_version_cache)
+      old_stack = @metadata.read(stack_cache).strip if @metadata.exists?(stack_cache)
       old_stack ||= DEFAULT_LEGACY_STACK
 
       stack_change  = old_stack != @stack
@@ -1366,9 +1366,9 @@ MESSAGE
       elsif !@metadata.include?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
         puts "Broken cache detected. Purging build cache."
         purge_bundler_cache
-      elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
+      elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).strip
         puts "Ruby version change detected. Clearing bundler cache."
-        puts "Old: #{@metadata.read(ruby_version_cache).chomp}"
+        puts "Old: #{@metadata.read(ruby_version_cache).strip}"
         puts "New: #{full_ruby_version}"
         purge_bundler_cache
       end
@@ -1382,7 +1382,7 @@ MESSAGE
       # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
       if (!@metadata.exists?(rubygems_version_cache) ||
           (old_rubygems_version == "2.0.0" && old_rubygems_version != rubygems_version)) &&
-          @metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).chomp.include?("ruby 2.0.0p0")
+          @metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).strip.include?("ruby 2.0.0p0")
         puts "Updating to rubygems #{rubygems_version}. Clearing bundler cache."
         purge_bundler_cache
       end
@@ -1403,7 +1403,7 @@ MESSAGE
 
       # recompile gems for libyaml 0.1.7 update
       if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 147 &&
-          (@metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).chomp.match(/ruby 2\.1\.(9|10)/) ||
+          (@metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).strip.match(/ruby 2\.1\.(9|10)/) ||
            bundler.has_gem?("psych")
           )
         puts "Need to recompile gems for CVE-2014-2014-9130. Clearing bundler cache."

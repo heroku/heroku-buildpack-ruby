@@ -61,7 +61,7 @@ FILE
 
     if schema_load.not_defined? && structure_load.not_defined?
       result = detect_schema_format
-      case result.lines.last.chomp
+      case result.lines.last.strip
       when "ruby"
         schema_load    = rake.task("db:schema:load")
       when "sql" # currently not a possible edge case, we think

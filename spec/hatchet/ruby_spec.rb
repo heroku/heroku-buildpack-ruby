@@ -118,7 +118,7 @@ describe "Ruby apps" do
       Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK, buildpacks: buildpacks, config: config).deploy do |app|
         expect(app.output).to match("cd version ruby 2.5.1")
 
-        expect(app.run("which ruby").chomp).to eq("/app/bin/ruby")
+        expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
       end
     end
   end
