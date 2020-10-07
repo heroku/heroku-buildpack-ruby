@@ -406,6 +406,11 @@ EOF
       ENV["PATH"] = paths.join(":")
 
       ENV["BUNDLE_WITHOUT"] = env("BUNDLE_WITHOUT") || bundle_default_without
+      if ENV["BUNDLE_WITHOUT"].include?(' ')
+        ENV["BUNDLE_WITHOUT"] = ENV["BUNDLE_WITHOUT"].tr(' ', ':')
+
+        warn("Your BUNDLE_WITHOUT contains a space, we are converting it to a colon `:` BUNDLE_WITHOUT=#{ENV["BUNDLE_WITHOUT"]}", inline: true)
+      end
       ENV["BUNDLE_PATH"] = bundle_path
       ENV["BUNDLE_BIN"] = bundler_binstubs_path
       ENV["BUNDLE_DEPLOYMENT"] = "1"
@@ -900,7 +905,7 @@ BUNDLE
         end
 
         bundle_command = String.new("")
-        bundle_command << "BUNDLE_WITHOUT=#{ENV["BUNDLE_WITHOUT"]} "
+        bundle_command << "BUNDLE_WITHOUT='#{ENV["BUNDLE_WITHOUT"]}' "
         bundle_command << "BUNDLE_PATH=#{ENV["BUNDLE_PATH"]} "
         bundle_command << "BUNDLE_BIN=#{ENV["BUNDLE_BIN"]} "
         bundle_command << "BUNDLE_DEPLOYMENT=#{ENV["BUNDLE_DEPLOYMENT"]} " if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock

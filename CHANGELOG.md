@@ -1,5 +1,7 @@
 # Main (unreleased)
 
+* BUNDLE_WITHOUT now accommodates values with single spaces (https://github.com/heroku/heroku-buildpack-ruby/pull/1083)
+
 ## v219 (8/6/2020)
 
 * Fix double installation of bundler on CI runs when no test script is specified (https://github.com/heroku/heroku-buildpack-ruby/pull/1073)
