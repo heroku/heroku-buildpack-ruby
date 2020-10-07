@@ -33,7 +33,7 @@ describe "Bundler" do
   end
 
   it "deploys with version 1.x" do
-    abi_version = LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER
+    abi_version = LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER.dup
     abi_version[-1] = "0" # turn 2.6.6 into 2.6.0
     pending("Must enable HATCHET_EXPENSIVE_MODE") unless ENV["HATCHET_EXPENSIVE_MODE"]
 
