@@ -51,7 +51,7 @@ class LanguagePack::Helpers::BinstubCheck
       For example bin/#{@bad_binstubs.first.basename} has the shebang line:
 
       ```
-      #{@bad_binstubs.first.open(&:readline).chomp}
+      #{@bad_binstubs.first.open(&:readline).strip}
       ```
 
       It should be:

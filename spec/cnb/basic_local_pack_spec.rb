@@ -27,13 +27,13 @@ class CnbRun
     return unless image_name
     repo_name, tag_name = image_name.split(":")
 
-    docker_list = `docker images --no-trunc | grep #{repo_name} | grep #{tag_name}`.chomp
+    docker_list = `docker images --no-trunc | grep #{repo_name} | grep #{tag_name}`.strip
     run_local!("docker rmi #{image_name} --force") if !docker_list.empty?
     @image_name = nil
   end
 
   def run(cmd)
-    `docker run #{image_name} '#{cmd}'`.chomp
+    `docker run #{image_name} '#{cmd}'`.strip
   end
 
   def run!(cmd)
