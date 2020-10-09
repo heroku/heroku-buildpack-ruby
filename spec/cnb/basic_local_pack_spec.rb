@@ -53,6 +53,8 @@ describe "cnb" do
   it "installs yarn" do
     CnbRun.new(hatchet_path("node/minimal_webpacker"), buildpack_paths: [buildpack_path]).call do |app|
 
+      run_out = app.run!("echo $PATH")
+
       run_out = app.run!("yarn -v")
       expect(run_out).to match(LanguagePack::Helpers::Nodebin.yarn["number"])
     end

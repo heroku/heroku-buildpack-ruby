@@ -112,13 +112,17 @@ WARNING
         build_bundler
         post_bundler
         create_database_yml
-        install_binaries
+        install_binaries(File.expand_path("vendor"))
         run_assets_precompile_rake_task
       end
       config_detect
       best_practice_warnings
       warn_outdated_ruby
-      setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
+      setup_profiled(
+        ruby_layer_path: "$HOME",
+        gem_layer_path: "$HOME",
+        vendor_binary_path: "$HOME/vendor"
+      ) # $HOME is set to /app at run time
       setup_export
       cleanup
       super
@@ -167,10 +171,17 @@ WARNING
 
       create_database_yml
       # TODO replace this with multibuildpack stuff? put binaries in their own layer?
-      install_binaries
+
+      vendor_binary_layer = Layer.new(@layer_dir, "vendor_binary", launch: true, cache: true, build: true)
+      install_binaries(vendor_binary_layer.path)
       run_assets_precompile_rake_task
+
+      setup_profiled(
+        ruby_layer_path: ruby_layer.path,
+        gem_layer_path: gem_layer.path,
+        vendor_binary_path: vendor_binary_layer.path
+      )
     end
-    setup_profiled(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
     setup_export(gem_layer)
     config_detect
     best_practice_warnings
@@ -458,7 +469,7 @@ EOF
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled(ruby_layer_path: , gem_layer_path: )
+  def setup_profiled(ruby_layer_path: , gem_layer_path: , vendor_binary_path: )
     instrument 'setup_profiled' do
       profiled_path = []
 
@@ -467,7 +478,7 @@ EOF
       if yarn_preinstalled?
         profiled_path << yarn_preinstall_bin_path.gsub(File.expand_path("."), "$HOME")
       elsif has_yarn_binary?
-        profiled_path << "#{ruby_layer_path}/vendor/#{@yarn_installer.binary_path}"
+        profiled_path << "#{vendor_binary_path}/#{@yarn_installer.binary_path}"
       end
       profiled_path << "$HOME/bin" # /app in production
       profiled_path << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
@@ -747,9 +758,9 @@ EOF
   end
 
   # vendors binaries into the slug
-  def install_binaries
+  def install_binaries(vendor_path)
     instrument 'ruby.install_binaries' do
-      binaries.each {|binary| install_binary(binary) }
+      binaries.each {|binary| install_binary(binary, vendor_path) }
       Dir["bin/*"].each {|path| run("chmod +x #{path}") }
     end
   end
@@ -757,12 +768,12 @@ EOF
   # vendors individual binary into the slug
   # @param [String] name of the binary package from S3.
   #   Example: https://s3.amazonaws.com/language-pack-ruby/node-0.4.7.tgz, where name is "node-0.4.7"
-  def install_binary(name)
+  def install_binary(name, vendor_path)
     topic "Installing #{name}"
     bin_dir = "bin"
     FileUtils.mkdir_p bin_dir
-    Dir.chdir(bin_dir) do |dir|
-      if name.match(/^node\-/)
+    if name.match(/^node\-/)
+      Dir.chdir(bin_dir) do |dir|
         @node_installer.install
         # need to set PATH here b/c `node-gyp` can change the CWD, but still depends on executing node.
         # the current PATH is relative, but it needs to be absolute for this.
@@ -770,14 +781,16 @@ EOF
         node_bin_path = File.absolute_path(".")
         # this needs to be set after so other binaries in bin/ don't take precedence"
         ENV["PATH"] = "#{ENV["PATH"]}:#{node_bin_path}"
-      elsif name.match(/^yarn\-/)
-        FileUtils.mkdir_p("../vendor")
-        Dir.chdir("../vendor") do |vendor_dir|
-          @yarn_installer.install
-          yarn_path = File.absolute_path("#{vendor_dir}/#{@yarn_installer.binary_path}")
-          ENV["PATH"] = "#{yarn_path}:#{ENV["PATH"]}"
-        end
-      else
+      end
+    elsif name.match(/^yarn\-/)
+      FileUtils.mkdir_p(vendor_path)
+      Dir.chdir(vendor_path) do |vendor_dir|
+        @yarn_installer.install
+        yarn_path = File.absolute_path("#{vendor_path}/#{@yarn_installer.binary_path}")
+        ENV["PATH"] = "#{yarn_path}:#{ENV["PATH"]}"
+      end
+    else
+      Dir.chdir(bin_dir) do |dir|
         @fetchers[:buildpack].fetch_untar("#{name}.tgz")
       end
     end
