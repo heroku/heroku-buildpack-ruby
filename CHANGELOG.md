@@ -1,5 +1,6 @@
 # Main (unreleased)
 
+* Fix bug preventing yarn from being accessed at runtime with CNB (https://github.com/heroku/heroku-buildpack-ruby/pull/1089)
 * Remove excessive Active Storage warnings (https://github.com/heroku/heroku-buildpack-ruby/pull/1087)
 
 ## v220 (8/7/2020)

@@ -22,6 +22,7 @@ class LanguagePack::Ruby
         post_bundler
         create_database_yml
         install_binaries
+        install_binaries(File.expand_path("vendor"))
         prepare_tests
       end
       setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
