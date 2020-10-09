@@ -50,6 +50,14 @@ class CnbRun
 end
 
 describe "cnb" do
+  it "installs yarn" do
+    CnbRun.new(hatchet_path("node/minimal_webpacker"), buildpack_paths: [buildpack_path]).call do |app|
+
+      run_out = app.run!("yarn -v")
+      expect(run_out).to match(LanguagePack::Helpers::Nodebin.yarn["number"])
+    end
+  end
+
   it "locally runs default_ruby app" do
     CnbRun.new(hatchet_path("rack/default_ruby"), buildpack_paths: [buildpack_path]).call do |app|
       expect(app.output).to match("Compiling Ruby/Rack")
