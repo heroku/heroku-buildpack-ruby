@@ -545,7 +545,7 @@ EOF
         Your current Ruby version no longer receives security updates from
         Ruby Core and may have serious vulnerabilities. While you will continue
         to be able to deploy on Heroku with this Ruby version you must upgrade
-        to a non-EOL version to be eligable to receive support.
+        to a non-EOL version to be eligible to receive support.
 
         Upgrade your Ruby version as soon as possible.
 
