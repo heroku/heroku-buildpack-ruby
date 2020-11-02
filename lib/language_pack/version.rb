@@ -2,6 +2,6 @@ require "language_pack/base"
 
 module LanguagePack
   class LanguagePack::Base
-    BUILDPACK_VERSION = "v221"
+    BUILDPACK_VERSION = "v222"
   end
 end
