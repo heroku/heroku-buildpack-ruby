@@ -37,7 +37,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   BLESSED_BUNDLER_VERSIONS = {}
   BLESSED_BUNDLER_VERSIONS["1"] = "1.17.3"
-  BLESSED_BUNDLER_VERSIONS["2"] = "2.0.2"
+  BLESSED_BUNDLER_VERSIONS["2"] = "2.1.4"
   BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m
 
   class GemfileParseError < BuildpackError
@@ -152,13 +152,20 @@ class LanguagePack::Helpers::BundlerWrapper
       if output.match(/No ruby version specified/)
         ""
       else
-        output.chomp.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
+        output.strip.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
       end
     end
   end
 
   def lockfile_parser
     @lockfile_parser ||= parse_gemfile_lock
+  end
+
+  # Some bundler versions have different behavior
+  # if config is global versus local. These versions need
+  # the environment variable BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=1
+  def needs_ruby_global_append_path?
+    Gem::Version.new(@version) < Gem::Version.new("2.1.4")
   end
 
   private
@@ -169,6 +176,14 @@ class LanguagePack::Helpers::BundlerWrapper
       topic("Installing bundler #{@version}")
       bundler_version_escape_valve!
 
+      # Install directory structure (as of Bundler 2.1.4):
+      # - cache
+      # - bin
+      # - gems
+      # - specifications
+      # - build_info
+      # - extensions
+      # - doc
       FileUtils.mkdir_p(bundler_path)
       Dir.chdir(bundler_path) do
         @fetcher.fetch_untar(@bundler_tar)

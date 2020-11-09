@@ -34,7 +34,7 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
 
     @app_secret ||= begin
       if @metadata.exists?(key)
-        @metadata.read(key).chomp
+        @metadata.read(key).strip
       else
         secret = SecureRandom.hex(64)
         @metadata.write(key, secret)

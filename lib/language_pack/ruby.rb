@@ -101,12 +101,16 @@ class LanguagePack::Ruby < LanguagePack::Base
       warn_bad_binstubs
       install_ruby(slug_vendor_ruby, build_ruby_path)
       install_jvm
-      setup_language_pack_environment(ruby_layer_path: File.expand_path("."), gem_layer_path: File.expand_path("."))
-      setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
+      setup_language_pack_environment(
+        ruby_layer_path: File.expand_path("."),
+        gem_layer_path: File.expand_path("."),
+        bundle_path: "vendor/bundle",
+        bundle_default_without: "development:test"
+      )
       allow_git do
         install_bundler_in_app(slug_vendor_base)
         load_bundler_cache
-        build_bundler(bundle_path: "vendor/bundle", default_bundle_without: "development:test")
+        build_bundler
         post_bundler
         create_database_yml
         install_binaries
@@ -115,6 +119,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       config_detect
       best_practice_warnings
       warn_outdated_ruby
+      setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
       setup_export
       cleanup
       super
@@ -137,9 +142,13 @@ class LanguagePack::Ruby < LanguagePack::Base
     ruby_layer.metadata[:engine_version] = ruby_version.engine_version
     ruby_layer.write
 
-    gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true)
-    setup_language_pack_environment(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
-    setup_profiled(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
+    gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true, build: true)
+    setup_language_pack_environment(
+      ruby_layer_path: ruby_layer.path,
+      gem_layer_path: gem_layer.path,
+      bundle_path: "#{gem_layer.path}/vendor/bundle",
+      bundle_default_without: "development:test"
+    )
     allow_git do
       # TODO install bundler in separate layer
       topic "Loading Bundler Cache"
@@ -147,13 +156,13 @@ class LanguagePack::Ruby < LanguagePack::Base
         valid_bundler_cache?(gem_layer.path, gem_layer.metadata)
       end
       install_bundler_in_app("#{gem_layer.path}/#{slug_vendor_base}")
-      build_bundler(bundle_path: "#{gem_layer.path}/vendor/bundle", default_bundle_without: "development:test")
+      build_bundler
       # TODO post_bundler might need to be done in a new layer
       bundler.clean
       gem_layer.metadata[:gems] = Digest::SHA2.hexdigest(File.read("Gemfile.lock"))
       gem_layer.metadata[:stack] = @stack
-      gem_layer.metadata[:ruby_version] = run_stdout(%q(ruby -v)).chomp
-      gem_layer.metadata[:rubygems_version] = run_stdout(%q(gem -v)).chomp
+      gem_layer.metadata[:ruby_version] = run_stdout(%q(ruby -v)).strip
+      gem_layer.metadata[:rubygems_version] = run_stdout(%q(gem -v)).strip
       gem_layer.metadata[:buildpack_version] = BUILDPACK_VERSION
       gem_layer.write
 
@@ -162,6 +171,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       install_binaries
       run_assets_precompile_rake_task
     end
+    setup_profiled(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
     setup_export(gem_layer)
     config_detect
     best_practice_warnings
@@ -208,7 +218,7 @@ private
   end
 
   def warn_bundler_upgrade
-    old_bundler_version  = @metadata.read("bundler_version").chomp if @metadata.exists?("bundler_version")
+    old_bundler_version  = @metadata.read("bundler_version").strip if @metadata.exists?("bundler_version")
 
     if old_bundler_version && old_bundler_version != bundler.version
       warn(<<-WARNING, inline: true)
@@ -224,10 +234,12 @@ WARNING
 
   # For example "vendor/bundle/ruby/2.6.0"
   def self.slug_vendor_base
-    command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
-    slug_vendor_base = run_no_pipe(command, user_env: true).chomp
-    error "Problem detecting bundler vendor directory: #{@slug_vendor_base}" unless $?.success?
-    return slug_vendor_base
+    @slug_vendor_base ||= begin
+      command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
+      out = run_no_pipe(command, user_env: true).strip
+      error "Problem detecting bundler vendor directory: #{out}" unless $?.success?
+      out
+    end
   end
 
   # the relative path to the bundler directory of gems
@@ -264,7 +276,7 @@ WARNING
       new_app           = !File.exist?("vendor/scalingo")
       last_version_file = "buildpack_ruby_version"
       last_version      = nil
-      last_version      = @metadata.read(last_version_file).chomp if @metadata.exists?(last_version_file)
+      last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
 
       @ruby_version = LanguagePack::RubyVersion.new(bundler.ruby_version,
         is_new:       new_app,
@@ -345,11 +357,11 @@ EOF
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(ruby_layer_path:, gem_layer_path:)
+  def setup_language_pack_environment(ruby_layer_path:, gem_layer_path:, bundle_path:, bundle_default_without:)
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
-        ENV["JAVA_MEM"] = run(<<~SHELL).chomp
+        ENV["JAVA_MEM"] = run(<<~SHELL).strip
           #{set_jvm_max_heap}
           echo #{default_java_mem}
         SHELL
@@ -393,6 +405,17 @@ EOF
       paths << ENV["PATH"]
 
       ENV["PATH"] = paths.join(":")
+
+      ENV["BUNDLE_WITHOUT"] = env("BUNDLE_WITHOUT") || bundle_default_without
+      if ENV["BUNDLE_WITHOUT"].include?(' ')
+        ENV["BUNDLE_WITHOUT"] = ENV["BUNDLE_WITHOUT"].tr(' ', ':')
+
+        warn("Your BUNDLE_WITHOUT contains a space, we are converting it to a colon `:` BUNDLE_WITHOUT=#{ENV["BUNDLE_WITHOUT"]}", inline: true)
+      end
+      ENV["BUNDLE_PATH"] = bundle_path
+      ENV["BUNDLE_BIN"] = bundler_binstubs_path
+      ENV["BUNDLE_DEPLOYMENT"] = "1"
+      ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"] = "1" if bundler.needs_ruby_global_append_path?
     end
   end
 
@@ -426,6 +449,12 @@ EOF
         set_export_default "JAVA_OPTS",  default_java_opts
         set_export_default "JRUBY_OPTS", default_jruby_opts
       end
+
+      set_export_default "BUNDLE_PATH", ENV["BUNDLE_PATH"], layer
+      set_export_default "BUNDLE_WITHOUT", ENV["BUNDLE_WITHOUT"], layer
+      set_export_default "BUNDLE_BIN", ENV["BUNDLE_BIN"], layer
+      set_export_default "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE", ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"], layer if bundler.needs_ruby_global_append_path?
+      set_export_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"], layer if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
     end
   end
 
@@ -461,6 +490,12 @@ EOF
         set_env_default "JAVA_OPTS", default_java_opts
         set_env_default "JRUBY_OPTS", default_jruby_opts
       end
+
+      set_env_default "BUNDLE_PATH", ENV["BUNDLE_PATH"]
+      set_env_default "BUNDLE_WITHOUT", ENV["BUNDLE_WITHOUT"]
+      set_env_default "BUNDLE_BIN", ENV["BUNDLE_BIN"]
+      set_env_default "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE", ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"] if bundler.needs_ruby_global_append_path?
+      set_env_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"] if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
     end
   end
 
@@ -761,7 +796,7 @@ EOF
     instrument "ruby.load_default_cache" do
       if false # load_default_cache?
         puts "New app detected loading default bundler cache"
-        patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").chomp
+        patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").strip
         cache_name  = "#{LanguagePack::RubyVersion::DEFAULT_VERSION}-p#{patchlevel}-default-cache"
         @fetchers[:buildpack].fetch_untar("#{cache_name}.tgz")
       end
@@ -840,44 +875,48 @@ BUNDLE
   end
 
   # runs bundler to install the dependencies
-  def build_bundler(bundle_path:, default_bundle_without:)
+  def build_bundler
     instrument 'ruby.build_bundler' do
       log("bundle") do
-        bundle_without = env("BUNDLE_WITHOUT") || default_bundle_without
-        bundle_bin     = "bundle"
-        bundle_command = "#{bundle_bin} install --without #{bundle_without} --path #{bundle_path} --binstubs #{bundler_binstubs_path}"
-        bundle_command << " -j4"
-
         if File.exist?("#{Dir.pwd}/.bundle/config")
-          warn(<<-WARNING, inline: true)
-You have the `.bundle/config` file checked into your repository
- It contains local state like the location of the installed bundle
- as well as configured git local gems, and other settings that should
-not be shared between multiple checkouts of a single repo. Please
-remove the `.bundle/` folder from your repo and add it to your `.gitignore` file.
-https://doc.scalingo.com/languages/ruby/bundle-configuration
-WARNING
+          warn(<<~WARNING, inline: true)
+            You have the `.bundle/config` file checked into your repository
+             It contains local state like the location of the installed bundle
+             as well as configured git local gems, and other settings that should
+            not be shared between multiple checkouts of a single repo. Please
+            remove the `.bundle/` folder from your repo and add it to your `.gitignore` file.
+
+            https://doc.scalingo.com/languages/ruby/bundle-configuration
+          WARNING
         end
 
         if bundler.windows_gemfile_lock?
-          warn(<<-WARNING, inline: true)
-Removing `Gemfile.lock` because it was generated on Windows.
-Bundler will do a full resolve so native gems are handled properly.
-This may result in unexpected gem versions being used in your app.
-In rare occasions Bundler may not be able to resolve your dependencies at all.
-https://doc.scalingo.com/languages/ruby/bundle-gemfile-on-windows
-WARNING
-
           log("bundle", "has_windows_gemfile_lock")
+
           File.unlink("Gemfile.lock")
-        else
-          # using --deployment is preferred if we can
-          bundle_command += " --deployment"
+          ENV.delete("BUNDLE_DEPLOYMENT")
+
+          warn(<<~WARNING, inline: true)
+            Removing `Gemfile.lock` because it was generated on Windows.
+            Bundler will do a full resolve so native gems are handled properly.
+            This may result in unexpected gem versions being used in your app.
+            In rare occasions Bundler may not be able to resolve your dependencies at all.
+
+            https://doc.scalingo.com/languages/ruby/bundle-gemfile-on-windows
+          WARNING
         end
+
+        bundle_command = String.new("")
+        bundle_command << "BUNDLE_WITHOUT='#{ENV["BUNDLE_WITHOUT"]}' "
+        bundle_command << "BUNDLE_PATH=#{ENV["BUNDLE_PATH"]} "
+        bundle_command << "BUNDLE_BIN=#{ENV["BUNDLE_BIN"]} "
+        bundle_command << "BUNDLE_DEPLOYMENT=#{ENV["BUNDLE_DEPLOYMENT"]} " if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
+        bundle_command << "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=#{ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"]} " if bundler.needs_ruby_global_append_path?
+        bundle_command << "bundle install -j4"
 
         topic("Installing dependencies using bundler #{bundler.version}")
 
-        bundler_output = ""
+        bundler_output = String.new("")
         bundle_time    = nil
         env_vars = {}
         Dir.mktmpdir("libyaml-") do |tmpdir|
@@ -919,9 +958,9 @@ WARNING
           instrument "ruby.bundle_clean" do
             # Only show bundle clean output when not using default cache
             if load_default_cache?
-              run("#{bundle_bin} clean > /dev/null", user_env: true, env: env_vars)
+              run("bundle clean > /dev/null", user_env: true, env: env_vars)
             else
-              pipe("#{bundle_bin} clean", out: "2> /dev/null", user_env: true, env: env_vars)
+              pipe("bundle clean", out: "2> /dev/null", user_env: true, env: env_vars)
             end
           end
           @bundler_cache.store
@@ -936,28 +975,28 @@ WARNING
           puts "Bundler Output: #{bundler_output}"
           if bundler_output.match(/An error occurred while installing sqlite3/)
             mcount "fail.sqlite3"
-            error_message += <<-ERROR
+            error_message += <<~ERROR
 
-Detected sqlite3 gem which is not supported on Scalingo.
-https://doc.scalingo.com/platform/databases/sqlite
+              Detected sqlite3 gem which is not supported on Scalingo:
+              https://doc.scalingo.com/platform/databases/sqlite
             ERROR
           end
 
           if bundler_output.match(/but your Gemfile specified/)
             mcount "fail.ruby_version_mismatch"
-            error_message += <<-ERROR
+            error_message += <<~ERROR
 
-Detected a mismatch between your Ruby version installed and
-Ruby version specified in Gemfile or Gemfile.lock. You can
-correct this by running:
+              Detected a mismatch between your Ruby version installed and
+              Ruby version specified in Gemfile or Gemfile.lock. You can
+              correct this by running:
 
-    $ bundle update --ruby
-    $ git add Gemfile.lock
-    $ git commit -m "update ruby version"
+                  $ bundle update --ruby
+                  $ git add Gemfile.lock
+                  $ git commit -m "update ruby version"
 
-If this does not solve the issue please see this documentation:
+              If this does not solve the issue please see this documentation:
 
-https://doc.scalingo.com/languages/ruby#gemfile-specified-x
+              https://doc.scalingo.com/languages/ruby#gemfile-specified-x
             ERROR
           end
 
@@ -981,7 +1020,7 @@ https://doc.scalingo.com/languages/ruby#gemfile-specified-x
   def syck_hack
     instrument "ruby.syck_hack" do
       syck_hack_file = File.expand_path(File.join(File.dirname(__FILE__), "../../vendor/syck_hack"))
-      rv             = run_stdout('ruby -e "puts RUBY_VERSION"').chomp
+      rv             = run_stdout('ruby -e "puts RUBY_VERSION"').strip
       # < 1.9.3 includes syck, so we need to use the syck hack
       if Gem::Version.new(rv) < Gem::Version.new("1.9.3")
         "-r#{syck_hack_file}"
@@ -1137,7 +1176,7 @@ params = CGI.parse(uri.query || "")
     return @node_preinstall_bin_path if defined?(@node_preinstall_bin_path)
 
     legacy_path = "#{Dir.pwd}/#{NODE_BP_PATH}"
-    path        = run("which node").chomp
+    path        = run("which node").strip
     if path && $?.success?
       @node_preinstall_bin_path = path
     elsif run("#{legacy_path}/node -v") && $?.success?
@@ -1161,7 +1200,7 @@ params = CGI.parse(uri.query || "")
   def yarn_preinstall_binary_path
     return @yarn_preinstall_binary_path if defined?(@yarn_preinstall_binary_path)
 
-    path = run("which yarn").chomp
+    path = run("which yarn").strip
     if path && $?.success?
       @yarn_preinstall_binary_path = path
     else
@@ -1218,8 +1257,8 @@ params = CGI.parse(uri.query || "")
   end
 
   def valid_bundler_cache?(path, metadata)
-    full_ruby_version       = run_stdout(%q(ruby -v)).chomp
-    rubygems_version        = run_stdout(%q(gem -v)).chomp
+    full_ruby_version       = run_stdout(%q(ruby -v)).strip
+    rubygems_version        = run_stdout(%q(gem -v)).strip
     old_rubygems_version    = nil
 
     old_rubygems_version = metadata[:ruby_version]
@@ -1257,7 +1296,7 @@ MESSAGE
     # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
     if (!metadata.include?(:rubygems_version) ||
         (old_rubygems_version == "2.0.0" && old_rubygems_version != rubygems_version)) &&
-      metadata.include?(:ruby_version) && metadata[:ruby_version].chomp.include?("ruby 2.0.0p0")
+      metadata.include?(:ruby_version) && metadata[:ruby_version].strip.include?("ruby 2.0.0p0")
       return [false, "Updating to rubygems #{rubygems_version}. Clearing bundler cache."]
     end
 
@@ -1295,9 +1334,9 @@ MESSAGE
     instrument "ruby.load_bundler_cache" do
       cache.load "vendor"
 
-      full_ruby_version       = run_stdout(%q(ruby -v)).chomp
-      rubygems_version        = run_stdout(%q(gem -v)).chomp
-      scalingo_metadata         = "vendor/scalingo"
+      full_ruby_version       = run_stdout(%q(ruby -v)).strip
+      rubygems_version        = run_stdout(%q(gem -v)).strip
+      scalingo_metadata       = "vendor/scalingo"
       old_rubygems_version    = nil
       ruby_version_cache      = "ruby_version"
       buildpack_version_cache = "buildpack_version"
@@ -1309,8 +1348,8 @@ MESSAGE
       # bundle clean does not remove binstubs
       FileUtils.rm_rf("vendor/bundler/bin")
 
-      old_rubygems_version = @metadata.read(ruby_version_cache).chomp if @metadata.exists?(ruby_version_cache)
-      old_stack = @metadata.read(stack_cache).chomp if @metadata.exists?(stack_cache)
+      old_rubygems_version = @metadata.read(ruby_version_cache).strip if @metadata.exists?(ruby_version_cache)
+      old_stack = @metadata.read(stack_cache).strip if @metadata.exists?(stack_cache)
       old_stack ||= DEFAULT_LEGACY_STACK
 
       stack_change  = old_stack != @stack
@@ -1333,9 +1372,9 @@ MESSAGE
       elsif !@metadata.include?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
         puts "Broken cache detected. Purging build cache."
         purge_bundler_cache
-      elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).chomp
+      elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).strip
         puts "Ruby version change detected. Clearing bundler cache."
-        puts "Old: #{@metadata.read(ruby_version_cache).chomp}"
+        puts "Old: #{@metadata.read(ruby_version_cache).strip}"
         puts "New: #{full_ruby_version}"
         purge_bundler_cache
       end
@@ -1349,7 +1388,7 @@ MESSAGE
       # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
       if (!@metadata.exists?(rubygems_version_cache) ||
           (old_rubygems_version == "2.0.0" && old_rubygems_version != rubygems_version)) &&
-          @metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).chomp.include?("ruby 2.0.0p0")
+          @metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).strip.include?("ruby 2.0.0p0")
         puts "Updating to rubygems #{rubygems_version}. Clearing bundler cache."
         purge_bundler_cache
       end
@@ -1370,7 +1409,7 @@ MESSAGE
 
       # recompile gems for libyaml 0.1.7 update
       if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 147 &&
-          (@metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).chomp.match(/ruby 2\.1\.(9|10)/) ||
+          (@metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).strip.match(/ruby 2\.1\.(9|10)/) ||
            bundler.has_gem?("psych")
           )
         puts "Need to recompile gems for CVE-2014-2014-9130. Clearing bundler cache."
