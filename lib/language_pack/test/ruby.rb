@@ -8,18 +8,23 @@ class LanguagePack::Ruby
       warn_bad_binstubs
       install_ruby(slug_vendor_ruby, build_ruby_path)
       install_jvm
-      setup_language_pack_environment(ruby_layer_path: File.expand_path("."), gem_layer_path: File.expand_path("."))
+      setup_language_pack_environment(
+        ruby_layer_path: File.expand_path("."),
+        gem_layer_path: File.expand_path("."),
+        bundle_path: "vendor/bundle",
+        bundle_default_without: "development"
+      )
       setup_export
-      setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
       allow_git do
         install_bundler_in_app(slug_vendor_base)
         load_bundler_cache
-        build_bundler(bundle_path: "vendor/bundle", default_bundle_without: "development")
+        build_bundler
         post_bundler
         create_database_yml
         install_binaries
         prepare_tests
       end
+      setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
       super
     end
   end

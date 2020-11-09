@@ -12,10 +12,10 @@ module LanguagePack
       end
     end
 
-    DEFAULT_VERSION_NUMBER = "2.6.6"
-    DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}"
-    LEGACY_VERSION_NUMBER  = "1.9.2"
-    LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}"
+    DEFAULT_VERSION_NUMBER = "2.6.6".freeze
+    DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
+    LEGACY_VERSION_NUMBER  = "1.9.2".freeze
+    LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}".freeze
     RUBY_VERSION_REGEX     = %r{
         (?<ruby_version>\d+\.\d+\.\d+){0}
         (?<patchlevel>p-?\d+){0}
