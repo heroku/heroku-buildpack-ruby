@@ -56,8 +56,16 @@ WARNING
     "public/assets"
   end
 
+  def public_webpacker_folder
+    "public/packs"
+  end
+
   def default_assets_cache
     "tmp/cache/assets"
+  end
+
+  def default_webpacker_cache
+    "tmp/cache/webpacker"
   end
 
   def cleanup
@@ -81,7 +89,9 @@ WARNING
         topic("Preparing app for Rails asset pipeline")
 
         @cache.load_without_overwrite public_assets_folder
+        @cache.load_without_overwrite public_webpacker_folder
         @cache.load default_assets_cache
+        @cache.load default_webpacker_cache
 
         precompile.invoke(env: rake_env)
 
@@ -97,6 +107,9 @@ WARNING
             cleanup_assets_cache
             @cache.store public_assets_folder
             @cache.store default_assets_cache
+
+            @cache.store public_webpacker_folder
+            @cache.store default_webpacker_cache
           end
         else
           precompile_fail(precompile.output)
@@ -108,6 +121,7 @@ WARNING
   def cleanup_assets_cache
     instrument "rails4.cleanup_assets_cache" do
       LanguagePack::Helpers::StaleFileCleaner.new(default_assets_cache).clean_over(ASSETS_CACHE_LIMIT)
+      LanguagePack::Helpers::StaleFileCleaner.new(default_webpacker_cache).clean_over(ASSETS_CACHE_LIMIT)
     end
   end
 end
