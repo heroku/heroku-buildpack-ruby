@@ -1,5 +1,7 @@
 # Main (unreleased)
 
+* Bundler 2.2.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/1104)
+
 ## v222 (11/02/2020)
 
 * CNB support for Heroku-20 (https://github.com/heroku/heroku-buildpack-ruby/pull/1096)
