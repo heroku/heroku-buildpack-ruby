@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe "Rails 5" do
   it "works" do
-    Hatchet::Runner.new("rails5").deploy do |app, heroku|
+    Hatchet::Runner.new("rails5", stack: "heroku-18").deploy do |app, heroku|
       # Test BUNDLE_DISABLE_VERSION_CHECK works
       expect(app.output).not_to include("The latest bundler is")
 
@@ -29,7 +29,12 @@ describe "Rails 5" do
   end
 
   it "blocks bads sprockets config with bad version" do
-    Hatchet::Runner.new("sprockets_asset_compile_true", allow_failure: true, config: {'HEROKU_DEBUG_RAILS_RUNNER' => 'true'}).deploy do |app, heroku|
+    Hatchet::Runner.new(
+      "sprockets_asset_compile_true",
+      stack: "heroku-18",
+      allow_failure: true,
+      config: {'HEROKU_DEBUG_RAILS_RUNNER' => 'true'}
+    ).deploy do |app, heroku|
       expect(app.output).to match("heroku.detecting.config.for.assets.compile=true")
       expect(app.output).to match('A security vulnerability has been detected')
       expect(app.output).to match('version "3.7.2"')

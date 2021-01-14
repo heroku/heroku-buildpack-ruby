@@ -1,45 +1,9 @@
 require_relative '../spec_helper'
 
 describe "Ruby Versions on cedar-14" do
-  it "should allow patchlevels" do
-    app = Hatchet::Runner.new('mri_193_p547', stack: "cedar-14")
-    app.deploy do |app|
-      version = '1.9.3p547'
-      expect(app.output).to match("ruby-1.9.3-p547")
-      expect(app.run('ruby -v')).to match(version)
-    end
-  end
-
-  it "should deploy ruby 1.9.2 properly" do
-    app = Hatchet::Runner.new('mri_192', stack: "cedar-14")
-    app.deploy do |app|
-      version = '1.9.2'
-      expect(app.output).to match(version)
-      expect(app.run('ruby -v')).to match(version)
-    end
-  end
-
-  it "should deploy ruby 1.9.3 properly" do
-    app = Hatchet::Runner.new('mri_193', stack: "cedar-14")
-    app.deploy do |app|
-      version = '1.9.3'
-      expect(app.output).to match(version)
-      expect(app.run('ruby -v')).to match(version)
-    end
-  end
-
-  it "should deploy ruby 2.0.0 properly" do
-    app = Hatchet::Runner.new('mri_200', stack: "cedar-14")
-    app.deploy do |app|
-      version = '2.0.0'
-      expect(app.output).to match(version)
-      expect(app.run('ruby -v')).to match(version)
-
-      expect(app.output).to match("devcenter.heroku.com/articles/ruby-default-web-server")
-    end
-  end
-
   it "should deploy jruby 1.7.16.1 (jdk 7) properly on cedar-14 with sys props file" do
+    pending("Port this to a more recent stack")
+
     app = Hatchet::Runner.new("ruby_193_jruby_17161_jdk7", stack: "cedar-14")
     app.deploy do |app|
       expect(app.output).to match("Installing JVM: openjdk-7")
