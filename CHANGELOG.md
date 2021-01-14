@@ -1,5 +1,7 @@
 # Main (unreleased)
 
+* Fix Gemfile.lock read bug from preventing propper removal of BUNDLED WITH declaration ()
+
 ## v222 (11/02/2020)
 
 * CNB support for Heroku-20 (https://github.com/heroku/heroku-buildpack-ruby/pull/1096)

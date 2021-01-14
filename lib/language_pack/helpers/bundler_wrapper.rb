@@ -168,6 +168,14 @@ class LanguagePack::Helpers::BundlerWrapper
     Gem::Version.new(@version) < Gem::Version.new("2.1.4")
   end
 
+  def bundler_version_escape_valve!
+    topic("Removing BUNDLED WITH version in the Gemfile.lock")
+    contents = File.read(@gemfile_lock_path, mode: "rt")
+    File.open(@gemfile_lock_path, "w") do |f|
+      f.write contents.sub(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m, '')
+    end
+  end
+
   private
   def fetch_bundler
     instrument 'fetch_bundler' do
@@ -222,11 +230,4 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  def bundler_version_escape_valve!
-    topic("Removing BUNDLED WITH version in the Gemfile.lock")
-    contents = File.read("Gemfile.lock")
-    File.open("Gemfile.lock", "w") do |f|
-      f.write contents.sub(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m, '')
-    end
-  end
 end
