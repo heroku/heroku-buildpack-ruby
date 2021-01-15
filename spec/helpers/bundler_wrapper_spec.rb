@@ -20,9 +20,24 @@ describe "BundlerWrapper" do
   end
 
   it "handles windows BUNDLED WITH" do
-    wrapper = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: fixture_path("windows_lockfile/Gemfile"))
+    Dir.mktmpdir do |dir|
+      tmp_dir = Pathname(dir)
+      FileUtils.cp_r(fixture_path("windows_lockfile/."), tmp_dir)
 
-    expect(wrapper.version).to eq(LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS["2"])
+      tmp_gemfile_path = tmp_dir.join("Gemfile")
+      tmp_gemfile_lock_path = tmp_dir.join("Gemfile.lock")
+
+      expect(tmp_gemfile_lock_path.read).to match("BUNDLED")
+
+      wrapper = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: tmp_gemfile_path )
+
+      expect(wrapper.version).to eq(LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS["2"])
+
+      def wrapper.topic(*args); end # Silence output in tests
+      wrapper.bundler_version_escape_valve!
+
+      expect(tmp_gemfile_lock_path.read).to_not match("BUNDLED")
+    end
   end
 
   it "detects windows gemfiles" do
