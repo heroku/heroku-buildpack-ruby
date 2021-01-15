@@ -16,7 +16,7 @@ describe "Bundler" do
     abi_version[-1] = "0" # turn 2.5.7 into 2.5.0
     pending("Must enable HATCHET_EXPENSIVE_MODE") unless ENV["HATCHET_EXPENSIVE_MODE"]
 
-    Hatchet::Runner.new("default_ruby", run_multi: true).tap do |app|
+    Hatchet::Runner.new("default_ruby", run_multi: true, stack: "heroku-18").tap do |app|
       app.before_deploy do
         run!(%Q{echo "ruby '#{ruby_version}'" >> Gemfile})
         run!(%Q{printf "\nBUNDLED WITH\n   2.0.1\n" >> Gemfile.lock})

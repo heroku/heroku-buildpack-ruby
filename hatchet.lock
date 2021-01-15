@@ -16,7 +16,7 @@
 - - "./repos/ci/activerecord_rake_tasks_does_not_exist"
   - a6b711be6921cf7a0aa4e31269c37965799ea110
 - - "./repos/ci/ci_fails_ruby_default_bundler"
-  - 43cbf196245957be6242b1e1bc56b8f1bfa00004
+  - a99cfbe3395bbd4539d5984b73d61771243b6208
 - - "./repos/ci/heroku-ci-json-example"
   - 4e5410a7381f486ba3df7739e02e52f32fdd4dda
 - - "./repos/ci/rails5_ruby_schema_format"
@@ -30,7 +30,7 @@
 - - "./repos/ci/ruby_no_rails_test"
   - 3916137106d59b008b67d738abe6a1438f8fbde6
 - - "./repos/heroku/ruby-getting-started"
-  - 9ddca7b694875499165eb56adffd3e29b38405c5
+  - c300328cd71f7a903fc2701b53ddc99af711b7e0
 - - "./repos/jruby/jruby_naether"
   - 4a11f8af5a3cca21f3659394e5bbac3cca9b6a2c
 - - "./repos/node/minimal_webpacker"
@@ -86,7 +86,7 @@
 - - "./repos/rails52/sprockets_asset_compile_true"
   - 98c6675cf97059278709cf75030e28063e0228d2
 - - "./repos/rails6/rails6-basic"
-  - b633fb14a58880bc21ccec4918af454fd5423843
+  - 3b404ac714a16877781b7bf69f1b8a308df6c92f
 - - "./repos/rake/asset_precompile_fail"
   - 16f7834331d6bb3fc5c284130b14eb1ff74d99d5
 - - "./repos/rake/asset_precompile_not_found"
