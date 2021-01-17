@@ -23,7 +23,6 @@ class LanguagePack::Rails6 < LanguagePack::Rails5
   end
 
   def restore_precompiled_assets
-    puts "Restoring #{node_modules_folder} & #{public_packs_folder}"
     @cache.load_without_overwrite node_modules_folder
     @cache.load_without_overwrite public_packs_folder
     super
