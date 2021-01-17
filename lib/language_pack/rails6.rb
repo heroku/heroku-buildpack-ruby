@@ -14,6 +14,20 @@ class LanguagePack::Rails6 < LanguagePack::Rails5
     end
   end
 
+  def public_packs_folder
+    "public/packs"
+  end
+
+  def restore_precompiled_assets
+    @cache.load_without_overwrite public_packs_folder
+    super
+  end
+
+  def save_precompiled_assets
+    @cache.store public_packs_folder
+    super
+  end
+
   def compile
     instrument "rails6.compile" do
       FileUtils.mkdir_p("tmp/pids")

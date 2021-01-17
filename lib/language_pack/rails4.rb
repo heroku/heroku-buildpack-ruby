@@ -67,6 +67,16 @@ WARNING
     FileUtils.remove_dir(default_assets_cache)
   end
 
+  def restore_precompiled_assets
+    @cache.load_without_overwrite public_assets_folder
+    @cache.load default_assets_cache
+  end
+
+  def save_precompiled_assets
+    @cache.store public_assets_folder
+    @cache.store default_assets_cache
+  end
+
   def run_assets_precompile_rake_task
     instrument "rails4.run_assets_precompile_rake_task" do
       log("assets_precompile") do
@@ -80,8 +90,7 @@ WARNING
 
         topic("Preparing app for Rails asset pipeline")
 
-        @cache.load_without_overwrite public_assets_folder
-        @cache.load default_assets_cache
+        restore_precompiled_assets
 
         precompile.invoke(env: rake_env)
 
@@ -95,8 +104,7 @@ WARNING
             clean_task.invoke(env: rake_env)
 
             cleanup_assets_cache
-            @cache.store public_assets_folder
-            @cache.store default_assets_cache
+            save_precompiled_assets
           end
         else
           precompile_fail(precompile.output)
