@@ -22,15 +22,21 @@ class LanguagePack::Rails6 < LanguagePack::Rails5
     "public/packs"
   end
 
+  def webpacker_cache_folder
+    "tmp/cache/webpacker"
+  end
+
   def restore_precompiled_assets
-    @cache.load node_modules_folder
     @cache.load_without_overwrite public_packs_folder
+    @cache.load node_modules_folder
+    @cache.load webpacker_cache_folder
     super
   end
 
   def save_precompiled_assets
-    @cache.store node_modules_folder
     @cache.store public_packs_folder
+    @cache.store node_modules_folder
+    @cache.store webpacker_cache_folder
     super
   end
 
