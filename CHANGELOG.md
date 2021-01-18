@@ -1,6 +1,7 @@
 # Main (unreleased)
 
 * Fix Gemfile.lock read bug from preventing propper removal of BUNDLED WITH declaration ()
+* Fail detection with a CNB-friendly exit code ()
 
 ## v222 (11/02/2020)
 
