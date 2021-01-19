@@ -16,5 +16,5 @@ if [ -f "$APP_DIR/Gemfile" ]; then
   exit 0
 else
   echo "no"
-  exit 1
+  exit 100
 fi
