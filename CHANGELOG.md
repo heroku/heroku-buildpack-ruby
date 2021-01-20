@@ -1,6 +1,7 @@
 # Main (unreleased)
 
-* Fix Gemfile.lock read bug from preventing propper removal of BUNDLED WITH declaration ()
+* Fix Gemfile.lock read bug from preventing propper removal of BUNDLED WITH declaration (https://github.com/heroku/heroku-buildpack-ruby/pull/1108)
+* Fail detection with a CNB-friendly exit code (https://github.com/heroku/heroku-buildpack-ruby/pull/1111)
 
 ## v222 (11/02/2020)
 
