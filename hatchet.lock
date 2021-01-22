@@ -45,8 +45,8 @@
   - 2e9ed455517c57b0dc953f54fbf9fef641c7aadb
 - - "./repos/rack/mri_200"
   - f9922cbd9c6f44fdded54912f66038db37cb4b8f
-- - "./repos/rails2/rails23_mri_193"
-  - 557f7ba7a9347ebe0dd2038dda7e7a97b2582525
+- - "./repos/rails2/rails_lts_23_default_ruby"
+  - 7178b2f97d3b2b3170b390d997dcb212dd52cd30
 - - "./repos/rails3/rails3-fail-assets-compile"
   - 0a2496b162fee373cbd484466abfcac1792510a1
 - - "./repos/rails3/rails3-fail-rakefile"

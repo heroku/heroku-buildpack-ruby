@@ -45,7 +45,7 @@
     "sharpstone/mri_200"
   ],
   "rails2": [
-    "sharpstone/rails23_mri_193"
+    "sharpstone/rails_lts_23_default_ruby"
   ],
   "rails3": [
     "sharpstone/rails3_mri_193",
