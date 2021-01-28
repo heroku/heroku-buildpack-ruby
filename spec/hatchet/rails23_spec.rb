@@ -1,11 +1,17 @@
 require_relative '../spec_helper'
 
 describe "Rails 2.3.x" do
-  it "should deploy on ruby 1.9.3 on cedar-14" do
-    pending("Rails LTS support")
+  it "should deploy" do
+    skip("Need RAILS_LTS_CREDS env var set") unless ENV["RAILS_LTS_CREDS"]
 
-    Hatchet::Runner.new('rails23_mri_193', stack: "cedar-14").deploy do |app|
-      # assert deploy is successful
+    Hatchet::Runner.new('rails_lts_23_default_ruby', config: rails_lts_config).tap do |app|
+      app.before_deploy do
+        Pathname("Gemfile").write("ruby '2.7.2'", mode: "a")
+      end
+
+      app.deploy do
+        # assert deploy is successful
+      end
     end
   end
 end

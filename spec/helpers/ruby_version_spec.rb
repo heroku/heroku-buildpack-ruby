@@ -38,18 +38,6 @@ describe "RubyVersion" do
     end
   end
 
-  it "correctly handles patch levels" do
-    Hatchet::App.new("mri_193_p547").in_directory_fork do |dir|
-      ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: true)
-      version_number = "1.9.3"
-      version        = "ruby-#{version_number}"
-      expect(ruby_version.version_without_patchlevel).to eq(version)
-      expect(ruby_version.patchlevel).to                 eq("p547")
-      expect(ruby_version.engine_version).to             eq(version_number)
-      expect(ruby_version.engine).to                     eq(:ruby)
-    end
-  end
-
   it "does not include patchlevels when the patchlevel is negative for download" do
     ruby_version = LanguagePack::RubyVersion.new("ruby-2.0.0-p-1")
     expect(ruby_version.version_for_download).to eq("ruby-2.0.0")

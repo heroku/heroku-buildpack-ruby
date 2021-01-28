@@ -66,12 +66,6 @@ describe "BundlerWrapper" do
       end
     end
 
-    it "handles MRI patchlevel gemfiles" do
-      Hatchet::App.new("mri_193_p547").in_directory_fork do |dir|
-        expect(@bundler.ruby_version).to eq("ruby-1.9.3-p547")
-      end
-    end
-
     it "handles app with output in their Gemfile" do
       Hatchet::App.new("problem_gemfile_version").in_directory_fork do |dir|
         run!(%{echo '\nputs "some output"\n' >> Gemfile})
