@@ -49,20 +49,10 @@
   - e2119af6ddd4bc21fda9bc7da6401e7aa256e38d
 - - "./repos/rails_versions/active_storage_non_local"
   - cba59b7559f1f806684b65654228d44fcda91a82
-- - "./repos/rails_versions/rails3-to-4-no-bin"
-  - 3fd6e84f5d8eaaadb6d95aeb1f367f62da28cc62
 - - "./repos/rails_versions/rails3_default_ruby"
   - a6b44db674c0d3538633989295e2cfd5e8e1ba0d
-- - "./repos/rails_versions/rails4-fail-assets-compile"
-  - 7f65fbb04ca49be526906a1b0d9155cd24941b8e
-- - "./repos/rails_versions/rails4-manifest"
-  - b700f4683f601f102ab4b65a7e5052e40f2b4def
-- - "./repos/rails_versions/rails41_scaffold"
-  - d98e9ccee771b3745f1ab1936a697a05229392df
-- - "./repos/rails_versions/rails42_scaffold"
-  - 5da1259651bf29b80af2bb27789422def02be5a8
-- - "./repos/rails_versions/rails42_sprockets3_manifest"
-  - 4ea4b080599b4394bdf6753a7b392d9ed6b844a7
+- - "./repos/rails_versions/rails42_default_ruby"
+  - dfa0f0133dafa62064968ea2efb6432f54350138
 - - "./repos/rails_versions/rails4_windows_mri193"
   - f4c7b6209835050468bbb87827acf652b8f4d8ce
 - - "./repos/rails_versions/rails5"
