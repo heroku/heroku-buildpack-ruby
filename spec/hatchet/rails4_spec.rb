@@ -19,7 +19,6 @@ describe "Rails 4.x" do
     end
   end
 
-  # before_deploy, add manifest file
   it "should skip asset compilation when deployed with NEW manifest file" do
     skip("Need RAILS_LTS_CREDS env var set") unless ENV["RAILS_LTS_CREDS"]
 

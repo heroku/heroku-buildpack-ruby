@@ -6,7 +6,7 @@ describe "Rails 2.3.x" do
 
     Hatchet::Runner.new('rails_lts_23_default_ruby', config: rails_lts_config).tap do |app|
       app.before_deploy do
-        File.open("Gemfile", mode: "a") {|f| f.puts "ruby '2.6.6'" }
+        Pathname("Gemfile").write("ruby '2.7.2'", mode: "a")
       end
 
       app.deploy do
