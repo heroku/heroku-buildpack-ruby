@@ -1,6 +1,7 @@
 require "fileutils"
 require "language_pack"
 require "language_pack/rack"
+require "language_pack/helpers/rails_bootcheck"
 
 # Rails 2 Language Pack. This is for any Rails 2.x apps.
 class LanguagePack::Rails2 < LanguagePack::Ruby
@@ -19,6 +20,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   def initialize(*args)
     super(*args)
     @rails_runner = LanguagePack::Helpers::RailsRunner.new
+    @bootcheck = LanguagePack::Helpers::RailsBootcheck.new
   end
 
   def name
@@ -29,7 +31,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     {
       "RAILS_ENV" => "production",
       "RACK_ENV" => "production"
-    }
+    }.merge(bootcheck_env_vars)
   end
 
   def default_config_vars
@@ -60,6 +62,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     instrument "rails2.compile" do
       install_plugins
       super
+      @bootcheck.call
     end
   end
 
@@ -106,4 +109,11 @@ private
     end
   end
 
+  def bootcheck_env_vars
+    value = env("HEROKU_RAILS_BOOTCHECK_ENABLE")
+
+    return {} unless value || new_app?
+
+    { "HEROKU_RAILS_BOOTCHECK_ENABLE" => value || "1" }
+  end
 end
