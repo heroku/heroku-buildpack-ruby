@@ -42,34 +42,44 @@ describe "BundlerWrapper" do
 
   it "detects windows gemfiles" do
     Hatchet::App.new("rails4_windows_mri193").in_directory_fork do |dir|
-      expect(@bundler.install.windows_gemfile_lock?).to be_truthy
+      Bundler.with_unbundled_env do
+        expect(@bundler.install.windows_gemfile_lock?).to be_truthy
+      end
     end
   end
 
   describe "when executing bundler" do
-    before do
-      @bundler.install
-    end
-
     it "handles apps with ruby versions locked in Gemfile.lock" do
       Hatchet::App.new("problem_gemfile_version").in_directory_fork do |dir|
-        expect(@bundler.ruby_version).to eq("ruby-2.5.1-p0")
+        Bundler.with_unbundled_env do
+          @bundler.install
 
-        ruby_version = LanguagePack::RubyVersion.new(@bundler.ruby_version, is_new: true)
-        expect(ruby_version.version_for_download).to eq("ruby-2.5.1")
+          expect(@bundler.ruby_version).to eq("ruby-2.5.1-p0")
+
+          ruby_version = LanguagePack::RubyVersion.new(@bundler.ruby_version, is_new: true)
+          expect(ruby_version.version_for_download).to eq("ruby-2.5.1")
+        end
       end
     end
 
     it "handles JRuby pre gemfiles" do
       Hatchet::App.new("jruby-minimal").in_directory_fork do |dir|
-        expect(@bundler.ruby_version).to eq("ruby-2.3.1-p0-jruby-9.1.7.0")
+        Bundler.with_unbundled_env do
+          @bundler.install
+
+          expect(@bundler.ruby_version).to eq("ruby-2.3.1-p0-jruby-9.1.7.0")
+        end
       end
     end
 
     it "handles app with output in their Gemfile" do
       Hatchet::App.new("problem_gemfile_version").in_directory_fork do |dir|
-        run!(%{echo '\nputs "some output"\n' >> Gemfile})
-        expect(@bundler.ruby_version).to eq("ruby-2.5.1-p0")
+        Bundler.with_unbundled_env do
+          @bundler.install
+
+          run!(%{echo '\nputs "some output"\n' >> Gemfile})
+          expect(@bundler.ruby_version).to eq("ruby-2.5.1-p0")
+        end
       end
     end
   end
