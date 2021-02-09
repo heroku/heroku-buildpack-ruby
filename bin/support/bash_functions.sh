@@ -85,24 +85,28 @@ detect_needs_java()
 #
 compile_buildpack_v2()
 {
-  # BUILD_DIR=$1
-  # CACHE_DIR=$2
-  # ENV_DIR=$3
-  BUILDPACK=$4
-  NAME=$5
+  local build_dir=$1
+  local cache_dir=$2
+  local env_dir=$3
+  local buildpack=$4
+  local name=$5
+
+  local dir
+  local url
+  local branch
 
   dir=$(mktemp -t buildpackXXXXX)
   rm -rf "$dir"
 
-  url=${BUILDPACK%#*}
-  branch=${BUILDPACK#*#}
+  url=${buildpack%#*}
+  branch=${buildpack#*#}
 
   if [ "$branch" == "$url" ]; then
     branch=""
   fi
 
   if [ "$url" != "" ]; then
-    echo "-----> Downloading Buildpack: ${NAME}"
+    echo "-----> Downloading Buildpack: ${name}"
 
     if [[ "$url" =~ \.tgz$ ]] || [[ "$url" =~ \.tgz\? ]]; then
       mkdir -p "$dir"
@@ -119,12 +123,12 @@ compile_buildpack_v2()
     # we'll get errors later if these are needed and don't exist
     chmod -f +x "$dir/bin/{detect,compile,release}" || true
 
-    framework=$("$dir"/bin/detect "$1")
+    framework=$("$dir"/bin/detect "$build_dir")
 
     # shellcheck disable=SC2181
     if [ $? == 0 ]; then
       echo "-----> Detected Framework: $framework"
-      "$dir"/bin/compile "$1" "$2" "$3"
+      "$dir"/bin/compile "$build_dir" "$cache_dir" "$env_dir"
 
       # shellcheck disable=SC2181
       if [ $? != 0 ]; then
@@ -140,7 +144,7 @@ compile_buildpack_v2()
       fi
 
       if [ -x "$dir/bin/release" ]; then
-        "$dir"/bin/release "$1" > "$1"/last_pack_release.out
+        "$dir"/bin/release "$build_dir" > "$1"/last_pack_release.out
       fi
     else
       echo "Couldn't detect any framework for this buildpack. Exiting."
