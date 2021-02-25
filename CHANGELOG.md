@@ -1,5 +1,7 @@
 # Main (unreleased)
 
+* Bundler 2.x is now 2.2.11 (https://github.com/heroku/heroku-buildpack-ruby/pull/1132)
+
 ## v224 (2/25/2021)
 
 * Ruby buildpack now relies on the JVM buildpack to install java for Jruby apps (https://github.com/heroku/heroku-buildpack-ruby/pull/1119)
