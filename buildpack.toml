@@ -17,9 +17,6 @@ ruby_version = "2.6.6"
   dir = "."
   files = ["./.env"]
   [[publish.Vendor]]
-  url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/cedar-14/ruby-2.6.6.tgz"
-  dir = "vendor/ruby/cedar-14"
-  [[publish.Vendor]]
   url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-16/ruby-2.6.6.tgz"
   dir = "vendor/ruby/heroku-16"
   [[publish.Vendor]]
