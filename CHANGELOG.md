@@ -1,5 +1,13 @@
 # Main (unreleased)
 
+## v225 (2/25/2021)
+
+* Bundler 2.x is now 2.2.11 (https://github.com/heroku/heroku-buildpack-ruby/pull/1132)
+
+## v224 (2/24/2021)
+
+* Ruby buildpack now relies on the JVM buildpack to install java for Jruby apps (https://github.com/heroku/heroku-buildpack-ruby/pull/1119)
+
 ## v223 (1/22/2021)
 
 * Fix Gemfile.lock read bug from preventing propper removal of BUNDLED WITH declaration (https://github.com/heroku/heroku-buildpack-ruby/pull/1108)

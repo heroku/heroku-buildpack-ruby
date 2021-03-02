@@ -13,19 +13,45 @@ describe "Ruby Versions on cedar-14" do
 end
 
 describe "Ruby versions" do
-  it "should deploy jdk 8 on heroku-18  by default" do
-    app = Hatchet::Runner.new("ruby_193_jruby_1_7_27", stack: "heroku-18")
-    app.deploy do |app|
-      expect(app.output).to match("Installing JVM: openjdk-8")
-      expect(app.output).to match("JRUBY_OPTS is:  -Xcompile.invokedynamic=false")
-      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
+  it "should deploy jdk on heroku-20" do
+    Hatchet::Runner.new("default_ruby", stack: "heroku-20").tap do |app|
+      app.before_deploy do |app|
+        Pathname("Gemfile.lock").write(<<~EOM)
+         GEM
+           remote: https://rubygems.org/
+           specs:
+             rack (2.2.2)
+             rake (13.0.1)
 
-      run!('git commit -am "redeploy" --allow-empty')
-      app.set_config("JRUBY_BUILD_OPTS" => "--dev")
-      app.push!
-      expect(app.output).to match("JRUBY_OPTS is:  --dev")
+         PLATFORMS
+           java
 
-      expect(app.run("ls vendor/jvm/jre/lib/ext")).to match("pgconfig.jar")
+         DEPENDENCIES
+           rack
+           rake
+
+
+         RUBY VERSION
+            ruby 2.5.7p0 (jruby 9.2.13.0)
+        EOM
+
+        Pathname("Rakefile").write(<<~'EOM')
+          task "assets:precompile" do
+            puts "JRUBY_OPTS is: #{ENV['JRUBY_OPTS']}"
+          end
+        EOM
+      end
+
+      app.deploy do
+        expect(app.output).to match("JRUBY_OPTS is: -Xcompile.invokedynamic=false")
+
+        app.set_config("JRUBY_BUILD_OPTS" => "--dev")
+        app.commit!
+        app.push!
+        expect(app.output).to match("JRUBY_OPTS is: --dev")
+
+        expect(app.run("ls .jdk/jre/lib/ext/")).to match("pgconfig.jar")
+      end
     end
   end
 

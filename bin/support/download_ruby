@@ -41,6 +41,8 @@ cat<<EOF
   This is most likely a temporary internal error. If the problem
   persists, make sure that you are not running a custom or forked
   version of the Heroku Ruby buildpack which may need updating.
+
+  url: $heroku_buildpack_ruby_url
 EOF
   exit 1
 }

@@ -80,3 +80,7 @@ end
 def web_boot_status(app)
   wait_for_dyno_boot(app)["state"]
 end
+
+def root_dir
+  Pathname(__dir__).join("..")
+end

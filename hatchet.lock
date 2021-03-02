@@ -95,8 +95,6 @@
   - a08e8b2cc61d08bd611accaa455dbcbfff80f831
 - - "./repos/ruby/ruby_193_jruby_176"
   - 9fcbc184cb386abc8784e9935d52d403e35c532c
-- - "./repos/ruby/ruby_193_jruby_1_7_27"
-  - 06d5e86180ff0e5b6894f823736cd649dcfebed4
 - - "./repos/ruby/ruby_25"
   - 0cb3df80d55b61e9417f2ac00adb06e15ae37982
 - - "./repos/ruby/ruby_version_does_not_exist"
