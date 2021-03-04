@@ -1,0 +1,69 @@
+name: Release Buildpack
+on:
+  workflow_dispatch:
+    inputs:
+      requested_buildpack_id:
+        description: "Buildpack ID"
+        required: true
+
+jobs:
+  release:
+    name: Release ${{ github.event.inputs.requested_buildpack_id }}
+    runs-on: ubuntu-20.04 # ubuntu-latest currently resolves to 18.04 which does not have aws-cli 2.x yet
+    env:
+      REQUESTED_BUILDPACK_ID: ${{ github.event.inputs.requested_buildpack_id }}
+    steps:
+      - id: checkout
+        name: "Checkout code"
+        uses: actions/checkout@v2
+      - id: setup-pack
+        name: "Setup pack"
+        uses: buildpacks/github-actions/setup-pack@v4.0.0
+      - id: login
+        name: "Login to public ECR"
+        uses: docker/login-action@v1
+        with:
+          registry: public.ecr.aws
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        env:
+          AWS_REGION: us-east-1
+      - id: package
+        name: "Package buildpack and publish to container registry"
+        run: ./.github/scripts/release-workflow-package-push.sh
+        shell: bash
+      - id: add-registry-entry
+        name: "Request Registry Entry"
+        uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:4.0.0
+        with:
+          token: ${{ secrets.PUBLIC_REPO_TOKEN }}
+          id: ${{ steps.package.outputs.id }}
+          version: ${{ steps.package.outputs.version }}
+          address: ${{ steps.package.outputs.address }}
+      - id: create_release
+        name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.package.outputs.id }}_${{ steps.package.outputs.version }}
+          release_name: ${{ steps.package.outputs.id }} ${{ steps.package.outputs.version }}
+          body: |
+            Find the changelog here: [CHANGELOG](${{ steps.package.outputs.path }}/CHANGELOG.md)
+            Docker: `docker pull ${{ steps.package.outputs.address }}`
+          draft: false
+          prerelease: false
+      - id: prepare-pr
+        name: "Prepare PR with version bumps and CHANGELOG updates"
+        run: ./.github/scripts/release-workflow-prepare-pr.sh "${{ steps.package.outputs.id }}" "${{ steps.package.outputs.version }}" "docker://${{ steps.package.outputs.address }}"
+        shell: bash
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: "Post-release updates: ${{ steps.package.outputs.id }} ${{ steps.package.outputs.version }}"
+          commit-message: "Post-release updates: ${{ steps.package.outputs.id }} ${{ steps.package.outputs.version }}"
+          branch-suffix: "random"
+          labels: "automation"
+          body: |
+            Automated pull-request to update buildpack versions and changelogs
+            after releasing version `${{ steps.package.outputs.version }}` of `${{ steps.package.outputs.id }}`.
