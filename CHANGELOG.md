@@ -1,5 +1,7 @@
 # Main (unreleased)
 
+* Bundler 2.x is now 2.2.12 (https://github.com/heroku/heroku-buildpack-ruby/pull/1140)
+
 ## v225 (2/25/2021)
 
 * Bundler 2.x is now 2.2.11 (https://github.com/heroku/heroku-buildpack-ruby/pull/1132)
