@@ -39,4 +39,4 @@ id = "heroku-20"
 [metadata.release]
 
 [metadata.release.docker]
-repository = "public.ecr.aws/r2f9u0w4/heroku-ruby-buildpack"
+repository = "public.ecr.aws/heroku-buildpacks/heroku-ruby-buildpack"
