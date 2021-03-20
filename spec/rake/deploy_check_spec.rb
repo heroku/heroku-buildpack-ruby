@@ -4,9 +4,18 @@ require "rake/deploy_check"
 describe "A helper class for deploying" do
   describe "tests that hit github" do
     it "know remote tags" do
-      deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby")
-      expect(deploy.remote_tag_array.class).to eq(Array)
-      expect(deploy.remote_tag_array).to include("v218")
+      Dir.mktmpdir do |dir|
+        Dir.chdir(dir) do
+          run!("touch foo; git init; git add .; git commit -m first")
+
+          deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby")
+          expect(deploy.remote_tag_array.class).to eq(Array)
+          expect(deploy.remote_tag_array).to include("v218")
+
+          expect(deploy.remote_tag_matches?(local_sha: "nope")).to be_falsey
+          expect(deploy.remote_tag_matches?(remote_sha: "nope")).to be_falsey
+        end
+      end
     end
 
     it "remote sha" do

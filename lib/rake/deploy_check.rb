@@ -48,7 +48,7 @@ class DeployCheck
   end
 
   # Returns a truthy value if the remote tag SHA matches the current local sha
-  def remote_tag_matches?(remote_sha: remote_commit_sha(next_version), local_sha: local_commit)
+  def remote_tag_matches?(remote_sha: remote_commit_sha(next_version), local_sha: local_commit_sha)
     remote_sha == local_sha
   end
 
@@ -125,7 +125,7 @@ class DeployCheck
     if block_given?
       yield out, $?
     else
-      raise "Command #{cmd} expected to return successfully did not: #{out}"
+      raise "Command #{cmd} expected to return successfully did not: #{out.inspect}"
     end
   end
 end
