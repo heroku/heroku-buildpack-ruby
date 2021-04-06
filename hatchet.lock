@@ -26,7 +26,7 @@
 - - "./repos/ci/ruby_no_rails_test"
   - 3916137106d59b008b67d738abe6a1438f8fbde6
 - - "./repos/heroku/ruby-getting-started"
-  - c300328cd71f7a903fc2701b53ddc99af711b7e0
+  - main
 - - "./repos/jruby/jruby_naether"
   - 4a11f8af5a3cca21f3659394e5bbac3cca9b6a2c
 - - "./repos/node/minimal_webpacker"
@@ -42,9 +42,9 @@
 - - "./repos/rack/mri_200"
   - f9922cbd9c6f44fdded54912f66038db37cb4b8f
 - - "./repos/rails_versions/active_storage_local"
-  - e2119af6ddd4bc21fda9bc7da6401e7aa256e38d
+  - 18853ba7dda61745995740b4ca6f5f90bbd8afba
 - - "./repos/rails_versions/active_storage_non_local"
-  - cba59b7559f1f806684b65654228d44fcda91a82
+  - 86dddf0127043abba1cb2890590a1d38f111edbd
 - - "./repos/rails_versions/rails3_default_ruby"
   - a6b44db674c0d3538633989295e2cfd5e8e1ba0d
 - - "./repos/rails_versions/rails42_default_ruby"
@@ -56,11 +56,11 @@
 - - "./repos/rails_versions/rails51_webpacker"
   - 75c5c4f21b1d88fc3b8edf60b3f871df3ad70208
 - - "./repos/rails_versions/rails6-basic"
-  - 3b404ac714a16877781b7bf69f1b8a308df6c92f
+  - 6b81e0246c64c332181c22ace4ac96b57309cb85
 - - "./repos/rails_versions/rails_lts_23_default_ruby"
   - 7178b2f97d3b2b3170b390d997dcb212dd52cd30
 - - "./repos/rails_versions/sprockets_asset_compile_true"
-  - 98c6675cf97059278709cf75030e28063e0228d2
+  - 6f3aa208046a5c79e84fc272f52f5ebb7b775755
 - - "./repos/rake/asset_precompile_fail"
   - 16f7834331d6bb3fc5c284130b14eb1ff74d99d5
 - - "./repos/rake/asset_precompile_not_found"
