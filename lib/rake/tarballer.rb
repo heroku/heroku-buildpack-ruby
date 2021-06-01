@@ -12,7 +12,7 @@ require "language_pack/version"
 # In addition to TAR logic it also vendors ruby versions so
 # they don't need to be pulled at runtime
 class Tarballer
-  STACKS = %W{cedar-14 heroku-16 heroku-18}
+  STACKS = %W{heroku-18 heroku-20}
 
   def initialize(name: , directory: , io: STDOUT)
     @name = name

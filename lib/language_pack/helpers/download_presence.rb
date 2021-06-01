@@ -8,7 +8,7 @@
 #
 #    download = LanguagePack::Helpers::DownloadPresence.new(
 #      'ruby-1.9.3.tgz',
-#      stacks: ['cedar-14', 'heroku-16', 'heroku-18', 'heroku-20']
+#      stacks: ['heroku-18', 'heroku-20']
 #    )
 #
 #    download.call
@@ -16,7 +16,7 @@
 #    puts download.exists? #=> true
 #    puts download.valid_stack_list #=> ['cedar-14']
 class LanguagePack::Helpers::DownloadPresence
-  STACKS = ['cedar-14', 'heroku-16', 'heroku-18', 'heroku-20']
+  STACKS = ['heroku-18', 'heroku-20']
 
   def initialize(path, stacks: STACKS)
     @path = path

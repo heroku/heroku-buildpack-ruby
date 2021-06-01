@@ -7,7 +7,7 @@
 #   ruby_version = LanguagePack::RubyVersion.new("ruby-2.2.5")
 #   outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
 #     current_ruby_version: ruby_version,
-#     fetcher: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, "heroku-16")
+#     fetcher: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, "heroku-20")
 #   )
 #
 #   outdated.call
