@@ -203,15 +203,6 @@ private
     return false
   end
 
-  def stack_not_14_not_16?
-    case stack
-    when "cedar-14", "heroku-16"
-      return false
-    else
-      return true
-    end
-  end
-
   def warn_bundler_upgrade
     old_bundler_version  = @metadata.read("bundler_version").strip if @metadata.exists?("bundler_version")
 
@@ -608,7 +599,7 @@ EOF
           On Heroku CI you can set your stack in the `app.json`. For example:
 
           ```
-          "stack": "heroku-16"
+          "stack": "heroku-20"
           ```
         ERROR
       end
@@ -730,19 +721,6 @@ EOF
     end
   end
 
-  # install libyaml into the LP to be referenced for psych compilation
-  # @param [String] tmpdir to store the libyaml files
-  def install_libyaml(dir)
-    return false if stack_not_14_not_16?
-
-    instrument 'ruby.install_libyaml' do
-      FileUtils.mkdir_p dir
-      Dir.chdir(dir) do
-        @fetchers[:buildpack].fetch_untar("#{@stack}/#{LIBYAML_PATH}.tgz")
-      end
-    end
-  end
-
   # remove `vendor/bundle` that comes from the git repo
   # in case there are native ext.
   # users should be using `bundle pack` instead.
@@ -844,7 +822,6 @@ BUNDLE
         env_vars = {}
         Dir.mktmpdir("libyaml-") do |tmpdir|
           libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
-          install_libyaml(libyaml_dir)
 
           # need to setup compile environment for the psych gem
           yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
