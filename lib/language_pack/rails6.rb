@@ -1,8 +1,8 @@
 require 'securerandom'
 require "language_pack"
-require "language_pack/rails5"
+require "language_pack/rails51"
 
-class LanguagePack::Rails6 < LanguagePack::Rails5
+class LanguagePack::Rails6 < LanguagePack::Rails51
   # @return [Boolean] true if it's a Rails 6.x app
   def self.use?
     instrument "rails6.use" do
