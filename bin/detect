@@ -14,6 +14,9 @@ fi
 if [ -f "$APP_DIR/Gemfile" ]; then
   echo "Ruby"
   exit 0
+elif [ -f "$APP_DIR/gems.rb" ]; then
+  echo "Ruby"
+  exit 0
 else
   echo "no"
   exit 100
