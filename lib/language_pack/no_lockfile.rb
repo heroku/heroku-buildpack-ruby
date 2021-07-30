@@ -3,7 +3,8 @@ require "language_pack/ruby"
 
 class LanguagePack::NoLockfile < LanguagePack::Ruby
   def self.use?
-    !File.exists?("Gemfile.lock")
+    !File.exist?("Gemfile.lock") &&
+    !File.exist?("gems.locked")
   end
 
   def name
@@ -11,6 +12,6 @@ class LanguagePack::NoLockfile < LanguagePack::Ruby
   end
 
   def compile
-    error "Gemfile.lock required. Please check it in."
+    error "'Gemfile.lock' or 'gems.locked' required. Please check it in."
   end
 end
