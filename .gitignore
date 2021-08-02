@@ -8,3 +8,4 @@ buildpacks/*
 .anvil/
 tmp/*.log
 log/*.log
+spec/examples.txt
