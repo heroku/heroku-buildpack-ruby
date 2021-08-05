@@ -7,7 +7,7 @@ require 'rspec/retry'
 require 'language_pack'
 require 'language_pack/shell_helpers'
 
-ENV["HATCHET_BUILDPACK_BASE"] = "https://github.com/heroku/heroku-buildpack-ruby"
+ENV["HATCHET_BUILDPACK_BASE"] ||= "https://github.com/heroku/heroku-buildpack-ruby"
 
 ENV['RACK_ENV'] = 'test'
 
@@ -20,6 +20,7 @@ RSpec.configure do |config|
   config.full_backtrace      = true
   config.verbose_retry       = true # show retry status in spec process
   config.default_retry_count = 2 if ENV['IS_RUNNING_ON_CI'] # retry all tests that fail again
+  config.example_status_persistence_file_path = 'spec/examples.txt'
 
   config.expect_with :rspec do |c|
     c.max_formatted_output_length = Float::INFINITY
