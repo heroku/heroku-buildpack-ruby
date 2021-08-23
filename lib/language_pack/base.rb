@@ -206,7 +206,7 @@ private ##################################
   def setup_language_pack_environment
   end
 
-  def add_to_profiled(string, filename = "ruby.sh", mode = "a")
+  def add_to_profiled(string, filename: "ruby.sh", mode: "a")
     profiled_path = @layer_dir ? "#{@layer_dir}/ruby/profile.d/" : "#{build_path}/.profile.d/"
 
     FileUtils.mkdir_p profiled_path
