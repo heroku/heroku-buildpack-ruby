@@ -412,7 +412,9 @@ EOF
       set_env_override "DISABLE_SPRING", "1"
 
       set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
-      add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
+
+      web_concurrency = env("SENSIBLE_DEFAULTS") ? set_default_web_concurrency : ""
+      add_to_profiled(web_concurrency, filename: "WEB_CONCURRENCY.sh", mode: "w") # always write that file, even if its empty (meaning no defaults apply), for interop with other buildpacks - and we overwrite the file rather than appending (which is the default)
 
       # TODO handle JRUBY
       if ruby_version.jruby?
