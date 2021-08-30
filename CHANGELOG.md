@@ -1,5 +1,7 @@
 # Main (unreleased)
 
+## v229 (7/30/2021)
+
 * Fix interoperability with other Heroku buildpacks' `$WEB_CONCURRENCY` handling (https://github.com/heroku/heroku-buildpack-ruby/pull/1188)
 
 ## v228 (6/24/2021)
