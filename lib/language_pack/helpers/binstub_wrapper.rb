@@ -1,5 +1,7 @@
 # frozen_string_literal: true
-#
+
+require 'delegate'
+
 # This is a helper class, it wraps a pathname object
 # and adds helper methods used to pull out the first line of the file ("the shebang")
 # as well as determining if the file is binary or not.
