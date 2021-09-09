@@ -15,6 +15,5 @@ if [ -f "$APP_DIR/Gemfile" ]; then
   echo "Ruby"
   exit 0
 else
-  echo "no"
   exit 100
 fi
