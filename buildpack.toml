@@ -4,7 +4,7 @@ api = "0.2"
 id = "heroku/ruby"
 version = "0.1.3"
 name = "Ruby"
-ruby_version = "2.6.6"
+ruby_version = "2.7.4"
 
 [publish]
 
@@ -17,11 +17,11 @@ dir = "."
 files = ["./.env"]
 
 [[publish.Vendor]]
-url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-18/ruby-2.6.6.tgz"
+url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-18/ruby-2.7.4.tgz"
 dir = "vendor/ruby/heroku-18"
 
 [[publish.Vendor]]
-url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-20/ruby-2.6.6.tgz"
+url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-20/ruby-2.7.4.tgz"
 dir = "vendor/ruby/heroku-20"
 
 [[stacks]]

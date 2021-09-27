@@ -3,7 +3,6 @@
     "sharpstone/asset_precompile_fail",
     "sharpstone/asset_precompile_pass",
     "sharpstone/asset_precompile_not_found",
-    "sharpstone/connect_to_database_on_first_push",
     "sharpstone/no_rakefile",
     "sharpstone/bad_rakefile",
     "sharpstone/default_with_rakefile"
@@ -46,8 +45,6 @@
     "sharpstone/rails3_default_ruby",
     "sharpstone/rails4_windows_mri193",
     "sharpstone/rails42_default_ruby",
-    "sharpstone/rails5",
-    "schneems/rails51_webpacker",
     "sharpstone/active_storage_non_local",
     "sharpstone/active_storage_local",
     "sharpstone/sprockets_asset_compile_true",
