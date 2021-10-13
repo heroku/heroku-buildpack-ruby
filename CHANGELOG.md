@@ -2,6 +2,9 @@
 
 ## Main (unreleased)
 
+* Applications with `package.json` now get `nodejs` installed (https://github.com/heroku/heroku-buildpack-ruby/pull/1212)
+* Applications with `yarn.lock` now get `yarn` installed (https://github.com/heroku/heroku-buildpack-ruby/pull/1212)
+
 ## v230 (10/5/2021)
 
 * Default Ruby version is now 2.7.4 (https://github.com/heroku/heroku-buildpack-ruby/pull/1193)
