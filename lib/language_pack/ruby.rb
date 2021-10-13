@@ -1053,7 +1053,11 @@ params = CGI.parse(uri.query || "")
   # @note execjs will blow up if no JS RUNTIME is detected and is loaded.
   # @return [Array] the node.js binary path if we need it or an empty Array
   def add_node_js_binary
-    if (bundler.has_gem?('execjs') || bundler.has_gem?('webpacker')) && node_not_preinstalled?
+    return [] if node_js_preinstalled?
+
+    if Pathname(build_path).join("package.json").exist? ||
+         bundler.has_gem?('execjs') ||
+         bundler.has_gem?('webpacker')
       [@node_installer.binary_path]
     else
       []
@@ -1061,7 +1065,13 @@ params = CGI.parse(uri.query || "")
   end
 
   def add_yarn_binary
-    bundler.has_gem?('webpacker') && yarn_not_preinstalled? ? [@yarn_installer.name] : []
+    return [] if yarn_preinstalled?
+
+    if Pathname(build_path).join("yarn.lock").exist? || bundler.has_gem?('webpacker')
+      [@yarn_installer.name]
+    else
+      []
+    end
   end
 
   def has_yarn_binary?
