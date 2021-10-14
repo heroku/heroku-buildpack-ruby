@@ -24,7 +24,7 @@
       },
       "buildpacks": [
         { "url": "https://github.com/heroku/heroku-buildpack-cli.git" },
-        { "url": "https://github.com/heroku/heroku-buildpack-ruby#v211" }
+        { "url": "heroku/ruby" }
       ]
     }
   }

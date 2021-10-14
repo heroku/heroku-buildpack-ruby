@@ -1,4 +1,40 @@
-# Main (unreleased)
+# Changelog
+
+## Main (unreleased)
+
+## v230 (10/5/2021)
+
+* Default Ruby version is now 2.7.4 (https://github.com/heroku/heroku-buildpack-ruby/pull/1193)
+
+## v229 (8/30/2021)
+
+* Fix interoperability with other Heroku buildpacks' `$WEB_CONCURRENCY` handling (https://github.com/heroku/heroku-buildpack-ruby/pull/1188)
+
+## v228 (6/24/2021)
+
+* Bundler 2.x is now 2.2.21 (https://github.com/heroku/heroku-buildpack-ruby/pull/1170)
+* Remove support for the Cedar-14 and Heroku-16 stacks (https://github.com/heroku/heroku-buildpack-ruby/pull/1163)
+
+## v227 (4/19/2021)
+
+* Bundler 2.x is now 2.2.16 (https://github.com/heroku/heroku-buildpack-ruby/pull/1150)
+
+## v226 (4/13/2021)
+
+* Bundler 2.x is now 2.2.15 (https://github.com/heroku/heroku-buildpack-ruby/pull/1144)
+
+## v225 (2/25/2021)
+
+* Bundler 2.x is now 2.2.11 (https://github.com/heroku/heroku-buildpack-ruby/pull/1132)
+
+## v224 (2/24/2021)
+
+* Ruby buildpack now relies on the JVM buildpack to install java for Jruby apps (https://github.com/heroku/heroku-buildpack-ruby/pull/1119)
+
+## v223 (1/22/2021)
+
+* Fix Gemfile.lock read bug from preventing propper removal of BUNDLED WITH declaration (https://github.com/heroku/heroku-buildpack-ruby/pull/1108)
+* Fail detection with a CNB-friendly exit code (https://github.com/heroku/heroku-buildpack-ruby/pull/1111)
 
 ## v222 (11/02/2020)
 

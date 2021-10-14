@@ -8,7 +8,6 @@ require "language_pack/ruby_version"
 require "language_pack/helpers/nodebin"
 require "language_pack/helpers/node_installer"
 require "language_pack/helpers/yarn_installer"
-require "language_pack/helpers/jvm_installer"
 require "language_pack/helpers/layer"
 require "language_pack/helpers/binstub_check"
 require "language_pack/version"
@@ -45,7 +44,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     @fetchers[:rbx]    = LanguagePack::Fetcher.new(RBX_BASE_URL, @stack)
     @node_installer    = LanguagePack::Helpers::NodeInstaller.new
     @yarn_installer    = LanguagePack::Helpers::YarnInstaller.new
-    @jvm_installer     = LanguagePack::Helpers::JvmInstaller.new(slug_vendor_jvm, @stack)
   end
 
   def name
@@ -65,7 +63,6 @@ class LanguagePack::Ruby < LanguagePack::Base
       }
 
       ruby_version.jruby? ? vars.merge({
-        "JAVA_OPTS" => default_java_opts,
         "JRUBY_OPTS" => default_jruby_opts
       }) : vars
     end
@@ -100,7 +97,6 @@ class LanguagePack::Ruby < LanguagePack::Base
       warn_bundler_upgrade
       warn_bad_binstubs
       install_ruby(slug_vendor_ruby, build_ruby_path)
-      install_jvm
       setup_language_pack_environment(
         ruby_layer_path: File.expand_path("."),
         gem_layer_path: File.expand_path("."),
@@ -208,15 +204,6 @@ private
     return false
   end
 
-  def stack_not_14_not_16?
-    case stack
-    when "cedar-14", "heroku-16"
-      return false
-    else
-      return true
-    end
-  end
-
   def warn_bundler_upgrade
     old_bundler_version  = @metadata.read("bundler_version").strip if @metadata.exists?("bundler_version")
 
@@ -256,12 +243,6 @@ WARNING
     "vendor/#{ruby_version.version_without_patchlevel}"
   end
 
-  # the relative path to the vendored jvm
-  # @return [String] resulting path
-  def slug_vendor_jvm
-    "vendor/jvm"
-  end
-
   # the absolute path of the build ruby to use during the buildpack
   # @return [String] resulting path
   def build_ruby_path
@@ -283,40 +264,6 @@ WARNING
         last_version: last_version)
       return @ruby_version
     end
-  end
-
-  # default JAVA_OPTS
-  # return [String] string of JAVA_OPTS
-  def default_java_opts
-    "-Dfile.encoding=UTF-8"
-  end
-
-  def set_jvm_max_heap
-    <<-EOF
-limit=$(ulimit -u)
-case $limit in
-512)   # 2X, private-s: memory.limit_in_bytes=1073741824
-  echo "$opts -Xmx671m -XX:CICompilerCount=2"
-  ;;
-16384) # perf-m, private-m: memory.limit_in_bytes=2684354560
-  echo "$opts -Xmx2g"
-  ;;
-32768) # perf-l, private-l: memory.limit_in_bytes=15032385536
-  echo "$opts -Xmx12g"
-  ;;
-*) # Free, Hobby, 1X: memory.limit_in_bytes=536870912
-  echo "$opts -Xmx300m -Xss512k -XX:CICompilerCount=2"
-  ;;
-esac
-EOF
-  end
-
-  def set_java_mem
-    <<-EOF
-if ! [[ "${JAVA_OPTS}" == *-Xmx* ]]; then
-  export JAVA_MEM=${JAVA_MEM:--Xmx${JVM_MAX_HEAP:-384}m}
-fi
-EOF
   end
 
   def set_default_web_concurrency
@@ -350,23 +297,12 @@ EOF
     "-Xcompile.invokedynamic=false"
   end
 
-  # default Java Xmx
-  # return [String] string of Java Xmx
-  def default_java_mem
-    "-Xmx${JVM_MAX_HEAP:-384}m"
-  end
-
   # sets up the environment variables for the build process
   def setup_language_pack_environment(ruby_layer_path:, gem_layer_path:, bundle_path:, bundle_default_without:)
     instrument 'ruby.setup_language_pack_environment' do
       if ruby_version.jruby?
         ENV["PATH"] += ":bin"
-        ENV["JAVA_MEM"] = run(<<~SHELL).strip
-          #{set_jvm_max_heap}
-          echo #{default_java_mem}
-        SHELL
         ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
-        ENV["JAVA_HOME"] = @jvm_installer.java_home
       end
       setup_ruby_install_env(ruby_layer_path)
 
@@ -401,7 +337,6 @@ EOF
 
       paths << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
       paths << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
-      paths << "#{slug_vendor_jvm}/bin" if ruby_version.jruby?
       paths << ENV["PATH"]
 
       ENV["PATH"] = paths.join(":")
@@ -444,9 +379,6 @@ EOF
 
       # TODO handle jruby
       if ruby_version.jruby?
-        add_to_export set_jvm_max_heap
-        add_to_export set_java_mem
-        set_export_default "JAVA_OPTS",  default_java_opts
         set_export_default "JRUBY_OPTS", default_jruby_opts
       end
 
@@ -481,13 +413,12 @@ EOF
       set_env_override "DISABLE_SPRING", "1"
 
       set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
-      add_to_profiled set_default_web_concurrency if env("SENSIBLE_DEFAULTS")
+
+      web_concurrency = env("SENSIBLE_DEFAULTS") ? set_default_web_concurrency : ""
+      add_to_profiled(web_concurrency, filename: "WEB_CONCURRENCY.sh", mode: "w") # always write that file, even if its empty (meaning no defaults apply), for interop with other buildpacks - and we overwrite the file rather than appending (which is the default)
 
       # TODO handle JRUBY
       if ruby_version.jruby?
-        add_to_profiled set_jvm_max_heap
-        add_to_profiled set_java_mem
-        set_env_default "JAVA_OPTS", default_java_opts
         set_env_default "JRUBY_OPTS", default_jruby_opts
       end
 
@@ -690,15 +621,6 @@ EOF
     @new_app ||= !File.exist?("vendor/scalingo")
   end
 
-  # vendors JVM into the slug for JRuby
-  def install_jvm(forced = false)
-    instrument 'ruby.install_jvm' do
-      if ruby_version.jruby? || forced
-        @jvm_installer.install(ruby_version.engine_version, forced)
-      end
-    end
-  end
-
   # find the ruby install path for its binstubs during build
   # @return [String] resulting path or empty string if ruby is not vendored
   def ruby_install_binstub_path(ruby_layer_path = ".")
@@ -716,10 +638,6 @@ EOF
   def setup_ruby_install_env(ruby_layer_path = ".")
     instrument 'ruby.setup_ruby_install_env' do
       ENV["PATH"] = "#{File.expand_path(ruby_install_binstub_path(ruby_layer_path))}:#{ENV["PATH"]}"
-
-      if ruby_version.jruby?
-        ENV['JAVA_OPTS']  = default_java_opts
-      end
     end
   end
 
@@ -799,23 +717,6 @@ EOF
         patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").strip
         cache_name  = "#{LanguagePack::RubyVersion::DEFAULT_VERSION}-p#{patchlevel}-default-cache"
         @fetchers[:buildpack].fetch_untar("#{cache_name}.tgz")
-      end
-    end
-  end
-
-  # install libyaml into the LP to be referenced for psych compilation
-  # @param [String] tmpdir to store the libyaml files
-  def install_libyaml(dir)
-    case stack
-    when "scalingo"
-    else
-      return false
-    end
-
-    instrument 'ruby.install_libyaml' do
-      FileUtils.mkdir_p dir
-      Dir.chdir(dir) do
-        @fetchers[:buildpack].fetch_untar("#{@stack}/#{LIBYAML_PATH}.tgz")
       end
     end
   end
@@ -921,7 +822,6 @@ BUNDLE
         env_vars = {}
         Dir.mktmpdir("libyaml-") do |tmpdir|
           libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
-          install_libyaml(libyaml_dir)
 
           # need to setup compile environment for the psych gem
           yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
@@ -939,7 +839,6 @@ BUNDLE
           env_vars["RUBYOPT"] = syck_hack
           env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
           env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
-          env_vars["JAVA_HOME"]                    = noshellescape("#{pwd}/$JAVA_HOME") if ruby_version.jruby?
           env_vars["BUNDLER_LIB_PATH"]             = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
           env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
 
