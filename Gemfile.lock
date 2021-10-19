@@ -3,6 +3,7 @@ GEM
   specs:
     ci-queue (0.21.0)
     citrus (3.0.2)
+    dead_end (2.0.0)
     diff-lcs (1.4.4)
     erubis (2.7.0)
     excon (0.85.0)
@@ -51,6 +52,7 @@ PLATFORMS
 
 DEPENDENCIES
   ci-queue
+  dead_end
   excon
   heroku_hatchet
   json

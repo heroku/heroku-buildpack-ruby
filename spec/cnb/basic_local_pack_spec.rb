@@ -115,7 +115,7 @@ describe "cnb" do
       expect(app.output).to match("Compiling Ruby/Rails")
 
       run_out = app.run!("ruby -v")
-      expect(run_out).to match("2.6.6")
+      expect(run_out).to match("2.7.4")
     end
   end
 end
