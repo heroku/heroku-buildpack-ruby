@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+## v231 (10/27/2021)
+
 * Applications with `package.json` now get `nodejs` installed (https://github.com/heroku/heroku-buildpack-ruby/pull/1212)
 * Applications with `yarn.lock` now get `yarn` installed (https://github.com/heroku/heroku-buildpack-ruby/pull/1212)
 
