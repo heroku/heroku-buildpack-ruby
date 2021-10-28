@@ -11,11 +11,11 @@ jobs:
       - checkout
       - run:
           command: |
-            rvm install 2.6.6
-            rvm use ruby-2.6.6
-            export PATH="/opt/circleci/.rvm/rubies/ruby-2.6.6/bin:$PATH"
-            export GEM_HOME="/opt/circleci/.rvm/gems/ruby-2.6.6"
-            export GEM_PATH="/opt/circleci/.rvm/gems/ruby-2.6.6"
+            rvm install 2.7.4
+            rvm use ruby-2.7.4
+            export PATH="/opt/circleci/.rvm/rubies/ruby-2.7.4/bin:$PATH"
+            export GEM_HOME="/opt/circleci/.rvm/gems/ruby-2.7.4"
+            export GEM_PATH="/opt/circleci/.rvm/gems/ruby-2.7.4"
             gem install bundler -v 2.1.0
             bundle install
             bundle exec rake hatchet:setup_ci

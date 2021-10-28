@@ -2,11 +2,31 @@
 # The actual compilation code lives in `bin/support/ruby_compile`. This file instead
 # bootstraps the ruby needed and then executes `bin/support/ruby_compile`
 
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
 BIN_DIR=$(cd $(dirname $0); pwd)
 BUILDPACK_DIR=$(dirname $BIN_DIR)
 
 source "$BIN_DIR/support/bash_functions.sh"
 
 heroku_buildpack_ruby_install_ruby "$BIN_DIR" "$BUILDPACK_DIR"
+
+if detect_needs_java "$BUILD_DIR"; then
+  cat <<EOM
+
+       ## Warning: Your app needs java
+
+       The Ruby buildpack determined your app needs java installed
+       we recommend you add the jvm buildpack to your application:
+
+       https://doc.scalingo.com/languages/java/start#installation-of-jdk-only-no-maven
+
+-----> Installing Java
+
+EOM
+
+  compile_buildpack_v2 "$BUILD_DIR" "$CACHE_DIR" "$ENV_DIR" "https://buildpacks-repository.s3.eu-central-1.amazonaws.com/jvm-common.tar.xz" "Common JVM"
+fi
 
 $heroku_buildpack_ruby_dir/bin/ruby $BIN_DIR/support/ruby_compile $@

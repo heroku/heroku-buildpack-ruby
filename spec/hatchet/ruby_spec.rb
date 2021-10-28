@@ -140,7 +140,7 @@ describe "Ruby apps" do
 
   describe "2.5.0" do
     it "works" do
-      Hatchet::Runner.new("ruby_25").deploy do |app|
+      Hatchet::Runner.new("ruby_25", stack: "heroku-18").deploy do |app|
         expect(app.output).to include("There is a more recent Ruby version available")
       end
     end
@@ -179,8 +179,7 @@ end
 
 describe "Raise errors on specific gems" do
   it "should raise on sqlite3" do
-    before_deploy = -> { run!(%Q{echo "ruby '2.5.4' >> Gemfile"}) }
-    Hatchet::Runner.new("sqlite3_gemfile", allow_failure: true, before_deploy: before_deploy).deploy do |app|
+    Hatchet::Runner.new("sqlite3_gemfile", allow_failure: true).deploy do |app|
       expect(app).not_to be_deployed
       expect(app.output).to include("Detected sqlite3 gem which is not supported")
       expect(app.output).to include("devcenter.heroku.com/articles/sqlite3")
@@ -204,6 +203,28 @@ describe "Rack" do
 
     app.deploy do |app|
       expect(app.run("env")).to match(custom_env)
+    end
+  end
+end
+
+describe "WEB_CONCURRENCY.sh" do
+  it "from a preceding buildpack is overwritten by this buildpack" do
+    buildpacks = [
+      "heroku/nodejs",
+      :default
+    ]
+    before_deploy = -> { run!(%Q{echo "{}" > package.json}) }
+    Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK, buildpacks: buildpacks, before_deploy: before_deploy).deploy do |app|
+      expect(app.run("cat .profile.d/WEB_CONCURRENCY.sh").strip).to be_empty
+      expect(app.run("echo $WEB_CONCURRENCY").strip).to be_empty
+      expect(app.run("echo $WEB_CONCURRENCY", :heroku => {:env => "WEB_CONCURRENCY=0"}).strip).to eq("0")
+    end
+  end
+
+  it "has defaults set with SENSIBLE_DEFAULTS on" do
+    config = { "SENSIBLE_DEFAULTS" => "1"}
+    Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK, config: config).deploy do |app|
+      expect(app.run("env")).to match("WEB_CONCURRENCY=")
     end
   end
 end
