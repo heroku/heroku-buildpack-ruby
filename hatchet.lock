@@ -45,16 +45,14 @@
   - 18853ba7dda61745995740b4ca6f5f90bbd8afba
 - - "./repos/rails_versions/active_storage_non_local"
   - 86dddf0127043abba1cb2890590a1d38f111edbd
+- - "./repos/rails_versions/rails-jsbundling"
+  - 6b60a3aa7eb9507865ebba6afcca150017ab66b4
 - - "./repos/rails_versions/rails3_default_ruby"
   - a6b44db674c0d3538633989295e2cfd5e8e1ba0d
 - - "./repos/rails_versions/rails42_default_ruby"
   - dfa0f0133dafa62064968ea2efb6432f54350138
 - - "./repos/rails_versions/rails4_windows_mri193"
   - f4c7b6209835050468bbb87827acf652b8f4d8ce
-- - "./repos/rails_versions/rails5"
-  - 1680c5da829e03ffb9345187971a13e5109d86a6
-- - "./repos/rails_versions/rails51_webpacker"
-  - 75c5c4f21b1d88fc3b8edf60b3f871df3ad70208
 - - "./repos/rails_versions/rails6-basic"
   - 6b81e0246c64c332181c22ace4ac96b57309cb85
 - - "./repos/rails_versions/rails_lts_23_default_ruby"
@@ -69,8 +67,6 @@
   - ce976c727d9f477957c499f39f4cf9603c378103
 - - "./repos/rake/bad_rakefile"
   - 3cb9c7bf6494c59bd25fa74c2aa4531119e12a46
-- - "./repos/rake/connect_to_database_on_first_push"
-  - 635e002cb5a0400092dd5e80b88c6ffb740fda02
 - - "./repos/rake/default_with_rakefile"
   - c6e0c4db8dcccb47e11d496e17adbc2dafc80dd8
 - - "./repos/rake/no_rakefile"

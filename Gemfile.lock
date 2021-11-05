@@ -1,8 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    ci-queue (0.20.8)
+    ci-queue (0.21.0)
     citrus (3.0.2)
+    dead_end (2.0.0)
     diff-lcs (1.4.4)
     erubis (2.7.0)
     excon (0.85.0)
@@ -18,7 +19,7 @@ GEM
       rrrretry (~> 1)
       thor (~> 1)
       threaded (~> 0)
-    json (2.5.1)
+    json (2.6.1)
     moneta (1.0.0)
     multi_json (1.15.0)
     parallel (1.21.0)
@@ -51,6 +52,7 @@ PLATFORMS
 
 DEPENDENCIES
   ci-queue
+  dead_end
   excon
   heroku_hatchet
   json
