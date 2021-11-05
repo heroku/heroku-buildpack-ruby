@@ -9,7 +9,7 @@ class LanguagePack::Rails6 < LanguagePack::Rails5
       rails_version = bundler.gem_version('railties')
       return false unless rails_version
       is_rails = rails_version >= Gem::Version.new('6.x') &&
-        rails_version < Gem::Version.new('7.0.0')
+        rails_version < Gem::Version.new('7.a')
       return is_rails
     end
   end

@@ -15,4 +15,5 @@ group :development, :test do
   gem 'json'
   gem 'ci-queue'
   gem 'redis'
+  gem 'dead_end'
 end

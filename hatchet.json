@@ -48,7 +48,8 @@
     "sharpstone/active_storage_non_local",
     "sharpstone/active_storage_local",
     "sharpstone/sprockets_asset_compile_true",
-    "sharpstone/rails6-basic"
+    "sharpstone/rails6-basic",
+    "sharpstone/rails-jsbundling"
   ],
   "heroku": [
     "heroku/ruby-getting-started"
