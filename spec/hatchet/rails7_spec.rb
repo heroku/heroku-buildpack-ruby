@@ -9,6 +9,8 @@ describe "Rails 6" do
   end
 
   it "works with jsbundling" do
+    skip("rails-turbo was yanked and I don't know why")
+
     Hatchet::Runner.new("rails-jsbundling").tap do |app|
       app.deploy do
         expect(app.output).to include("yarn install")

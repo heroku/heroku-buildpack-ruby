@@ -25,7 +25,7 @@ module LanguagePack
     end
 
     def self.out
-      Thread.current[:out] ||= ENV['LOGPLEX_DEFAULT_TOKEN'] ? Lpxc.new(batch_size: 1) : StringIO.new
+      Thread.current[:out] ||= StringIO.new
     end
 
     def self.trace(name, *args, &blk)

@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v232 (11/9/2021)
+
+* Deactivate LXPC (https://github.com/heroku/heroku-buildpack-ruby/pull/1228)
+
 ## v231 (10/27/2021)
 
 * Applications with `package.json` now get `nodejs` installed (https://github.com/heroku/heroku-buildpack-ruby/pull/1212)
