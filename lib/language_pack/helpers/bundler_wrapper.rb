@@ -100,10 +100,8 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def gem_version(name)
-    instrument "ruby.gem_version" do
-      if spec = specs[name]
-        spec.version
-      end
+    if spec = specs[name]
+      spec.version
     end
   end
 
@@ -131,29 +129,23 @@ class LanguagePack::Helpers::BundlerWrapper
     "bundler-#{version}"
   end
 
-  def instrument(*args, &block)
-    LanguagePack::Instrument.instrument(*args, &block)
-  end
-
   def ruby_version
-    instrument 'detect_ruby_version' do
-      env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
-              "RUBYLIB"  => File.join(bundler_path, "gems", dir_name, "lib"),
-              "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
-              "BUNDLE_DISABLE_VERSION_CHECK" => "true"
-            }
-      command = "bundle platform --ruby"
+    env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
+            "RUBYLIB"  => File.join(bundler_path, "gems", dir_name, "lib"),
+            "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
+            "BUNDLE_DISABLE_VERSION_CHECK" => "true"
+          }
+    command = "bundle platform --ruby"
 
-      # Silently check for ruby version
-      output  = run_stdout(command, user_env: true, env: env).strip.lines.last
+    # Silently check for ruby version
+    output  = run_stdout(command, user_env: true, env: env).strip.lines.last
 
-      # If there's a gem in the Gemfile (i.e. syntax error) emit error
-      raise GemfileParseError.new(run("bundle check", user_env: true, env: env)) unless $?.success?
-      if output.match(/No ruby version specified/)
-        ""
-      else
-        output.strip.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
-      end
+    # If there's a gem in the Gemfile (i.e. syntax error) emit error
+    raise GemfileParseError.new(run("bundle check", user_env: true, env: env)) unless $?.success?
+    if output.match(/No ruby version specified/)
+      ""
+    else
+      output.strip.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
     end
   end
 
@@ -178,33 +170,29 @@ class LanguagePack::Helpers::BundlerWrapper
 
   private
   def fetch_bundler
-    instrument 'fetch_bundler' do
-      return true if Dir.exists?(bundler_path)
+    return true if Dir.exists?(bundler_path)
 
-      topic("Installing bundler #{@version}")
-      bundler_version_escape_valve!
+    topic("Installing bundler #{@version}")
+    bundler_version_escape_valve!
 
-      # Install directory structure (as of Bundler 2.1.4):
-      # - cache
-      # - bin
-      # - gems
-      # - specifications
-      # - build_info
-      # - extensions
-      # - doc
-      FileUtils.mkdir_p(bundler_path)
-      Dir.chdir(bundler_path) do
-        @fetcher.fetch_untar(@bundler_tar)
-      end
-      Dir["bin/*"].each {|path| `chmod 755 #{path}` }
+    # Install directory structure (as of Bundler 2.1.4):
+    # - cache
+    # - bin
+    # - gems
+    # - specifications
+    # - build_info
+    # - extensions
+    # - doc
+    FileUtils.mkdir_p(bundler_path)
+    Dir.chdir(bundler_path) do
+      @fetcher.fetch_untar(@bundler_tar)
     end
+    Dir["bin/*"].each {|path| `chmod 755 #{path}` }
   end
 
   def parse_gemfile_lock
-    instrument 'parse_bundle' do
-      gemfile_contents = File.read(@gemfile_lock_path)
-      Bundler::LockfileParser.new(gemfile_contents)
-    end
+    gemfile_contents = File.read(@gemfile_lock_path)
+    Bundler::LockfileParser.new(gemfile_contents)
   end
 
   def major_bundler_version

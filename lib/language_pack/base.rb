@@ -8,7 +8,6 @@ require "language_pack/helpers/bundler_cache"
 require "language_pack/helpers/layer"
 require "language_pack/metadata"
 require "language_pack/fetcher"
-require "language_pack/instrument"
 
 Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
 ENV["BPLOG_PREFIX"] = "buildpack.ruby"
@@ -28,26 +27,16 @@ class LanguagePack::Base
   # @param [String] the path of the build dir
   # @param [String] the path of the cache dir this is nil during detect and release
   def initialize(build_path, cache_path = nil, layer_dir=nil)
-     self.class.instrument "base.initialize" do
-      @build_path    = build_path
-      @stack         = ENV.fetch("STACK")
-      @cache         = LanguagePack::Cache.new(cache_path)
-      @metadata      = LanguagePack::Metadata.new(@cache)
-      @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
-      @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
-      @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
-      @layer_dir     = layer_dir
+    @build_path    = build_path
+    @stack         = ENV.fetch("STACK")
+    @cache         = LanguagePack::Cache.new(cache_path)
+    @metadata      = LanguagePack::Metadata.new(@cache)
+    @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
+    @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
+    @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
+    @layer_dir     = layer_dir
 
-      Dir.chdir build_path
-    end
-  end
-
-  def instrument(*args, &block)
-    self.class.instrument(*args, &block)
-  end
-
-  def self.instrument(*args, &block)
-    LanguagePack::Instrument.instrument(*args, &block)
+    Dir.chdir build_path
   end
 
   def self.===(build_path)
@@ -82,40 +71,36 @@ class LanguagePack::Base
   # this is called to build the slug
   def compile
     write_release_yaml
-    instrument 'base.compile' do
+    Kernel.puts ""
+    warnings.each do |warning|
+      Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m"# Bold yellow
       Kernel.puts ""
-      warnings.each do |warning|
-        Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m"# Bold yellow
-        Kernel.puts ""
-        puts warning
-        Kernel.puts ""
-      end
-      if deprecations.any?
-        topic "DEPRECATIONS:"
-        puts @deprecations.join("\n")
-      end
+      puts warning
       Kernel.puts ""
     end
+    if deprecations.any?
+      topic "DEPRECATIONS:"
+      puts @deprecations.join("\n")
+    end
+    Kernel.puts ""
     mcount "success"
   end
 
   def build
     write_release_toml
-    instrument 'base.compile' do
+    Kernel.puts ""
+    warnings.each do |warning|
+      Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m"# Bold yellow
       Kernel.puts ""
-      warnings.each do |warning|
-        Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m"# Bold yellow
-        Kernel.puts ""
-        puts warning
-        Kernel.puts ""
-        Kernel.puts ""
-      end
-      if deprecations.any?
-        topic "DEPRECATIONS:"
-        puts @deprecations.join("\n")
-      end
+      puts warning
+      Kernel.puts ""
       Kernel.puts ""
     end
+    if deprecations.any?
+      topic "DEPRECATIONS:"
+      puts @deprecations.join("\n")
+    end
+    Kernel.puts ""
     mcount "success"
   end
 
