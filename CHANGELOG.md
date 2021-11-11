@@ -2,9 +2,11 @@
 
 ## Main (unreleased)
 
+* Remove instrumentation and LPXC logic (https://github.com/heroku/heroku-buildpack-ruby/pull/1229)
+
 ## v232 (11/9/2021)
 
-* Deactivate LXPC (https://github.com/heroku/heroku-buildpack-ruby/pull/1228)
+* Deactivate LPXC (https://github.com/heroku/heroku-buildpack-ruby/pull/1228)
 
 ## v231 (10/27/2021)
 

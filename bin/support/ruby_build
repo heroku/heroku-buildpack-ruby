@@ -18,13 +18,11 @@ ENV_DIR="#{PLATFORM_DIR}/env"
 PLAN=ARGV[3]
 
 begin
-  LanguagePack::Instrument.trace 'compile', 'app.compile' do
-    LanguagePack::ShellHelpers.initialize_env(ENV_DIR)
-    if pack = LanguagePack.detect(ARGV[0], nil, LAYER_DIR)
-      pack.topic("Compiling #{pack.name}")
-      pack.log("compile") do
-        pack.build
-      end
+  LanguagePack::ShellHelpers.initialize_env(ENV_DIR)
+  if pack = LanguagePack.detect(ARGV[0], nil, LAYER_DIR)
+    pack.topic("Compiling #{pack.name}")
+    pack.log("compile") do
+      pack.build
     end
   end
 rescue Exception => e

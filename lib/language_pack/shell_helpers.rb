@@ -1,4 +1,5 @@
 require "shellwords"
+require "timeout"
 
 class BuildpackError < StandardError
 end
