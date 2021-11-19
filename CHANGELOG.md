@@ -2,6 +2,7 @@
 
 ## Main (unreleased)
 
+* Default node version now 16.13.1, yarn is 1.22.17 (https://github.com/heroku/heroku-buildpack-ruby/pull/1238)
 * Remove instrumentation and LPXC logic (https://github.com/heroku/heroku-buildpack-ruby/pull/1229)
 
 ## v232 (11/9/2021)
