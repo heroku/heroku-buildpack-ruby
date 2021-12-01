@@ -2,6 +2,7 @@
 
 ## Main (unreleased)
 
+* Default Ruby version is now 2.7.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/1237)
 * Remove instrumentation and LPXC logic (https://github.com/heroku/heroku-buildpack-ruby/pull/1229)
 
 ## v232 (11/9/2021)
