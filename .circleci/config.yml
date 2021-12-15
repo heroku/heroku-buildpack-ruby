@@ -1,13 +1,13 @@
 version: 2.1
 orbs:
-  buildpacks: jkutner/buildpacks@0.1.0
+  pack: buildpacks/pack@0.2.4
   ruby: circleci/ruby@0.2.1
 jobs:
   build:
     machine: true
     steps:
-      - buildpacks/install-pack:
-          version: "0.11.0"
+      - pack/install-pack:
+          version: "0.23.0"
       - checkout
       - run:
           command: |
