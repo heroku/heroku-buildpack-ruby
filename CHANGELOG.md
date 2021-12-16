@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v234 (12/16/2021)
+
+* Fix YML indentation from v233 (https://github.com/heroku/heroku-buildpack-ruby/pull/1252)
+
 ## v233 (12/16/2021)
 
 * Default node version now 16.13.1, yarn is 1.22.17 (https://github.com/heroku/heroku-buildpack-ruby/pull/1238)
