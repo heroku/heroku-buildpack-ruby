@@ -16,4 +16,11 @@ describe "Rails 6" do
       end
     end
   end
+
+  it "Works on Heroku CI" do
+    Hatchet::Runner.new("rails-jsbundling").run_ci do |test_run|
+      expect(test_run.output).to match("db:schema:load")
+      expect(test_run.output).to match("db:migrate")
+    end
+  end
 end

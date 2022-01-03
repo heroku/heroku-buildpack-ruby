@@ -46,7 +46,7 @@
 - - "./repos/rails_versions/active_storage_non_local"
   - 86dddf0127043abba1cb2890590a1d38f111edbd
 - - "./repos/rails_versions/rails-jsbundling"
-  - 192a71e0931aa00724412521dcad4d1e1db2ec0f
+  - 34bd25cef7c09758b3e7763a5d4be6dc94364606
 - - "./repos/rails_versions/rails3_default_ruby"
   - a6b44db674c0d3538633989295e2cfd5e8e1ba0d
 - - "./repos/rails_versions/rails42_default_ruby"
