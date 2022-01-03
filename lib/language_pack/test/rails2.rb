@@ -1,4 +1,5 @@
-#module LanguagePack::Test::Rails2
+# Opens up the class of the Rails2 language pack and
+# overwrites methods defined in `language_pack/test/ruby.rb`
 class LanguagePack::Rails2
   # sets up the profile.d script for this buildpack
   def setup_profiled(ruby_layer_path: , gem_layer_path: )
@@ -51,7 +52,6 @@ FILE
     end
   end
 
-  private
   def db_prepare_test_rake_tasks
     schema_load    = rake.task("db:schema:load_if_ruby")
     structure_load = rake.task("db:structure:load_if_sql")

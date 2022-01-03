@@ -1,4 +1,8 @@
-#module LanguagePack::Test::Ruby
+# Opens up the class of the Ruby language pack and
+# overwrites methods defined in `language_pack/ruby.rb`
+#
+# Other "test packs" futher extend this behavior by hooking into
+# methods or over writing methods defined here.
 class LanguagePack::Ruby
   def compile
     new_app?
@@ -26,7 +30,6 @@ class LanguagePack::Ruby
     super
   end
 
-  private
   def db_prepare_test_rake_tasks
     ["db:schema:load", "db:migrate"].map {|name| rake.task(name) }
   end
