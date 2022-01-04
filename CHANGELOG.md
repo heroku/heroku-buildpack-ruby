@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+## v236 (2022/01/04)
+
 * Fix deprecated rake tasks for Rails 7 on Heroku CI (https://github.com/heroku/heroku-buildpack-ruby/pull/1257)
 
 ## v235 (2022/01/03)
