@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v236 (2022/01/04)
+
+* Fix deprecated rake tasks for Rails 7 on Heroku CI (https://github.com/heroku/heroku-buildpack-ruby/pull/1257)
+
 ## v235 (2022/01/03)
 
 * Bundler 2.x is now 2.2.33 (https://github.com/heroku/heroku-buildpack-ruby/pull/1248)

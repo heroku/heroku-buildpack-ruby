@@ -95,6 +95,11 @@ namespace :buildpack do
 
       changelog_md.write(contents.gsub("## Main (unreleased)", new_section))
     end
+
+    version_rb = Pathname(__dir__).join("lib/language_pack/version.rb")
+    puts "Updating version.rb"
+    contents =  version_rb.read.gsub(/BUILDPACK_VERSION = .*$/, %Q{BUILDPACK_VERSION = "#{deploy.next_version.to_s}"})
+    version_rb.write(contents)
   end
 
   desc "releases the next version of the buildpack"
