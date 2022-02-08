@@ -31,7 +31,7 @@ GEM
       rate_throttle_client (~> 0.1.0)
     rake (13.0.6)
     rate_throttle_client (0.1.2)
-    redis (4.5.1)
+    redis (4.6.0)
     rrrretry (1.0.0)
     rspec-core (3.10.2)
       rspec-support (~> 3.10.0)
