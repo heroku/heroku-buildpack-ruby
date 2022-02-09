@@ -13,8 +13,8 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
     return is_rails4
   end
 
-  def setup_profiled(*args)
-    super(*args)
+  def setup_profiled(**args)
+    super(**args)
     set_env_default "SECRET_KEY_BASE", app_secret
   end
 

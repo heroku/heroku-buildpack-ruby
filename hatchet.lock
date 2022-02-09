@@ -20,9 +20,9 @@
 - - "./repos/ci/heroku-ci-json-example"
   - 4e5410a7381f486ba3df7739e02e52f32fdd4dda
 - - "./repos/ci/rails5_ruby_schema_format"
-  - d76be86c66ae8f45ec611fb2c4d8eb3adac0ad4b
+  - 8b8a3a7850bdba29bdefc70c0f80f35a9e6c96ae
 - - "./repos/ci/rails5_sql_schema_format"
-  - df48237c57f89bb3629937ae6b1d6af070100ed3
+  - ee81b300a1019b47bbcaec0a512932df7dc23bc0
 - - "./repos/ci/ruby_no_rails_test"
   - 3916137106d59b008b67d738abe6a1438f8fbde6
 - - "./repos/heroku/ruby-getting-started"
@@ -30,7 +30,7 @@
 - - "./repos/jruby/jruby_naether"
   - 4a11f8af5a3cca21f3659394e5bbac3cca9b6a2c
 - - "./repos/node/minimal_webpacker"
-  - bca8b8169c553a0f62f0263b621cf3a5813e4023
+  - 9d55c0ee923824829305eb23e23b7ff98d2ee3ba
 - - "./repos/rack/default_ruby"
   - master
 - - "./repos/rack/mri_187_nokogiri"
@@ -46,7 +46,7 @@
 - - "./repos/rails_versions/active_storage_non_local"
   - 86dddf0127043abba1cb2890590a1d38f111edbd
 - - "./repos/rails_versions/rails-jsbundling"
-  - 34bd25cef7c09758b3e7763a5d4be6dc94364606
+  - f2c1455efb5892208b08a4a964e7f8e692b9b6f9
 - - "./repos/rails_versions/rails3_default_ruby"
   - a6b44db674c0d3538633989295e2cfd5e8e1ba0d
 - - "./repos/rails_versions/rails42_default_ruby"

@@ -11,14 +11,24 @@ describe "CI" do
   end
 
   it "Works with Rails 5 ruby schema apps" do
-    Hatchet::Runner.new("rails5_ruby_schema_format").run_ci do |test_run|
-      expect(test_run.output).to match("db:schema:load_if_ruby completed")
+    Hatchet::Runner.new("rails5_ruby_schema_format").tap do |app|
+      app.before_deploy do
+        Pathname("Gemfile").write("ruby '2.7.5'", mode: "a")
+      end
+      app.run_ci do |test_run|
+        expect(test_run.output).to match("db:schema:load_if_ruby completed")
+      end
     end
   end
 
   it "Works with Rails 5 SQL schema apps" do
-    Hatchet::Runner.new("rails5_sql_schema_format").run_ci do |test_run|
-      expect(test_run.output).to match("db:structure:load_if_sql completed")
+    Hatchet::Runner.new("rails5_sql_schema_format").tap do |app|
+      app.before_deploy do
+        Pathname("Gemfile").write("ruby '2.7.5'", mode: "a")
+      end
+      app.run_ci do |test_run|
+        expect(test_run.output).to match("db:structure:load_if_sql completed")
+      end
     end
   end
 
