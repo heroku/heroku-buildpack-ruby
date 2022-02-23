@@ -1,8 +1,6 @@
 ---
 - - "./repos/bundler/bad_gemfile_on_platform"
   - 5dd45c83631f58d121afb48b513016cc9e2d3432
-- - "./repos/bundler/bundle-ruby-version-not-in-lockfile"
-  - 5c8219d8bbdc8faa6a98781867b9fce25a6f2abb
 - - "./repos/bundler/git_gemspec"
   - 7755e19caf122e1373bce73ffe9b333e9411d732
 - - "./repos/bundler/no_lockfile"
@@ -75,8 +73,6 @@
   - 6e4662c44b49e2c3c9429f00e7e7f4708142b03f
 - - "./repos/ruby/bad_ruby_version"
   - 7bf3470265a87ea6361640aa4bfce6ce3b743520
-- - "./repos/ruby/cd_ruby"
-  - 88df7181e301d25a8da992107747acff62670327
 - - "./repos/ruby/empty-procfile"
   - 7cae0aae424c2028b81b5d37ee24d42db8e545b9
 - - "./repos/ruby/jruby-minimal"
