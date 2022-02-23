@@ -13,12 +13,10 @@
     "sharpstone/git_gemspec",
     "sharpstone/no_lockfile",
     "sharpstone/sqlite3_gemfile",
-    "sharpstone/nokogiri_160",
-    "sharpstone/bundle-ruby-version-not-in-lockfile"
+    "sharpstone/nokogiri_160"
   ],
   "ruby": [
     "sharpstone/ruby_version_does_not_exist",
-    "sharpstone/cd_ruby",
     "sharpstone/ruby_193_jruby_173",
     "sharpstone/ruby_193_jruby_176",
     "sharpstone/ruby_193_jruby_17161_jdk7",

@@ -3,8 +3,13 @@ GEM
   specs:
     ci-queue (0.22.1)
     citrus (3.0.2)
+    cutlass (0.3.0)
+      docker-api (>= 2.0)
     dead_end (3.1.1)
     diff-lcs (1.5.0)
+    docker-api (2.2.0)
+      excon (>= 0.47.0)
+      multi_json
     erubis (2.7.0)
     excon (0.91.0)
     heroics (0.1.2)
@@ -41,7 +46,7 @@ GEM
     rspec-retry (0.6.2)
       rspec-core (> 3.3)
     rspec-support (3.11.0)
-    thor (1.1.0)
+    thor (1.2.1)
     threaded (0.0.4)
     toml-rb (2.1.2)
       citrus (~> 3.0, > 3.0)
@@ -52,6 +57,7 @@ PLATFORMS
 
 DEPENDENCIES
   ci-queue
+  cutlass
   dead_end
   excon
   heroku_hatchet
@@ -65,7 +71,7 @@ DEPENDENCIES
   toml-rb
 
 RUBY VERSION
-   ruby 2.7.5p203
+   ruby 3.0.3p157
 
 BUNDLED WITH
-   2.1.4
+   2.2.32

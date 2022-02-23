@@ -89,8 +89,8 @@ private
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled(*args)
-    super(*args)
+  def setup_profiled(**args)
+    super(**args)
     default_env_vars.each do |key, value|
       set_env_default key, value
     end

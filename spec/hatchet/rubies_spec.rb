@@ -54,28 +54,21 @@ describe "Ruby versions" do
       end
     end
   end
-
-  it "should deploy jruby with the naether gem" do
-    app = Hatchet::Runner.new("jruby_naether", stack: DEFAULT_STACK)
-    app.deploy do |app|
-      expect(app.output).to match("Installing naether")
-      expect(app.output).not_to include("An error occurred while installing naether")
-    end
-  end
 end
 
 describe "Upgrading ruby apps" do
-  it "works when changing from default version" do
+  it "works when changing versions" do
     app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)
     app.deploy do |app|
       expect(app.run("env | grep MALLOC_ARENA_MAX")).to match("MALLOC_ARENA_MAX=2")
       expect(app.run("env | grep DISABLE_SPRING")).to match("DISABLE_SPRING=1")
 
-      run!(%Q{echo "ruby '2.5.1'" >> Gemfile})
+      # Deploy again
+      run!(%Q{echo "ruby '2.7.5'" >> Gemfile})
       run!("git add -A; git commit -m update-ruby")
       app.push!
-      expect(app.output).to match("2.5.1")
-      expect(app.run("ruby -v")).to match("2.5.1")
+      expect(app.output).to match("2.7.5")
+      expect(app.run("ruby -v")).to match("2.7.5")
       expect(app.output).to match("Ruby version change detected")
     end
   end

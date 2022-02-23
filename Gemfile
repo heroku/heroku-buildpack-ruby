@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.5'
+ruby '3.0.3'
 
 group :development, :test do
   gem "toml-rb"
@@ -16,4 +16,5 @@ group :development, :test do
   gem 'ci-queue'
   gem 'redis'
   gem 'dead_end'
+  gem 'cutlass'
 end

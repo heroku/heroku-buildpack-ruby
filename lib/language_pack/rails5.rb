@@ -12,8 +12,8 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
     return is_rails
   end
 
-  def setup_profiled(*args)
-    super(*args)
+  def setup_profiled(**args)
+    super(**args)
     set_env_default "RAILS_LOG_TO_STDOUT", "enabled"
   end
 
