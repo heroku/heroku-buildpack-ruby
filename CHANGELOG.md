@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v238 (2022/03/02)
+
+* Bundler 2.x is now 2.3.7 (https://github.com/heroku/heroku-buildpack-ruby/pull/1276)
+
 ## v237 (2022/02/24)
 
 * Default Ruby version is now 3.0.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/1270)
