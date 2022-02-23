@@ -13,7 +13,6 @@ jobs:
       - restore_cache:
           keys:
             - v3-ruby-3.0.3
-            - v3-deps
 
       - run:
           name: Install ruby-install
@@ -61,12 +60,6 @@ jobs:
             echo "pack version: $(pack --version)"
 
             bundle exec rspec spec/cnb/
-
-      - save_cache:
-          key: v3-deps
-          paths:
-            - "./vendor/bundle"
-            - "./repos"
 
 workflows:
   main:
