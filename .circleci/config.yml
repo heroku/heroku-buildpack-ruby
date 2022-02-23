@@ -9,7 +9,7 @@ jobs:
     steps:
       - checkout
       - pack/install-pack:
-          version: 0.23.0
+          version: 0.24.0
       - restore_cache:
           keys:
             - v3-ruby-3.0.3
