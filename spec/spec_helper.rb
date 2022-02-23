@@ -11,7 +11,7 @@ ENV["HATCHET_BUILDPACK_BASE"] ||= "https://github.com/heroku/heroku-buildpack-ru
 
 ENV['RACK_ENV'] = 'test'
 
-DEFAULT_STACK = 'heroku-18'
+DEFAULT_STACK = 'heroku-20'
 
 
 def hatchet_path(path = "")
