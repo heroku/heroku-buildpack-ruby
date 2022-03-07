@@ -15,7 +15,7 @@ jobs:
     steps:
       - id: checkout
         name: "Checkout code"
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
       - id: setup-pack
         name: "Setup pack"
         uses: buildpacks/github-actions/setup-pack@v4.6.0
