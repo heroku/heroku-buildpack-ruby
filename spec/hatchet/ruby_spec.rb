@@ -115,33 +115,109 @@ describe "Ruby apps" do
       ]
       config = {FORCE_ABSOLUTE_PATHS_BUILDPACK_IGNORE_PATHS: "BUNDLE_PATH"}
 
-      Hatchet::Runner.new('cd_ruby', stack: DEFAULT_STACK, buildpacks: buildpacks, config: config).deploy do |app|
-        expect(app.output).to match("cd version ruby 2.5.1")
 
-        expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
+      Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK, buildpacks: buildpacks, config: config).tap do |app|
+        app.before_deploy do
+          Pathname("Gemfile").write(<<~'EOF')
+            source "https://rubygems.org"
+
+            ruby "~> 3.0.0"
+
+            gem "rake"
+          EOF
+
+          Pathname("Gemfile.lock").write(<<~'EOF')
+            GEM
+              remote: https://rubygems.org/
+              specs:
+                rake (13.0.6)
+
+            PLATFORMS
+              ruby
+              x86_64-darwin-20
+
+            DEPENDENCIES
+              rake
+
+            RUBY VERSION
+              ruby 3.0.3p157
+
+            BUNDLED WITH
+               2.3.7
+          EOF
+
+          Pathname("Rakefile").write(<<~'EOF')
+            task "assets:precompile" do
+              out = `cd client && bundle exec ruby -v`
+              puts "cd version #{out}"
+              unless $?.success?
+                puts "Failed: #{out}"
+                exit 1
+              end
+            end
+          EOF
+
+          dir = Pathname("client")
+          dir.mkpath
+          FileUtils.touch(dir.join(".gitkeep"))
+        end
+
+        app.deploy do |app|
+          expect(app.output).to match("cd version ruby 3.0.3")
+
+          expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
+        end
       end
     end
   end
 
   describe "bundler ruby version matcher" do
     it "installs a version even when not present in the Gemfile.lock" do
-      Hatchet::Runner.new('bundle-ruby-version-not-in-lockfile', stack: DEFAULT_STACK).deploy do |app|
-        expect(app.output).to         match("2.5.1")
-        expect(app.run("ruby -v")).to match("2.5.1")
-      end
-    end
+      Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK).tap do |app|
+        app.before_deploy do
+          Pathname("Gemfile").write(<<~'EOF')
+            source "https://rubygems.org"
 
-    it "works even when patchfile is specified" do
-      Hatchet::Runner.new('problem_gemfile_version', stack: DEFAULT_STACK).deploy do |app|
-        expect(app.output).to match("2.5.1")
-      end
-    end
-  end
+            ruby "~> 3.0.0"
 
-  describe "2.5.0" do
-    it "works" do
-      Hatchet::Runner.new("ruby_25", stack: "heroku-18").deploy do |app|
-        expect(app.output).to include("There is a more recent Ruby version available")
+            gem "sinatra"
+          EOF
+
+          Pathname("Gemfile.lock").write(<<~'EOF')
+            GEM
+              remote: https://rubygems.org/
+              specs:
+                mustermann (1.1.1)
+                  ruby2_keywords (~> 0.0.1)
+                rack (2.2.3)
+                rack-protection (2.2.0)
+                  rack
+                ruby2_keywords (0.0.5)
+                sinatra (2.2.0)
+                  mustermann (~> 1.0)
+                  rack (~> 2.2)
+                  rack-protection (= 2.2.0)
+                  tilt (~> 2.0)
+                tilt (2.0.10)
+
+            PLATFORMS
+              ruby
+              x86_64-darwin-20
+
+            DEPENDENCIES
+              sinatra
+
+            BUNDLED WITH
+               2.3.7
+          EOF
+
+        end
+
+        app.deploy do |app|
+          # Intentionally different than the default ruby version
+          expect(app.output).to         match("3.0.0")
+          expect(app.run("ruby -v")).to match("3.0.0")
+        end
       end
     end
   end

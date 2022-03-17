@@ -1,61 +1,32 @@
 require_relative '../spec_helper'
 
-class CnbRun
-  attr_accessor :image_name, :output, :repo_path, :buildpack_path, :builder
-
-  def initialize(repo_path, builder: "heroku/buildpacks:18", buildpack_paths: )
-    @repo_path = repo_path
-    @image_name = "heroku-buildpack-ruby-tests:#{SecureRandom.hex}"
-    @builder = builder
-    @buildpack_paths = Array.new(buildpack_paths)
-    @build_output = ""
-  end
-
-  def call
-    command = String.new("pack build #{image_name} --path #{repo_path} --builder heroku/buildpacks:18")
-    @buildpack_paths.each do |path|
-      command << " --buildpack #{path}"
-    end
-
-    @output = run_local!(command)
-    yield self
-  ensure
-    teardown
-  end
-
-  def teardown
-    return unless image_name
-    repo_name, tag_name = image_name.split(":")
-
-    docker_list = `docker images --no-trunc | grep #{repo_name} | grep #{tag_name}`.strip
-    run_local!("docker rmi #{image_name} --force") if !docker_list.empty?
-    @image_name = nil
-  end
-
-  def run(cmd)
-    `docker run #{image_name} '#{cmd}'`.strip
-  end
-
-  def run!(cmd)
-    out = run(cmd)
-    raise "Command #{cmd.inspect} failed. Output: #{out}" unless $?.success?
-    out
-  end
-
-  private def run_local!(cmd)
-    out = `#{cmd}`
-    raise "Command #{cmd.inspect} failed. Output: #{out}" unless $?.success?
-    out
-  end
-end
-
 describe "cnb" do
   it "locally runs default_ruby app" do
-    CnbRun.new(hatchet_path("rack/default_ruby"), buildpack_paths: [buildpack_path]).call do |app|
-      expect(app.output).to match("Compiling Ruby/Rack")
+    Cutlass::App.new("default_ruby").transaction do |app|
+      app.pack_build
 
-      run_out = app.run!("ruby -v")
-      expect(run_out).to match(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
+      expect(app.stdout).to include("Installing rake")
+
+      app.run_multi("ruby -v") do |out|
+        expect(out.stdout).to match(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
+      end
+
+      app.run_multi("bundle list") do |out|
+        expect(out.stdout).to match("rack")
+      end
+
+      app.run_multi("gem list") do |out|
+        expect(out.stdout).to match("rack")
+      end
+
+      app.run_multi(%Q{ruby -e "require 'rack'; puts 'done'"}) do |out|
+        expect(out.stdout).to match("done")
+      end
+
+      # Test cache
+      app.pack_build
+
+      expect(app.stdout).to include("Using rake")
     end
   end
 
@@ -76,7 +47,7 @@ describe "cnb" do
 
           # Stacks that the buildpack will work with
           [[stacks]]
-          id = "heroku-18"
+          id = "heroku-20"
 
           [[stacks]]
           id = "org.cloudfoundry.stacks.cflinuxfs3"
@@ -101,21 +72,23 @@ describe "cnb" do
       FileUtils.chmod("+x", "#{second_buildpack_dir}/bin/detect")
       FileUtils.chmod("+x", "#{second_buildpack_dir}/bin/build")
 
-      CnbRun.new(hatchet_path("rack/default_ruby"), buildpack_paths: [buildpack_path, second_buildpack_dir]).call do |app|
-        expect(app.output).to match("Compiling Ruby/Rack")
+      Cutlass::App.new("default_ruby", buildpacks: [:default, second_buildpack_dir]).transaction do |app|
+        app.pack_build
 
-        expect(app.output).to match("com.examples.buildpacks.test_ruby_export")
-        expect(app.output).to match("Which gem: /workspace/bin/gem")
+        expect(app.stdout).to match("Compiling Ruby/Rack")
+
+        expect(app.stdout).to match("com.examples.buildpacks.test_ruby_export")
+        expect(app.stdout).to match("Which gem: /workspace/bin/gem")
       end
     end
   end
 
   it "locally runs rails getting started" do
-    CnbRun.new(hatchet_path("heroku/ruby-getting-started"), buildpack_paths: [buildpack_path]).call do |app|
-      expect(app.output).to match("Compiling Ruby/Rails")
+    Cutlass::App.new("ruby-getting-started").transaction do |app|
+      app.pack_build
+      expect(app.stdout).to match("Compiling Ruby/Rails")
 
-      run_out = app.run!("ruby -v")
-      expect(run_out).to match("2.7.4")
+      expect(app.run("ruby -v").stdout).to match("2.7.4")
     end
   end
 end
