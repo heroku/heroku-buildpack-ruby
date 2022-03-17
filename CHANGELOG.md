@@ -2,6 +2,40 @@
 
 ## Main (unreleased)
 
+## v239 (2022/03/02)
+
+* Rollback bundler 2.x change. Bundler 2.x is now back at 2.2.33 (https://github.com/heroku/heroku-buildpack-ruby/pull/1281)
+
+## v238 (2022/03/02)
+
+* Bundler 2.x is now 2.3.7 (https://github.com/heroku/heroku-buildpack-ruby/pull/1276)
+
+## v237 (2022/02/24)
+
+* Default Ruby version is now 3.0.3 (https://github.com/heroku/heroku-buildpack-ruby/pull/1270)
+
+## v236 (2022/01/04)
+
+* Fix deprecated rake tasks for Rails 7 on Heroku CI (https://github.com/heroku/heroku-buildpack-ruby/pull/1257)
+
+## v235 (2022/01/03)
+
+* Bundler 2.x is now 2.2.33 (https://github.com/heroku/heroku-buildpack-ruby/pull/1248)
+
+## v234 (12/16/2021)
+
+* Fix YML indentation from v233 (https://github.com/heroku/heroku-buildpack-ruby/pull/1252)
+
+## v233 (12/16/2021)
+
+* Default node version now 16.13.1, yarn is 1.22.17 (https://github.com/heroku/heroku-buildpack-ruby/pull/1238)
+* Default Ruby version is now 2.7.5 (https://github.com/heroku/heroku-buildpack-ruby/pull/1237)
+* Remove instrumentation and LPXC logic (https://github.com/heroku/heroku-buildpack-ruby/pull/1229)
+
+## v232 (11/9/2021)
+
+* Deactivate LPXC (https://github.com/heroku/heroku-buildpack-ruby/pull/1228)
+
 ## v231 (10/27/2021)
 
 * Applications with `package.json` now get `nodejs` installed (https://github.com/heroku/heroku-buildpack-ruby/pull/1212)

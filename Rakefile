@@ -65,6 +65,43 @@ def install_gem(gem_name, version)
 end
 
 namespace :buildpack do
+  desc "prepares the next version of the buildpack for release"
+  task :prepare do
+    deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby")
+    unreleased_changelogs = Pathname(__dir__).join("changelogs/unreleased").glob("*.md")
+    if unreleased_changelogs.empty?
+      puts "No devcenter changelog entries on disk in changelogs/unreleased"
+    else
+      next_changelog_dir = Pathname(__dir__).join("changelogs").join(deploy.next_version.to_s)
+
+      next_changelog_dir.mkpath
+
+      unreleased_changelogs.each do |source|
+        dest = next_changelog_dir.join(source.basename)
+        puts "Moving #{source} to #{dest}"
+        FileUtils.mv(source, dest)
+      end
+    end
+
+    changelog_md = Pathname(__dir__).join("CHANGELOG.md")
+    contents = changelog_md.read
+    version_string = "## #{deploy.next_version}"
+    if contents.include?(version_string)
+      puts "Found an entry in CHANGELOG.md for #{version_string}"
+    else
+      new_section = "## Main (unreleased)\n\n#{version_string} (#{Time.now.strftime("%Y/%m/%d")})"
+
+      puts "Writing to CHANGELOG.md:\n\n#{new_section}"
+
+      changelog_md.write(contents.gsub("## Main (unreleased)", new_section))
+    end
+
+    version_rb = Pathname(__dir__).join("lib/language_pack/version.rb")
+    puts "Updating version.rb"
+    contents =  version_rb.read.gsub(/BUILDPACK_VERSION = .*$/, %Q{BUILDPACK_VERSION = "#{deploy.next_version.to_s}"})
+    version_rb.write(contents)
+  end
+
   desc "releases the next version of the buildpack"
   task :release do
     deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby")
