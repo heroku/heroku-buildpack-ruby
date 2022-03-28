@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+* Add support for heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1289)
+
 ## v239 (2022/03/02)
 
 * Rollback bundler 2.x change. Bundler 2.x is now back at 2.2.33 (https://github.com/heroku/heroku-buildpack-ruby/pull/1281)
