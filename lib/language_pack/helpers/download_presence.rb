@@ -16,7 +16,7 @@
 #    puts download.exists? #=> true
 #    puts download.valid_stack_list #=> ['cedar-14']
 class LanguagePack::Helpers::DownloadPresence
-  STACKS = ['heroku-18', 'heroku-20']
+  STACKS = ['heroku-18', 'heroku-20', 'heroku-22']
 
   def initialize(path, stacks: STACKS)
     @path = path
