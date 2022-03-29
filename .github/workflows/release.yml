@@ -58,7 +58,7 @@ jobs:
         run: ./.github/scripts/release-workflow-prepare-pr.sh "${{ steps.package.outputs.id }}" "${{ steps.package.outputs.version }}" "docker://${{ steps.package.outputs.address }}"
         shell: bash
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         with:
           title: "Post-release updates: ${{ steps.package.outputs.id }} ${{ steps.package.outputs.version }}"
           commit-message: "Post-release updates: ${{ steps.package.outputs.id }} ${{ steps.package.outputs.version }}"
