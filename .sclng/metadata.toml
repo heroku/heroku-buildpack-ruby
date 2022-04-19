@@ -1,0 +1,8 @@
+version = "1.0.0"
+owner = "etienne@scalingo.com"
+team = "IST"
+description = "Ruby Buildpack for Scalingo"
+languages = ["shell"]
+destination_server = []
+flags = ["buildpack"]
+dependencies = []
