@@ -69,7 +69,7 @@ describe LanguagePack::Helpers::DownloadPresence do
 
   it "detects default ruby version" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      "#{LanguagePack::RubyVersion::DEFAULT_VERSION}.tgz",
+      "ruby-3.1.1.tgz",
     )
 
     download.call
@@ -84,7 +84,7 @@ describe LanguagePack::Helpers::DownloadPresence do
     )
 
     download.call
-    
+
     expect(download.supported_stack?(current_stack: "unknown-stack")).to be_falsey
     expect(download.next_stack(current_stack: "unknown-stack")).to be_nil
     expect(download.exists_on_next_stack?(current_stack:"unknown-stack")).to be_falsey
