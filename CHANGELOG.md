@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v241 (2022/06/01)
+
+* Download presence check now includes heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1290)
+
 ## v240 (2022/04/05)
 
 * Add support for heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1289)
