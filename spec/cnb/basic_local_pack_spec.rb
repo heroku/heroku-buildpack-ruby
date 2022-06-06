@@ -88,7 +88,7 @@ describe "cnb" do
       app.pack_build
       expect(app.stdout).to match("Compiling Ruby/Rails")
 
-      expect(app.run("ruby -v").stdout).to match("2.7.4")
+      expect(app.run("ruby -v").stdout).to match("3.1.2")
     end
   end
 end
