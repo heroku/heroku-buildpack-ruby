@@ -1,6 +1,10 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env bash
 
-require 'pathname'
+# fail hard
+set -o pipefail
+# fail harder
+set -eu
 
-release = Pathname.new(ARGV.first).join("tmp/heroku-buildpack-release-step.yml")
-puts release.read if release.exist?
+BUILD_DIR=${1:-}
+
+cat "$BUILD_DIR/tmp/heroku-buildpack-release-step.yml"
