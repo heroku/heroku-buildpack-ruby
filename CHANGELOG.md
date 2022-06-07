@@ -2,7 +2,10 @@
 
 ## Main (unreleased)
 
+## v242 (2022/06/07)
+
 * Ensure `bin/release` exits zero if `tmp/heroku-buildpack-release-step.yml` does not exist (https://github.com/heroku/heroku-buildpack-ruby/pull/1309)
+* Bootstrap Ruby version used by the buildpack internals is updated to Ruby 3.1.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/1310)
 
 ## v241 (2022/06/06)
 
