@@ -2,13 +2,16 @@
 
 ## Main (unreleased)
 
+* Ensure `bin/release` exits zero if `tmp/heroku-buildpack-release-step.yml` does not exist (https://github.com/heroku/heroku-buildpack-ruby/pull/1309)
+
 ## v241 (2022/06/06)
 
-- `bin/release` is re-written in bash (https://github.com/heroku/heroku-buildpack-ruby/pull/1308)
+* `bin/release` is re-written in bash, so it supports Heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1308)
+* Download presence check now includes heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1290)
 
 ## v240 (2022/04/05)
 
-* Add support for heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1289)
+* Add initial support for heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1289)
 * Bundler 2.x is now 2.3.10 (https://github.com/heroku/heroku-buildpack-ruby/pull/1296)
 
 ## v239 (2022/03/02)
