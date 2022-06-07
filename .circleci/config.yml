@@ -12,7 +12,7 @@ jobs:
           version: 0.24.0
       - restore_cache:
           keys:
-            - v3-ruby-3.1.1
+            - v3-ruby-3.1.2
 
       - run:
           name: Install ruby-install
@@ -32,23 +32,23 @@ jobs:
       - run:
           name: Ruby install
           command: |
-              ruby-install ruby 3.1.1 --no-reinstall
+              ruby-install ruby 3.1.2 --no-reinstall
 
       - run:
           name: Set chruby defaults
           command: |
             echo 'source /usr/local/share/chruby/chruby.sh' >> $BASH_ENV
-            echo 'chruby ruby-3.1.1' >> $BASH_ENV
+            echo 'chruby ruby-3.1.2' >> $BASH_ENV
 
       - save_cache:
-          key: v3-ruby-3.1.1
+          key: v3-ruby-3.1.2
           paths:
             - "~/.rubies"
 
       - run:
           command: |
             rvm implode --force
-            chruby 3.1.1
+            chruby 3.1.2
 
             gem install bundler -v 2.2.32 --no-document
             bundle config deployment 'true'
