@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+* Switch away from deprecated path-based S3 URLs (https://github.com/heroku/heroku-buildpack-ruby/pull/1311)
+
 ## v242 (2022/06/07)
 
 * Ensure `bin/release` exits zero if `tmp/heroku-buildpack-release-step.yml` does not exist (https://github.com/heroku/heroku-buildpack-ruby/pull/1309)
