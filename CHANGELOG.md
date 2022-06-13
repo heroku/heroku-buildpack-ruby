@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+* Adjust curl retry and connection timeout handling (https://github.com/heroku/heroku-buildpack-ruby/pull/1312)
+
 ## v242 (2022/06/07)
 
 * Ensure `bin/release` exits zero if `tmp/heroku-buildpack-release-step.yml` does not exist (https://github.com/heroku/heroku-buildpack-ruby/pull/1309)

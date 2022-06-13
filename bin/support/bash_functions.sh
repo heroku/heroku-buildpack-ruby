@@ -110,7 +110,7 @@ compile_buildpack_v2()
 
     if [[ "$url" =~ \.tgz$ ]] || [[ "$url" =~ \.tgz\? ]]; then
       mkdir -p "$dir"
-      curl_retry_on_18 -s "$url" | tar xvz -C "$dir" >/dev/null 2>&1
+      curl_retry_on_18 -s --fail --retry 3 --retry-connrefused --connect-timeout ${CURL_CONNECT_TIMEOUT:-3} "$url" | tar xvz -C "$dir" >/dev/null 2>&1
     else
       git clone "$url" "$dir" >/dev/null 2>&1
     fi
