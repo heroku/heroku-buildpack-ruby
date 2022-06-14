@@ -646,7 +646,7 @@ EOF
 
   # vendors individual binary into the slug
   # @param [String] name of the binary package from S3.
-  #   Example: https://s3.amazonaws.com/language-pack-ruby/node-0.4.7.tgz, where name is "node-0.4.7"
+  #   Example: https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/node-0.4.7.tgz, where name is "node-0.4.7"
   def install_binary(name)
     topic "Installing #{name}"
     bin_dir = "bin"

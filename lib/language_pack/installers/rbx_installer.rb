@@ -4,7 +4,7 @@ require "language_pack/shell_helpers"
 class LanguagePack::Installers::RbxInstaller
   include LanguagePack::ShellHelpers, LanguagePack::Installers::RubyInstaller
 
-  BASE_URL = "https://rubinius-binaries-rubinius-com.s3.amazonaws.com/ubuntu/14.04/x86_64/"
+  BASE_URL = "https://rubinius-binaries-rubinius-com.s3.us-west-2.amazonaws.com/ubuntu/14.04/x86_64/"
 
   def initialize(stack)
     @fetcher = LanguagePack::Fetcher.new(BASE_URL)
