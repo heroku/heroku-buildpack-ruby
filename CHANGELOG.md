@@ -3,6 +3,7 @@
 ## Main (unreleased)
 
 * Switch away from deprecated path-based S3 URLs (https://github.com/heroku/heroku-buildpack-ruby/pull/1311)
+* Adjust curl retry and connection timeout handling (https://github.com/heroku/heroku-buildpack-ruby/pull/1312)
 
 ## v242 (2022/06/07)
 
