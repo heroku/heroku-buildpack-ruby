@@ -9,3 +9,4 @@ buildpacks/*
 tmp/*.log
 log/*.log
 spec/examples.txt
+.idea

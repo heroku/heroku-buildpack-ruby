@@ -14,6 +14,7 @@ require "language_pack/version"
 
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
+  MECAB_VENDOR_URL = "https://s3.amazonaws.com/mecab/libmecab-heroku.tar.gz"
   NAME                 = "ruby"
   LIBYAML_VERSION      = "0.1.7"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
@@ -94,6 +95,14 @@ WARNING
       bundle_default_without: "development:test"
     )
     allow_git do
+      install_mecab
+      run("cp -R vendor/mecab /app/vendor/mecab")
+      ENV['PATH'] += ":/app/vendor/mecab/bin"
+      ENV['CFLAGS'] = "-I/app/vendor/mecab/include"
+      ENV['CPATH'] = "/app/vendor/mecab/include"
+      ENV['CPPPATH'] = "/app/vendor/mecab/include"
+      ENV['LIBRARY_PATH'] = "/app/vendor/mecab/lib"
+      ENV['LDFLAGS'] = "-L/app/vendor/mecab/lib"
       install_bundler_in_app(slug_vendor_base)
       load_bundler_cache
       build_bundler
@@ -677,6 +686,15 @@ EOF
   # @param [String] relative path of the binary on the slug
   def uninstall_binary(path)
     FileUtils.rm File.join('bin', File.basename(path)), :force => true
+  end
+
+  def install_mecab
+    topic("Installing mecab")
+    bin_dir = "vendor/mecab"
+    FileUtils.mkdir_p bin_dir
+    Dir.chdir(bin_dir) do |dir|
+      run("curl #{MECAB_VENDOR_URL} -s -o - | tar xzf -")
+    end
   end
 
   def load_default_cache?
