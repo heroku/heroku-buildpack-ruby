@@ -68,6 +68,12 @@ class LanguagePack::Base
     raise "must subclass"
   end
 
+  def procfile_default_process_types
+    return unless File.exist?("Procfile")
+
+    File.read('Procfile').split("\n").map{ |row| row.split(':', 2).map(&:strip) }.to_h
+  end
+
   # this is called to build the slug
   def compile
     write_release_yaml
@@ -108,7 +114,7 @@ class LanguagePack::Base
     release = {}
     release["addons"]                = default_addons
     release["config_vars"]           = default_config_vars
-    release["default_process_types"] = default_process_types
+    release["default_process_types"] = procfile_default_process_types || default_process_types
 
     release
   end
