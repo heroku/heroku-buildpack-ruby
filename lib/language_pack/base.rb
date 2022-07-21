@@ -71,6 +71,7 @@ class LanguagePack::Base
   def procfile_default_process_types
     return unless File.exist?("Procfile")
 
+    topic "Discovering process types"
     File.read('Procfile').split("\n").map{ |row| row.split(':', 2).map(&:strip) }.to_h
   end
 
