@@ -13,7 +13,7 @@ module LanguagePack
     end
 
     BOOTSTRAP_VERSION_NUMBER = "3.1.2".freeze
-    DEFAULT_VERSION_NUMBER = "3.0.3".freeze
+    DEFAULT_VERSION_NUMBER = "3.1.2".freeze
     DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
     LEGACY_VERSION_NUMBER  = "1.9.2".freeze
     LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}".freeze

@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v244 (2022/07/25)
+
+* Default Ruby version is now 3.1.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/1316)
+
 ## v243 (2022/06/14)
 
 * Switch away from deprecated path-based S3 URLs (https://github.com/heroku/heroku-buildpack-ruby/pull/1311)
