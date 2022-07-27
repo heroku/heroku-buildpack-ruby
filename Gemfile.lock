@@ -11,7 +11,7 @@ GEM
       excon (>= 0.47.0)
       multi_json
     erubis (2.7.0)
-    excon (0.92.1)
+    excon (0.92.4)
     heroics (0.1.2)
       erubis (~> 2.0)
       excon
@@ -48,7 +48,7 @@ GEM
     rspec-support (3.11.0)
     thor (1.2.1)
     threaded (0.0.4)
-    toml-rb (2.1.2)
+    toml-rb (2.2.0)
       citrus (~> 3.0, > 3.0)
     webrick (1.7.0)
 
