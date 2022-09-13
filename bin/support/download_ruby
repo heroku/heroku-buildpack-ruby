@@ -7,7 +7,7 @@
 # fail hard
 set -o pipefail
 # fail harder
-set -eu
+set -e
 
 BIN_DIR=$1
 RUBY_BOOTSTRAP_DIR=$2
@@ -26,7 +26,11 @@ curl_retry_on_18() {
 regex=".*ruby_version = [\'\"]([0-9]+\.[0-9]+\.[0-9]+)[\'\"].*"
 if [[ $(cat "$BIN_DIR/../buildpack.toml") =~ $regex ]]
   then
-    heroku_buildpack_ruby_url="https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/$STACK/ruby-${BASH_REMATCH[1]}.tgz"
+    if [[ $BUILDPACK_VENDOR_URL ]]; then
+      heroku_buildpack_ruby_url="$BUILDPACK_VENDOR_URL/$STACK/ruby-${BASH_REMATCH[1]}.tgz"
+    else
+      heroku_buildpack_ruby_url="https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/$STACK/ruby-${BASH_REMATCH[1]}.tgz"
+    fi
   else
     echo "Could not detect ruby version to bootstrap"
     exit 1
