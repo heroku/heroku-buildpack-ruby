@@ -1,0 +1,48 @@
+name: heroku/heroku-buildpack-ruby/main
+on:
+  push:
+env:
+  HEROKU_API_KEY: xxxxxxx
+  HEROKU_API_USER: xxxxxxx
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+#     # This item has no matching transformer
+#     - buildpacks_pack_install_pack:
+    - name: restore_cache
+      uses: actions/cache@v2
+      with:
+        key: v3-ruby-3.1.2
+        restore-keys: v3-ruby-3.1.2
+        path: "~/.rubies"
+    - name: Install ruby-install
+      run: |-
+        wget -O ruby-install-0.8.3.tar.gz https://github.com/postmodern/ruby-install/archive/v0.8.3.tar.gz
+        tar -xzvf ruby-install-0.8.3.tar.gz
+        cd ruby-install-0.8.3/
+        sudo make install
+    - name: Install chruby
+      run: |-
+        wget -O chruby-0.3.9.tar.gz https://github.com/postmodern/chruby/archive/v0.3.9.tar.gz
+        tar -xzvf chruby-0.3.9.tar.gz
+        cd chruby-0.3.9/
+        sudo make install
+    - name: Ruby install
+      run: ruby-install ruby 3.1.2 --no-reinstall
+    - name: Set chruby defaults
+      run: |-
+        echo 'source /usr/local/share/chruby/chruby.sh' >> $BASH_ENV
+        echo 'chruby ruby-3.1.2' >> $BASH_ENV
+    - run: |-
+        rvm implode --force
+        chruby 3.1.2
+        gem install bundler -v 2.2.32 --no-document
+        bundle config deployment 'true'
+        bundle config path ./vendor/bundle
+        bundle install
+        bundle clean
+        bundle exec rake hatchet:setup_ci
+        echo "pack version: $(pack --version)"
+        bundle exec rspec spec/cnb/
