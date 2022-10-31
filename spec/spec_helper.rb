@@ -80,6 +80,10 @@ def rails_lts_config
   { 'BUNDLE_GEMS__RAILSLTS__COM' => ENV["RAILS_LTS_CREDS"] }
 end
 
+def rails_lts_stack
+  "heroku-20"
+end
+
 def hatchet_path(path = "")
   Pathname.new(__FILE__).join("../../repos").expand_path.join(path)
 end
