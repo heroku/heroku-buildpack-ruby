@@ -3,13 +3,8 @@ GEM
   specs:
     ci-queue (0.22.1)
     citrus (3.0.2)
-    cutlass (0.3.0)
-      docker-api (>= 2.0)
     dead_end (3.1.1)
     diff-lcs (1.5.0)
-    docker-api (2.2.0)
-      excon (>= 0.47.0)
-      multi_json
     erubis (2.7.0)
     excon (0.92.4)
     heroics (0.1.2)
@@ -57,7 +52,6 @@ PLATFORMS
 
 DEPENDENCIES
   ci-queue
-  cutlass
   dead_end
   excon
   heroku_hatchet
