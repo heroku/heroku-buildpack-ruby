@@ -3,7 +3,7 @@ GEM
   specs:
     ci-queue (0.22.1)
     citrus (3.0.2)
-    dead_end (3.1.1)
+    dead_end (4.0.0)
     diff-lcs (1.5.0)
     erubis (2.7.0)
     excon (0.92.4)
