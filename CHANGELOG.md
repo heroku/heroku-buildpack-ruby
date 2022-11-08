@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v245 (2022/11/08)
+
+* Default node version now 18.12.1 (https://github.com/heroku/heroku-buildpack-ruby/pull/1331)
+
 ## v244 (2022/07/25)
 
 * Default Ruby version is now 3.1.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/1316)
