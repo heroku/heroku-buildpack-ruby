@@ -16,5 +16,4 @@ group :development, :test do
   gem 'ci-queue'
   gem 'redis'
   gem 'dead_end'
-  gem 'cutlass'
 end
