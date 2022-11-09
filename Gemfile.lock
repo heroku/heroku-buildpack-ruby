@@ -3,6 +3,7 @@ GEM
   specs:
     ci-queue (0.24.2)
     citrus (3.0.2)
+    connection_pool (2.3.0)
     dead_end (4.0.0)
     diff-lcs (1.5.0)
     erubis (2.7.0)
@@ -31,7 +32,10 @@ GEM
       rate_throttle_client (~> 0.1.0)
     rake (13.0.6)
     rate_throttle_client (0.1.2)
-    redis (4.6.0)
+    redis (5.0.5)
+      redis-client (>= 0.9.0)
+    redis-client (0.11.1)
+      connection_pool
     rrrretry (1.0.0)
     rspec-core (3.12.0)
       rspec-support (~> 3.12.0)
