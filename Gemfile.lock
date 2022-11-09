@@ -43,7 +43,7 @@ GEM
     rspec-support (3.12.0)
     thor (1.2.1)
     threaded (0.0.4)
-    toml-rb (2.1.2)
+    toml-rb (2.2.0)
       citrus (~> 3.0, > 3.0)
     webrick (1.7.0)
 
