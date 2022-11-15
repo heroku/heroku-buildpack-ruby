@@ -37,7 +37,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   BLESSED_BUNDLER_VERSIONS = {}
   BLESSED_BUNDLER_VERSIONS["1"] = "1.17.3"
-  BLESSED_BUNDLER_VERSIONS["2"] = "2.3.10"
+  BLESSED_BUNDLER_VERSIONS["2"] = "2.3.25"
   BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m
 
   class GemfileParseError < BuildpackError
