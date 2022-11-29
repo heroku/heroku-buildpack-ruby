@@ -2,6 +2,11 @@
 
 ## Main (unreleased)
 
+## v246 (2022/11/29)
+
+* Default Node.js version now 16.18.1 (https://github.com/heroku/heroku-buildpack-ruby/pull/1342)
+* Default Yarn version now 1.22.19 (https://github.com/heroku/heroku-buildpack-ruby/pull/1342)
+
 ## v245 (2022/11/16)
 
 * Bump Bundler 2 wrapper to 2.3.25 (https://github.com/heroku/heroku-buildpack-ruby/pull/1337)
