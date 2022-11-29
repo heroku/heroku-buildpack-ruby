@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+* Bump Bundler 2 wrapper to 2.3.26 (https://github.com/heroku/heroku-buildpack-ruby/pull/1341)
+
 ## v245 (2022/11/16)
 
 * Bump Bundler 2 wrapper to 2.3.25 (https://github.com/heroku/heroku-buildpack-ruby/pull/1337)
