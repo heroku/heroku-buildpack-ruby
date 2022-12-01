@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v247 (2022/12/01)
+
+* JRuby 9.3.7.0, 9.3.8.0, 9.3.9.0, 9.4.0.0
+
 ## v246 (2022/11/29)
 
 * Default Node.js version now 16.18.1 (https://github.com/heroku/heroku-buildpack-ruby/pull/1342)
