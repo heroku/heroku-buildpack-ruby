@@ -16,7 +16,7 @@ describe "Bundler" do
     abi_version[-1] = "0" # turn 2.5.7 into 2.5.0
     pending("Must enable HATCHET_EXPENSIVE_MODE") unless ENV["HATCHET_EXPENSIVE_MODE"]
 
-    Hatchet::Runner.new("default_ruby", run_multi: true, stack: "heroku-18").tap do |app|
+    Hatchet::Runner.new("default_ruby", stack: "heroku-18").tap do |app|
       app.before_deploy do
         run!(%Q{echo "ruby '#{ruby_version}'" >> Gemfile})
         run!(%Q{printf "\nBUNDLED WITH\n   2.0.1\n" >> Gemfile.lock})
@@ -29,11 +29,11 @@ describe "Bundler" do
         app.commit!
         app.push!
 
-        app.run_multi("ls vendor/bundle/ruby/#{abi_version}/gems") do |ls_output|
-          expect(ls_output).to match("rake-")
-        end
+        # app.run_multi("ls vendor/bundle/ruby/#{abi_version}/gems") do |ls_output|
+        #   expect(ls_output).to match("rake-")
+        # end
 
-        app.run_multi("which -a rake") do |which_rake|
+        app.run("which -a rake") do |which_rake|
           expect(which_rake).to include("/app/vendor/bundle/bin/rake")
           expect(which_rake).to include("/app/vendor/bundle/ruby/#{abi_version}/bin/rake")
         end
@@ -46,7 +46,7 @@ describe "Bundler" do
     abi_version[-1] = "0" # turn 2.6.6 into 2.6.0
     pending("Must enable HATCHET_EXPENSIVE_MODE") unless ENV["HATCHET_EXPENSIVE_MODE"]
 
-    Hatchet::Runner.new("default_ruby", run_multi: true).tap do |app|
+    Hatchet::Runner.new("default_ruby").tap do |app|
       app.before_deploy do
         run!(%Q{printf "\nBUNDLED WITH\n   1.0.1\n" >> Gemfile.lock})
       end
@@ -54,11 +54,11 @@ describe "Bundler" do
         expect(app.output).to match("Installing dependencies using bundler 1.")
         expect(app.output).to match("BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=1")
 
-        app.run_multi("ls vendor/bundle/ruby/#{abi_version}/gems") do |ls_output|
-          expect(ls_output).to match("rake-")
-        end
+        # app.run_multi("ls vendor/bundle/ruby/#{abi_version}/gems") do |ls_output|
+        #   expect(ls_output).to match("rake-")
+        # end
 
-        app.run_multi("which -a rake") do |which_rake|
+        app.run("which -a rake") do |which_rake|
           expect(which_rake).to include("/app/vendor/bundle/bin/rake")
           expect(which_rake).to include("/app/vendor/bundle/ruby/#{abi_version}/bin/rake")
         end
