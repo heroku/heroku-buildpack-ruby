@@ -2,7 +2,7 @@
 
 ## Main (unreleased)
 
-## v249 (2022/12/15)
+## v249 (2022/12/16)
 
 * Apps with the environment variable `HEROKU_SKIP_DATABASE_PROVISION=1` set will no longer receive a database on the first push to a new Heroku app. This environment variable interface is not standard across other buildpacks and may be deprecated via warnings in the build output and changed in the future.
 
