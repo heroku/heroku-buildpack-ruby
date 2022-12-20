@@ -16,7 +16,7 @@
 #    puts download.exists? #=> true
 #    puts download.valid_stack_list #=> ['cedar-14']
 class LanguagePack::Helpers::DownloadPresence
-  STACKS = ['scalingo-18', 'scalingo-20']
+  STACKS = ['scalingo-18', 'scalingo-20', 'scalingo-22']
 
   def initialize(path, stacks: STACKS)
     @path = path

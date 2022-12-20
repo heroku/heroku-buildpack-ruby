@@ -13,8 +13,6 @@
   - 116db685f54dae18f703b3beb90e64fdbddb048d
 - - "./repos/ci/activerecord_rake_tasks_does_not_exist"
   - a6b711be6921cf7a0aa4e31269c37965799ea110
-- - "./repos/ci/ci_fails_ruby_default_bundler"
-  - a99cfbe3395bbd4539d5984b73d61771243b6208
 - - "./repos/ci/heroku-ci-json-example"
   - 4e5410a7381f486ba3df7739e02e52f32fdd4dda
 - - "./repos/ci/rails5_ruby_schema_format"
@@ -44,15 +42,15 @@
 - - "./repos/rails_versions/active_storage_non_local"
   - 86dddf0127043abba1cb2890590a1d38f111edbd
 - - "./repos/rails_versions/rails-jsbundling"
-  - f2c1455efb5892208b08a4a964e7f8e692b9b6f9
+  - c58178e061d9846386ca34ea31c99f6e6bb8dbf7
 - - "./repos/rails_versions/rails3_default_ruby"
   - a6b44db674c0d3538633989295e2cfd5e8e1ba0d
 - - "./repos/rails_versions/rails42_default_ruby"
   - dfa0f0133dafa62064968ea2efb6432f54350138
 - - "./repos/rails_versions/rails4_windows_mri193"
   - f4c7b6209835050468bbb87827acf652b8f4d8ce
-- - "./repos/rails_versions/rails6-basic"
-  - 6b81e0246c64c332181c22ace4ac96b57309cb85
+- - "./repos/rails_versions/rails61"
+  - e896f51e679eaf2204aa4fab6d038103fc622aed
 - - "./repos/rails_versions/rails_lts_23_default_ruby"
   - 7178b2f97d3b2b3170b390d997dcb212dd52cd30
 - - "./repos/rails_versions/sprockets_asset_compile_true"

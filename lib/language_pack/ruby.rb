@@ -644,7 +644,7 @@ EOF
 
   # vendors individual binary into the slug
   # @param [String] name of the binary package from S3.
-  #   Example: https://s3.amazonaws.com/language-pack-ruby/node-0.4.7.tgz, where name is "node-0.4.7"
+  #   Example: https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/node-0.4.7.tgz, where name is "node-0.4.7"
   def install_binary(name)
     topic "Installing #{name}"
     bin_dir = "bin"
@@ -993,6 +993,8 @@ params = CGI.parse(uri.query || "")
   # decides if we need to enable the dev database addon
   # @return [Array] the database addon if the pg gem is detected or an empty Array if it isn't.
   def add_dev_database_addon
+    return [] if env("HEROKU_SKIP_DATABASE_PROVISION")
+
     pg_adapters.any? {|a| bundler.has_gem?(a) } ? ['heroku-postgresql'] : []
   end
 

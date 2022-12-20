@@ -1,17 +1,13 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    ci-queue (0.22.1)
+    ci-queue (0.24.2)
     citrus (3.0.2)
-    cutlass (0.3.0)
-      docker-api (>= 2.0)
-    dead_end (3.1.1)
+    connection_pool (2.3.0)
+    dead_end (4.0.0)
     diff-lcs (1.5.0)
-    docker-api (2.2.0)
-      excon (>= 0.47.0)
-      multi_json
     erubis (2.7.0)
-    excon (0.92.1)
+    excon (0.94.0)
     heroics (0.1.2)
       erubis (~> 2.0)
       excon
@@ -24,11 +20,11 @@ GEM
       rrrretry (~> 1)
       thor (~> 1)
       threaded (~> 0)
-    json (2.6.1)
+    json (2.6.2)
     moneta (1.0.0)
     multi_json (1.15.0)
     parallel (1.22.1)
-    parallel_tests (3.8.1)
+    parallel_tests (4.0.0)
       parallel
     platform-api (3.3.0)
       heroics (~> 0.1.1)
@@ -36,19 +32,22 @@ GEM
       rate_throttle_client (~> 0.1.0)
     rake (13.0.6)
     rate_throttle_client (0.1.2)
-    redis (4.6.0)
+    redis (5.0.5)
+      redis-client (>= 0.9.0)
+    redis-client (0.11.1)
+      connection_pool
     rrrretry (1.0.0)
-    rspec-core (3.11.0)
-      rspec-support (~> 3.11.0)
-    rspec-expectations (3.11.0)
+    rspec-core (3.12.0)
+      rspec-support (~> 3.12.0)
+    rspec-expectations (3.12.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.11.0)
+      rspec-support (~> 3.12.0)
     rspec-retry (0.6.2)
       rspec-core (> 3.3)
-    rspec-support (3.11.0)
+    rspec-support (3.12.0)
     thor (1.2.1)
     threaded (0.0.4)
-    toml-rb (2.1.2)
+    toml-rb (2.2.0)
       citrus (~> 3.0, > 3.0)
     webrick (1.7.0)
 
@@ -57,7 +56,6 @@ PLATFORMS
 
 DEPENDENCIES
   ci-queue
-  cutlass
   dead_end
   excon
   heroku_hatchet
@@ -71,7 +69,7 @@ DEPENDENCIES
   toml-rb
 
 RUBY VERSION
-   ruby 3.1.1p18
+   ruby 3.1.2p20
 
 BUNDLED WITH
    2.3.10

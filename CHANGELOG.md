@@ -2,9 +2,49 @@
 
 ## Main (unreleased)
 
+## v249 (2022/12/16)
+
+* Apps with the environment variable `HEROKU_SKIP_DATABASE_PROVISION=1` set will no longer receive a database on the first push to a new Heroku app. This environment variable interface is not standard across other buildpacks and may be deprecated via warnings in the build output and changed in the future.
+
+## v248 (2022/12/06)
+
+* Ruby 3.2.0-rc1 is available
+
+## v247 (2022/12/01)
+
+* JRuby 9.3.7.0, 9.3.8.0, 9.3.9.0, 9.4.0.0
+
+## v246 (2022/11/29)
+
+* Default Node.js version now 16.18.1 (https://github.com/heroku/heroku-buildpack-ruby/pull/1342)
+* Default Yarn version now 1.22.19 (https://github.com/heroku/heroku-buildpack-ruby/pull/1342)
+
+## v245 (2022/11/16)
+
+* Bump Bundler 2 wrapper to 2.3.25 (https://github.com/heroku/heroku-buildpack-ruby/pull/1337)
+
+## v244 (2022/07/25)
+
+* Default Ruby version is now 3.1.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/1316)
+
+## v243 (2022/06/14)
+
+* Switch away from deprecated path-based S3 URLs (https://github.com/heroku/heroku-buildpack-ruby/pull/1311)
+* Adjust curl retry and connection timeout handling (https://github.com/heroku/heroku-buildpack-ruby/pull/1312)
+
+## v242 (2022/06/07)
+
+* Ensure `bin/release` exits zero if `tmp/heroku-buildpack-release-step.yml` does not exist (https://github.com/heroku/heroku-buildpack-ruby/pull/1309)
+* Bootstrap Ruby version used by the buildpack internals is updated to Ruby 3.1.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/1310)
+
+## v241 (2022/06/06)
+
+* `bin/release` is re-written in bash, so it supports Heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1308)
+* Download presence check now includes heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1290)
+
 ## v240 (2022/04/05)
 
-* Add support for heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1289)
+* Add initial support for heroku-22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1289)
 * Bundler 2.x is now 2.3.10 (https://github.com/heroku/heroku-buildpack-ruby/pull/1296)
 
 ## v239 (2022/03/02)

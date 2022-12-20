@@ -34,7 +34,7 @@ fi
 
 mkdir -p "$RUBY_BOOTSTRAP_DIR"
 
-curl_retry_on_18 --fail --silent --location -o "$RUBY_BOOTSTRAP_DIR/ruby.tgz" "$scalingo_buildpack_ruby_url" || {
+curl_retry_on_18 --fail --retry 3 --retry-connrefused --connect-timeout ${CURL_CONNECT_TIMEOUT:-3} --silent --location -o "$RUBY_BOOTSTRAP_DIR/ruby.tgz" "$scalingo_buildpack_ruby_url" || {
 cat<<EOF
   Failed to download a Ruby executable for bootstrapping!
 

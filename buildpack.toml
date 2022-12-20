@@ -5,7 +5,7 @@ id = "heroku/ruby"
 version = "0.1.4"
 name = "Ruby"
 homepage = "https://github.com/heroku/heroku-buildpack-ruby"
-ruby_version = "3.1.1"
+ruby_version = "3.1.2"
 
 [publish]
 
@@ -13,15 +13,15 @@ ruby_version = "3.1.1"
 files = ["spec/"]
 
 [[publish.Vendor]]
-url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-18/ruby-3.1.1.tgz"
+url = "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/heroku-18/ruby-3.1.2.tgz"
 dir = "vendor/ruby/heroku-18"
 
 [[publish.Vendor]]
-url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-20/ruby-3.1.1.tgz"
+url = "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/heroku-20/ruby-3.1.2.tgz"
 dir = "vendor/ruby/heroku-20"
 
 [[publish.Vendor]]
-url = "https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/heroku-22/ruby-3.1.1.tgz"
+url = "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/heroku-22/ruby-3.1.2.tgz"
 dir = "vendor/ruby/heroku-22"
 
 [[stacks]]

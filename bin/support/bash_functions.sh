@@ -81,7 +81,7 @@ detect_needs_java()
 #
 # Example:
 #
-#   compile_buildpack_v2 "$build_dir" "$cache_dir" "$env_dir" "https://buildpack-registry.s3.amazonaws.com/buildpacks/heroku/nodejs.tgz" "heroku/nodejs"
+#   compile_buildpack_v2 "$build_dir" "$cache_dir" "$env_dir" "https://buildpack-registry.s3.us-east-1.amazonaws.com/buildpacks/heroku/nodejs.tgz" "heroku/nodejs"
 #
 compile_buildpack_v2()
 {
@@ -110,7 +110,7 @@ compile_buildpack_v2()
 
     if [[ "$url" =~ \.tgz$ ]] || [[ "$url" =~ \.tgz\? ]]; then
       mkdir -p "$dir"
-      curl_retry_on_18 -s "$url" | tar xvz -C "$dir" >/dev/null 2>&1
+      curl_retry_on_18 -s --fail --retry 3 --retry-connrefused --connect-timeout ${CURL_CONNECT_TIMEOUT:-3} "$url" | tar xvz -C "$dir" >/dev/null 2>&1
     else
       git clone "$url" "$dir" >/dev/null 2>&1
     fi

@@ -46,7 +46,7 @@
     "sharpstone/active_storage_non_local",
     "sharpstone/active_storage_local",
     "sharpstone/sprockets_asset_compile_true",
-    "sharpstone/rails6-basic",
+    "sharpstone/rails61",
     "sharpstone/rails-jsbundling"
   ],
   "heroku": [
@@ -60,7 +60,6 @@
     "sharpstone/heroku-ci-json-example",
     "sharpstone/rails5_sql_schema_format",
     "sharpstone/ruby_no_rails_test",
-    "sharpstone/activerecord_rake_tasks_does_not_exist",
-    "sharpstone/ci_fails_ruby_default_bundler"
+    "sharpstone/activerecord_rake_tasks_does_not_exist"
   ]
 }
