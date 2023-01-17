@@ -18,22 +18,6 @@ def hatchet_path(path = "")
   Pathname(__FILE__).join("../../repos").expand_path.join(path)
 end
 
-puts hatchet_path
-
-require 'cutlass'
-
-RUBY_BUILDPACK = Cutlass::LocalBuildpack.new(directory: Pathname(__dir__).join(".."))
-Cutlass.config do |config|
-  config.default_builder = "heroku/buildpacks:20"
-
-  # Where do your test fixtures live?
-  config.default_repo_dirs = hatchet_path("").children
-
-  # Where does your buildpack live?
-  # Can be a directory or a Cutlass:LocalBuildpack instance
-  config.default_buildpack_paths = [RUBY_BUILDPACK]
-end
-
 RSpec.configure do |config|
   config.filter_run focused: true unless ENV['IS_RUNNING_ON_CI']
   config.run_all_when_everything_filtered = true
@@ -78,6 +62,10 @@ end
 
 def rails_lts_config
   { 'BUNDLE_GEMS__RAILSLTS__COM' => ENV["RAILS_LTS_CREDS"] }
+end
+
+def rails_lts_stack
+  "heroku-20"
 end
 
 def hatchet_path(path = "")

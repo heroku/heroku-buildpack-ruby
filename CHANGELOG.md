@@ -2,6 +2,31 @@
 
 ## Main (unreleased)
 
+## v250 (2022/12/25)
+
+* Ruby 3.2.0 is available
+
+## v249 (2022/12/16)
+
+* Apps with the environment variable `HEROKU_SKIP_DATABASE_PROVISION=1` set will no longer receive a database on the first push to a new Heroku app. This environment variable interface is not standard across other buildpacks and may be deprecated via warnings in the build output and changed in the future.
+
+## v248 (2022/12/06)
+
+* Ruby 3.2.0-rc1 is available
+
+## v247 (2022/12/01)
+
+* JRuby 9.3.7.0, 9.3.8.0, 9.3.9.0, 9.4.0.0
+
+## v246 (2022/11/29)
+
+* Default Node.js version now 16.18.1 (https://github.com/heroku/heroku-buildpack-ruby/pull/1342)
+* Default Yarn version now 1.22.19 (https://github.com/heroku/heroku-buildpack-ruby/pull/1342)
+
+## v245 (2022/11/16)
+
+* Bump Bundler 2 wrapper to 2.3.25 (https://github.com/heroku/heroku-buildpack-ruby/pull/1337)
+
 ## v244 (2022/07/25)
 
 * Default Ruby version is now 3.1.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/1316)

@@ -54,7 +54,7 @@ describe "BundlerWrapper" do
         Bundler.with_unbundled_env do
           @bundler.install
 
-          expect(@bundler.ruby_version).to eq("ruby-2.5.1-p0")
+          expect(@bundler.ruby_version).to eq("ruby-2.5.1")
 
           ruby_version = LanguagePack::RubyVersion.new(@bundler.ruby_version, is_new: true)
           expect(ruby_version.version_for_download).to eq("ruby-2.5.1")
@@ -78,7 +78,7 @@ describe "BundlerWrapper" do
           @bundler.install
 
           run!(%{echo '\nputs "some output"\n' >> Gemfile})
-          expect(@bundler.ruby_version).to eq("ruby-2.5.1-p0")
+          expect(@bundler.ruby_version).to eq("ruby-2.5.1")
         end
       end
     end
