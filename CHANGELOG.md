@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v251 (2023/02/03)
+
+* Jruby 9.3.10.0 is available
+
 ## v250 (2022/12/25)
 
 * Ruby 3.2.0 is available
