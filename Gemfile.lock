@@ -7,7 +7,7 @@ GEM
     dead_end (4.0.0)
     diff-lcs (1.5.0)
     erubis (2.7.0)
-    excon (0.94.0)
+    excon (0.99.0)
     heroics (0.1.2)
       erubis (~> 2.0)
       excon
