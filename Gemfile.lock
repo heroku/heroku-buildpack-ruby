@@ -14,7 +14,7 @@ GEM
       moneta
       multi_json (>= 1.9.2)
       webrick
-    heroku_hatchet (7.3.4)
+    heroku_hatchet (8.0.2)
       excon (~> 0)
       platform-api (~> 3)
       rrrretry (~> 1)
@@ -26,7 +26,7 @@ GEM
     parallel (1.22.1)
     parallel_tests (4.0.0)
       parallel
-    platform-api (3.3.0)
+    platform-api (3.5.0)
       heroics (~> 0.1.1)
       moneta (~> 1.0.0)
       rate_throttle_client (~> 0.1.0)
@@ -49,7 +49,7 @@ GEM
     threaded (0.0.4)
     toml-rb (2.2.0)
       citrus (~> 3.0, > 3.0)
-    webrick (1.7.0)
+    webrick (1.8.1)
 
 PLATFORMS
   ruby
