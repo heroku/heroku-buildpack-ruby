@@ -26,7 +26,7 @@
 - - "./repos/jruby/jruby_naether"
   - 4a11f8af5a3cca21f3659394e5bbac3cca9b6a2c
 - - "./repos/node/minimal_webpacker"
-  - 9d55c0ee923824829305eb23e23b7ff98d2ee3ba
+  - 9152fec98df59a0bf8a5478ed428841ee135acbb
 - - "./repos/rack/default_ruby"
   - master
 - - "./repos/rack/mri_187_nokogiri"

@@ -169,6 +169,8 @@ module LanguagePack
           raise "Cannot specify :file, and :out" if options[:out]
           @file = Pathname.new(@file)
           @file.dirname.mkpath
+          FileUtils.touch(@file)
+
           options[:out] = ">> #{@file} 2>&1"
         end
 

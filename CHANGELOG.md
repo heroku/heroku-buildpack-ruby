@@ -2,6 +2,11 @@
 
 ## Main (unreleased)
 
+## v254 (2023/05/12)
+
+- Default Ruby version is now 3.1.4
+- Ruby 3.3.0-preview1 is now available
+
 ## v253 (2023/03/31)
 
 - Ruby versions 2.7.8, 3.0.6, 3.1.4, 3.2.2 are now available
