@@ -2,6 +2,11 @@
 
 ## Main (unreleased)
 
+## v255 (2023/07/24)
+
+- JRuby 9.4.3.0 is now available
+- JRuby 9.4.2.0 is now available
+
 ## v254 (2023/05/12)
 
 - Default Ruby version is now 3.1.4
