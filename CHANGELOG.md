@@ -2,6 +2,11 @@
 
 ## Main (unreleased)
 
+## v257 (2023/09/20)
+
+- JRuby 9.3.11.0 is now available
+- Ruby 3.3.0-preview2 is now available
+
 ## v256 (2023/08/04)
 
 - Fix Ruby 2.5.7 download on Heroku-20
