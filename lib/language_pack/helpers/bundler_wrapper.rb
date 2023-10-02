@@ -142,10 +142,15 @@ class LanguagePack::Helpers::BundlerWrapper
 
     # If there's a gem in the Gemfile (i.e. syntax error) emit error
     raise GemfileParseError.new(run("bundle check", user_env: true, env: env)) unless $?.success?
-    if output.match(/No ruby version specified/)
+
+    self.class.platform_to_version(output)
+  end
+
+  def self.platform_to_version(bundle_platform_output)
+    if bundle_platform_output.match(/No ruby version specified/)
       ""
     else
-      output.strip.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
+      bundle_platform_output.strip.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
     end
   end
 

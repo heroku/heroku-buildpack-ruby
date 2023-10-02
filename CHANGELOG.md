@@ -2,9 +2,13 @@
 
 ## Main (unreleased)
 
-## v258 (2023/09/26)
+## v259 (2023/10/02)
 
 - Ruby 3.3.0-preview2 is now available
+
+## v258 (2023/09/26)
+
+- No changes
 
 ## v257 (2023/09/20)
 
