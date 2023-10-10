@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+- Exclude development-only files from the packaged buildpack
+
 ## v260 (2023/10/23)
 
 - JRuby 9.4.4.0 is now available
