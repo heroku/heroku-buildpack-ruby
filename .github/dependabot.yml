@@ -4,8 +4,21 @@ updates:
     directory: "/"
     open-pull-requests-limit: 1 # Limit concurrent CI runs from executing, do not remove
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "ruby"
+      - "skip changelog"
+    groups:
+      ruby-dependencies:
+        update-types:
+          - "minor"
+          - "patch"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "github actions"
+      - "skip changelog"
