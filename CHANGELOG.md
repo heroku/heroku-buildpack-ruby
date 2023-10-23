@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v260 (2023/10/23)
+
+- JRuby 9.4.4.0 is now available
+
 ## v259 (2023/10/02)
 
 - Ruby 3.3.0-preview2 is now available
