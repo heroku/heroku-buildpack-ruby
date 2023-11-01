@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    ci-queue (0.37.0)
+    ci-queue (0.38.0)
     citrus (3.0.2)
     connection_pool (2.4.1)
     dead_end (4.0.0)
@@ -30,11 +30,11 @@ GEM
       heroics (~> 0.1.1)
       moneta (~> 1.0.0)
       rate_throttle_client (~> 0.1.0)
-    rake (13.0.6)
+    rake (13.1.0)
     rate_throttle_client (0.1.2)
-    redis (5.0.7)
-      redis-client (>= 0.9.0)
-    redis-client (0.17.0)
+    redis (5.0.8)
+      redis-client (>= 0.17.0)
+    redis-client (0.18.0)
       connection_pool
     rrrretry (1.0.0)
     rspec-core (3.12.2)
