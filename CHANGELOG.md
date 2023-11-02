@@ -3,6 +3,7 @@
 ## Main (unreleased)
 
 - Exclude development-only files from the packaged buildpack
+- Default Node.js version now 20.9.0
 
 ## v260 (2023/10/23)
 
