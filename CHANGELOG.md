@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+* Default Node.js version now 20.9.0
+
 ## v260 (2023/10/23)
 
 - JRuby 9.4.4.0 is now available
