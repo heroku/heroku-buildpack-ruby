@@ -40,7 +40,7 @@ For more information about using Ruby and buildpacks on Heroku, see these Dev Ce
 
 - [Heroku Ruby Support](https://devcenter.heroku.com/articles/ruby-support)
 - [Getting Started with Ruby on Heroku](https://devcenter.heroku.com/articles/getting-started-with-ruby)
-- [Getting Started with Rails 4 on Heroku](https://devcenter.heroku.com/articles/getting-started-with-rails4)
+- [Getting Started with Rails 7 on Heroku](https://devcenter.heroku.com/articles/getting-started-with-rails7)
 - [Buildpacks](https://devcenter.heroku.com/articles/buildpacks)
 - [Buildpack API](https://devcenter.heroku.com/articles/buildpack-api)
 
