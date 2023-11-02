@@ -2,7 +2,8 @@
 
 ## Main (unreleased)
 
-- Exclude development-only files from the packaged buildpack
+- JRuby 9.4.5.0 is now available
+- JRuby 9.3.13.0 is now available
 - Default Node.js version now 20.9.0
 
 ## v260 (2023/10/23)
