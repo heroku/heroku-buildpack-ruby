@@ -16,6 +16,9 @@ describe "Node and Yarn" do
       expect(app.output).to include("bin/node is the node directory")
       expect(app.output).to_not include(".heroku/node/bin/node is the node directory")
 
+      expect(app.output).to include("Installing a default version (#{LanguagePack::Helpers::Nodebin::YARN_VERSION}) of Yarn")
+      expect(app.output).to include("Installing a default version (#{LanguagePack::Helpers::Nodebin::NODE_VERSION}) of Node.js")
+
       expect(app.run("which node")).to match("/app/bin/node")     # We put node in bin/node
       expect(app.run("which yarn")).to match("/app/vendor/yarn-") # We put yarn in /app/vendor/yarn-
     end
