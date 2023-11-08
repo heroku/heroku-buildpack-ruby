@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+## v262 (2023/11/08)
+
 - Warn when relying on default Node.js or Yarn versions (https://github.com/heroku/heroku-buildpack-ruby/pull/1401)
 - Warn when default Node.js or Yarn versions change (https://github.com/heroku/heroku-buildpack-ruby/pull/1401)
 

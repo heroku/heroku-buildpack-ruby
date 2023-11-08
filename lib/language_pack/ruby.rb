@@ -1062,8 +1062,9 @@ params = CGI.parse(uri.query || "")
         Installing a default version (#{version}) of Yarn
         This version is not pinned and can change over time, causing unexpected failures.
 
-        Heroku recommends placing the `heroku/nodejs` buildpack in front of
-        `heroku/ruby` to install a specific version of node:
+        Heroku recommends placing the `heroku/nodejs` buildpack in front of the `heroku/ruby`
+        buildpack as it offers more comprehensive Node.js support, including the ability to
+        customise the Node.js version:
 
         https://devcenter.heroku.com/articles/ruby-support#node-js-support
       WARNING
