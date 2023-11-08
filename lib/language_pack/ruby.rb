@@ -1018,6 +1018,26 @@ params = CGI.parse(uri.query || "")
     if Pathname(build_path).join("package.json").exist? ||
          bundler.has_gem?('execjs') ||
          bundler.has_gem?('webpacker')
+
+      version = @node_installer.version
+      old_version = @metadata.fetch("default_node_version") { version }
+
+      if version != version
+        warn(<<~WARNING, inline: true)
+          Default version of Node.js changed (#{old_version} to #{version})
+        WARNING
+      end
+
+      warn(<<~WARNING, inline: true)
+        Installing a default version (#{version}) of Node.js.
+        This version is not pinned and can change over time, causing unexpected failures.
+
+        Heroku recommends placing the `heroku/nodejs` buildpack in front of
+        `heroku/ruby` to install a specific version of node:
+
+        https://devcenter.heroku.com/articles/ruby-support#node-js-support
+      WARNING
+
       [@node_installer.binary_path]
     else
       []
@@ -1028,6 +1048,26 @@ params = CGI.parse(uri.query || "")
     return [] if yarn_preinstalled?
 
     if Pathname(build_path).join("yarn.lock").exist? || bundler.has_gem?('webpacker')
+
+      version = @yarn_installer.version
+      old_version = @metadata.fetch("default_yarn_version") { version }
+
+      if version != version
+        warn(<<~WARNING, inline: true)
+          Default version of Yarn changed (#{old_version} to #{version})
+        WARNING
+      end
+
+      warn(<<~WARNING, inline: true)
+        Installing a default version (#{version}) of Yarn
+        This version is not pinned and can change over time, causing unexpected failures.
+
+        Heroku recommends placing the `heroku/nodejs` buildpack in front of
+        `heroku/ruby` to install a specific version of node:
+
+        https://devcenter.heroku.com/articles/ruby-support#node-js-support
+      WARNING
+
       [@yarn_installer.name]
     else
       []
