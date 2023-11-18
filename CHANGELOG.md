@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+- Apps with the environment variable `HEROKU_SKIP_NODE_INSTALL=1` set will no longer install auto-install nodejs and yarn.
+
 ## v262 (2023/11/08)
 
 - Warn when relying on default Node.js or Yarn versions (https://github.com/heroku/heroku-buildpack-ruby/pull/1401)
