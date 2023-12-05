@@ -2,6 +2,8 @@
 
 ## Main (unreleased)
 
+- Fix BUILDPACK_VENDOR_URL support (https://github.com/heroku/heroku-buildpack-ruby/pull/1409)
+
 ## v262 (2023/11/08)
 
 - Warn when relying on default Node.js or Yarn versions (https://github.com/heroku/heroku-buildpack-ruby/pull/1401)
