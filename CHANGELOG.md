@@ -2,7 +2,7 @@
 
 ## Main (unreleased)
 
-- Fix BUILDPACK_VENDOR_URL support (https://github.com/heroku/heroku-buildpack-ruby/pull/1409)
+- Fix BUILDPACK_VENDOR_URL support (https://github.com/heroku/heroku-buildpack-ruby/pull/1406)
 
 ## v262 (2023/11/08)
 
