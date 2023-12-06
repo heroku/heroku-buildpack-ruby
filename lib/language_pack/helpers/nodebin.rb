@@ -7,7 +7,7 @@ class LanguagePack::Helpers::Nodebin
   def self.hardcoded_node_lts
     {
       "number" => NODE_VERSION,
-      "url"    => "https://heroku-nodebin.s3.us-east-1.amazonaws.com/node/release/linux-x64/node-v#{NODE_VERSION}-linux-x64.tar.gz"
+      "url"    => ENV['BUILDPACK_NODEJS_VENDOR_URL']&.gsub("{NODE_VERSION}", NODE_VERSION) || "https://heroku-nodebin.s3.us-east-1.amazonaws.com/node/release/linux-x64/node-v#{NODE_VERSION}-linux-x64.tar.gz"
     }
   end
 
