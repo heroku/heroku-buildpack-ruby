@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v264 (2023/12/25)
+
+- Ruby 3.3.0 is now available
+
 ## v263 (2023/12/11)
 
 - Ruby 3.3.0-rc1 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1411)
