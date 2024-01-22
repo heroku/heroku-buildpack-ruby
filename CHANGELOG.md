@@ -2,6 +2,10 @@
 
 ## Main (unreleased)
 
+## v265 (2024/01/22)
+
+- Ruby 3.2.3 is now available
+
 ## v264 (2023/12/25)
 
 - Ruby 3.3.0 is now available
