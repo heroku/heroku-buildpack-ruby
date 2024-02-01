@@ -1,13 +1,13 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    ci-queue (0.38.0)
+    ci-queue (0.44.0)
     citrus (3.0.2)
     connection_pool (2.4.1)
     dead_end (4.0.0)
     diff-lcs (1.5.0)
     erubis (2.7.0)
-    excon (0.104.0)
+    excon (0.109.0)
     heroics (0.1.2)
       erubis (~> 2.0)
       excon
@@ -20,11 +20,11 @@ GEM
       rrrretry (~> 1)
       thor (~> 1)
       threaded (~> 0)
-    json (2.6.3)
+    json (2.7.1)
     moneta (1.0.0)
     multi_json (1.15.0)
-    parallel (1.23.0)
-    parallel_tests (4.3.0)
+    parallel (1.24.0)
+    parallel_tests (4.4.0)
       parallel
     platform-api (3.5.0)
       heroics (~> 0.1.1)
