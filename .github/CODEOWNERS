@@ -1,2 +1,9 @@
+# Default to requesting pull request reviews from the Heroku Languages team.
 * @heroku/languages
-#ECCN:Open Source
+
+# However, request review from the language owner instead for files that are updated
+# by Dependabot or release automation, to reduce team review request noise.
+CHANGELOG.md @schneems
+Gemfile.lock @schneems
+/changelogs/ @schneems
+/lib/language_pack/version.rb @schneems
