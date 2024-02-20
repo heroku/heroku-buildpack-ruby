@@ -86,15 +86,17 @@ namespace :buildpack do
 
     changelog_md = Pathname(__dir__).join("CHANGELOG.md")
     contents = changelog_md.read
-    version_string = "## #{deploy.next_version}"
+    version_string = "## [#{deploy.next_version}]"
     if contents.include?(version_string)
       puts "Found an entry in CHANGELOG.md for #{version_string}"
     else
-      new_section = "## Main (unreleased)\n\n#{version_string} (#{Time.now.strftime("%Y/%m/%d")})"
+      new_section = "## [Unreleased]\n\n#{version_string} - #{Time.now.strftime("%Y/%m/%d")}"
 
       puts "Writing to CHANGELOG.md:\n\n#{new_section}"
 
-      changelog_md.write(contents.gsub("## Main (unreleased)", new_section))
+      modified = contents.gsub("## [Unreleased]", new_section)
+      raise "Expected CHANGELOG.md to be modified but it wasn't" if modified == changelog_md
+      changelog_md.write(modified)
     end
 
     version_rb = Pathname(__dir__).join("lib/language_pack/version.rb")
