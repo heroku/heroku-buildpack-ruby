@@ -9,7 +9,6 @@ require 'hatchet/tasks'
 ENV["BUILDPACK_LOG_FILE"] ||= "tmp/buildpack.log"
 
 require_relative 'lib/rake/deploy_check'
-require_relative 'lib/rake/tarballer'
 
 S3_BUCKET_REGION = "us-east-1"
 S3_BUCKET_NAME  = "heroku-buildpack-ruby"
