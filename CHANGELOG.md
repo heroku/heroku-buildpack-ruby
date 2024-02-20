@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v266] - 2024-02-20
+
 - Officially deprecate SENSIBLE_DEFAULTS environment variable (https://github.com/heroku/heroku-buildpack-ruby/pull/1420)
 
 ## [v265] - 2024-01-22
@@ -1502,7 +1505,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v265...HEAD
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v266...main
+[v266]: https://github.com/heroku/heroku-buildpack-ruby/compare/v265...v266
 [v265]: https://github.com/heroku/heroku-buildpack-ruby/compare/v264...v265
 [v264]: https://github.com/heroku/heroku-buildpack-ruby/compare/v263...v264
 [v263]: https://github.com/heroku/heroku-buildpack-ruby/compare/v262...v263
