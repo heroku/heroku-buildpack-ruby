@@ -12,8 +12,10 @@ jobs:
     secrets: inherit
     with:
       custom_update_command: |
+        set -euo pipefail
+
         sed --in-place --regexp-extended \
-          --expression "s/v${OLD_VERSION}/v${NEW_VERSION}/" \
+          --expression "s/v${EXISTING_VERSION}/v${NEW_VERSION}/" \
           lib/language_pack/version.rb
 
         if compgen -G 'changelogs/unreleased/*.md' > /dev/null; then
