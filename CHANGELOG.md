@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Officially deprecate SENSIBLE_DEFAULTS environment variable (https://github.com/heroku/heroku-buildpack-ruby/pull/1420)
 
 ## [v265] - 2024-01-22
 
