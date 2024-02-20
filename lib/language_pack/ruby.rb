@@ -252,6 +252,20 @@ WARNING
   end
 
   def set_default_web_concurrency
+    warn(<<~WARNING)
+      Your application is using an undocumented feature SENSIBLE_DEFAULTS
+
+      This feature is not supported and may be removed at any time. Please remove the SENSIBLE_DEFAULTS environment variable from your app.
+
+      $ heroku config:unset SENSIBLE_DEFAULTS
+
+      To configure your application's web concurrency, use the WEB_CONCURRENCY environment variable following this documentation:
+
+      - https://devcenter.heroku.com/articles/deploying-rails-applications-with-the-puma-web-server#recommended-default-puma-process-and-thread-configuration
+      - https://devcenter.heroku.com/articles/h12-request-timeout-in-ruby-mri#puma-pool-usage
+      - https://help.heroku.com/88G3XLA6/what-is-an-acceptable-amount-of-dyno-load
+    WARNING
+
     <<-EOF
 case $(ulimit -u) in
 256)
