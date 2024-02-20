@@ -67,8 +67,8 @@ class DeployCheck
 
   # Raises an error if the changelog does not have an entry with the designated version
   def check_changelog!
-    if !File.read("CHANGELOG.md").include?("## #{next_version}")
-      raise "Expected CHANGELOG.md to include #{next_version} but it did not"
+    if !File.read("CHANGELOG.md").include?("## [#{next_version}]")
+      raise "Expected CHANGELOG.md to include [#{next_version}] but it did not"
     end
   end
 

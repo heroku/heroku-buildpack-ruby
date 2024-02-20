@@ -139,9 +139,9 @@ describe "A helper class for deploying" do
           run!("touch CHANGELOG.md")
           expect {
             deploy.check_changelog!
-          }.to raise_error(/Expected CHANGELOG.md to include v999/)
+          }.to raise_error(/Expected CHANGELOG.md to include \[v999\]/)
 
-          run!("echo '## v999' >> CHANGELOG.md")
+          run!("echo '## [v999]' >> CHANGELOG.md")
           deploy.check_changelog!
         end
       end
