@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update Bundler 2 apps to version 2.5.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/1426)
 
 ## [v266] - 2024-02-20
 
