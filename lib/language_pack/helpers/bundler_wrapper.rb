@@ -42,9 +42,9 @@ class LanguagePack::Helpers::BundlerWrapper
   BLESSED_BUNDLER_VERSIONS["2.4"] = "2.4.22"
   BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.6"
   BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
-    if key.start_with?("1")
+    if Gem::Version.new(key).segments.first == 1
       hash["1"]
-    elsif key.start_with?("2")
+    elsif Gem::Version::new(key).segments.first == 2
       if Gem::Version.new(key) > Gem::Version.new("2.5")
         hash["2.5"]
       elsif Gem::Version.new(key) < Gem::Version.new("2.3")
