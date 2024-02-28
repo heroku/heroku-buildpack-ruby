@@ -37,8 +37,38 @@ class LanguagePack::Helpers::BundlerWrapper
 
   BLESSED_BUNDLER_VERSIONS = {}
   BLESSED_BUNDLER_VERSIONS["1"] = "1.17.3"
-  BLESSED_BUNDLER_VERSIONS["2"] = "2.3.25"
-  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m
+  # Heroku-20's oldest Ruby verison is 2.5.x which doesn't work with bundler 2.4
+  BLESSED_BUNDLER_VERSIONS["2.3"] = "2.3.25"
+  BLESSED_BUNDLER_VERSIONS["2.4"] = "2.4.22"
+  BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.6"
+  BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
+    if Gem::Version.new(key).segments.first == 1
+      hash["1"]
+    elsif Gem::Version::new(key).segments.first == 2
+      if Gem::Version.new(key) > Gem::Version.new("2.5")
+        hash["2.5"]
+      elsif Gem::Version.new(key) < Gem::Version.new("2.3")
+        hash["2.3"]
+      else
+        raise UnsupportedBundlerVersion.new(hash, key)
+      end
+    else
+      raise UnsupportedBundlerVersion.new(hash, key)
+    end
+  end
+
+  def self.detect_bundler_version(contents: )
+    version_match = contents.match(BUNDLED_WITH_REGEX)
+    if version_match
+      major = version_match[:major]
+      minor = version_match[:minor]
+      BLESSED_BUNDLER_VERSIONS["#{major}.#{minor}"]
+    else
+      BLESSED_BUNDLER_VERSIONS["1"]
+    end
+  end
+
+  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.(?<minor>\d+)\.\d+/m
 
   class GemfileParseError < BuildpackError
     def initialize(error)
@@ -49,8 +79,8 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   class UnsupportedBundlerVersion < BuildpackError
-    def initialize(version_hash, major)
-      msg = String.new("Your Gemfile.lock indicates you need bundler `#{major}.x`\n")
+    def initialize(version_hash, major_minor)
+      msg = String.new("Your Gemfile.lock indicates you need bundler `#{major_minor}.x`\n")
       msg << "which is not currently supported. You can deploy with bundler version:\n"
       version_hash.keys.each do |v|
         msg << "  - `#{v}.x`\n"
@@ -73,12 +103,14 @@ class LanguagePack::Helpers::BundlerWrapper
     @fetcher              = options[:fetcher]      || LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
     @gemfile_path         = options[:gemfile_path] || Pathname.new("./Gemfile")
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
-    detect_bundler_version_and_dir_name!
 
-    @bundler_path         = options[:bundler_path] || @bundler_tmp.join(dir_name)
-    @bundler_tar          = options[:bundler_tar]  || "bundler/#{dir_name}.tgz"
+    @version = self.class.detect_bundler_version(contents: @gemfile_lock_path.read(mode: "rt"))
+    @dir_name = "bundler-#{@version}"
+
+    @bundler_path         = options[:bundler_path] || @bundler_tmp.join(@dir_name)
+    @bundler_tar          = options[:bundler_tar]  || "bundler/#{@dir_name}.tgz"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
-    @path                 = Pathname.new("#{@bundler_path}/gems/#{dir_name}/lib")
+    @path                 = Pathname.new("#{@bundler_path}/gems/#{@dir_name}/lib")
   end
 
   def install
@@ -126,7 +158,7 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def dir_name
-    "bundler-#{version}"
+    @dir_name
   end
 
   def ruby_version
@@ -143,7 +175,32 @@ class LanguagePack::Helpers::BundlerWrapper
     # If there's a gem in the Gemfile (i.e. syntax error) emit error
     raise GemfileParseError.new(run("bundle check", user_env: true, env: env)) unless $?.success?
 
-    self.class.platform_to_version(output)
+    ruby_version = self.class.platform_to_version(output)
+    if ruby_version.nil? || ruby_version.empty?
+      if Gem::Version.new(self.version) > Gem::Version.new("2.3")
+        warn(<<~WARNING, inline: true)
+          No ruby version specified in the Gemfile.lock
+
+          We could not determine the version of Ruby from your Gemfile.lock.
+
+            $ bundle platform --ruby
+            #{output}
+
+            $ bundle -v
+            #{run("bundle -v", user_env: true, env: env)}
+
+          Ensure the above command outputs the version of Ruby you expect. If you have a ruby version specified in your Gemfile, you can update the Gemfile.lock by running the following command:
+
+            $ bundle update --ruby
+
+          Make sure you commit the results to git before attempting to deploy again:
+
+            $ git add Gemfile.lock
+            $ git commit -m "update ruby version"
+        WARNING
+      end
+    end
+    ruby_version
   end
 
   def self.platform_to_version(bundle_platform_output)
@@ -198,29 +255,6 @@ class LanguagePack::Helpers::BundlerWrapper
   def parse_gemfile_lock
     gemfile_contents = File.read(@gemfile_lock_path)
     Bundler::LockfileParser.new(gemfile_contents)
-  end
-
-  def major_bundler_version
-    # https://rubular.com/r/jt9yj0aY7fU3hD
-    bundler_version_match = @gemfile_lock_path.read(mode: "rt").match(BUNDLED_WITH_REGEX)
-
-    if bundler_version_match
-      bundler_version_match[:major]
-    else
-      "1"
-    end
-  end
-
-  # You cannot use Bundler 2.x with a Gemfile.lock that points to a 1.x bundler
-  # version. The solution here is to read in the value set in the Gemfile.lock
-  # and download the "blessed" version with the same major version.
-  def detect_bundler_version_and_dir_name!
-    major = major_bundler_version
-    if BLESSED_BUNDLER_VERSIONS.key?(major)
-      @version = BLESSED_BUNDLER_VERSIONS[major]
-    else
-      raise UnsupportedBundlerVersion.new(BLESSED_BUNDLER_VERSIONS, major)
-    end
   end
 
 end

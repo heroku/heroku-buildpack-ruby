@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Bundler version installation is now based on both major and minor version (https://github.com/heroku/heroku-buildpack-ruby/pull/1428)
+- Applications using bundler 2.4+ must now specify a ruby version in the Gemfile.lock or they will receive the default Ruby version (https://github.com/heroku/heroku-buildpack-ruby/pull/1428)
 
 ## [v266] - 2024-02-20
 
