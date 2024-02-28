@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v267] - 2024-02-28
+
 - Bundler version installation is now based on both major and minor version (https://github.com/heroku/heroku-buildpack-ruby/pull/1428)
 - Applications using bundler 2.4+ must now specify a ruby version in the Gemfile.lock or they will receive the default Ruby version (https://github.com/heroku/heroku-buildpack-ruby/pull/1428)
 
@@ -1507,7 +1510,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v266...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v267...main
+[v267]: https://github.com/heroku/heroku-buildpack-ruby/compare/v266...v267
 [v266]: https://github.com/heroku/heroku-buildpack-ruby/compare/v265...v266
 [v265]: https://github.com/heroku/heroku-buildpack-ruby/compare/v264...v265
 [v264]: https://github.com/heroku/heroku-buildpack-ruby/compare/v263...v264
