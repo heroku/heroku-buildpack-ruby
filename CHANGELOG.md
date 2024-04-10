@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Remove unused Rubinius and Ruby 1.9.2 codepaths (https://github.com/heroku/heroku-buildpack-ruby/pull/1440)
 
 ## [v267] - 2024-02-28
 

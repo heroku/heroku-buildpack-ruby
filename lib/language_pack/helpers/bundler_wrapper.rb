@@ -256,5 +256,4 @@ class LanguagePack::Helpers::BundlerWrapper
     gemfile_contents = File.read(@gemfile_lock_path)
     Bundler::LockfileParser.new(gemfile_contents)
   end
-
 end

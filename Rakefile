@@ -106,21 +106,6 @@ task "gem:install", :gem, :version do |t, args|
   install_gem(gem, version)
 end
 
-desc "generate ruby versions manifest"
-task "ruby:manifest" do
-  require 'rexml/document'
-  require 'yaml'
-
-  document = REXML::Document.new(`curl https://#{S3_BUCKET_NAME}.s3.#{S3_BUCKET_REGION}.amazonaws.com`)
-  rubies   = document.elements.to_a("//Contents/Key").map {|node| node.text }.select {|text| text.match(/^(ruby|rbx|jruby)-\\\\d+\\\\.\\\\d+\\\\.\\\\d+(-p\\\\d+)?/) }
-
-  Dir.mktmpdir("ruby_versions-") do |tmpdir|
-    name = 'ruby_versions.yml'
-    File.open(name, 'w') {|file| file.puts(rubies.to_yaml) }
-    sh("#{s3_tools_dir}/s3 put #{S3_BUCKET_NAME} #{name} #{name}")
-  end
-end
-
 begin
   require 'rspec/core/rake_task'
 

@@ -75,20 +75,6 @@ describe "RubyVersion" do
     end
   end
 
-  it "correctly sets default legacy version" do
-    Hatchet::App.new("default_ruby").in_directory_fork do |dir|
-      Bundler.with_unbundled_env do
-        ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: false)
-        version_number = LanguagePack::RubyVersion::LEGACY_VERSION_NUMBER
-        version        = LanguagePack::RubyVersion::LEGACY_VERSION
-        expect(ruby_version.version_without_patchlevel).to eq(version)
-        expect(ruby_version.engine_version).to eq(version_number)
-        expect(ruby_version.to_gemfile).to eq("ruby '#{version_number}'")
-        expect(ruby_version.engine).to eq(:ruby)
-      end
-    end
-  end
-
   it "detects Ruby from Gemfile.lock" do
     Hatchet::App.new("default_ruby").in_directory_fork do |_|
       dir = Pathname(Dir.pwd)
@@ -125,7 +111,6 @@ describe "RubyVersion" do
         version        = "ruby-#{version_number}"
         expect(ruby_version.version_without_patchlevel).to eq(version)
         expect(ruby_version.engine_version).to eq(version_number)
-        expect(ruby_version.to_gemfile).to eq("ruby '#{version_number}'")
         expect(ruby_version.engine).to eq(:ruby)
       end
     end

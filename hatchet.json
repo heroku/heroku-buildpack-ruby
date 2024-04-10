@@ -8,7 +8,6 @@
     "sharpstone/default_with_rakefile"
   ],
   "bundler": [
-    "sharpstone/bad_gemfile_on_platform",
     "sharpstone/problem_gemfile_version",
     "sharpstone/git_gemspec",
     "sharpstone/no_lockfile",
