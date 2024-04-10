@@ -514,11 +514,15 @@ EOF
     return false unless ruby_version
 
     installer = LanguagePack::Installers::HerokuRubyInstaller.new(
+      multi_arch_stacks: MULTI_ARCH_STACKS,
       stack: @stack,
+      arch: @arch
     )
 
     @ruby_download_check = LanguagePack::Helpers::DownloadPresence.new(
+      multi_arch_stacks: MULTI_ARCH_STACKS,
       file_name: ruby_version.file_name,
+      arch: @arch
     )
     @ruby_download_check.call
 

@@ -20,6 +20,8 @@ class LanguagePack::Base
   VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com"
   DEFAULT_LEGACY_STACK = "cedar"
   ROOT_DIR             = File.expand_path("../../..", __FILE__)
+  MULTI_ARCH_STACKS    = ["heroku-24"]
+  KNOWN_ARCHITECTURES  = ["amd64", "arm64"]
 
   attr_reader :build_path, :cache, :stack
 
@@ -35,8 +37,23 @@ class LanguagePack::Base
     @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
     @layer_dir     = layer_dir
+    @arch = get_arch
 
     Dir.chdir build_path
+  end
+
+  def get_arch
+    command = "dpkg --print-architecture"
+    arch = run!(command, silent: true).strip
+
+    if !KNOWN_ARCHITECTURES.include?(arch)
+      raise <<~EOF
+        Architecture '#{arch}' returned from command `#{command}` is unknown.
+        Known architectures include: #{KNOWN_ARCHITECTURES.inspect}"
+      EOF
+    end
+
+    arch
   end
 
   def self.===(build_path)

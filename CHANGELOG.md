@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Heroku-24 stack initial support. Includes multi-architecture (arm64/amd64) logic that has not been tested on the platform (https://github.com/heroku/heroku-buildpack-ruby/pull/1439)
 - Remove unused Rubinius and Ruby 1.9.2 codepaths (https://github.com/heroku/heroku-buildpack-ruby/pull/1440)
 
 ## [v267] - 2024-02-28

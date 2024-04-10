@@ -10,8 +10,12 @@ class LanguagePack::Installers::HerokuRubyInstaller
   include LanguagePack::ShellHelpers
   attr_reader :fetcher
 
-  def initialize(stack: )
-    @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack)
+  def initialize(stack: , multi_arch_stacks: , arch: )
+    if multi_arch_stacks.include?(stack)
+      @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
+    else
+      @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack)
+    end
   end
 
   def install(ruby_version, install_dir)

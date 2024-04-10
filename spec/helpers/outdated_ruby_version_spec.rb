@@ -6,6 +6,38 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack)
   }
 
+  it "handles amd ↗️ architecture on heroku-24" do
+    ruby_version = LanguagePack::RubyVersion.new("ruby-3.1.0")
+    fetcher = LanguagePack::Fetcher.new(
+      LanguagePack::Base::VENDOR_URL,
+      stack: "heroku-24",
+      arch: "amd64"
+    )
+    outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
+      current_ruby_version: ruby_version,
+      fetcher: fetcher
+    )
+
+    outdated.call
+    expect(outdated.suggested_ruby_minor_version).to eq("3.1.4")
+  end
+
+  it "handles arm 💪 architecture on heroku-24" do
+    ruby_version = LanguagePack::RubyVersion.new("ruby-3.1.0")
+    fetcher = LanguagePack::Fetcher.new(
+      LanguagePack::Base::VENDOR_URL,
+      stack: "heroku-24",
+      arch: "arm64"
+    )
+    outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
+      current_ruby_version: ruby_version,
+      fetcher: fetcher
+    )
+
+    outdated.call
+    expect(outdated.suggested_ruby_minor_version).to eq("3.1.4")
+  end
+
   it "finds the latest version on a stack" do
     ruby_version = LanguagePack::RubyVersion.new("ruby-2.2.5")
     outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(

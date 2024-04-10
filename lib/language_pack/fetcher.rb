@@ -7,10 +7,11 @@ module LanguagePack
 
     include ShellHelpers
 
-    def initialize(host_url, stack: nil)
+    def initialize(host_url, stack: nil, arch: nil)
       @host_url = Pathname.new(host_url)
       # File.basename prevents accidental directory traversal
       @host_url += File.basename(stack) if stack
+      @host_url += File.basename(arch) if arch
     end
 
     def exists?(path, max_attempts = 1)
