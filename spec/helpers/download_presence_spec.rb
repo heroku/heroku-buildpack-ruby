@@ -3,23 +3,22 @@ require "spec_helper"
 describe LanguagePack::Helpers::DownloadPresence do
   it "knows if exists on the next stack" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      'ruby-1.9.3.tgz',
-      stacks: ['cedar-14', 'heroku-16', 'heroku-18']
+      file_name: 'ruby-3.1.4.tgz',
+      stacks: ['heroku-20', 'heroku-22'],
     )
 
     download.call
 
-    expect(download.next_stack(current_stack: "cedar-14")).to eq("heroku-16")
-    expect(download.next_stack(current_stack: "heroku-16")).to eq("heroku-18")
-    expect(download.next_stack(current_stack: "heroku-18")).to be_falsey
+    expect(download.next_stack(current_stack: "heroku-20")).to eq("heroku-22")
+    expect(download.next_stack(current_stack: "heroku-22")).to be_falsey
 
-    expect(download.exists_on_next_stack?(current_stack:"cedar-14")).to be_truthy
+    expect(download.exists_on_next_stack?(current_stack:"heroku-20")).to be_truthy
   end
 
   it "detects when a package is present on higher stacks" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      'ruby-2.6.5.tgz',
-      stacks: ['cedar-14', 'heroku-16', 'heroku-18']
+      file_name: 'ruby-2.6.5.tgz',
+      stacks: ['cedar-14', 'heroku-16', 'heroku-18'],
     )
 
     download.call
@@ -33,8 +32,8 @@ describe LanguagePack::Helpers::DownloadPresence do
 
   it "detects when a package is not present on higher stacks" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      'ruby-1.9.3.tgz',
-      stacks: ['cedar-14', 'heroku-16', 'heroku-18']
+      file_name: 'ruby-1.9.3.tgz',
+      stacks: ['cedar-14', 'heroku-16', 'heroku-18'],
     )
 
     download.call
@@ -45,8 +44,8 @@ describe LanguagePack::Helpers::DownloadPresence do
 
   it "detects when a package is present on two stacks but not a third" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      'ruby-2.3.0.tgz',
-      stacks: ['cedar-14', 'heroku-16', 'heroku-18']
+      file_name: 'ruby-2.3.0.tgz',
+      stacks: ['cedar-14', 'heroku-16', 'heroku-18'],
     )
 
     download.call
@@ -57,8 +56,8 @@ describe LanguagePack::Helpers::DownloadPresence do
 
   it "detects when a package does not exist" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      'does-not-exist.tgz',
-      stacks: ['cedar-14', 'heroku-16', 'heroku-18']
+      file_name: 'does-not-exist.tgz',
+      stacks: ['cedar-14', 'heroku-16', 'heroku-18'],
     )
 
     download.call
@@ -69,7 +68,7 @@ describe LanguagePack::Helpers::DownloadPresence do
 
   it "detects default ruby version" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      "ruby-3.1.1.tgz",
+      file_name: "ruby-3.1.1.tgz",
     )
 
     download.call
@@ -80,7 +79,7 @@ describe LanguagePack::Helpers::DownloadPresence do
 
   it "handles the current stack not being in the known stacks list" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      "#{LanguagePack::RubyVersion::DEFAULT_VERSION}.tgz",
+      file_name: "#{LanguagePack::RubyVersion::DEFAULT_VERSION}.tgz",
     )
 
     download.call

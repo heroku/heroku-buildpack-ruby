@@ -18,13 +18,13 @@
 class LanguagePack::Helpers::DownloadPresence
   STACKS = ['heroku-20', 'heroku-22']
 
-  def initialize(path, stacks: STACKS)
-    @path = path
+  def initialize(file_name:, stacks: STACKS)
+    @file_name = file_name
     @stacks = stacks
     @fetchers = []
     @threads = []
     @stacks.each do |stack|
-      @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack)
+      @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack)
     end
   end
 
@@ -43,7 +43,7 @@ class LanguagePack::Helpers::DownloadPresence
     return false unless supported_stack?(current_stack: current_stack)
 
     next_index = @stacks.index(current_stack) + 1
-    @threads[next_index]
+    @threads[next_index].value
   end
 
   def valid_stack_list
@@ -67,7 +67,7 @@ class LanguagePack::Helpers::DownloadPresence
   def call
     @fetchers.map do |fetcher|
       @threads << Thread.new do
-        fetcher.exists?(@path, 3)
+        fetcher.exists?(@file_name, 3)
       end
     end
   end

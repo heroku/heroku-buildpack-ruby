@@ -8,7 +8,6 @@
     "sharpstone/default_with_rakefile"
   ],
   "bundler": [
-    "sharpstone/bad_gemfile_on_platform",
     "sharpstone/problem_gemfile_version",
     "sharpstone/git_gemspec",
     "sharpstone/no_lockfile",
@@ -17,10 +16,7 @@
   ],
   "ruby": [
     "sharpstone/ruby_version_does_not_exist",
-    "sharpstone/ruby_193_jruby_173",
-    "sharpstone/ruby_193_jruby_176",
     "sharpstone/ruby_193_jruby_17161_jdk7",
-    "sharpstone/ruby_193_bad_patch_cedar_14",
     "sharpstone/ruby_25",
     "sharpstone/jruby-minimal",
     "sharpstone/empty-procfile",
@@ -34,9 +30,7 @@
   "rack": [
     "sharpstone/default_ruby",
     "sharpstone/mri_187_nokogiri",
-    "sharpstone/mri_192",
-    "sharpstone/mri_193",
-    "sharpstone/mri_200"
+    "sharpstone/mri_192"
   ],
   "rails_versions": [
     "sharpstone/rails_lts_23_default_ruby",

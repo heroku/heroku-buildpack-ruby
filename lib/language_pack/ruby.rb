@@ -17,7 +17,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
   LIBYAML_VERSION      = "0.1.7"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
-  RBX_BASE_URL         = "http://binaries.rubini.us/heroku"
   NODE_BP_PATH         = "vendor/node/bin"
 
   Layer = LanguagePack::Helpers::Layer
@@ -38,8 +37,6 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def initialize(*args)
     super(*args)
-    @fetchers[:mri]    = LanguagePack::Fetcher.new(VENDOR_URL, @stack)
-    @fetchers[:rbx]    = LanguagePack::Fetcher.new(RBX_BASE_URL, @stack)
     @node_installer    = LanguagePack::Helpers::NodeInstaller.new
     @yarn_installer    = LanguagePack::Helpers::YarnInstaller.new
   end
@@ -86,7 +83,7 @@ WARNING
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
-    install_ruby(slug_vendor_ruby, build_ruby_path)
+    install_ruby(slug_vendor_ruby)
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
       gem_layer_path: File.expand_path("."),
@@ -228,12 +225,6 @@ WARNING
   # @return [String] resulting path
   def slug_vendor_ruby
     "vendor/#{ruby_version.version_without_patchlevel}"
-  end
-
-  # the absolute path of the build ruby to use during the buildpack
-  # @return [String] resulting path
-  def build_ruby_path
-    "/tmp/#{ruby_version.version_without_patchlevel}"
   end
 
   # fetch the ruby version from bundler
@@ -518,23 +509,24 @@ EOF
 
   # install the vendored ruby
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
-  def install_ruby(install_path, build_ruby_path = nil)
+  def install_ruby(install_path)
     # Could do a compare operation to avoid re-downloading ruby
     return false unless ruby_version
-    installer = LanguagePack::Installers::RubyInstaller.installer(ruby_version).new(@stack)
 
-    @ruby_download_check = LanguagePack::Helpers::DownloadPresence.new(ruby_version.file_name)
+    installer = LanguagePack::Installers::HerokuRubyInstaller.new(
+      stack: @stack,
+    )
+
+    @ruby_download_check = LanguagePack::Helpers::DownloadPresence.new(
+      file_name: ruby_version.file_name,
+    )
     @ruby_download_check.call
-
-    if ruby_version.build?
-      installer.fetch_unpack(ruby_version, build_ruby_path, true)
-    end
 
     installer.install(ruby_version, install_path)
 
     @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
-      fetcher: installer.fetcher
+      fetcher: installer.fetcher,
     )
     @outdated_version_check.call
 
@@ -620,9 +612,7 @@ EOF
   # @return [String] resulting path or empty string if ruby is not vendored
   def ruby_install_binstub_path(ruby_layer_path = ".")
     @ruby_install_binstub_path ||=
-      if ruby_version.build?
-        "#{build_ruby_path}/bin"
-      elsif ruby_version
+      if ruby_version
         "#{ruby_layer_path}/#{slug_vendor_ruby}/bin"
       else
         ""
@@ -691,20 +681,6 @@ EOF
   # @param [String] relative path of the binary on the slug
   def uninstall_binary(path)
     FileUtils.rm File.join('bin', File.basename(path)), :force => true
-  end
-
-  def load_default_cache?
-    new_app? && ruby_version.default?
-  end
-
-  # loads a default bundler cache for new apps to speed up initial bundle installs
-  def load_default_cache
-    if false # load_default_cache?
-      puts "New app detected loading default bundler cache"
-      patchlevel = run("ruby -e 'puts RUBY_PATCHLEVEL'").strip
-      cache_name  = "#{LanguagePack::RubyVersion::DEFAULT_VERSION}-p#{patchlevel}-default-cache"
-      @fetchers[:buildpack].fetch_untar("#{cache_name}.tgz")
-    end
   end
 
   # remove `vendor/bundle` that comes from the git repo
@@ -837,12 +813,7 @@ BUNDLE
         puts "Bundle completed (#{"%.2f" % bundle_time}s)"
         log "bundle", :status => "success"
         puts "Cleaning up the bundler cache."
-        # Only show bundle clean output when not using default cache
-        if load_default_cache?
-          run("bundle clean > /dev/null", user_env: true, env: env_vars)
-        else
-          pipe("bundle clean", out: "2> /dev/null", user_env: true, env: env_vars)
-        end
+        pipe("bundle clean", out: "2> /dev/null", user_env: true, env: env_vars)
         @bundler_cache.store
 
         # Keep gem cache out of the slug

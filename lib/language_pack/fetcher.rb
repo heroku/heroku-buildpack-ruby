@@ -6,11 +6,10 @@ module LanguagePack
     class FetchError < StandardError; end
 
     include ShellHelpers
-    CDN_YAML_FILE = File.expand_path("../../../config/cdn.yml", __FILE__)
 
-    def initialize(host_url, stack = nil)
-      @config   = load_config
-      @host_url = fetch_cdn(host_url)
+    def initialize(host_url, stack: nil)
+      @host_url = Pathname.new(host_url)
+      # File.basename prevents accidental directory traversal
       @host_url += File.basename(stack) if stack
     end
 
@@ -49,15 +48,6 @@ module LanguagePack
 
     def curl_connect_timeout_in_seconds
       env('CURL_CONNECT_TIMEOUT') || 3
-    end
-
-    def load_config
-      YAML.load_file(CDN_YAML_FILE) || {}
-    end
-
-    def fetch_cdn(url)
-      url = @config[url] || url
-      Pathname.new(url)
     end
   end
 end

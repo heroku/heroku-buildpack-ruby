@@ -2,7 +2,9 @@ require "spec_helper"
 
 describe LanguagePack::Helpers::OutdatedRubyVersion do
   let(:stack) { "heroku-16" }
-  let(:fetcher) { LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack) }
+  let(:fetcher) {
+    LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack)
+  }
 
   it "finds the latest version on a stack" do
     ruby_version = LanguagePack::RubyVersion.new("ruby-2.2.5")
@@ -27,18 +29,6 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     outdated.call
     expect(outdated.suggested_ruby_minor_version).to eq("2.2.10")
     expect(outdated.latest_minor_version?).to be_truthy
-  end
-
-  it "Doesn't do anything when using a patch significant version" do
-    ruby_version = LanguagePack::RubyVersion.new("ruby-1.9.3p123")
-    outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
-      current_ruby_version: ruby_version,
-      fetcher: fetcher
-    )
-
-    outdated.call
-    expect(outdated.can_check?).to eq(false)
-    expect(outdated.suggested_ruby_minor_version).to eq(nil)
   end
 
   it "recommends a non EOL version of Ruby" do
