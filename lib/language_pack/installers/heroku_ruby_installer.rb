@@ -11,7 +11,7 @@ class LanguagePack::Installers::HerokuRubyInstaller
   attr_reader :fetcher
 
   def initialize(stack: )
-      @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack)
+    @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack)
   end
 
   def install(ruby_version, install_dir)
