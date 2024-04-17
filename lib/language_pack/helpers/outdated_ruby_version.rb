@@ -8,6 +8,7 @@
 #   outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
 #     current_ruby_version: ruby_version,
 #     fetcher: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: "heroku-22")
+#     fetcher: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: "heroku-22", arch: "amd64")
 #   )
 #
 #   outdated.call

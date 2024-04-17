@@ -18,13 +18,17 @@
 class LanguagePack::Helpers::DownloadPresence
   STACKS = ['heroku-20', 'heroku-22']
 
-  def initialize(file_name:, stacks: STACKS)
+  def initialize(file_name:, arch: , multi_arch_stacks:, stacks: STACKS )
     @file_name = file_name
     @stacks = stacks
     @fetchers = []
     @threads = []
     @stacks.each do |stack|
-      @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack)
+      if multi_arch_stacks.include?(stack)
+        @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack, arch: arch)
+      else
+        @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack)
+      end
     end
   end
 
