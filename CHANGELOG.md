@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v268] - 2024-04-17
+
 - Heroku-24 stack initial support. Includes multi-architecture (arm64/amd64) logic that has not been tested on the platform (https://github.com/heroku/heroku-buildpack-ruby/pull/1439)
 - Remove unused Rubinius and Ruby 1.9.2 codepaths (https://github.com/heroku/heroku-buildpack-ruby/pull/1440)
 
@@ -1512,7 +1515,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v267...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v268...main
+[v268]: https://github.com/heroku/heroku-buildpack-ruby/compare/v267...v268
 [v267]: https://github.com/heroku/heroku-buildpack-ruby/compare/v266...v267
 [v266]: https://github.com/heroku/heroku-buildpack-ruby/compare/v265...v266
 [v265]: https://github.com/heroku/heroku-buildpack-ruby/compare/v264...v265
