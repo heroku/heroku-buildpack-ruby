@@ -4,9 +4,8 @@ if [ -z "$CNB_STACK_ID" ]; then
   # v2 API
   APP_DIR=$1
 else
-  PLATFORM_DIR=$1
-  PLAN=$2
-  # working is the cwd now
+  _PLATFORM_DIR=$1
+  _PLAN=$2
   # v3 API
   APP_DIR=$(pwd)
 fi
