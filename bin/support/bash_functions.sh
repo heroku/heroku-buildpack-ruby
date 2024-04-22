@@ -30,7 +30,14 @@ install_bootstrap_ruby()
 {
   local bin_dir=$1
   local buildpack_dir=$2
-  local heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$STACK"
+
+  # Multi-arch aware stack support
+  if [ "$STACK" == "heroku-24" ]; then
+    local arch=dpkg --print-architecture
+    local heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$STACK/$arch"
+  else
+    local heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$STACK"
+  fi
 
   # The -d flag checks to see if a file exists and is a directory.
   # This directory may be non-empty if a previous compile has
