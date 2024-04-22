@@ -15,7 +15,7 @@ source "$BIN_DIR/support/bash_functions.sh"
 heroku_buildpack_ruby_install_ruby "$BIN_DIR" "$BUILDPACK_DIR"
 
 cat<<EOF 1>&2
-    CNB no longer maintained
+    The CNB implementation in this buildpack is no longer maintained
 
     The heroku/heroku-ruby-buildpack previously implemented the Cloud Native Buildpack \(CNB\) spec beta support, however this functionality is no longer supported or maintained.
 
