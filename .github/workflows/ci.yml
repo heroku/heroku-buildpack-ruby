@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    # Avoid duplicate builds on PRs.
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run ShellCheck bin top level
+        run: |
+            shellcheck bin/support/bash_functions.sh bin/support/download_ruby -x &&
+            shellcheck bin/build bin/compile bin/detect bin/release bin/test bin/test-compile -x
