@@ -30,6 +30,10 @@ dir = "vendor/ruby/heroku-20"
 url = "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/heroku-22/ruby-3.1.4.tgz"
 dir = "vendor/ruby/heroku-22"
 
+[[publish.Vendor]]
+url = "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/heroku-24/amd64/ruby-3.1.4.tgz"
+dir = "vendor/ruby/amd64/heroku-24"
+
 [[stacks]]
 id = "heroku-20"
 

@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix Heroku-24 Ruby buildpack bootstrapping logic (https://github.com/heroku/heroku-buildpack-ruby/pull/1446)
 - Deprecate CNB support in this buildpack; CNB support for Ruby is provided by [heroku/buildpacks-ruby](https://github.com/heroku/buildpacks-ruby) instead (https://github.com/heroku/heroku-buildpack-ruby/pull/1445)
 
 ## [v268] - 2024-04-17
