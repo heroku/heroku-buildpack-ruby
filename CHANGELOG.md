@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v269] - 2024-04-23
+
 - Fix Heroku-24 Ruby buildpack bootstrapping logic (https://github.com/heroku/heroku-buildpack-ruby/pull/1446)
 - Deprecate CNB support in this buildpack; CNB support for Ruby is provided by [heroku/buildpacks-ruby](https://github.com/heroku/buildpacks-ruby) instead (https://github.com/heroku/heroku-buildpack-ruby/pull/1445)
 
@@ -1517,7 +1520,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v268...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v269...main
+[v269]: https://github.com/heroku/heroku-buildpack-ruby/compare/v268...v269
 [v268]: https://github.com/heroku/heroku-buildpack-ruby/compare/v267...v268
 [v267]: https://github.com/heroku/heroku-buildpack-ruby/compare/v266...v267
 [v266]: https://github.com/heroku/heroku-buildpack-ruby/compare/v265...v266
