@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v270] - 2024-04-23
+
 - Ruby versions 3.0.7, 3.1.5, 3.2.4, and 3.3.1 are now available on Heroku (https://github.com/heroku/heroku-buildpack-ruby/pull/1449)
 
 ## [v269] - 2024-04-23
@@ -1521,7 +1524,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v269...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v270...main
+[v270]: https://github.com/heroku/heroku-buildpack-ruby/compare/v269...v270
 [v269]: https://github.com/heroku/heroku-buildpack-ruby/compare/v268...v269
 [v268]: https://github.com/heroku/heroku-buildpack-ruby/compare/v267...v268
 [v267]: https://github.com/heroku/heroku-buildpack-ruby/compare/v266...v267
