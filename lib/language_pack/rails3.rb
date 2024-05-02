@@ -134,7 +134,9 @@ WARNING
   def sprocket_version_upgrade_needed
     # Due to https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-3760
     sprockets_version = bundler.gem_version('sprockets')
-    if sprockets_version < Gem::Version.new("2.12.5")
+    if sprockets_version.nil?
+      return false
+    elsif sprockets_version < Gem::Version.new("2.12.5")
       return "2.12.5"
     elsif sprockets_version > Gem::Version.new("3") &&
           sprockets_version < Gem::Version.new("3.7.2")
