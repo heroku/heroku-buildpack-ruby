@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v271] - 2024-05-24
+
 - Fix issue with sprockets reference being nil when
   propshaft gem is used instead (https://github.com/heroku/heroku-buildpack-ruby/pull/1452)
 
@@ -1526,7 +1529,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v270...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v271...main
+[v271]: https://github.com/heroku/heroku-buildpack-ruby/compare/v270...v271
 [v270]: https://github.com/heroku/heroku-buildpack-ruby/compare/v269...v270
 [v269]: https://github.com/heroku/heroku-buildpack-ruby/compare/v268...v269
 [v268]: https://github.com/heroku/heroku-buildpack-ruby/compare/v267...v268
