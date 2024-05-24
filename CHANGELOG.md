@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fix issue with sprockets reference being nil when
+  propshaft gem is used instead (https://github.com/heroku/heroku-buildpack-ruby/pull/1452)
 
 ## [v270] - 2024-04-23
 
