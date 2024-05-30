@@ -222,6 +222,10 @@ class LanguagePack::Helpers::BundlerWrapper
     Gem::Version.new(@version) < Gem::Version.new("2.1.4")
   end
 
+  def supports_multiple_platforms?
+    Gem::Version.new(@version) >= Gem::Version.new("2.2")
+  end
+
   def bundler_version_escape_valve!
     topic("Removing BUNDLED WITH version in the Gemfile.lock")
     contents = File.read(@gemfile_lock_path, mode: "rt")

@@ -756,7 +756,7 @@ BUNDLE
         WARNING
       end
 
-      if bundler.windows_gemfile_lock?
+      if !bundler.supports_multiple_platforms? && bundler.windows_gemfile_lock?
         log("bundle", "has_windows_gemfile_lock")
 
         File.unlink("Gemfile.lock")
