@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v271] - 2024-06-03
+
 - Ruby 3.4.0-preview1 is now available
 - Ruby 3.1.6 and 3.3.2 are now available
 - JRuby 9.4.7.0, 9.4.6.0, and 9.3.14.0 are now available
@@ -1533,6 +1536,7 @@ Bugfixes:
 * use `$RACK_ENV` when thin is detected for rack apps
 
 [unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v271...main
+[v271]: https://github.com/heroku/heroku-buildpack-ruby/compare/v270...v271
 [v271]: https://github.com/heroku/heroku-buildpack-ruby/compare/v270...v271
 [v270]: https://github.com/heroku/heroku-buildpack-ruby/compare/v269...v270
 [v269]: https://github.com/heroku/heroku-buildpack-ruby/compare/v268...v269
