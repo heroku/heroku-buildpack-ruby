@@ -1,18 +1,10 @@
 #!/bin/sh
 
-if [ -z "$CNB_STACK_ID" ]; then
-  # v2 API
-  APP_DIR=$1
-else
-  _PLATFORM_DIR=$1
-  _PLAN=$2
-  # v3 API
-  APP_DIR=$(pwd)
-fi
+APP_DIR=$1
 
 if [ -f "$APP_DIR/Gemfile" ]; then
   echo "Ruby"
   exit 0
 else
-  exit 100
+  exit 1
 fi

@@ -1,10 +1,5 @@
-api = "0.2"
-
 [buildpack]
-id = "heroku/ruby"
-version = "0.1.4"
 name = "Ruby"
-homepage = "https://github.com/heroku/heroku-buildpack-ruby"
 ruby_version = "3.1.4"
 
 [publish]
@@ -19,7 +14,6 @@ files = [
   "app.json",
   "hatchet.json",
   "hatchet.lock",
-  "package.toml",
 ]
 
 [[publish.Vendor]]
@@ -33,16 +27,3 @@ dir = "vendor/ruby/heroku-22"
 [[publish.Vendor]]
 url = "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/heroku-24/amd64/ruby-3.1.4.tgz"
 dir = "vendor/ruby/amd64/heroku-24"
-
-[[stacks]]
-id = "heroku-20"
-
-[[stacks]]
-id = "heroku-22"
-
-[metadata]
-
-[metadata.release]
-
-[metadata.release.docker]
-repository = "public.ecr.aws/heroku-buildpacks/heroku-ruby-buildpack"

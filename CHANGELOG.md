@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Remove experimental CNB support. For official CNB support use [heroku/buildpacks-ruby](https://github.com/heroku/buildpacks-ruby) instead. (https://github.com/heroku/heroku-buildpack-ruby/pull/1464)
 
 ## [v271] - 2024-06-03
 
