@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 - Remove experimental CNB support. For official CNB support use [heroku/buildpacks-ruby](https://github.com/heroku/buildpacks-ruby) instead. (https://github.com/heroku/heroku-buildpack-ruby/pull/1464)
+- Default Ruby version is now 3.1.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/1466)
+- Ruby 3.3.3 is now available
 
 ## [v271] - 2024-06-03
 
