@@ -8,7 +8,6 @@ require "language_pack/ruby_version"
 require "language_pack/helpers/nodebin"
 require "language_pack/helpers/node_installer"
 require "language_pack/helpers/yarn_installer"
-require "language_pack/helpers/layer"
 require "language_pack/helpers/binstub_check"
 require "language_pack/version"
 
@@ -18,8 +17,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   LIBYAML_VERSION      = "0.1.7"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   NODE_BP_PATH         = "vendor/node/bin"
-
-  Layer = LanguagePack::Helpers::Layer
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -109,57 +106,6 @@ WARNING
   rescue => e
     warn_outdated_ruby
     raise e
-  end
-
-
-  def build
-    new_app?
-    remove_vendor_bundle
-    warn_bad_binstubs
-    ruby_layer = Layer.new(@layer_dir, "ruby", launch: true)
-    install_ruby("#{ruby_layer.path}/#{slug_vendor_ruby}")
-    ruby_layer.metadata[:version] = ruby_version.version
-    ruby_layer.metadata[:patchlevel] = ruby_version.patchlevel if ruby_version.patchlevel
-    ruby_layer.metadata[:engine] = ruby_version.engine.to_s
-    ruby_layer.metadata[:engine_version] = ruby_version.engine_version
-    ruby_layer.write
-
-    gem_layer = Layer.new(@layer_dir, "gems", launch: true, cache: true, build: true)
-    setup_language_pack_environment(
-      ruby_layer_path: ruby_layer.path,
-      gem_layer_path: gem_layer.path,
-      bundle_path: "#{gem_layer.path}/vendor/bundle",
-      bundle_default_without: "development:test"
-    )
-    allow_git do
-      # TODO install bundler in separate layer
-      topic "Loading Bundler Cache"
-      gem_layer.validate! do |metadata|
-        valid_bundler_cache?(gem_layer.path, gem_layer.metadata)
-      end
-      install_bundler_in_app("#{gem_layer.path}/#{slug_vendor_base}")
-      build_bundler
-      # TODO post_bundler might need to be done in a new layer
-      bundler.clean
-      gem_layer.metadata[:gems] = Digest::SHA2.hexdigest(File.read("Gemfile.lock"))
-      gem_layer.metadata[:stack] = @stack
-      gem_layer.metadata[:ruby_version] = run_stdout(%q(ruby -v)).strip
-      gem_layer.metadata[:rubygems_version] = run_stdout(%q(gem -v)).strip
-      gem_layer.metadata[:buildpack_version] = BUILDPACK_VERSION
-      gem_layer.write
-
-      create_database_yml
-      # TODO replace this with multibuildpack stuff? put binaries in their own layer?
-      install_binaries
-      run_assets_precompile_rake_task
-    end
-    setup_profiled(ruby_layer_path: ruby_layer.path, gem_layer_path: gem_layer.path)
-    setup_export(gem_layer)
-    config_detect
-    best_practice_warnings
-    cleanup
-
-    super
   end
 
   def cleanup
@@ -344,36 +290,28 @@ EOF
 
   # Sets up the environment variables for subsequent processes run by
   # muiltibuildpack. We can't use profile.d because $HOME isn't set up
-  def setup_export(layer = nil)
-    if layer
-      paths = ENV["PATH"]
-    else
-      paths = ENV["PATH"].split(":").map do |path|
-        /^\/.*/ !~ path ? "#{build_path}/#{path}" : path
-      end.join(":")
-    end
+  def setup_export
+    paths = ENV["PATH"].split(":").map do |path|
+      /^\/.*/ !~ path ? "#{build_path}/#{path}" : path
+    end.join(":")
 
     # TODO ensure path exported is correct
-    set_export_path "PATH", paths, layer
+    set_export_path "PATH", paths
 
-    if layer
-      gem_path = "#{layer.path}/#{slug_vendor_base}"
-    else
-      gem_path = "#{build_path}/#{slug_vendor_base}"
-    end
-    set_export_path "GEM_PATH", gem_path, layer
-    set_export_default "LANG", "en_US.UTF-8", layer
+    gem_path = "#{build_path}/#{slug_vendor_base}"
+    set_export_path "GEM_PATH", gem_path
+    set_export_default "LANG", "en_US.UTF-8"
 
     # TODO handle jruby
     if ruby_version.jruby?
       set_export_default "JRUBY_OPTS", default_jruby_opts
     end
 
-    set_export_default "BUNDLE_PATH", ENV["BUNDLE_PATH"], layer
-    set_export_default "BUNDLE_WITHOUT", ENV["BUNDLE_WITHOUT"], layer
-    set_export_default "BUNDLE_BIN", ENV["BUNDLE_BIN"], layer
-    set_export_default "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE", ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"], layer if bundler.needs_ruby_global_append_path?
-    set_export_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"], layer if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
+    set_export_default "BUNDLE_PATH", ENV["BUNDLE_PATH"]
+    set_export_default "BUNDLE_WITHOUT", ENV["BUNDLE_WITHOUT"]
+    set_export_default "BUNDLE_BIN", ENV["BUNDLE_BIN"]
+    set_export_default "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE", ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"]
+    set_export_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
   end
 
   # sets up the profile.d script for this buildpack
@@ -607,7 +545,6 @@ EOF
     error message
   end
 
-  # TODO make this compatible with CNB
   def new_app?
     @new_app ||= !File.exist?("vendor/heroku")
   end
