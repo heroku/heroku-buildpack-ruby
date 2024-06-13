@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v272] - 2024-06-13
+
 - Remove experimental CNB support. For official CNB support use [heroku/buildpacks-ruby](https://github.com/heroku/buildpacks-ruby) instead. (https://github.com/heroku/heroku-buildpack-ruby/pull/1464)
 - Default Ruby version is now 3.1.6 (https://github.com/heroku/heroku-buildpack-ruby/pull/1466)
 - Ruby 3.3.3 is now available
@@ -1535,7 +1538,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v271...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v272...main
+[v272]: https://github.com/heroku/heroku-buildpack-ruby/compare/v271...v272
 [v271]: https://github.com/heroku/heroku-buildpack-ruby/compare/v270...v271
 [v271]: https://github.com/heroku/heroku-buildpack-ruby/compare/v270...v271
 [v270]: https://github.com/heroku/heroku-buildpack-ruby/compare/v269...v270
