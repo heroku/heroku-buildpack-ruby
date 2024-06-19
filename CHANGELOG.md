@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Native Gemfile.lock support for Windows Ruby users with Bundler 2.2+ (https://github.com/heroku/heroku-buildpack-ruby/pull/1469)
 
 ## [v272] - 2024-06-13
 

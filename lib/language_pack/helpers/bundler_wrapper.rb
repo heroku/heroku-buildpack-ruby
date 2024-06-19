@@ -222,6 +222,8 @@ class LanguagePack::Helpers::BundlerWrapper
     Gem::Version.new(@version) < Gem::Version.new("2.1.4")
   end
 
+  # Bundler 2.2 introduced support for multiple "platforms" in the Gemfile.lock
+  # For more information see https://github.com/heroku/heroku-buildpack-ruby/issues/1157
   def supports_multiple_platforms?
     Gem::Version.new(@version) >= Gem::Version.new("2.2")
   end
