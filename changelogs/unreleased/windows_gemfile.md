@@ -12,7 +12,7 @@ Ruby applications that use Windows and Bundler 2.2+ will no longer have their `G
 > git commit -m "Upgrade bundler"
 ```
 
-This change is reflected in the [Deploying a Ruby Project Generated on Windows](https://devcenter.heroku.com/articles/bundler-windows-gemfile) Devcenter article. More information on the history of the behavior can be found [on this GitHub issue](https://github.com/heroku/heroku-buildpack-ruby/issues/1157).
+This change is reflected in the [Deploying a Ruby Project Generated on Windows](https://devcenter.heroku.com/articles/bundler-windows-gemfile) Dev Center article. More information on the history of the behavior can be found [on this GitHub issue](https://github.com/heroku/heroku-buildpack-ruby/issues/1157).
 
 <!--
 
