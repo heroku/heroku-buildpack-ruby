@@ -694,19 +694,32 @@ BUNDLE
       end
 
       if bundler.windows_gemfile_lock?
-        log("bundle", "has_windows_gemfile_lock")
+        if bundler.supports_multiple_platforms?
+          puts "Windows `Gemfile.lock` detected, bundler #{@bundler.version} supports multiple platforms, no action taken."
+        else
+            File.unlink("Gemfile.lock")
+            ENV.delete("BUNDLE_DEPLOYMENT")
 
-        File.unlink("Gemfile.lock")
-        ENV.delete("BUNDLE_DEPLOYMENT")
+            warn(<<~WARNING, inline: true)
+              Removing `Gemfile.lock` because it was generated on Windows.
 
-        warn(<<~WARNING, inline: true)
-          Removing `Gemfile.lock` because it was generated on Windows.
-          Bundler will do a full resolve so native gems are handled properly.
-          This may result in unexpected gem versions being used in your app.
-          In rare occasions Bundler may not be able to resolve your dependencies at all.
+              Bundler will do a full resolve so native gems are handled properly.
+              This may result in unexpected gem versions being used in your app.
+              In rare occasions Bundler may not be able to resolve your dependencies at all.
 
-          https://devcenter.heroku.com/articles/bundler-windows-gemfile
-        WARNING
+              Upgrade to bundler version 2.2 or higher to skip this behavior and use built in support
+              for multiple platforms. Running these commands below (after the `>`) in a command prompt
+              should resolve this warning:
+
+                > gem install bundler
+                > bundle update --bundler
+                > git add Gemfile.lock
+                > git commit -m "Upgrade bundler"
+
+              For more information see:
+                https://devcenter.heroku.com/articles/bundler-windows-gemfile
+            WARNING
+        end
       end
 
       bundle_command = String.new("")
