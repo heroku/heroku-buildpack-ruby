@@ -713,6 +713,9 @@ BUNDLE
 
                 > gem install bundler
                 > bundle update --bundler
+                > bundle lock --add-platform ruby
+                > bundle lock --add-platform x86_64-linux
+                > bundle install
                 > git add Gemfile.lock
                 > git commit -m "Upgrade bundler"
 
