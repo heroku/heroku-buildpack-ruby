@@ -8,6 +8,9 @@ Ruby applications that use Windows and Bundler 2.2+ will no longer have their `G
 ```
 > gem install bundler
 > bundle update --bundler
+> bundle lock --add-platform ruby
+> bundle lock --add-platform x86_64-linux
+> bundle install
 > git add Gemfile.lock
 > git commit -m "Upgrade bundler"
 ```
@@ -55,11 +58,14 @@ Heroku supports deploying applications developed on Windows, but [production dyn
 ```
 > gem install bundler
 > bundle update --bundler
+> bundle lock --add-platform ruby
+> bundle lock --add-platform x86_64-linux
+> bundle install
 > git add Gemfile.lock
 > git commit -m "Upgrade bundler"
 ```
 
-Windows applications using bundler 2.2+ will rely on bundler's support for multiple platforms to find and install an appropriate version.
+After running these commands, Windows applications using bundler 2.2+ will rely on bundler's support for multiple platforms to find and install an appropriate version.
 
 ## Windows support with bundler before 2.2
 
