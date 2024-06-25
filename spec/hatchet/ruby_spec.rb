@@ -1,6 +1,40 @@
 require_relative '../spec_helper'
 
 describe "Ruby apps" do
+  describe "with mingw platform" do
+    it "is detected as a Windows app" do
+      Hatchet::Runner.new("default_ruby").tap do |app|
+        app.before_deploy do
+          Pathname("Gemfile").write(<<~'EOF')
+            source "https://rubygems.org"
+
+            gem "rake"
+          EOF
+
+          Pathname("Gemfile.lock").write(<<~'EOF')
+            GEM
+              remote: https://rubygems.org/
+              specs:
+                rake (13.2.1)
+
+            PLATFORMS
+              x86-mingw32
+              ruby
+
+            DEPENDENCIES
+              rake
+
+            BUNDLED WITH
+               2.5.9
+          EOF
+        end
+
+        app.deploy do
+          expect(app.output).to include("Windows platform detected, preserving `Gemfile.lock`")
+        end
+      end
+    end
+  end
 
   # https://github.com/heroku/heroku-buildpack-ruby/issues/1025
   describe "bin/rake binstub" do

@@ -695,7 +695,7 @@ BUNDLE
 
       if bundler.windows_gemfile_lock?
         if bundler.supports_multiple_platforms?
-          puts "Windows `Gemfile.lock` detected, bundler #{@bundler.version} supports multiple platforms, no action taken."
+          puts "Windows `Gemfile.lock` detected, bundler #{bundler.version} supports multiple platforms, no action taken."
         else
             File.unlink("Gemfile.lock")
             ENV.delete("BUNDLE_DEPLOYMENT")
