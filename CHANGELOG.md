@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- JRuby 9.4.8.0 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1479)
 
 ## [v274] - 2024-06-28
 
