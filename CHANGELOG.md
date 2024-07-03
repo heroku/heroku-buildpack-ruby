@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v275] - 2024-07-03
+
 - JRuby 9.4.8.0 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1479)
 
 ## [v274] - 2024-06-28
@@ -1547,7 +1550,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v274...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v275...main
+[v275]: https://github.com/heroku/heroku-buildpack-ruby/compare/v274...v275
 [v274]: https://github.com/heroku/heroku-buildpack-ruby/compare/v273...v274
 [v273]: https://github.com/heroku/heroku-buildpack-ruby/compare/v272...v273
 [v272]: https://github.com/heroku/heroku-buildpack-ruby/compare/v271...v272
