@@ -11,7 +11,7 @@ curl_retry_on_18() {
 }
 
 # This function will install a version of Ruby onto the
-# system for the buidlpack to use. It coordinates download
+# system for the buildpack to use. It coordinates download
 # and setting appropriate env vars for execution
 #
 # Example:
@@ -25,7 +25,7 @@ curl_retry_on_18() {
 #
 # This function relies on the env var `$STACK` being set. This
 # is set in codon outside of the buildpack. An example of a stack
-# would be "cedar-14".
+# would be "heroku-24".
 install_bootstrap_ruby()
 {
   local bin_dir=$1
@@ -42,10 +42,7 @@ install_bootstrap_ruby()
 
   # The -d flag checks to see if a file exists and is a directory.
   # This directory may be non-empty if a previous compile has
-  # already placed a Ruby executable here. Also
-  # when the buildpack is deployed we vendor a ruby executable
-  # at this location so it doesn't have to be downloaded for
-  # every app compile
+  # already placed a Ruby executable here.
   if [ ! -d "$heroku_buildpack_ruby_dir" ]; then
     heroku_buildpack_ruby_dir=$(mktemp -d)
     # bootstrap ruby
