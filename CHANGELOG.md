@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Stop bundling bootstrap Ruby for each stack inside the buildpack archive on the buildpack registry (https://github.com/heroku/heroku-buildpack-ruby/pull/1481)
 
 ## [v276] - 2024-07-09
 
