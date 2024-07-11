@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v277] - 2024-07-11
+
 - Stop bundling bootstrap Ruby for each stack inside the buildpack archive on the buildpack registry (https://github.com/heroku/heroku-buildpack-ruby/pull/1481)
 
 ## [v276] - 2024-07-09
@@ -1555,7 +1558,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v276...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v277...main
+[v277]: https://github.com/heroku/heroku-buildpack-ruby/compare/v276...v277
 [v276]: https://github.com/heroku/heroku-buildpack-ruby/compare/v275...v276
 [v275]: https://github.com/heroku/heroku-buildpack-ruby/compare/v274...v275
 [v274]: https://github.com/heroku/heroku-buildpack-ruby/compare/v273...v274
