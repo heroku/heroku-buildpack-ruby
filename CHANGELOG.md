@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Ruby 3.2.5 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1488)
 
 ## [v277] - 2024-07-11
 
