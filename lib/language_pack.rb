@@ -12,7 +12,7 @@ module LanguagePack
   def self.detect(*args)
     Dir.chdir(args.first)
 
-    pack = [ NoLockfile, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+    pack = [ NoLockfile, Rails8, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
       klass.use?
     end
 
@@ -44,4 +44,5 @@ require "language_pack/rails42"
 require "language_pack/rails5"
 require "language_pack/rails6"
 require "language_pack/rails7"
+require "language_pack/rails8"
 require "language_pack/no_lockfile"

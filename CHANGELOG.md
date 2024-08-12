@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Add detection support for Rails 8 (https://github.com/heroku/heroku-buildpack-ruby/pull/1498)
 
 ## [v278] - 2024-08-05
 
