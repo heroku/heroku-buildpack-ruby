@@ -1,10 +1,10 @@
 require_relative '../spec_helper'
 
-describe "Rails 7" do
+describe "Rails 8" do
   it "should detect successfully" do
     Hatchet::App.new('rails-jsbundling').in_directory_fork do
-      expect(LanguagePack::Rails6.use?).to eq(false)
-      expect(LanguagePack::Rails7.use?).to eq(true)
+      expect(LanguagePack::Rails7.use?).to eq(false)
+      expect(LanguagePack::Rails8.use?).to eq(true)
     end
   end
 
