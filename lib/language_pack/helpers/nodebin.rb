@@ -3,11 +3,12 @@ require 'json'
 class LanguagePack::Helpers::Nodebin
   NODE_VERSION = "20.9.0"
   YARN_VERSION = "1.22.19"
+  ARCH = RUBY_PLATFORM.start_with?(/aarch64|arm64/) ? "arm64" : "x64"
 
   def self.hardcoded_node_lts
     {
       "number" => NODE_VERSION,
-      "url"    => "https://heroku-nodebin.s3.us-east-1.amazonaws.com/node/release/linux-x64/node-v#{NODE_VERSION}-linux-x64.tar.gz"
+      "url"    => "https://nodejs.org/download/release/v#{NODE_VERSION}/node-v#{NODE_VERSION}-linux-#{ARCH}.tar.gz",
     }
   end
 

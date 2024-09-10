@@ -9,7 +9,7 @@ class LanguagePack::Helpers::NodeInstaller
   end
 
   def binary_path
-    node_folder(@version)
+    File.basename(@url).delete_suffix(".tar.gz")
   end
 
   def install
@@ -26,10 +26,5 @@ class LanguagePack::Helpers::NodeInstaller
 
       FileUtils.mv("#{dir}/#{node_bin}", ".")
     end
-  end
-
-  private
-  def node_folder(version)
-    "node-v#{version}-linux-x64"
   end
 end
