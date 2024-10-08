@@ -1,8 +1,8 @@
 class LanguagePack::Helpers::NodeInstaller
   attr_reader :version
 
-  def initialize
-    nodebin = LanguagePack::Helpers::Nodebin.node_lts
+  def initialize(arch: )
+    nodebin = LanguagePack::Helpers::Nodebin.node_lts(arch: arch)
     @version = nodebin["number"]
     @url     = nodebin["url"]
     @fetcher = LanguagePack::Fetcher.new("")

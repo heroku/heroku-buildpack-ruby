@@ -3,12 +3,12 @@ require 'json'
 class LanguagePack::Helpers::Nodebin
   NODE_VERSION = "20.9.0"
   YARN_VERSION = "1.22.19"
-  ARCH = RUBY_PLATFORM.start_with?(/aarch64|arm64/) ? "arm64" : "x64"
 
-  def self.hardcoded_node_lts
+  def self.hardcoded_node_lts(arch: )
+    arch = "x64" if arch == "amd64"
     {
       "number" => NODE_VERSION,
-      "url"    => "https://nodejs.org/download/release/v#{NODE_VERSION}/node-v#{NODE_VERSION}-linux-#{ARCH}.tar.gz",
+      "url"    => "https://nodejs.org/download/release/v#{NODE_VERSION}/node-v#{NODE_VERSION}-linux-#{arch}.tar.gz",
     }
   end
 
@@ -19,8 +19,8 @@ class LanguagePack::Helpers::Nodebin
     }
   end
 
-  def self.node_lts
-    hardcoded_node_lts
+  def self.node_lts(arch: )
+    hardcoded_node_lts(arch: arch)
   end
 
   def self.yarn
