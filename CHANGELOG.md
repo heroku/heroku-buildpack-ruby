@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Support Node.js on ARM builds (https://github.com/heroku/heroku-buildpack-ruby/pull/1499)
 
 ## [v280] - 2024-10-08
 
