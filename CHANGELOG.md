@@ -5,6 +5,10 @@
 - Add detection support for Rails 8 (https://github.com/heroku/heroku-buildpack-ruby/pull/1498)
 - Support Node.js on ARM builds (https://github.com/heroku/heroku-buildpack-ruby/pull/1499)
 
+## [v280] - 2024-11-01
+
+- Ruby 3.2.6 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1504)
+
 ## [v280] - 2024-10-08
 
 - Ruby 3.4.0 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1496)
