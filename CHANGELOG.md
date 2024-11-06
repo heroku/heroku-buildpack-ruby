@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Ruby 3.3.6 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1510)
 
 ## [v280] - 2024-11-06
 
