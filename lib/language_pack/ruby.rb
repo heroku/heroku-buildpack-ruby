@@ -34,7 +34,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def initialize(*args)
     super(*args)
-    @node_installer    = LanguagePack::Helpers::NodeInstaller.new(arch: @arch)
+    @node_installer    = LanguagePack::Helpers::NodeInstaller.new
     @yarn_installer    = LanguagePack::Helpers::YarnInstaller.new
   end
 

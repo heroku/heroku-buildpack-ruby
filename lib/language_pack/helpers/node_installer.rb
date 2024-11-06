@@ -1,15 +1,15 @@
 class LanguagePack::Helpers::NodeInstaller
   attr_reader :version
 
-  def initialize(arch: )
-    nodebin = LanguagePack::Helpers::Nodebin.node_lts(arch: arch)
+  def initialize
+    nodebin = LanguagePack::Helpers::Nodebin.node_lts
     @version = nodebin["number"]
     @url     = nodebin["url"]
     @fetcher = LanguagePack::Fetcher.new("")
   end
 
   def binary_path
-    File.basename(@url).delete_suffix(".tar.gz")
+    node_folder(@version)
   end
 
   def install
@@ -26,5 +26,10 @@ class LanguagePack::Helpers::NodeInstaller
 
       FileUtils.mv("#{dir}/#{node_bin}", ".")
     end
+  end
+
+  private
+  def node_folder(version)
+    "node-v#{version}-linux-x64"
   end
 end
