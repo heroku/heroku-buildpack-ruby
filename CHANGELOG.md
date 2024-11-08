@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v282] - 2024-11-08
+
 - Default Node.js version now 22.11.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/1503)
 - Default Yarn version now 1.22.22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1503)
 
@@ -1586,7 +1589,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v281...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v282...main
+[v282]: https://github.com/heroku/heroku-buildpack-ruby/compare/v281...v282
 [v281]: https://github.com/heroku/heroku-buildpack-ruby/compare/v280...v281
 [v280]: https://github.com/heroku/heroku-buildpack-ruby/compare/v279...v280
 [v279]: https://github.com/heroku/heroku-buildpack-ruby/compare/v278...v279
