@@ -13,7 +13,7 @@ group :development, :test do
   gem "parallel_tests"
   gem 'rspec-retry'
   gem 'json'
-  gem 'ci-queue'
+  gem 'ci-queue', github: "schneems/ci-queue", branch: "schneems/allow-hosted-redis"
   gem 'redis'
   gem 'dead_end'
 end
