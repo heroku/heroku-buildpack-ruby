@@ -34,7 +34,7 @@ GEM
       rate_throttle_client (~> 0.1.0)
     rake (13.2.1)
     rate_throttle_client (0.1.2)
-    redis (5.2.0)
+    redis (5.3.0)
       redis-client (>= 0.22.0)
     redis-client (0.22.2)
       connection_pool
