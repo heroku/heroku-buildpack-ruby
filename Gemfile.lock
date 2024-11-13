@@ -1,8 +1,15 @@
+GIT
+  remote: https://github.com/schneems/ci-queue.git
+  revision: 285353ba8bc58e1b2ed02dedf55730400c27e32b
+  branch: schneems/allow-hosted-redis
+  specs:
+    ci-queue (0.58.0)
+      logger
+
 GEM
   remote: https://rubygems.org/
   specs:
     base64 (0.2.0)
-    ci-queue (0.55.0)
     citrus (3.0.2)
     connection_pool (2.4.1)
     dead_end (4.0.0)
@@ -23,6 +30,7 @@ GEM
       thor (~> 1)
       threaded (~> 0)
     json (2.7.2)
+    logger (1.6.1)
     moneta (1.0.0)
     multi_json (1.15.0)
     parallel (1.25.1)
@@ -34,7 +42,7 @@ GEM
       rate_throttle_client (~> 0.1.0)
     rake (13.2.1)
     rate_throttle_client (0.1.2)
-    redis (5.2.0)
+    redis (5.3.0)
       redis-client (>= 0.22.0)
     redis-client (0.22.2)
       connection_pool
@@ -57,7 +65,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ci-queue
+  ci-queue!
   dead_end
   excon
   heroku_hatchet
