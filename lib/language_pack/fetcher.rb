@@ -26,10 +26,9 @@ module LanguagePack
       run!(curl, error_class: FetchError)
     end
 
-    def fetch_untar(path, files_to_extract = nil, strip_components: false)
+    def fetch_untar(path, files_to_extract = nil, strip_components: 0)
       curl = curl_command("#{@host_url.join(path)} -s -o")
-      tar_cmd = ["tar zxf - #{files_to_extract}"]
-      tar_cmd << "--strip #{strip_components}" if strip_components
+      tar_cmd = ["tar zxf - #{files_to_extract}", "--strip #{strip_components}"]
       run! "#{curl} - | #{tar_cmd.join(" ")}",
         error_class: FetchError,
         max_attempts: 3
