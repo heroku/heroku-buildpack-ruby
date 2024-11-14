@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Default Node.js version now 22.11.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/1503)
+- Default Yarn version now 1.22.22 (https://github.com/heroku/heroku-buildpack-ruby/pull/1503)
 
 ## [v282] - 2024-11-08
 
