@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Default `UV_USE_IO_URING=0` due to build timeouts [context](https://github.com/heroku/heroku-buildpack-nodejs/pull/1347) (https://github.com/heroku/heroku-buildpack-ruby/pull/1523)
 
 ## [v284] - 2024-11-15
 

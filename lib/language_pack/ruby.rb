@@ -964,6 +964,9 @@ params = CGI.parse(uri.query || "")
       version = @node_installer.version
       old_version = @metadata.fetch("default_node_version") { version }
 
+      ENV["UV_USE_IO_URING"] ||= "0"
+      set_env_default "UV_USE_IO_URING", "0"
+
       if version != version
         warn(<<~WARNING, inline: true)
           Default version of Node.js changed (#{old_version} to #{version})
@@ -993,6 +996,9 @@ params = CGI.parse(uri.query || "")
 
       version = @yarn_installer.version
       old_version = @metadata.fetch("default_yarn_version") { version }
+
+      ENV["UV_USE_IO_URING"] ||= "0"
+      set_env_default "UV_USE_IO_URING", "0"
 
       if version != version
         warn(<<~WARNING, inline: true)
