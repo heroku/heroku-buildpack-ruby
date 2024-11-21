@@ -965,7 +965,6 @@ params = CGI.parse(uri.query || "")
       old_version = @metadata.fetch("default_node_version") { version }
 
       ENV["UV_USE_IO_URING"] ||= "0"
-      set_env_default "UV_USE_IO_URING", "0"
 
       if version != version
         warn(<<~WARNING, inline: true)
@@ -998,7 +997,6 @@ params = CGI.parse(uri.query || "")
       old_version = @metadata.fetch("default_yarn_version") { version }
 
       ENV["UV_USE_IO_URING"] ||= "0"
-      set_env_default "UV_USE_IO_URING", "0"
 
       if version != version
         warn(<<~WARNING, inline: true)
