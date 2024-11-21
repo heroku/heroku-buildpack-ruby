@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v285] - 2024-11-21
+
 - Default `UV_USE_IO_URING=0` due to build timeouts [context](https://github.com/heroku/heroku-buildpack-nodejs/pull/1347) (https://github.com/heroku/heroku-buildpack-ruby/pull/1523)
 
 ## [v284] - 2024-11-15
@@ -1599,7 +1602,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v284...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v285...main
+[v285]: https://github.com/heroku/heroku-buildpack-ruby/compare/v284...v285
 [v284]: https://github.com/heroku/heroku-buildpack-ruby/compare/v283...v284
 [v283]: https://github.com/heroku/heroku-buildpack-ruby/compare/v282...v283
 [v282]: https://github.com/heroku/heroku-buildpack-ruby/compare/v281...v282
