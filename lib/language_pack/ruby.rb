@@ -964,6 +964,11 @@ params = CGI.parse(uri.query || "")
       version = @node_installer.version
       old_version = @metadata.fetch("default_node_version") { version }
 
+      # Make available for `rake assets:precompile` and other sub-shells
+      ENV["UV_USE_IO_URING"] ||= "0"
+      # Make available to future buildpacks (export), but not runtime (profile.d)
+      set_export_default "UV_USE_IO_URING", "0"
+
       if version != version
         warn(<<~WARNING, inline: true)
           Default version of Node.js changed (#{old_version} to #{version})
@@ -993,6 +998,11 @@ params = CGI.parse(uri.query || "")
 
       version = @yarn_installer.version
       old_version = @metadata.fetch("default_yarn_version") { version }
+
+      # Make available for `rake assets:precompile` and other sub-shells
+      ENV["UV_USE_IO_URING"] ||= "0"
+      # Make available to future buildpacks (export), but not runtime (profile.d)
+      set_export_default "UV_USE_IO_URING", "0"
 
       if version != version
         warn(<<~WARNING, inline: true)
