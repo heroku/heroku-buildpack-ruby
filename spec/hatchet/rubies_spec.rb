@@ -33,6 +33,9 @@ describe "Ruby versions" do
 
          RUBY VERSION
             ruby 2.5.7p0 (jruby 9.2.13.0)
+
+         BUNDLED WITH
+            2.5.23
         EOM
 
         Pathname("Rakefile").write(<<~'EOM')
