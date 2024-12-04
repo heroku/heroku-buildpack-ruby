@@ -32,7 +32,7 @@ describe "Ruby versions" do
 
 
          RUBY VERSION
-            ruby 2.5.7p0 (jruby 9.2.13.0)
+            ruby 3.1.4p0 (jruby 9.4.8.0)
 
          BUNDLED WITH
             2.5.23
