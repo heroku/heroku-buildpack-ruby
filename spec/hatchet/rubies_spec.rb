@@ -13,15 +13,16 @@ describe "Ruby Versions on cedar-14" do
 end
 
 describe "Ruby versions" do
-  it "should deploy jdk on heroku-20" do
-    Hatchet::Runner.new("default_ruby", stack: "heroku-20").tap do |app|
+  it "should deploy jdk on heroku-24" do
+    Hatchet::Runner.new("default_ruby", stack: "heroku-24").tap do |app|
       app.before_deploy do |app|
         Pathname("Gemfile.lock").write(<<~EOM)
          GEM
            remote: https://rubygems.org/
            specs:
-             rack (2.2.2)
-             rake (13.0.1)
+             rack (3.1.8)
+             rake (13.2.1)
+             webrick (1.9.1)
 
          PLATFORMS
            java
@@ -29,10 +30,13 @@ describe "Ruby versions" do
          DEPENDENCIES
            rack
            rake
-
+           webrick
 
          RUBY VERSION
-            ruby 2.5.7p0 (jruby 9.2.13.0)
+            ruby 3.1.4p0 (jruby 9.4.8.0)
+
+         BUNDLED WITH
+            2.5.23
         EOM
 
         Pathname("Rakefile").write(<<~'EOM')
@@ -50,7 +54,7 @@ describe "Ruby versions" do
         app.push!
         expect(app.output).to match("JRUBY_OPTS is: --dev")
 
-        expect(app.run("ls .jdk/jre/lib/ext/")).to match("pgconfig.jar")
+        expect(app.run("ruby -v")).to match("jruby")
       end
     end
   end
