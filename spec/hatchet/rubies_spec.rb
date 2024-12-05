@@ -13,8 +13,8 @@ describe "Ruby Versions on cedar-14" do
 end
 
 describe "Ruby versions" do
-  it "should deploy jdk on heroku-20" do
-    Hatchet::Runner.new("default_ruby", stack: "heroku-20").tap do |app|
+  it "should deploy jdk on heroku-24" do
+    Hatchet::Runner.new("default_ruby", stack: "heroku-24").tap do |app|
       app.before_deploy do |app|
         Pathname("Gemfile.lock").write(<<~EOM)
          GEM
