@@ -20,8 +20,9 @@ describe "Ruby versions" do
          GEM
            remote: https://rubygems.org/
            specs:
-             rack (2.2.2)
-             rake (13.0.1)
+             rack (3.1.8)
+             rake (13.2.1)
+             webrick (1.9.1)
 
          PLATFORMS
            java
@@ -29,7 +30,7 @@ describe "Ruby versions" do
          DEPENDENCIES
            rack
            rake
-
+           webrick
 
          RUBY VERSION
             ruby 3.1.4p0 (jruby 9.4.8.0)
