@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Ruby 3.4.0-rc1 is now available
 
 ## [v285] - 2024-11-21
 
