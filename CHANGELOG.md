@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Ruby 3.4.0-rc1 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1528)
 
 ## [v285] - 2024-11-21
 
