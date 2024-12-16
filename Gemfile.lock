@@ -53,7 +53,7 @@ GEM
     threaded (0.0.4)
     toml-rb (2.2.0)
       citrus (~> 3.0, > 3.0)
-    webrick (1.8.1)
+    webrick (1.8.2)
 
 PLATFORMS
   ruby
