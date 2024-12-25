@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Ruby 3.4.0 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1531)
+- Ruby 3.4.1 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1531)
 
 ## [v286] - 2024-12-13
 
