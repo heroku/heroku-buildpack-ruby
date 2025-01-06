@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Ruby apps using bundler 2.6+ will now receive bundler 2.6.2 ()
+- Ruby apps using bundler 2.5.x will now receive bundler 2.5.23 ()
 
 ## [v287] - 2024-12-25
 
