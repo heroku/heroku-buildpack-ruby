@@ -40,13 +40,14 @@ class LanguagePack::Helpers::BundlerWrapper
   # Heroku-20's oldest Ruby verison is 2.5.x which doesn't work with bundler 2.4
   BLESSED_BUNDLER_VERSIONS["2.3"] = "2.3.25"
   BLESSED_BUNDLER_VERSIONS["2.4"] = "2.4.22"
-  BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.6"
+  BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.23"
+  BLESSED_BUNDLER_VERSIONS["2.6"] = "2.6.2"
   BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
     if Gem::Version.new(key).segments.first == 1
       hash["1"]
     elsif Gem::Version::new(key).segments.first == 2
-      if Gem::Version.new(key) > Gem::Version.new("2.5")
-        hash["2.5"]
+      if Gem::Version.new(key) > Gem::Version.new("2.6")
+        hash["2.6"]
       elsif Gem::Version.new(key) < Gem::Version.new("2.3")
         hash["2.3"]
       else

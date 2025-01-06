@@ -36,8 +36,12 @@ describe "Bundler version detection" do
     expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.5"])
 
     version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.6.7")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.5")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.5"])
+    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.6")).to be_truthy
+    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.6"])
+
+    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.999.7")
+    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.6")).to be_truthy
+    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.6"])
 
     expect {
       wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   3.6.7")
