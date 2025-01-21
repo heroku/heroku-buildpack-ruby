@@ -11,10 +11,7 @@ describe "CI" do
   end
 
   it "Works with Rails 5 ruby schema apps" do
-    Hatchet::Runner.new("rails5_ruby_schema_format", stack: "heroku-20").tap do |app|
-      app.before_deploy do
-        Pathname("Gemfile").write("ruby '2.7.5'", mode: "a")
-      end
+    Hatchet::Runner.new("rails_8_ruby_schema", stack: "heroku-24").tap do |app|
       app.run_ci do |test_run|
         expect(test_run.output).to match("db:schema:load_if_ruby completed")
       end
@@ -22,10 +19,7 @@ describe "CI" do
   end
 
   it "Works with Rails 5 SQL schema apps" do
-    Hatchet::Runner.new("rails5_sql_schema_format", stack: "heroku-20").tap do |app|
-      app.before_deploy do
-        Pathname("Gemfile").write("ruby '2.7.5'", mode: "a")
-      end
+    Hatchet::Runner.new("rails_8_sql_schema", stack: "heroku-24").tap do |app|
       app.run_ci do |test_run|
         expect(test_run.output).to match("db:structure:load_if_sql completed")
       end

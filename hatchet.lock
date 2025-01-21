@@ -13,10 +13,10 @@
   - a6b711be6921cf7a0aa4e31269c37965799ea110
 - - "./repos/ci/heroku-ci-json-example"
   - 4e5410a7381f486ba3df7739e02e52f32fdd4dda
-- - "./repos/ci/rails5_ruby_schema_format"
-  - 8b8a3a7850bdba29bdefc70c0f80f35a9e6c96ae
-- - "./repos/ci/rails5_sql_schema_format"
-  - ee81b300a1019b47bbcaec0a512932df7dc23bc0
+- - "./repos/ci/rails_8_ruby_schema"
+  - 32a4dce6c43834752dd9f263c41290a4ff168795
+- - "./repos/ci/rails_8_sql_schema"
+  - e00d7b7b9cf95fb0a3aceb3c945025e5d20dec90
 - - "./repos/ci/ruby_no_rails_test"
   - 3916137106d59b008b67d738abe6a1438f8fbde6
 - - "./repos/heroku/ruby-getting-started"
