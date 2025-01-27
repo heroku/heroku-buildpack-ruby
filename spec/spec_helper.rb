@@ -65,7 +65,7 @@ def rails_lts_config
 end
 
 def rails_lts_stack
-  "heroku-20"
+  "heroku-22"
 end
 
 def hatchet_path(path = "")
