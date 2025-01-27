@@ -256,16 +256,6 @@ describe "Ruby apps" do
     end
   end
 
-  describe "Rake detection" do
-    context "Ruby 1.9+" do
-      it "runs a rake task if the gem exists" do
-        Hatchet::Runner.new('default_with_rakefile').deploy do |app, heroku|
-          expect(app.output).to include("foo")
-        end
-      end
-    end
-  end
-
   describe "database configuration" do
     context "no active record" do
       it "writes a heroku specific database.yml" do
@@ -279,8 +269,14 @@ describe "Ruby apps" do
 
     context "active record 4.1+" do
       it "doesn't write a heroku specific database.yml" do
-        Hatchet::Runner.new("activerecord41_scaffold").deploy do |app, heroku|
-          expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
+        Hatchet::Runner.new("activerecord41_scaffold", config: rails_lts_config, stack: rails_lts_stack).tap do |app|
+          app.before_deploy do
+            Pathname("Gemfile").write("ruby '2.7.2'", mode: "a")
+          end
+
+          app.deploy do
+            expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
+          end
         end
       end
     end

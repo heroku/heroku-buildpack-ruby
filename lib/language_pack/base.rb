@@ -112,7 +112,7 @@ class LanguagePack::Base
 
   def write_release_yaml
     release = build_release
-    FileUtils.mkdir("tmp") unless File.exists?("tmp")
+    FileUtils.mkdir("tmp") unless File.exist?("tmp")
     File.open("tmp/heroku-buildpack-release-step.yml", 'w') do |f|
       f.write(release.to_yaml)
     end

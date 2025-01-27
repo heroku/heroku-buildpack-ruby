@@ -50,9 +50,9 @@
     "sharpstone/minimal_webpacker"
   ],
   "ci": [
-    "sharpstone/rails5_ruby_schema_format",
+    "sharpstone/rails_8_ruby_schema",
     "sharpstone/heroku-ci-json-example",
-    "sharpstone/rails5_sql_schema_format",
+    "sharpstone/rails_8_sql_schema",
     "sharpstone/ruby_no_rails_test",
     "sharpstone/activerecord_rake_tasks_does_not_exist"
   ]

@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Default Ruby version is now 3.3.7 (https://github.com/heroku/heroku-buildpack-ruby/pull/1534)
 
 ## [v290] - 2025-01-23
 

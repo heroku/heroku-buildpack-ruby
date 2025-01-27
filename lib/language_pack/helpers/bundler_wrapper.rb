@@ -239,7 +239,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   private
   def fetch_bundler
-    return true if Dir.exists?(bundler_path)
+    return true if Dir.exist?(bundler_path)
 
     topic("Installing bundler #{@version}")
     bundler_version_escape_valve!
