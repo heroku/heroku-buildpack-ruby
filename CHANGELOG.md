@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Default Ruby version is now 3.3.7 (https://github.com/heroku/heroku-buildpack-ruby/pull/1534)
+- Default bundler version (when no version present in the `Gemfile.lock`) is now bundler `2.3.x` which is currently `2.3.25` (https://github.com/heroku/heroku-buildpack-ruby/pull/1534)
 
 ## [v288] - 2025-01-06
 
