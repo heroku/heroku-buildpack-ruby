@@ -15,9 +15,12 @@ describe "Rails 6" do
       # Test Clean task does not get called if it does not exist
       # This file will only have the `assets:precompile` task in it, but not `assets:clean`
       run! %Q{echo 'task "assets:precompile" do ; end' > Rakefile}
+
+      set_lts_ruby_version
+      set_bundler_version(version: :default)
     end
 
-    Hatchet::Runner.new('rails61', before_deploy: before_deploy).deploy do |app|
+    Hatchet::Runner.new('rails61', before_deploy: before_deploy, config: rails_lts_config, stack: rails_lts_stack).deploy do |app|
       expect(app.output).to match("Fetching railties 6")
 
       expect(app.output).to match("rake assets:precompile")
