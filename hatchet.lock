@@ -20,7 +20,7 @@
 - - "./repos/rack/default_ruby"
   - master
 - - "./repos/rails_versions/rails-jsbundling"
-  - c58178e061d9846386ca34ea31c99f6e6bb8dbf7
+  - 50e9fdf7c3a37623c676989ddebac4ee5349734b
 - - "./repos/rails_versions/rails3_default_ruby"
   - 984b6d02353519251c2d1e885bf8914a2584f26a
 - - "./repos/rails_versions/rails42_default_ruby"
