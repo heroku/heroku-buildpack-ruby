@@ -6,7 +6,7 @@
 - - "./repos/bundler/sqlite3_gemfile"
   - 116db685f54dae18f703b3beb90e64fdbddb048d
 - - "./repos/ci/heroku-ci-json-example"
-  - 4e5410a7381f486ba3df7739e02e52f32fdd4dda
+  - 728cc99c8e80290cc07441d61a8bcd4596e696fb
 - - "./repos/ci/rails_8_ruby_schema"
   - 32a4dce6c43834752dd9f263c41290a4ff168795
 - - "./repos/ci/rails_8_sql_schema"
@@ -24,7 +24,7 @@
 - - "./repos/rails_versions/rails3_default_ruby"
   - 984b6d02353519251c2d1e885bf8914a2584f26at
 - - "./repos/rails_versions/rails42_default_ruby"
-  - e90f232432e46a4c04ff30b970e11e7a39d9489f
+  - fbdaf031823f09d1514ec1d55dcb04ca2f4264ca
 - - "./repos/rails_versions/rails4_windows_mri193"
   - f4c7b6209835050468bbb87827acf652b8f4d8ce
 - - "./repos/rails_versions/rails61"
