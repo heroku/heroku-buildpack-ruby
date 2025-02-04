@@ -10,7 +10,7 @@ describe "CI" do
     end
   end
 
-  it "Works with Rails 5 ruby schema apps" do
+  it "Works with Rails: ruby schema apps" do
     Hatchet::Runner.new("rails_8_ruby_schema", stack: "heroku-24").tap do |app|
       app.before_deploy do
         Pathname("app.json").write(<<~EOF)
@@ -27,12 +27,12 @@ describe "CI" do
       end
 
       app.run_ci do |test_run|
-        expect(test_run.output).to match("db:schema:load_if_ruby completed")
+        expect(test_run.output).to match("db:schema:load completed")
       end
     end
   end
 
-  it "Works with Rails 5 SQL schema apps" do
+  it "Works with Rails: SQL schema apps" do
     Hatchet::Runner.new("rails_8_sql_schema", stack: "heroku-24").tap do |app|
       app.before_deploy do
         Pathname("app.json").write(<<~EOF)
@@ -49,7 +49,7 @@ describe "CI" do
       end
 
       app.run_ci do |test_run|
-        expect(test_run.output).to match("db:structure:load_if_sql completed")
+        expect(test_run.output).to match("db:structure:load completed")
       end
     end
   end
