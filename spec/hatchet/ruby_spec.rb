@@ -155,8 +155,6 @@ describe "Ruby apps" do
           Pathname("Gemfile").write(<<~'EOF')
             source "https://rubygems.org"
 
-            ruby "~> 3.0.0"
-
             gem "rake"
           EOF
 
@@ -172,12 +170,6 @@ describe "Ruby apps" do
 
             DEPENDENCIES
               rake
-
-            RUBY VERSION
-              ruby 3.0.3p157
-
-            BUNDLED WITH
-               2.3.7
           EOF
 
           Pathname("Rakefile").write(<<~'EOF')
@@ -212,8 +204,6 @@ describe "Ruby apps" do
           Pathname("Gemfile").write(<<~'EOF')
             source "https://rubygems.org"
 
-            ruby "~> 3.0.0"
-
             gem "sinatra"
           EOF
 
@@ -240,9 +230,6 @@ describe "Ruby apps" do
 
             DEPENDENCIES
               sinatra
-
-            BUNDLED WITH
-               2.3.7
           EOF
 
         end
