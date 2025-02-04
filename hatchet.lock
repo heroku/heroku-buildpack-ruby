@@ -22,7 +22,7 @@
 - - "./repos/rails_versions/rails-jsbundling"
   - c58178e061d9846386ca34ea31c99f6e6bb8dbf7
 - - "./repos/rails_versions/rails3_default_ruby"
-  - 984b6d02353519251c2d1e885bf8914a2584f26at
+  - 984b6d02353519251c2d1e885bf8914a2584f26a
 - - "./repos/rails_versions/rails42_default_ruby"
   - fbdaf031823f09d1514ec1d55dcb04ca2f4264ca
 - - "./repos/rails_versions/rails4_windows_mri193"
@@ -41,17 +41,11 @@
   - 3cb9c7bf6494c59bd25fa74c2aa4531119e12a46
 - - "./repos/rake/no_rakefile"
   - d2ec2084b825218418dac54bd6276ac896b31cdd
-- - "./repos/ruby/activerecord41_scaffold"
-  - 6e4662c44b49e2c3c9429f00e7e7f4708142b03f
 - - "./repos/ruby/bad_ruby_version"
   - 7bf3470265a87ea6361640aa4bfce6ce3b743520
 - - "./repos/ruby/empty-procfile"
   - 7cae0aae424c2028b81b5d37ee24d42db8e545b9
 - - "./repos/ruby/jruby-minimal"
   - f79860bc2866449fe065484f1542aaadd3f7cfd2
-- - "./repos/ruby/libpq_connection_error"
-  - c211c245f09d8335a520cd7a0b5360897d4988eb
-- - "./repos/ruby/ruby_25"
-  - 0cb3df80d55b61e9417f2ac00adb06e15ae37982
 - - "./repos/ruby/ruby_version_does_not_exist"
   - 9b6ad8e3b4fa7850393a5f232bb40ff3cd414d8b
