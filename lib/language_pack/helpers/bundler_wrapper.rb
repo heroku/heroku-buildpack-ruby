@@ -95,7 +95,7 @@ class LanguagePack::Helpers::BundlerWrapper
       msg << "\n"
       msg << "```\n"
       msg << "BUNDLED WITH\n"
-      msg << "   #{version_hash["1"]}\n"
+      msg << "   #{DEFAULT_VERSION}\n"
       msg << "```\n"
       super msg
     end
