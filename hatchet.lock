@@ -38,9 +38,9 @@
 - - "./repos/rails_versions/rails-jsbundling"
   - c58178e061d9846386ca34ea31c99f6e6bb8dbf7
 - - "./repos/rails_versions/rails3_default_ruby"
-  - a6b44db674c0d3538633989295e2cfd5e8e1ba0d
+  - 984b6d02353519251c2d1e885bf8914a2584f26at
 - - "./repos/rails_versions/rails42_default_ruby"
-  - dfa0f0133dafa62064968ea2efb6432f54350138
+  - e90f232432e46a4c04ff30b970e11e7a39d9489f
 - - "./repos/rails_versions/rails4_windows_mri193"
   - f4c7b6209835050468bbb87827acf652b8f4d8ce
 - - "./repos/rails_versions/rails61"
