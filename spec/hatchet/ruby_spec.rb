@@ -170,6 +170,9 @@ describe "Ruby apps" do
 
             DEPENDENCIES
               rake
+
+            RUBY VERSION
+               3.3.1p0
           EOF
 
           Pathname("Rakefile").write(<<~'EOF')
@@ -189,7 +192,9 @@ describe "Ruby apps" do
         end
 
         app.deploy do |app|
-          expect(app.output).to match("cd version ruby 3.0.3")
+          expected = "3.3.1"
+          expect(expected).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
+          expect(app.output).to match("cd version ruby #{expected}")
 
           expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
         end
