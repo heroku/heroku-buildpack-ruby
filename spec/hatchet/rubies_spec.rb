@@ -50,17 +50,20 @@ end
 
 describe "Upgrading ruby apps" do
   it "works when changing versions" do
+    version = "3.3.1"
+    expect(version).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
     app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)
     app.deploy do |app|
+      # default version
       expect(app.run("env | grep MALLOC_ARENA_MAX")).to match("MALLOC_ARENA_MAX=2")
       expect(app.run("env | grep DISABLE_SPRING")).to match("DISABLE_SPRING=1")
 
       # Deploy again
-      run!(%Q{echo "ruby '2.7.5'" >> Gemfile})
+      run!(%Q{echo "ruby '#{version}'" >> Gemfile})
       run!("git add -A; git commit -m update-ruby")
       app.push!
-      expect(app.output).to match("2.7.5")
-      expect(app.run("ruby -v")).to match("2.7.5")
+      expect(app.output).to match(version)
+      expect(app.run("ruby -v")).to match(version)
       expect(app.output).to match("Ruby version change detected")
     end
   end
