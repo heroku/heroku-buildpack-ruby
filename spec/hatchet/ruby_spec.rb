@@ -204,10 +204,15 @@ describe "Ruby apps" do
 
   describe "bundler ruby version matcher" do
     it "installs a version even when not present in the Gemfile.lock" do
+      version = "3.3.1"
+      expect(version).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
+
       Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK).tap do |app|
         app.before_deploy do
           Pathname("Gemfile").write(<<~'EOF')
             source "https://rubygems.org"
+
+            ruby "#{version}"
 
             gem "sinatra"
           EOF
@@ -241,8 +246,8 @@ describe "Ruby apps" do
 
         app.deploy do |app|
           # Intentionally different than the default ruby version
-          expect(app.output).to         match("3.0.0")
-          expect(app.run("ruby -v")).to match("3.0.0")
+          expect(app.output).to         match("#{version}")
+          expect(app.run("ruby -v")).to match("#{version}")
         end
       end
     end
