@@ -1,17 +1,5 @@
 require_relative '../spec_helper'
 
-describe "Ruby Versions on cedar-14" do
-  it "should deploy jruby 1.7.16.1 (jdk 7) properly on cedar-14 with sys props file" do
-    pending("Port this to a more recent stack")
-
-    app = Hatchet::Runner.new("ruby_193_jruby_17161_jdk7", stack: "cedar-14")
-    app.deploy do |app|
-      expect(app.output).to match("Installing JVM: openjdk-7")
-      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
-    end
-  end
-end
-
 describe "Ruby versions" do
   it "should deploy jdk on heroku-24" do
     Hatchet::Runner.new("default_ruby", stack: "heroku-24").tap do |app|
