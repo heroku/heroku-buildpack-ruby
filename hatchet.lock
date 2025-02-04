@@ -12,7 +12,7 @@
 - - "./repos/ci/rails_8_sql_schema"
   - e00d7b7b9cf95fb0a3aceb3c945025e5d20dec90
 - - "./repos/ci/ruby_no_rails_test"
-  - 3916137106d59b008b67d738abe6a1438f8fbde6
+  - c5925ab061f65433ec5dcbc890975f580e74c5ce
 - - "./repos/heroku/ruby-getting-started"
   - main
 - - "./repos/node/minimal_webpacker"
