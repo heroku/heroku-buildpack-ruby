@@ -269,11 +269,7 @@ describe "Ruby apps" do
 
     context "active record 4.1+" do
       it "doesn't write a heroku specific database.yml" do
-        Hatchet::Runner.new("activerecord41_scaffold", config: rails_lts_config, stack: rails_lts_stack).tap do |app|
-          app.before_deploy do
-            Pathname("Gemfile").write("ruby '2.7.2'", mode: "a")
-          end
-
+        Hatchet::Runner.new("rails61", config: rails_lts_config, stack: rails_lts_stack).tap do |app|
           app.deploy do
             expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
           end
