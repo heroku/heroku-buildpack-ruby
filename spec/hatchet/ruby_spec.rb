@@ -172,7 +172,7 @@ describe "Ruby apps" do
               rake
 
             RUBY VERSION
-               3.3.1p0
+              ruby 3.3.1p0
           EOF
 
           Pathname("Rakefile").write(<<~'EOF')
