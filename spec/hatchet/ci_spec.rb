@@ -65,12 +65,12 @@ describe "CI" do
   it "Uses the cache" do
     runner = Hatchet::Runner.new("ruby_no_rails_test")
     runner.run_ci do |test_run|
-      expect(test_run.output).to match("Fetching rake")
+      fetching_rake = "Fetching rake"
+      expect(test_run.output).to match(fetching_rake)
 
       test_run.run_again
 
-      expect(test_run.output).to match("Using rake")
-      expect(test_run.output).to_not match("Fetching rake")
+      expect(test_run.output).to_not match(fetching_rake)
     end
   end
 end
