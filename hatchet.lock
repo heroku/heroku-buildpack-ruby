@@ -28,7 +28,7 @@
 - - "./repos/rails_versions/rails4_windows_mri193"
   - f4c7b6209835050468bbb87827acf652b8f4d8ce
 - - "./repos/rails_versions/rails61"
-  - 03de843ba5151eee8eebcfca00317b090a8fb1bc
+  - bcd505482b66ceb2da3fae19bbc13a208bf5f08e
 - - "./repos/rails_versions/rails_lts_23_default_ruby"
   - f3597fd6f0887763eb65ec2f83a5e9a5155d5625
 - - "./repos/rake/asset_precompile_fail"
