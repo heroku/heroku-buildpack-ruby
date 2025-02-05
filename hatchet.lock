@@ -26,9 +26,9 @@
 - - "./repos/rails_versions/rails61"
   - 47828a3e8c79b7869ca0d9a3afa4be065fa46e96
 - - "./repos/rails_versions/rails_8_ruby_schema"
-  - 3c2466b2176ff9ee074bdd4d3f97ae8785a850c2
+  - a993a3f00c8e09f733bc3b783f7e37148d0af1d4
 - - "./repos/rails_versions/rails_8_sql_schema"
-  - 4da54ce6f267e6cfc8f9de3f68d45ea06b927739
+  - d5089812196931e858a97119de1640a86825a272
 - - "./repos/rails_versions/rails_lts_23_default_ruby"
   - f3597fd6f0887763eb65ec2f83a5e9a5155d5625
 - - "./repos/rake/asset_precompile_fail"
