@@ -7,10 +7,6 @@
   - 116db685f54dae18f703b3beb90e64fdbddb048d
 - - "./repos/ci/heroku-ci-json-example"
   - 728cc99c8e80290cc07441d61a8bcd4596e696fb
-- - "./repos/ci/rails_8_ruby_schema"
-  - 32a4dce6c43834752dd9f263c41290a4ff168795
-- - "./repos/ci/rails_8_sql_schema"
-  - e00d7b7b9cf95fb0a3aceb3c945025e5d20dec90
 - - "./repos/ci/ruby_no_rails_test"
   - c5925ab061f65433ec5dcbc890975f580e74c5ce
 - - "./repos/heroku/ruby-getting-started"
@@ -29,6 +25,10 @@
   - f4c7b6209835050468bbb87827acf652b8f4d8ce
 - - "./repos/rails_versions/rails61"
   - bcd505482b66ceb2da3fae19bbc13a208bf5f08e
+- - "./repos/rails_versions/rails_8_ruby_schema"
+  - 3c2466b2176ff9ee074bdd4d3f97ae8785a850c2
+- - "./repos/rails_versions/rails_8_sql_schema"
+  - 4da54ce6f267e6cfc8f9de3f68d45ea06b927739
 - - "./repos/rails_versions/rails_lts_23_default_ruby"
   - f3597fd6f0887763eb65ec2f83a5e9a5155d5625
 - - "./repos/rake/asset_precompile_fail"
