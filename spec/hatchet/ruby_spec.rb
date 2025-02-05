@@ -209,7 +209,7 @@ describe "Ruby apps" do
 
       Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK).tap do |app|
         app.before_deploy do
-          Pathname("Gemfile").write(<<~'EOF')
+          Pathname("Gemfile").write(<<~EOF)
             source "https://rubygems.org"
 
             ruby "#{version}"
