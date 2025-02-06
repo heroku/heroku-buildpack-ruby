@@ -18,7 +18,7 @@ describe "CI" do
             "environments": {
               "test": {
                 "addons":[
-                  "heroku-postgresql"
+                  "heroku-postgresql:in-dyno"
                 ]
               }
             }
@@ -40,7 +40,7 @@ describe "CI" do
             "environments": {
               "test": {
                 "addons":[
-                  "heroku-postgresql"
+                  "heroku-postgresql:in-dyno"
                 ]
               }
             }
