@@ -49,7 +49,7 @@ describe "CI" do
       end
 
       app.run_ci do |test_run|
-        expect(test_run.output).to match("db:structure:load completed")
+        expect(test_run.output).to match("db:schema:load completed")
       end
     end
   end
