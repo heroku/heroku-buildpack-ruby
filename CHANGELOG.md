@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v292] - 2025-02-10
+
 - Ruby 3.2.7 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1545)
 
 
@@ -1630,7 +1633,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v291...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v292...main
+[v292]: https://github.com/heroku/heroku-buildpack-ruby/compare/v291...v292
 [v291]: https://github.com/heroku/heroku-buildpack-ruby/compare/v290...v291
 [v290]: https://github.com/heroku/heroku-buildpack-ruby/compare/v289...v290
 [v289]: https://github.com/heroku/heroku-buildpack-ruby/compare/v288...v289
