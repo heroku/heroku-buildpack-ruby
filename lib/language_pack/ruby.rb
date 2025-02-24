@@ -629,7 +629,7 @@ EOF
   # users should be using `bundle pack` instead.
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
   def remove_vendor_bundle
-    if File.exists?("vendor/bundle")
+    if File.exist?("vendor/bundle")
       warn(<<-WARNING)
 Removing `vendor/bundle`.
 Checking in `vendor/bundle` is not supported. Please remove this directory
@@ -1130,7 +1130,7 @@ params = CGI.parse(uri.query || "")
     end
 
     # fix bug from v37 deploy
-    if File.exists?("#{path}/vendor/ruby_version")
+    if File.exist?("#{path}/vendor/ruby_version")
       puts "Broken cache detected. Purging build cache."
       cache.clear("vendor")
       FileUtils.rm_rf("#{path}/vendor/ruby_version")
@@ -1148,7 +1148,7 @@ MESSAGE
     end
 
     # fix git gemspec bug from Bundler 1.3.0+ upgrade
-    if File.exists?(bundler_cache) && !metadata.include?(:bundler_version) && !run("find #{path}/vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").include?("No such file or directory")
+    if File.exist?(bundler_cache) && !metadata.include?(:bundler_version) && !run("find #{path}/vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").include?("No such file or directory")
       return [false, "Old bundler cache detected. Clearing bundler cache."]
     end
 
@@ -1220,7 +1220,7 @@ MESSAGE
     end
 
     # fix bug from v37 deploy
-    if File.exists?("vendor/ruby_version")
+    if File.exist?("vendor/ruby_version")
       puts "Broken cache detected. Purging build cache."
       cache.clear("vendor")
       FileUtils.rm_rf("vendor/ruby_version")
@@ -1237,7 +1237,7 @@ MESSAGE
     end
 
     # fix git gemspec bug from Bundler 1.3.0+ upgrade
-    if File.exists?(bundler_cache) && !@metadata.exists?(bundler_version_cache) && !run("find vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").include?("No such file or directory")
+    if File.exist?(bundler_cache) && !@metadata.exists?(bundler_version_cache) && !run("find vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").include?("No such file or directory")
       puts "Old bundler cache detected. Clearing bundler cache."
       purge_bundler_cache
     end

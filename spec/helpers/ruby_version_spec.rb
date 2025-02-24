@@ -62,6 +62,7 @@ describe "RubyVersion" do
 
   it "correctly sets default ruby versions" do
     Hatchet::App.new("default_ruby").in_directory_fork do |dir|
+      require 'bundler'
       Bundler.with_unbundled_env do
         ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: true)
         version_number = LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER
@@ -77,6 +78,7 @@ describe "RubyVersion" do
 
   it "detects Ruby from Gemfile.lock" do
     Hatchet::App.new("default_ruby").in_directory_fork do |_|
+      require 'bundler'
       dir = Pathname(Dir.pwd)
       Bundler.with_unbundled_env do
         dir.join("Gemfile").write(<<~EOF)
@@ -118,6 +120,7 @@ describe "RubyVersion" do
 
   it "detects non mri engines" do
     Hatchet::App.new("default_ruby").in_directory_fork do |_|
+      require 'bundler'
       dir = Pathname(Dir.pwd)
       Bundler.with_unbundled_env do
         dir.join("Gemfile").write(<<~EOF)

@@ -3,7 +3,7 @@ require "language_pack/ruby"
 
 class LanguagePack::NoLockfile < LanguagePack::Ruby
   def self.use?
-    !File.exists?("Gemfile.lock")
+    !File.exist?("Gemfile.lock")
   end
 
   def name

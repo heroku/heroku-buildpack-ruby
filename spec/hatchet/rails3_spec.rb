@@ -6,7 +6,8 @@ describe "Rails 3.x" do
 
     Hatchet::Runner.new("rails3_default_ruby", config: rails_lts_config, stack: rails_lts_stack).tap do |app|
       app.before_deploy do
-        Pathname("Gemfile").write("ruby '2.7.2'", mode: "a")
+        set_lts_ruby_version
+        set_bundler_version(version: :default)
       end
 
       app.deploy do
