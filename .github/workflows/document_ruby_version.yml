@@ -9,7 +9,7 @@ on:
           type: string
           required: true
       is_jruby:
-          description: "JRuby version (as opposed to MRI)"
+          description: "JRuby release? (as opposed to MRI)"
           type: boolean
           default: false
           required: false
