@@ -255,7 +255,7 @@ module LanguagePack
       end
 
       $stdout.flush
-    rescue ArgumentError => e
+    rescue ArgumentError, Encoding::CompatibilityError => e
       error_message = e.message
       raise e if error_message !~ /invalid byte sequence/
 

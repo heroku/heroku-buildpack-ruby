@@ -1,17 +1,5 @@
 require_relative '../spec_helper'
 
-describe "Ruby Versions on cedar-14" do
-  it "should deploy jruby 1.7.16.1 (jdk 7) properly on cedar-14 with sys props file" do
-    pending("Port this to a more recent stack")
-
-    app = Hatchet::Runner.new("ruby_193_jruby_17161_jdk7", stack: "cedar-14")
-    app.deploy do |app|
-      expect(app.output).to match("Installing JVM: openjdk-7")
-      expect(app.output).not_to include("OpenJDK 64-Bit Server VM warning")
-    end
-  end
-end
-
 describe "Ruby versions" do
   it "should deploy jdk on heroku-24" do
     Hatchet::Runner.new("default_ruby", stack: "heroku-24").tap do |app|
@@ -62,17 +50,20 @@ end
 
 describe "Upgrading ruby apps" do
   it "works when changing versions" do
+    version = "3.3.1"
+    expect(version).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
     app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)
     app.deploy do |app|
+      # default version
       expect(app.run("env | grep MALLOC_ARENA_MAX")).to match("MALLOC_ARENA_MAX=2")
       expect(app.run("env | grep DISABLE_SPRING")).to match("DISABLE_SPRING=1")
 
       # Deploy again
-      run!(%Q{echo "ruby '2.7.5'" >> Gemfile})
+      run!(%Q{echo "ruby '#{version}'" >> Gemfile})
       run!("git add -A; git commit -m update-ruby")
       app.push!
-      expect(app.output).to match("2.7.5")
-      expect(app.run("ruby -v")).to match("2.7.5")
+      expect(app.output).to match(version)
+      expect(app.run("ruby -v")).to match(version)
       expect(app.output).to match("Ruby version change detected")
     end
   end

@@ -4,44 +4,31 @@
     "sharpstone/asset_precompile_pass",
     "sharpstone/asset_precompile_not_found",
     "sharpstone/no_rakefile",
-    "sharpstone/bad_rakefile",
-    "sharpstone/default_with_rakefile"
+    "sharpstone/bad_rakefile"
   ],
   "bundler": [
-    "sharpstone/problem_gemfile_version",
     "sharpstone/git_gemspec",
     "sharpstone/no_lockfile",
-    "sharpstone/sqlite3_gemfile",
-    "sharpstone/nokogiri_160"
+    "sharpstone/sqlite3_gemfile"
   ],
   "ruby": [
     "sharpstone/ruby_version_does_not_exist",
-    "sharpstone/ruby_193_jruby_17161_jdk7",
-    "sharpstone/ruby_25",
     "sharpstone/jruby-minimal",
     "sharpstone/empty-procfile",
-    "sharpstone/bad_ruby_version",
-    "sharpstone/activerecord41_scaffold",
-    "sharpstone/libpq_connection_error"
-  ],
-  "jruby": [
-    "sharpstone/jruby_naether"
+    "sharpstone/bad_ruby_version"
   ],
   "rack": [
-    "sharpstone/default_ruby",
-    "sharpstone/mri_187_nokogiri",
-    "sharpstone/mri_192"
+    "sharpstone/default_ruby"
   ],
   "rails_versions": [
     "sharpstone/rails_lts_23_default_ruby",
     "sharpstone/rails3_default_ruby",
     "sharpstone/rails4_windows_mri193",
     "sharpstone/rails42_default_ruby",
-    "sharpstone/active_storage_non_local",
-    "sharpstone/active_storage_local",
-    "sharpstone/sprockets_asset_compile_true",
     "sharpstone/rails61",
-    "sharpstone/rails-jsbundling"
+    "sharpstone/rails-jsbundling",
+    "sharpstone/rails_8_ruby_schema",
+    "sharpstone/rails_8_sql_schema"
   ],
   "heroku": [
     "heroku/ruby-getting-started"
@@ -50,10 +37,7 @@
     "sharpstone/minimal_webpacker"
   ],
   "ci": [
-    "sharpstone/rails5_ruby_schema_format",
     "sharpstone/heroku-ci-json-example",
-    "sharpstone/rails5_sql_schema_format",
-    "sharpstone/ruby_no_rails_test",
-    "sharpstone/activerecord_rake_tasks_does_not_exist"
+    "sharpstone/ruby_no_rails_test"
   ]
 }
