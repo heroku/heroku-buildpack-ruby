@@ -24,11 +24,11 @@ jobs:
     with:
       custom_update_command: |
         set -euo pipefail
+        DATE_TODAY="$(date --utc --iso-8601)"
 
-        sed --in-place '/## \[Unreleased\]/a\
-        \
-        - ${{ inputs.is_jruby && 'J' || ''}}Ruby ${{inputs.ruby_version}} is now available
-        ' CHANGELOG.md
+        sed --in-place "/## \[v${NEW_VERSION}\] - ${DATE_TODAY}/a\\
+        \\
+        - ${{ inputs.is_jruby && 'J' || ''}}Ruby ${{inputs.ruby_version}} is now available" CHANGELOG.md
 
         sed --in-place --regexp-extended \
           --expression "s/v${EXISTING_VERSION}/v${NEW_VERSION}/" \
