@@ -28,8 +28,7 @@ jobs:
 
         sed --in-place "/## \[v${NEW_VERSION}\] - ${DATE_TODAY}/a\\
         \\
-        - ${{ inputs.is_jruby && 'J' || ''}}Ruby ${{inputs.ruby_version}} is now available
-        " CHANGELOG.md
+        - ${{ inputs.is_jruby && 'J' || ''}}Ruby ${{inputs.ruby_version}} is now available" CHANGELOG.md
 
         sed --in-place --regexp-extended \
           --expression "s/v${EXISTING_VERSION}/v${NEW_VERSION}/" \
