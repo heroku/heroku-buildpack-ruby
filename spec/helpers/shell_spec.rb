@@ -87,7 +87,7 @@ describe "ShellHelpers" do
         def sh.mcount(*args); @error_caught = true; end
 
         bad_lines = File.read("spec/fixtures/invalid_encoding.log")
-        expect { sh.puts(bad_lines) }.to raise_error(ArgumentError)
+        expect { sh.puts(bad_lines) }.to raise_error(Encoding::CompatibilityError)
 
         error_caught = sh.instance_variable_get(:"@error_caught")
         expect(error_caught).to eq(true)

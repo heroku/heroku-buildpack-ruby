@@ -42,6 +42,10 @@ class LanguagePack::Helpers::BundlerWrapper
   BLESSED_BUNDLER_VERSIONS["2.4"] = "2.4.22"
   BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.23"
   BLESSED_BUNDLER_VERSIONS["2.6"] = "2.6.2"
+
+  DEFAULT_VERSION = BLESSED_BUNDLER_VERSIONS["2.3"]
+
+  # Convert arbitrary `<Major>.<Minor>.x` versions
   BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
     if Gem::Version.new(key).segments.first == 1
       hash["1"]
@@ -65,7 +69,7 @@ class LanguagePack::Helpers::BundlerWrapper
       minor = version_match[:minor]
       BLESSED_BUNDLER_VERSIONS["#{major}.#{minor}"]
     else
-      BLESSED_BUNDLER_VERSIONS["1"]
+      DEFAULT_VERSION
     end
   end
 
@@ -91,7 +95,7 @@ class LanguagePack::Helpers::BundlerWrapper
       msg << "\n"
       msg << "```\n"
       msg << "BUNDLED WITH\n"
-      msg << "   #{version_hash["1"]}\n"
+      msg << "   #{DEFAULT_VERSION}\n"
       msg << "```\n"
       super msg
     end
@@ -239,7 +243,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   private
   def fetch_bundler
-    return true if Dir.exists?(bundler_path)
+    return true if Dir.exist?(bundler_path)
 
     topic("Installing bundler #{@version}")
     bundler_version_escape_valve!

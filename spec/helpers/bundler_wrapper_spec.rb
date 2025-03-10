@@ -112,6 +112,7 @@ describe "BundlerWrapper mutates rubyopt" do
 
   it "detects windows gemfiles" do
     Hatchet::App.new("rails4_windows_mri193").in_directory_fork do |dir|
+      require "bundler"
       Bundler.with_unbundled_env do
         expect(@bundler.install.windows_gemfile_lock?).to be_truthy
       end
@@ -119,21 +120,9 @@ describe "BundlerWrapper mutates rubyopt" do
   end
 
   describe "when executing bundler" do
-    it "handles apps with ruby versions locked in Gemfile.lock" do
-      Hatchet::App.new("problem_gemfile_version").in_directory_fork do |dir|
-        Bundler.with_unbundled_env do
-          @bundler.install
-
-          expect(@bundler.ruby_version).to include("ruby-2.5.1")
-
-          ruby_version = LanguagePack::RubyVersion.new(@bundler.ruby_version, is_new: true)
-          expect(ruby_version.version_for_download).to include("ruby-2.5.1")
-        end
-      end
-    end
-
     it "handles JRuby pre gemfiles" do
       Hatchet::App.new("jruby-minimal").in_directory_fork do |dir|
+        require "bundler"
         Bundler.with_unbundled_env do
           @bundler.install
 

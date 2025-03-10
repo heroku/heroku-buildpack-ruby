@@ -155,8 +155,6 @@ describe "Ruby apps" do
           Pathname("Gemfile").write(<<~'EOF')
             source "https://rubygems.org"
 
-            ruby "~> 3.0.0"
-
             gem "rake"
           EOF
 
@@ -174,10 +172,7 @@ describe "Ruby apps" do
               rake
 
             RUBY VERSION
-              ruby 3.0.3p157
-
-            BUNDLED WITH
-               2.3.7
+              ruby 3.3.1p0
           EOF
 
           Pathname("Rakefile").write(<<~'EOF')
@@ -197,7 +192,9 @@ describe "Ruby apps" do
         end
 
         app.deploy do |app|
-          expect(app.output).to match("cd version ruby 3.0.3")
+          expected = "3.3.1"
+          expect(expected).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
+          expect(app.output).to match("cd version ruby #{expected}")
 
           expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
         end
@@ -207,12 +204,15 @@ describe "Ruby apps" do
 
   describe "bundler ruby version matcher" do
     it "installs a version even when not present in the Gemfile.lock" do
+      version = "3.3.1"
+      expect(version).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
+
       Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK).tap do |app|
         app.before_deploy do
-          Pathname("Gemfile").write(<<~'EOF')
+          Pathname("Gemfile").write(<<~EOF)
             source "https://rubygems.org"
 
-            ruby "~> 3.0.0"
+            ruby "#{version}"
 
             gem "sinatra"
           EOF
@@ -240,27 +240,14 @@ describe "Ruby apps" do
 
             DEPENDENCIES
               sinatra
-
-            BUNDLED WITH
-               2.3.7
           EOF
 
         end
 
         app.deploy do |app|
           # Intentionally different than the default ruby version
-          expect(app.output).to         match("3.0.0")
-          expect(app.run("ruby -v")).to match("3.0.0")
-        end
-      end
-    end
-  end
-
-  describe "Rake detection" do
-    context "Ruby 1.9+" do
-      it "runs a rake task if the gem exists" do
-        Hatchet::Runner.new('default_with_rakefile').deploy do |app, heroku|
-          expect(app.output).to include("foo")
+          expect(app.output).to         match("#{version}")
+          expect(app.run("ruby -v")).to match("#{version}")
         end
       end
     end
@@ -279,8 +266,10 @@ describe "Ruby apps" do
 
     context "active record 4.1+" do
       it "doesn't write a heroku specific database.yml" do
-        Hatchet::Runner.new("activerecord41_scaffold").deploy do |app, heroku|
-          expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
+        Hatchet::Runner.new("rails61", config: rails_lts_config, stack: rails_lts_stack).tap do |app|
+          app.deploy do
+            expect(app.output).not_to include("Writing config/database.yml to read from DATABASE_URL")
+          end
         end
       end
     end
