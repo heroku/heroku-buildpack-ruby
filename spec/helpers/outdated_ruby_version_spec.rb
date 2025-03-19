@@ -23,7 +23,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
   end
 
   it "handles arm 💪 architecture on heroku-24" do
-    ruby_version = LanguagePack::RubyVersion.new("ruby-3.1.0")
+    ruby_version = LanguagePack::RubyVersion.new("ruby-3.3.0")
     fetcher = LanguagePack::Fetcher.new(
       LanguagePack::Base::VENDOR_URL,
       stack: "heroku-24",
@@ -35,7 +35,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     )
 
     outdated.call
-    expect(outdated.suggested_ruby_minor_version).to eq("3.1.6")
+    expect(outdated.suggested_ruby_minor_version).to eq("3.3.7")
   end
 
   it "finds the latest version on a stack" do

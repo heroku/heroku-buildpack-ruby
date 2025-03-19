@@ -6,7 +6,8 @@ describe "Rails 4.x" do
 
     Hatchet::Runner.new("rails42_default_ruby", config: rails_lts_config, stack: rails_lts_stack).tap do |app|
       app.before_deploy do
-        Pathname("Gemfile").write("ruby '2.7.2'", mode: "a")
+        set_lts_ruby_version
+        set_bundler_version(version: :default)
       end
       app.deploy do
         # it Don't over-write database.yml
@@ -24,7 +25,8 @@ describe "Rails 4.x" do
 
     Hatchet::Runner.new("rails42_default_ruby", config: rails_lts_config, stack: rails_lts_stack).tap do |app|
       app.before_deploy do
-        Pathname("Gemfile").write("ruby '2.7.2'", mode: "a")
+        set_lts_ruby_version
+        set_bundler_version(version: :default)
         Pathname("public/assets/manifest-ccf61eade4793995271564a4767ce6b6.json").tap {|p| p.dirname.mkpath; FileUtils.touch(p) }
       end
 
@@ -39,7 +41,8 @@ describe "Rails 4.x" do
 
     Hatchet::Runner.new("rails42_default_ruby", config: rails_lts_config, stack: rails_lts_stack).tap do |app|
       app.before_deploy do
-        Pathname("Gemfile").write("ruby '2.7.2'", mode: "a")
+        set_lts_ruby_version
+        set_bundler_version(version: :default)
         Pathname("public/assets/.sprockets-manifest-040763ccc5036260c52c6adcf77d73f7.json").tap {|p| p.dirname.mkpath; FileUtils.touch(p) }
       end
 

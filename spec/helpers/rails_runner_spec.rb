@@ -29,7 +29,7 @@ describe "Rails Runner" do
 
   it "calls run through child object" do
     rails_runner  = LanguagePack::Helpers::RailsRunner.new
-    def rails_runner.call; @called ||= 0 ; @called += 1; end
+    def rails_runner.call; @called ||= 0 ; @called += 1; "" end
     def rails_runner.called; @called; end
 
     local_storage = rails_runner.detect("active_storage.service")

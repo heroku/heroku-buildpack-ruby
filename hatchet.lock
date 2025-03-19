@@ -3,52 +3,34 @@
   - 7755e19caf122e1373bce73ffe9b333e9411d732
 - - "./repos/bundler/no_lockfile"
   - 1947ce9a9c276d5df1c323b2ad78d1d85c7ab4c0
-- - "./repos/bundler/nokogiri_160"
-  - d9a761776be43e1c685f98ef13c6ef1ee0292267
-- - "./repos/bundler/problem_gemfile_version"
-  - abc25a7b582a720b99148a1c8753d0d7452254bb
 - - "./repos/bundler/sqlite3_gemfile"
   - 116db685f54dae18f703b3beb90e64fdbddb048d
-- - "./repos/ci/activerecord_rake_tasks_does_not_exist"
-  - a6b711be6921cf7a0aa4e31269c37965799ea110
 - - "./repos/ci/heroku-ci-json-example"
-  - 4e5410a7381f486ba3df7739e02e52f32fdd4dda
-- - "./repos/ci/rails5_ruby_schema_format"
-  - 8b8a3a7850bdba29bdefc70c0f80f35a9e6c96ae
-- - "./repos/ci/rails5_sql_schema_format"
-  - ee81b300a1019b47bbcaec0a512932df7dc23bc0
+  - 728cc99c8e80290cc07441d61a8bcd4596e696fb
 - - "./repos/ci/ruby_no_rails_test"
-  - 3916137106d59b008b67d738abe6a1438f8fbde6
+  - c5925ab061f65433ec5dcbc890975f580e74c5ce
 - - "./repos/heroku/ruby-getting-started"
   - main
-- - "./repos/jruby/jruby_naether"
-  - 4a11f8af5a3cca21f3659394e5bbac3cca9b6a2c
 - - "./repos/node/minimal_webpacker"
-  - 9152fec98df59a0bf8a5478ed428841ee135acbb
+  - d659577a612b12ddb44ce34e28124c025ecb22f3
 - - "./repos/rack/default_ruby"
   - master
-- - "./repos/rack/mri_187_nokogiri"
-  - 3fcce9c85bf560dba285cc385ae9845729195826
-- - "./repos/rack/mri_192"
-  - ef6b5ccf8aa2a8f5e3745934e3580dc0bd2d6d4b
-- - "./repos/rails_versions/active_storage_local"
-  - 18853ba7dda61745995740b4ca6f5f90bbd8afba
-- - "./repos/rails_versions/active_storage_non_local"
-  - 86dddf0127043abba1cb2890590a1d38f111edbd
 - - "./repos/rails_versions/rails-jsbundling"
-  - c58178e061d9846386ca34ea31c99f6e6bb8dbf7
+  - 50e9fdf7c3a37623c676989ddebac4ee5349734b
 - - "./repos/rails_versions/rails3_default_ruby"
-  - a6b44db674c0d3538633989295e2cfd5e8e1ba0d
+  - 984b6d02353519251c2d1e885bf8914a2584f26a
 - - "./repos/rails_versions/rails42_default_ruby"
-  - dfa0f0133dafa62064968ea2efb6432f54350138
+  - fbdaf031823f09d1514ec1d55dcb04ca2f4264ca
 - - "./repos/rails_versions/rails4_windows_mri193"
   - f4c7b6209835050468bbb87827acf652b8f4d8ce
 - - "./repos/rails_versions/rails61"
-  - e896f51e679eaf2204aa4fab6d038103fc622aed
+  - 47828a3e8c79b7869ca0d9a3afa4be065fa46e96
+- - "./repos/rails_versions/rails_8_ruby_schema"
+  - a993a3f00c8e09f733bc3b783f7e37148d0af1d4
+- - "./repos/rails_versions/rails_8_sql_schema"
+  - d5089812196931e858a97119de1640a86825a272
 - - "./repos/rails_versions/rails_lts_23_default_ruby"
-  - 7178b2f97d3b2b3170b390d997dcb212dd52cd30
-- - "./repos/rails_versions/sprockets_asset_compile_true"
-  - 6f3aa208046a5c79e84fc272f52f5ebb7b775755
+  - f3597fd6f0887763eb65ec2f83a5e9a5155d5625
 - - "./repos/rake/asset_precompile_fail"
   - 16f7834331d6bb3fc5c284130b14eb1ff74d99d5
 - - "./repos/rake/asset_precompile_not_found"
@@ -57,23 +39,13 @@
   - ce976c727d9f477957c499f39f4cf9603c378103
 - - "./repos/rake/bad_rakefile"
   - 3cb9c7bf6494c59bd25fa74c2aa4531119e12a46
-- - "./repos/rake/default_with_rakefile"
-  - c6e0c4db8dcccb47e11d496e17adbc2dafc80dd8
 - - "./repos/rake/no_rakefile"
   - d2ec2084b825218418dac54bd6276ac896b31cdd
-- - "./repos/ruby/activerecord41_scaffold"
-  - 6e4662c44b49e2c3c9429f00e7e7f4708142b03f
 - - "./repos/ruby/bad_ruby_version"
   - 7bf3470265a87ea6361640aa4bfce6ce3b743520
 - - "./repos/ruby/empty-procfile"
   - 7cae0aae424c2028b81b5d37ee24d42db8e545b9
 - - "./repos/ruby/jruby-minimal"
   - f79860bc2866449fe065484f1542aaadd3f7cfd2
-- - "./repos/ruby/libpq_connection_error"
-  - c211c245f09d8335a520cd7a0b5360897d4988eb
-- - "./repos/ruby/ruby_193_jruby_17161_jdk7"
-  - c1b632f8a96cf9b902f5cdcd7a190d46544a8144
-- - "./repos/ruby/ruby_25"
-  - 0cb3df80d55b61e9417f2ac00adb06e15ae37982
 - - "./repos/ruby/ruby_version_does_not_exist"
   - 9b6ad8e3b4fa7850393a5f232bb40ff3cd414d8b

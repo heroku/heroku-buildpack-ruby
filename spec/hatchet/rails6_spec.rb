@@ -17,7 +17,7 @@ describe "Rails 6" do
       run! %Q{echo 'task "assets:precompile" do ; end' > Rakefile}
     end
 
-    Hatchet::Runner.new('rails61', before_deploy: before_deploy).deploy do |app|
+    Hatchet::Runner.new('rails61', before_deploy: before_deploy, config: rails_lts_config, stack: rails_lts_stack).deploy do |app|
       expect(app.output).to match("Fetching railties 6")
 
       expect(app.output).to match("rake assets:precompile")

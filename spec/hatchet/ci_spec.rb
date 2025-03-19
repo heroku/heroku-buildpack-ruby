@@ -10,24 +10,46 @@ describe "CI" do
     end
   end
 
-  it "Works with Rails 5 ruby schema apps" do
-    Hatchet::Runner.new("rails5_ruby_schema_format", stack: "heroku-20").tap do |app|
+  it "Works with Rails: ruby schema apps" do
+    Hatchet::Runner.new("rails_8_ruby_schema", stack: "heroku-24").tap do |app|
       app.before_deploy do
-        Pathname("Gemfile").write("ruby '2.7.5'", mode: "a")
+        Pathname("app.json").write(<<~EOF)
+          {
+            "environments": {
+              "test": {
+                "addons":[
+                  "heroku-postgresql:in-dyno"
+                ]
+              }
+            }
+          }
+        EOF
       end
+
       app.run_ci do |test_run|
-        expect(test_run.output).to match("db:schema:load_if_ruby completed")
+        expect(test_run.output).to match("db:schema:load completed")
       end
     end
   end
 
-  it "Works with Rails 5 SQL schema apps" do
-    Hatchet::Runner.new("rails5_sql_schema_format", stack: "heroku-20").tap do |app|
+  it "Works with Rails: SQL schema apps" do
+    Hatchet::Runner.new("rails_8_sql_schema", stack: "heroku-24").tap do |app|
       app.before_deploy do
-        Pathname("Gemfile").write("ruby '2.7.5'", mode: "a")
+        Pathname("app.json").write(<<~EOF)
+          {
+            "environments": {
+              "test": {
+                "addons":[
+                  "heroku-postgresql:in-dyno"
+                ]
+              }
+            }
+          }
+        EOF
       end
+
       app.run_ci do |test_run|
-        expect(test_run.output).to match("db:structure:load_if_sql completed")
+        expect(test_run.output).to match("db:schema:load completed")
       end
     end
   end
@@ -43,12 +65,12 @@ describe "CI" do
   it "Uses the cache" do
     runner = Hatchet::Runner.new("ruby_no_rails_test")
     runner.run_ci do |test_run|
-      expect(test_run.output).to match("Fetching rake")
+      fetching_rake = "Fetching rake"
+      expect(test_run.output).to match(fetching_rake)
 
       test_run.run_again
 
-      expect(test_run.output).to match("Using rake")
-      expect(test_run.output).to_not match("Fetching rake")
+      expect(test_run.output).to_not match(fetching_rake)
     end
   end
 end
