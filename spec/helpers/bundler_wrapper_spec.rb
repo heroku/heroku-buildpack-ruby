@@ -63,8 +63,8 @@ describe "Multiple platform detection" do
       expect(bundler.supports_multiple_platforms?).to be_truthy
       expect(report.data).to eq(
         {
-          "ruby_bundled_with" => "2.5.7",
-          "ruby_bundler_version_installed" => LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS["2.5"]
+          "bundled_with" => "2.5.7",
+          "bundler_version_installed" => LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS["2.5"]
         }
       )
     end

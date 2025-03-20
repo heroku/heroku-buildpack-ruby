@@ -15,10 +15,10 @@ describe "Build report" do
 
       expect(path.read).to eq(<<~EOF)
         ---
-        ruby_string: "'with single quotes'"
-        ruby_string_plain: plain
-        ruby_number: 22
-        ruby_boolean: true
+        string: "'with single quotes'"
+        string_plain: plain
+        number: 22
+        boolean: true
       EOF
     end
   end
