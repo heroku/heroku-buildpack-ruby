@@ -2,11 +2,13 @@
 
 ## [Unreleased]
 
+- Explicit error message raised with upgrade instructions for applications specifying bundler `1.x` in the Gemfile.lock (https://github.com/heroku/heroku-buildpack-ruby/pull/1561)
 
 ## [v294] - 2025-03-19
 
 - Default Ruby version is now 3.3.7 (https://github.com/heroku/heroku-buildpack-ruby/pull/1534)
 - Default bundler version (when no version present in the `Gemfile.lock`) is now bundler `2.3.x` which is currently `2.3.25` (https://github.com/heroku/heroku-buildpack-ruby/pull/1534)
+- Bundler 1.x will no longer work with the Ruby buildpack (https://github.com/heroku/heroku-buildpack-ruby/pull/1534)
 
 ## [v293] - 2025-02-15
 
