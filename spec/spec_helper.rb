@@ -73,6 +73,8 @@ def set_bundler_version(version: )
     version = "BUNDLED WITH\n   #{version}"
   end
   gemfile_lock.gsub!(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.(?<minor>\d+)\.\d+/m, version)
+  gemfile_lock << "\n#{version}" unless gemfile_lock.match?(/^BUNDLED WITH/)
+
   Pathname("Gemfile.lock").write(gemfile_lock)
 end
 
