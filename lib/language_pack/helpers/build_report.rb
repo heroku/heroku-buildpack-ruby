@@ -1,11 +1,17 @@
 require 'yaml'
 
 class LanguagePack::Helpers::BuildReport
+  attr_reader :data
+
   def initialize(path: )
     @path = Pathname(path).expand_path
     @path.dirname.mkpath
     FileUtils.touch(@path)
-    @report = {}
+    @data = {}
+  end
+
+  def self.dev_null
+    new(path: "/dev/null")
   end
 
   def capture(key: , value: )
@@ -14,11 +20,11 @@ class LanguagePack::Helpers::BuildReport
     key = key&.strip
     raise "Key cannot be empty" if key.nil? || key.empty?
 
-    @report["ruby_#{key}"] = value
+    @data["ruby_#{key}"] = value
   end
 
   def store
     return if @report.empty?
-    @path.write(@report.to_yaml)
+    @data.write(@report.to_yaml)
   end
 end

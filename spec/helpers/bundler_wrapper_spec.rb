@@ -53,10 +53,20 @@ describe "Multiple platform detection" do
   it "reports true on bundler 2.2+" do
     Dir.mktmpdir do |dir|
       gemfile = Pathname(dir).join("Gemfile")
-      lockfile = Pathname(dir).join("Gemfile.lock").tap {|p| p.write("BUNDLED WITH\n   2.5.7") }
+      Pathname(dir).join("Gemfile.lock").tap {|p| p.write("BUNDLED WITH\n   2.5.7") }
+      report = LanguagePack::Helpers::BuildReport.dev_null
 
-      bundler = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: gemfile)
+      bundler = LanguagePack::Helpers::BundlerWrapper.new(
+        report: report,
+        gemfile_path: gemfile
+      )
       expect(bundler.supports_multiple_platforms?).to be_truthy
+      expect(report.data).to eq(
+        {
+          "ruby_bundled_with" => "2.5.7",
+          "ruby_bundler_version_installed" => LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS["2.5"]
+        }
+      )
     end
   end
 end
