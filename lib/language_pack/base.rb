@@ -4,6 +4,7 @@ require "yaml"
 require "digest/sha1"
 require "language_pack/shell_helpers"
 require "language_pack/cache"
+require "language_pack/helpers/build_report"
 require "language_pack/helpers/bundler_cache"
 require "language_pack/metadata"
 require "language_pack/fetcher"
@@ -22,22 +23,27 @@ class LanguagePack::Base
   MULTI_ARCH_STACKS    = ["heroku-24"]
   KNOWN_ARCHITECTURES  = ["amd64", "arm64"]
 
-  attr_reader :build_path, :cache, :stack
+  attr_reader :build_path, :cache, :stack, :report
 
   # changes directory to the build_path
   # @param [String] the path of the build dir
   # @param [String] the path of the cache dir this is nil during detect and release
   def initialize(build_path, cache_path = nil)
-    @build_path    = build_path
+    @build_path    = Pathname(build_path)
     @stack         = ENV.fetch("STACK")
     @cache         = LanguagePack::Cache.new(cache_path)
     @metadata      = LanguagePack::Metadata.new(@cache)
     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
     @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
+    @report = LanguagePack::Helpers::BuildReport.new(
+      path: @build_path.join("vendor").join("heroku").join("build_report.yml")
+    )
     @arch = get_arch
 
     Dir.chdir build_path
+  ensure
+    @report.store if @report
   end
 
   def get_arch
