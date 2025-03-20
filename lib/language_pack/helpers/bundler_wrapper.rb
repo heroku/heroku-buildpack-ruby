@@ -62,19 +62,17 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  def self.detect_bundler_version(contents: )
-    version_match = contents.match(BUNDLED_WITH_REGEX)
-    if version_match
-      major = version_match[:major]
-      minor = version_match[:minor]
-      version = BLESSED_BUNDLER_VERSIONS["#{major}.#{minor}"]
-      version
+  def self.detect_bundler_version(contents: , bundled_with: contents.match(BUNDLED_WITH_REGEX))
+    if bundled_with
+      major = bundled_with[:major]
+      minor = bundled_with[:minor]
+      BLESSED_BUNDLER_VERSIONS["#{major}.#{minor}"]
     else
       DEFAULT_VERSION
     end
   end
 
-  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.(?<minor>\d+)\.\d+/m
+  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m
 
   class GemfileParseError < BuildpackError
     def initialize(error)
@@ -102,15 +100,18 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  attr_reader :bundler_path
+  attr_reader :bundler_path, :report
 
   def initialize(options = {})
     @bundler_tmp          = Pathname.new(Dir.mktmpdir)
+    @report               = options[:report]       || LanguagePack::Helpers::BuildReport.dev_null
     @fetcher              = options[:fetcher]      || LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
     @gemfile_path         = options[:gemfile_path] || Pathname.new("./Gemfile")
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
-
-    @version = self.class.detect_bundler_version(contents: @gemfile_lock_path.read(mode: "rt"))
+    bundled_with = @gemfile_lock_path.read(mode: "rt").match(BUNDLED_WITH_REGEX)
+    report.capture(key: "bundled_with", value: bundled_with&.[]("version") || "empty")
+    @version = self.class.detect_bundler_version(contents: nil, bundled_with: bundled_with)
+    report.capture(key: "bundler_version_installed", value: @version)
     @dir_name = "bundler-#{@version}"
 
     @bundler_path         = options[:bundler_path] || @bundler_tmp.join(@dir_name)
