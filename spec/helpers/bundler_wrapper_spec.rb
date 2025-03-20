@@ -15,9 +15,9 @@ end
 describe "Bundler version detection" do
   it "supports minor versions" do
     wrapper_klass = LanguagePack::Helpers::BundlerWrapper
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   1.17.3")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("1")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["1"])
+    expect {
+      wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   1.17.3")
+    }.to raise_error(BuildpackError)
 
     version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.2.7")
     expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.3")).to be_truthy
@@ -57,16 +57,6 @@ describe "Multiple platform detection" do
 
       bundler = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: gemfile)
       expect(bundler.supports_multiple_platforms?).to be_truthy
-    end
-  end
-
-  it "reports false on bundler prior to 2.2" do
-    Dir.mktmpdir do |dir|
-      gemfile = Pathname(dir).join("Gemfile")
-      lockfile = Pathname(dir).join("Gemfile.lock").tap {|p| p.write("BUNDLED WITH\n   1.15.2") }
-
-      bundler = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: gemfile)
-      expect(bundler.supports_multiple_platforms?).to be_falsey
     end
   end
 end

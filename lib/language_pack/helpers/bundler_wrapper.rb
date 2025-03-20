@@ -36,7 +36,6 @@ class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
   BLESSED_BUNDLER_VERSIONS = {}
-  BLESSED_BUNDLER_VERSIONS["1"] = "1.17.3"
   # Heroku-20's oldest Ruby verison is 2.5.x which doesn't work with bundler 2.4
   BLESSED_BUNDLER_VERSIONS["2.3"] = "2.3.25"
   BLESSED_BUNDLER_VERSIONS["2.4"] = "2.4.22"
@@ -48,7 +47,22 @@ class LanguagePack::Helpers::BundlerWrapper
   # Convert arbitrary `<Major>.<Minor>.x` versions
   BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
     if Gem::Version.new(key).segments.first == 1
-      hash["1"]
+      raise BuildpackError.new(<<~EOF)
+        Cannot install bundler 1.17.3
+
+        Your application requested bundler `#{key}` in the `Gemfile.lock`
+        which resolved to `1.17.3`. This version no longer works on
+        Heroku. Please upgrade to bundler `2.3.x` or higher:
+
+        ```
+        $ gem install bundler -v #{hash["2.3"]}
+        $ bundle update --bundler
+        $ git add Gemfile.lock
+        $ git commit -m "Updated bundler version"
+        ```
+
+        https://devcenter.heroku.com/changelog-items/3166
+      EOF
     elsif Gem::Version::new(key).segments.first == 2
       if Gem::Version.new(key) > Gem::Version.new("2.6")
         hash["2.6"]
