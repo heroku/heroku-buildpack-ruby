@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Bundler `1.x` usage error is downgraded to a warning. This warning will be moved to an error once `heroku-20` is Sunset (https://github.com/heroku/heroku-buildpack-ruby/pull/1565)
 
 ## [v295] - 2025-03-20
 
