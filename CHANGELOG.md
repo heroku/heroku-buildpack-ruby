@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v296] - 2025-03-21
+
 - Bundler `1.x` usage error is downgraded to a warning. This warning will be moved to an error once `heroku-20` is Sunset (https://github.com/heroku/heroku-buildpack-ruby/pull/1565)
 
 ## [v295] - 2025-03-20
@@ -1648,7 +1651,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v295...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v296...main
+[v296]: https://github.com/heroku/heroku-buildpack-ruby/compare/v295...v296
 [v295]: https://github.com/heroku/heroku-buildpack-ruby/compare/v294...v295
 [v294]: https://github.com/heroku/heroku-buildpack-ruby/compare/v293...v294
 [v293]: https://github.com/heroku/heroku-buildpack-ruby/compare/v292...v293
