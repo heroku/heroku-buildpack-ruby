@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v297] - 2025-03-26
+
+- Ruby 3.1.7 and 3.2.8 is now available
+
+
 ## [v296] - 2025-03-21
 
 - Bundler `1.x` usage error is downgraded to a warning. This warning will be moved to an error once `heroku-20` is Sunset (https://github.com/heroku/heroku-buildpack-ruby/pull/1565)
@@ -1651,7 +1656,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v296...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v297...main
+[v297]: https://github.com/heroku/heroku-buildpack-ruby/compare/v296...v297
 [v296]: https://github.com/heroku/heroku-buildpack-ruby/compare/v295...v296
 [v295]: https://github.com/heroku/heroku-buildpack-ruby/compare/v294...v295
 [v294]: https://github.com/heroku/heroku-buildpack-ruby/compare/v293...v294
