@@ -19,7 +19,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     )
 
     outdated.call
-    expect(outdated.suggested_ruby_minor_version).to eq("3.1.6")
+    expect(outdated.suggested_ruby_minor_version).to eq("3.1.7")
   end
 
   it "handles arm 💪 architecture on heroku-24" do
