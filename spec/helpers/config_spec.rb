@@ -9,9 +9,9 @@ describe "Boot Strap Config" do
 
     expect(`ruby -v`).to match(Regexp.escape(LanguagePack::RubyVersion::BOOTSTRAP_VERSION_NUMBER))
 
-    # bootstrap_version = Gem::Version.new(LanguagePack::RubyVersion::BOOTSTRAP_VERSION_NUMBER)
-    # default_version = Gem::Version.new(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
-
-    # expect(bootstrap_version).to be >= default_version
+    ci_task = Pathname(".github").join("workflows").join("hatchet_app_cleaner.yml").read
+    ci_task_yml = YAML.load(ci_task)
+    task = ci_task_yml["jobs"]["hatchet-app-cleaner"]["steps"].detect {|step| step["uses"].match?(/ruby\/setup-ruby/)} or raise "Not found"
+    expect(task["with"]["ruby-version"]).to match(LanguagePack::RubyVersion::BOOTSTRAP_VERSION_NUMBER)
   end
 end
