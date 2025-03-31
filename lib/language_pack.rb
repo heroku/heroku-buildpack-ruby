@@ -9,14 +9,14 @@ module LanguagePack
   # detects which language pack to use
   # @param [Array] first argument is a String of the build directory
   # @return [LanguagePack] the {LanguagePack} detected
-  def self.detect(*args)
-    Dir.chdir(args.first)
+  def self.detect(build_dir, cache_dir)
+    Dir.chdir(build_dir)
 
     pack = [ NoLockfile, Rails8, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
       klass.use?
     end
 
-    return pack ? pack.new(*args) : nil
+    return pack ? pack.new(build_dir, cache_dir) : nil
   end
 end
 

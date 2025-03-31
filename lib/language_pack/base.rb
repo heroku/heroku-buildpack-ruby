@@ -27,18 +27,15 @@ class LanguagePack::Base
 
   # changes directory to the build_path
   # @param [String] the path of the build dir
-  # @param [String] the path of the cache dir this is nil during detect and release
-  def initialize(build_path, cache_path = nil)
-    @build_path    = Pathname(build_path)
+  # @param [String] the path of the cache dir
+  def initialize(build_path, cache_path)
+    @build_path    = build_path
     @stack         = ENV.fetch("STACK")
     @cache         = LanguagePack::Cache.new(cache_path)
     @metadata      = LanguagePack::Metadata.new(@cache)
     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
     @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
-    @report = LanguagePack::Helpers::BuildReport.new(
-      path: @build_path.join("vendor").join("heroku").join("build_report.yml")
-    )
     @arch = get_arch
 
     Dir.chdir build_path
