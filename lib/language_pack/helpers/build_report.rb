@@ -9,9 +9,9 @@ class LanguagePack::Helpers::BuildReport
 
   # Current load order of the various "language packs"
   def self.set_global(cache_path: )
-    cache_path = Pathname(cache)
+    cache_path = Pathname(cache_path)
     # Coupled with `bin/report`
-    path = cache.join("vendor").join(".heroku_build_report.yml")
+    path = cache_path.join("vendor").join(".heroku_build_report.yml")
     repot = new(path: path)
     const_set(:GLOBAL, report)
     report
