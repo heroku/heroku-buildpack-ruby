@@ -1,5 +1,6 @@
 require 'language_pack/base'
 require 'language_pack/shell_helpers'
+require 'language_pack/helpers/build_report'
 
 module LanguagePack::Installers; end
 
@@ -10,7 +11,8 @@ class LanguagePack::Installers::HerokuRubyInstaller
   include LanguagePack::ShellHelpers
   attr_reader :fetcher
 
-  def initialize(stack: , multi_arch_stacks: , arch: )
+  def initialize(stack: , multi_arch_stacks: , arch: , report: LanguagePack::Helpers::BuildReport::GLOBAL)
+    @report = report
     if multi_arch_stacks.include?(stack)
       @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
     else
@@ -19,6 +21,7 @@ class LanguagePack::Installers::HerokuRubyInstaller
   end
 
   def install(ruby_version, install_dir)
+    @report.capture(key: "ruby_version", value: ruby_version.version)
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)
   end

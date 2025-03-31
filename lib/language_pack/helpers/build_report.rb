@@ -1,31 +1,23 @@
 require 'yaml'
 require 'pathname'
 
+# Accumulates metrics
+#
+# Stores values in memory until explicitly written to disk
 class LanguagePack::Helpers::BuildReport
-  PATH = nil # path to a report file
   attr_reader :data
 
-  # Sets the PATH constant, returns the path to the report file
-  #
-  def self.set_path_from_cache(cache_path: )
-    cache = Pathname(cache)
+  # Current load order of the various "language packs"
+  def self.set_global(cache_path: )
+    cache_path = Pathname(cache)
     # Coupled with `bin/report`
-    report = cache.join("vendor").join(".heroku_build_report.yml")
-    const_set(:PATH, report)
+    path = cache.join("vendor").join(".heroku_build_report.yml")
+    repot = new(path: path)
+    const_set(:GLOBAL, report)
     report
   end
 
-  # Main entrypoint `BuildReport.default`
-  #
-  # Defaults to `BuildReport::PATH` falls back to `/dev/null` if path is not specified
-  def self.default(path: PATH)
-    if path
-      new(path: path)
-    else
-      dev_null
-    end
-  end
-
+  # Stores data in memory only, does not persist to disk
   def self.dev_null
     new(path: "/dev/null")
   end
@@ -35,6 +27,11 @@ class LanguagePack::Helpers::BuildReport
     @path.dirname.mkpath
     FileUtils.touch(@path)
     @data = {}
+  end
+
+  def clear!
+    @data.clear
+    @path.write("")
   end
 
   def capture(key: , value: )
@@ -50,4 +47,8 @@ class LanguagePack::Helpers::BuildReport
     return if @data.empty?
     @path.write(@data.to_yaml)
   end
+end
+
+class LanguagePack::Helpers::BuildReport
+  GLOBAL = self.dev_null # Changed via `set_global`
 end

@@ -37,10 +37,9 @@ class LanguagePack::Base
     @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
     @arch = get_arch
+    @report = LanguagePack::Helpers::BuildReport::GLOBAL
 
     Dir.chdir build_path
-  ensure
-    @report.store if @report
   end
 
   def get_arch
@@ -101,7 +100,6 @@ class LanguagePack::Base
       puts @deprecations.join("\n")
     end
     Kernel.puts ""
-    mcount "success"
   end
 
   def build_release
