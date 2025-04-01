@@ -12,7 +12,7 @@ class LanguagePack::Helpers::BuildReport
     cache_path = Pathname(cache_path)
     # Coupled with `bin/report`
     path = cache_path.join("vendor").join(".heroku_build_report.yml")
-    repot = new(path: path)
+    report = new(path: path)
     const_set(:GLOBAL, report)
     report
   end
