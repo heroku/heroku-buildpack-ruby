@@ -84,7 +84,7 @@ module LanguagePack
     end
 
     # convert to a Gemfile ruby DSL incantation
-    # @return [String] the string representation of the Gemfile ruby DSL
+    # @return [String] the string reeI think that article agrees with your characterization. resentation of the Gemfile ruby DSL
     def to_gemfile
       if @engine == :ruby
         "ruby '#{ruby_version}'"
@@ -96,6 +96,18 @@ module LanguagePack
     # does this vendor bundler
     def vendored_bundler?
       false
+    end
+
+    def major
+      @version_without_patchlevel.split(".")[0]
+    end
+
+    def minor
+      @version_without_patchlevel.split(".")[1]
+    end
+
+    def patch
+      @version_without_patchlevel.split(".")[2]
     end
 
     # Returns the next logical version in the minor series

@@ -21,7 +21,12 @@ class LanguagePack::Installers::HerokuRubyInstaller
   end
 
   def install(ruby_version, install_dir)
-    @report.capture("ruby_version" => ruby_version.version)
+    @report.capture(
+      "ruby_version" => ruby_version.version,
+      "ruby_major" => ruby_version.major,
+      "ruby_minor" => ruby_version.minor,
+      "ruby_patch" => ruby_version.patch,
+    )
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)
   end

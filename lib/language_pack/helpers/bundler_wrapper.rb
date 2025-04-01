@@ -109,9 +109,17 @@ class LanguagePack::Helpers::BundlerWrapper
     @gemfile_path         = options[:gemfile_path] || Pathname.new("./Gemfile")
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
     bundled_with = @gemfile_lock_path.read(mode: "rt").match(BUNDLED_WITH_REGEX)
-    report.capture("bundled_with" => bundled_with&.[]("version") || "empty")
+    report.capture(
+      "bundled_with" => bundled_with&.[]("version") || "empty"
+    )
     @version = self.class.detect_bundler_version(contents: nil, bundled_with: bundled_with)
-    report.capture("bundler_version_installed" => @version)
+    parts = @version.split(".")
+    report.capture(
+      "bundler_version_installed" => @version
+      "bundler_major" => parts&.shift,
+      "bundler_minor" => parts&.shift,
+      "bundler_patch" => parts&.shift
+    )
     @dir_name = "bundler-#{@version}"
 
     @bundler_path         = options[:bundler_path] || @bundler_tmp.join(@dir_name)
