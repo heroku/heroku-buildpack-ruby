@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+CACHE_DIR="${2}"
+REPORT_FILE="${CACHE_DIR}/.heroku/ruby/build_report.yml"
+
+# Whilst the release file is always written by the buildpack, some apps use
+# third-party slug cleaner buildpacks to remove this and other files, so we
+# cannot assume it still exists by the time the release step runs.
+if [[ -f "${REPORT_FILE}" ]]; then
+  cat "${REPORT_FILE}"
+fi
