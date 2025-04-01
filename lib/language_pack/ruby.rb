@@ -26,7 +26,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def self.bundler
     @@bundler ||= LanguagePack::Helpers::BundlerWrapper.new(
-      report: LanguagePack::Helpers::BuildReport.default
+      report: LanguagePack::Helpers::BuildReport::GLOBAL
     ).install
   end
 
