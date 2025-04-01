@@ -98,6 +98,18 @@ module LanguagePack
       false
     end
 
+    def major
+      @version_without_patchlevel.split(".")[0].gsub(/ruby-/, "")
+    end
+
+    def minor
+      @version_without_patchlevel.split(".")[1]
+    end
+
+    def patch
+      @version_without_patchlevel.split(".")[2]
+    end
+
     # Returns the next logical version in the minor series
     # for example if the current ruby version is
     # `ruby-2.3.1` then then `next_logical_version(1)`

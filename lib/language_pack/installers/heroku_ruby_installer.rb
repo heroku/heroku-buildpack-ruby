@@ -10,7 +10,8 @@ class LanguagePack::Installers::HerokuRubyInstaller
   include LanguagePack::ShellHelpers
   attr_reader :fetcher
 
-  def initialize(stack: , multi_arch_stacks: , arch: )
+  def initialize(stack: , multi_arch_stacks: , arch: , report: HerokuBuildReport::GLOBAL)
+    @report = report
     if multi_arch_stacks.include?(stack)
       @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
     else
@@ -19,6 +20,12 @@ class LanguagePack::Installers::HerokuRubyInstaller
   end
 
   def install(ruby_version, install_dir)
+    @report.capture(
+      "ruby_version" => ruby_version.version,
+      "ruby_major" => ruby_version.major,
+      "ruby_minor" => ruby_version.minor,
+      "ruby_patch" => ruby_version.patch,
+    )
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)
   end
