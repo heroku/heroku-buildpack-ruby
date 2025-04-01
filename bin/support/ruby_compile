@@ -8,15 +8,16 @@
 $stdout.sync = true
 
 $:.unshift File.expand_path("../../../lib", __FILE__)
+require "heroku_build_report"
+HerokuBuildReport.set_global(
+  cache_path: ARGV[1]
+).tap(&:clear!)
+
 require "language_pack"
 require "language_pack/shell_helpers"
-require "language_pack/helpers/build_report"
 
 begin
   LanguagePack::ShellHelpers.initialize_env(ARGV[2])
-  report = LanguagePack::Helpers::BuildReport.set_global(
-    cache_path: ARGV[1]
-  ).tap(&:clear!)
 
   if pack = LanguagePack.detect(ARGV[0], ARGV[1])
     pack.topic("Compiling #{pack.name}")
@@ -26,6 +27,4 @@ begin
   end
 rescue Exception => e
   LanguagePack::ShellHelpers.display_error_and_exit(e)
-ensure
-  report&.store
 end

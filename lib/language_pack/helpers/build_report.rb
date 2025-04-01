@@ -34,13 +34,15 @@ class LanguagePack::Helpers::BuildReport
     @path.write("")
   end
 
-  def capture(key: , value: )
-    return if key.nil? || key.to_s.strip.empty?
+  def capture(metrics = {})
+    metrics.each do |(key, value)|
+      return if key.nil? || key.to_s.strip.empty?
 
-    key = key&.strip
-    raise "Key cannot be empty" if key.nil? || key.empty?
+      key = key&.strip
+      raise "Key  cannot be empty (#{key.inspect} => #{value})" if key.nil? || key.empty?
 
-    @data["#{key}"] = value
+      @data["#{key}"] = value
+    end
   end
 
   def store

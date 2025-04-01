@@ -54,7 +54,7 @@ describe "Multiple platform detection" do
     Dir.mktmpdir do |dir|
       gemfile = Pathname(dir).join("Gemfile")
       Pathname(dir).join("Gemfile.lock").tap {|p| p.write("BUNDLED WITH\n   2.5.7") }
-      report = LanguagePack::Helpers::BuildReport.dev_null
+      report = HerokuBuildReport.dev_null
 
       bundler = LanguagePack::Helpers::BundlerWrapper.new(
         report: report,

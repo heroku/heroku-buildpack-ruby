@@ -26,7 +26,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def self.bundler
     @@bundler ||= LanguagePack::Helpers::BundlerWrapper.new(
-      report: LanguagePack::Helpers::BuildReport::GLOBAL
+      report: HerokuBuildReport::GLOBAL
     ).install
   end
 
@@ -99,8 +99,10 @@ WARNING
       install_binaries
       run_assets_precompile_rake_task
     end
-    @report.capture(key: "railties_version", value: bundler.gem_version('railties'))
-    @report.capture(key: "rack_version", value: bundler.gem_version('rack'))
+    @report.capture(
+      "railties_version" => bundler.gem_version('railties'),
+      "rack_version" => bundler.gem_version('rack')
+    )
 
     config_detect
     best_practice_warnings

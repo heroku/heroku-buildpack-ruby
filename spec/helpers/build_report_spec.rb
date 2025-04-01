@@ -4,14 +4,15 @@ describe "Build report" do
   it "writes valid yaml" do
     Dir.mktmpdir do |dir|
       path = Pathname(dir).join(".report.yml")
-      report = LanguagePack::Helpers::BuildReport.new(
+      report = HerokuBuildReport::YamlReport.new(
         path: path
       )
-      report.capture(key: "string", value: "'with single quotes'")
-      report.capture(key: "string_plain", value: "plain")
-      report.capture(key: "number", value: 22)
-      report.capture(key: "boolean", value: true)
-      report.store
+      report.capture(
+        "string" => "'with single quotes'",
+        "string_plain" => "plain",
+        "number" => 22,
+        "boolean" => true,
+      )
 
       expect(path.read).to eq(<<~EOF)
         ---

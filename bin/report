@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-APP_DIR="${1:-}"
-REPORT_FILE="${APP_DIR}/vendor/heroku/.build_report.yml"
+CACHE_DIR="${2}"
+REPORT_FILE="${CACHE_DIR}/.heroku/ruby/build_report.yml"
 
 # Whilst the release file is always written by the buildpack, some apps use
 # third-party slug cleaner buildpacks to remove this and other files, so we

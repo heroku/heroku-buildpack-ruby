@@ -24,7 +24,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
     it "should install ruby and setup binstubs" do
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
-          report = LanguagePack::Helpers::BuildReport.dev_null
+          report = HerokuBuildReport.dev_null
           installer = LanguagePack::Installers::HerokuRubyInstaller.new(
             multi_arch_stacks: [],
             stack: "cedar-14",
