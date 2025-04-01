@@ -2,11 +2,11 @@
 
 ## [Unreleased]
 
+- Added observability metrics (https://github.com/heroku/heroku-buildpack-ruby/pull/1563)
 
 ## [v297] - 2025-03-26
 
 - Ruby 3.1.7 and 3.2.8 is now available
-
 
 ## [v296] - 2025-03-21
 
