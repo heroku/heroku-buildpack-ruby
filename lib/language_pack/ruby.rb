@@ -99,8 +99,8 @@ WARNING
       install_binaries
       run_assets_precompile_rake_task
     end
-    @report.store(key: "railties_version", value: bundler.gem_version('railties'))
-    @report.store(key: "rack_version", value: bundler.gem_version('rack'))
+    @report.capture(key: "railties_version", value: bundler.gem_version('railties'))
+    @report.capture(key: "rack_version", value: bundler.gem_version('rack'))
 
     config_detect
     best_practice_warnings
