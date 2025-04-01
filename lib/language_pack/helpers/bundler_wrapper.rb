@@ -62,11 +62,10 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  def self.detect_bundler_version(contents: )
-    version_match = contents.match(BUNDLED_WITH_REGEX)
-    if version_match
-      major = version_match[:major]
-      minor = version_match[:minor]
+  def self.detect_bundler_version(contents: , bundled_with: contents.match(BUNDLED_WITH_REGEX))
+    if bundled_with
+      major = bundled_with[:major]
+      minor = bundled_with[:minor]
       version = BLESSED_BUNDLER_VERSIONS["#{major}.#{minor}"]
       version
     else
@@ -74,7 +73,7 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.(?<minor>\d+)\.\d+/m
+  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m
 
   class GemfileParseError < BuildpackError
     def initialize(error)
@@ -105,12 +104,28 @@ class LanguagePack::Helpers::BundlerWrapper
   attr_reader :bundler_path
 
   def initialize(options = {})
+    @report               = options[:report] || HerokuBuildReport::GLOBAL
     @bundler_tmp          = Pathname.new(Dir.mktmpdir)
     @fetcher              = options[:fetcher]      || LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
     @gemfile_path         = options[:gemfile_path] || Pathname.new("./Gemfile")
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
 
-    @version = self.class.detect_bundler_version(contents: @gemfile_lock_path.read(mode: "rt"))
+    contents = @gemfile_lock_path.read(mode: "rt")
+    bundled_with = contents.match(BUNDLED_WITH_REGEX)
+    @report.capture(
+      "bundled_with" => bundled_with&.[]("version") || "empty"
+    )
+    @version = self.class.detect_bundler_version(
+      contents: contents,
+      bundled_with: bundled_with
+    )
+    parts = @version.split(".")
+    @report.capture(
+      "bundler_version_installed" => @version,
+      "bundler_major" => parts&.shift,
+      "bundler_minor" => parts&.shift,
+      "bundler_patch" => parts&.shift
+    )
     @dir_name = "bundler-#{@version}"
 
     @bundler_path         = options[:bundler_path] || @bundler_tmp.join(@dir_name)

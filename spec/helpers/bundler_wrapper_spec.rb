@@ -54,9 +54,23 @@ describe "Multiple platform detection" do
     Dir.mktmpdir do |dir|
       gemfile = Pathname(dir).join("Gemfile")
       lockfile = Pathname(dir).join("Gemfile.lock").tap {|p| p.write("BUNDLED WITH\n   2.5.7") }
+      report = HerokuBuildReport.dev_null
 
-      bundler = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: gemfile)
+      bundler = LanguagePack::Helpers::BundlerWrapper.new(
+        gemfile_path: gemfile,
+        report: report
+      )
       expect(bundler.supports_multiple_platforms?).to be_truthy
+
+      expect(report.data).to eq(
+        {
+          "bundled_with" => "2.5.7",
+          "bundler_major" => "2",
+          "bundler_minor" => "5",
+          "bundler_patch" => "23",
+          "bundler_version_installed" => "2.5.23",
+        }
+      )
     end
   end
 end
