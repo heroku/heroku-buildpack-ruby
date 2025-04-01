@@ -145,7 +145,8 @@ describe "Ruby apps" do
     it "works" do
       buildpacks = [
         :default,
-        "https://github.com/sharpstone/force_absolute_paths_buildpack"
+        "https://github.com/sharpstone/force_absolute_paths_buildpack",
+        "https://github.com/heroku/heroku-buildpack-inline.git",
       ]
       config = {FORCE_ABSOLUTE_PATHS_BUILDPACK_IGNORE_PATHS: "BUNDLE_PATH"}
 
@@ -187,14 +188,60 @@ describe "Ruby apps" do
           EOF
 
           dir = Pathname("client")
-          dir.mkpath
-          FileUtils.touch(dir.join(".gitkeep"))
+            .tap(&:mkpath)
+            .tap {|path| FileUtils.touch(path.join(".gitkeep"))}
+
+          # Inline buildpack to ensure build_report file is emitted on compile
+          bin = Pathname("bin").tap(&:mkpath)
+          detect = bin.join("detect")
+          compile = bin.join("compile")
+          release = bin.join("release")
+
+          [detect, compile, release].each do |path|
+            FileUtils.touch(path)
+            FileUtils.chmod("+x", path)
+            path.write(<<~EOF)
+              #!/usr/bin/env bash
+              exit 0
+            EOF
+          end
+
+          compile.write(<<~EOF)
+            #!/usr/bin/env bash
+
+            set -euo pipefail
+
+            CACHE_DIR="${2}"
+            REPORT_FILE="${CACHE_DIR}/.heroku/ruby/build_report.yml"
+
+            echo "## PRINTING REPORT FILE ##"
+            if [[ -f "${REPORT_FILE}" ]]; then
+              cat "${REPORT_FILE}"
+            else
+              echo "No such file $REPORT_FILE"
+              ls -la "$(dirname "$REPORT_FILE")"
+              exit 1
+            fi
+            echo "## REPORT FILE DONE ##"
+          EOF
         end
 
         app.deploy do |app|
           expected = "3.3.1"
           expect(expected).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
           expect(app.output).to match("cd version ruby #{expected}")
+          begin
+            report_match = app.output.match(/## PRINTING REPORT FILE ##(?<yaml>.*)## REPORT FILE DONE/m) # https://rubular.com/r/FfaV5AEstigaMO
+            expect(report_match).to be_truthy
+            yaml = report_match[:yaml].gsub(/remote: /, "")
+            report = YAML.load(yaml)
+            expect(report["ruby_version"]).to eq("ruby-#{expected}")
+          rescue Exception => e
+            puts app.output
+            puts yaml if yaml
+            puts report.inspect if report
+            raise e
+          end
 
           expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
         end
