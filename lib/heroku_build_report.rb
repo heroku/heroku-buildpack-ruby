@@ -10,6 +10,8 @@ require 'pathname'
 #   )
 module HerokuBuildReport
   # Accumulates data in memory and writes it to the specified path in YAML format
+  #
+  # Writes data to disk on every capture. Later `bin/report` emits the disk contents
   class YamlReport
     attr_reader :data
 
