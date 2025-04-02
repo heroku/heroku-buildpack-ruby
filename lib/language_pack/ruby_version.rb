@@ -31,17 +31,28 @@ module LanguagePack
     include LanguagePack::ShellHelpers
 
     def initialize(bundler_output, app = {})
-      @set            = nil
+      @set = nil
+      @default = false
       @bundler_output = bundler_output
       @app            = app
       if @bundler_output.empty?
+        @default = true
         @set     = false
-        @version = none
+        @version = if @app[:is_new]
+          DEFAULT_VERSION
+        elsif @app[:last_version]
+          @app[:last_version]
+        else
+          LEGACY_VERSION
+        end
       else
-        @set     = :gemfile
+        @set = :gemfile
         @version = @bundler_output
       end
-      parse_version
+      parsed = ParsedVersion.new(from_bundler: @version)
+      @ruby_version = parsed.version
+      @engine = parsed.engine
+      @engine_version = parsed.engine_version
 
       @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
     end
@@ -71,7 +82,7 @@ module LanguagePack
     end
 
     def default?
-      @version == none
+      @default
     end
 
     # determine if we're using jruby
@@ -133,18 +144,6 @@ module LanguagePack
       return "ruby-#{split_version.join(".")}"
     end
 
-    private
-
-    def none
-      if @app[:is_new]
-        DEFAULT_VERSION
-      elsif @app[:last_version]
-        @app[:last_version]
-      else
-        LEGACY_VERSION
-      end
-    end
-
     class ParsedVersion
       attr_reader :version, :major, :minor, :patch, :engine, :engine_version
 
@@ -167,14 +166,6 @@ module LanguagePack
         @minor = parts.shift
         @patch = parts.shift
       end
-    end
-
-    def parse_version
-      md = RUBY_VERSION_REGEX.match(version)
-      raise BadVersionError.new("'#{version}' is not valid") unless md
-      @ruby_version   = md[:ruby_version]
-      @engine_version = md[:engine_version] || @ruby_version
-      @engine         = (md[:engine]        || :ruby).to_sym
     end
   end
 end
