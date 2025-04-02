@@ -27,7 +27,19 @@ module LanguagePack
         ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
       }x
 
-    attr_reader :version, :version_without_patchlevel, :engine, :ruby_version, :engine_version
+    # `version`  is the raw input or default usually `ruby-<major>.<minor>.<patch>`
+    attr_reader :version,
+      # `version_without_patchlevel` is `version` with any trailing `-p<number>` stripped
+      :version_without_patchlevel,
+      # `ruby_version` is what `<major>.<minor>.<patch>`
+      :ruby_version,
+      # `engine` is either :ruby or :jruby
+      :engine,
+      # `engine_version` is the same as `ruby_version` for MRI and the JRuby version for jruby
+      :engine_version,
+      # `major.minor.patch` the digits of `ruby_version` in integers
+      :major, :minor, :patch
+
     include LanguagePack::ShellHelpers
 
     def initialize(bundler_output, app = {})
