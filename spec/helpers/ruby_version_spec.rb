@@ -51,7 +51,7 @@ describe "RubyVersion" do
     ruby_version   = LanguagePack::RubyVersion.new("ruby-#{version_number}-p0", is_new: true)
     version        = "ruby-#{version_number}"
 
-    expect(ruby_version.version_without_patchlevel).to eq(version)
+    expect(ruby_version.version_for_download).to eq(version)
     expect(ruby_version.next_logical_version).to eq("ruby-2.5.1")
     expect(ruby_version.next_logical_version).to eq("ruby-2.5.1")
     expect(ruby_version.next_logical_version(2)).to eq("ruby-2.5.2")
@@ -97,7 +97,7 @@ describe "RubyVersion" do
         ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: true)
         version_number = LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER
         version        = LanguagePack::RubyVersion::DEFAULT_VERSION
-        expect(ruby_version.version_without_patchlevel).to eq(version)
+        expect(ruby_version.version_for_download).to eq(version)
         expect(ruby_version.engine_version).to eq(version_number)
         expect(ruby_version.to_gemfile).to eq("ruby '#{version_number}'")
         expect(ruby_version.engine).to eq(:ruby)
@@ -142,7 +142,7 @@ describe "RubyVersion" do
         version_number = "3.2.3"
         version        = "ruby-#{version_number}"
         expect(@bundler.install.ruby_version).to eq("ruby-3.2.3")
-        expect(ruby_version.version_without_patchlevel).to eq(version)
+        expect(ruby_version.version_for_download).to eq(version)
         expect(ruby_version.engine_version).to eq(version_number)
         expect(ruby_version.engine).to eq(:ruby)
       end
@@ -189,7 +189,7 @@ describe "RubyVersion" do
         engine = :jruby
 
         expect(@bundler.install.ruby_version).to eq("ruby-3.1.4-p0-jruby-9.4.9.0")
-        expect(ruby_version.version_without_patchlevel).to eq("ruby-#{version_number}-#{engine}-#{engine_version}")
+        expect(ruby_version.version_for_download).to eq("ruby-#{version_number}-#{engine}-#{engine_version}")
         expect(ruby_version.engine_version).to eq(engine_version)
         expect(ruby_version.engine).to eq(engine)
       end

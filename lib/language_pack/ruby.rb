@@ -199,7 +199,7 @@ WARNING
   # the relative path to the vendored ruby directory
   # @return [String] resulting path
   def slug_vendor_ruby
-    "vendor/#{ruby_version.version_without_patchlevel}"
+    "vendor/#{ruby_version.version_for_download}"
   end
 
   # fetch the ruby version from bundler

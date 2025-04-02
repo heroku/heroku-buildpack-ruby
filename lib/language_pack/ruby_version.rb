@@ -29,8 +29,8 @@ module LanguagePack
 
     # `version`  is the raw input or default usually `ruby-<major>.<minor>.<patch>`
     attr_reader :version,
-      # `version_without_patchlevel` is `version` with any trailing `-p<number>` stripped
-      :version_without_patchlevel,
+      # `version_for_download` is `version` with any trailing `-p<number>` stripped
+      :version_for_download,
       # `ruby_version` is what `<major>.<minor>.<patch>`
       :ruby_version,
       # `engine` is either :ruby or :jruby
@@ -58,7 +58,10 @@ module LanguagePack
         @default = false
         @version = @bundler_output
       end
-      parsed = ParsedVersion.new(from_bundler: @version)
+      # Strip patch levels https://github.com/rubygems/bundler/issues/4621
+      @version_for_download = @version.sub(/-p-?\d+/, '')
+
+      parsed = ParsedVersion.new(from_bundler: @version_for_download)
       @ruby_version = parsed.version
       @engine = parsed.engine
       @engine_version = parsed.engine_version
@@ -66,7 +69,7 @@ module LanguagePack
       @minor = parsed.minor
       @patch = parsed.patch
 
-      @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
+      @version_for_download = @version.sub(/-p-?\d+/, '')
     end
 
     def warn_ruby_26_bundler?
@@ -74,11 +77,6 @@ module LanguagePack
       return false if Gem::Version.new(self.ruby_version) < Gem::Version.new("2.6.0")
 
       return true
-    end
-
-    # https://github.com/bundler/bundler/issues/4621
-    def version_for_download
-      version_without_patchlevel
     end
 
     def file_name
