@@ -34,7 +34,6 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   end
 
   def can_check?
-    return false if current_ruby_version.patchlevel_is_significant?
     return false if current_ruby_version.jruby?
 
     true
