@@ -16,8 +16,6 @@ module LanguagePack
     BOOTSTRAP_VERSION_NUMBER = "3.1.6".freeze
     DEFAULT_VERSION_NUMBER = "3.3.7".freeze
     DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
-    LEGACY_VERSION_NUMBER  = "1.9.2".freeze
-    LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}".freeze
     RUBY_VERSION_REGEX     = %r{
         (?<ruby_version>\d+\.\d+\.\d+){0}
         (?<patchlevel>p-?\d+){0}
@@ -47,13 +45,7 @@ module LanguagePack
       @app = app
       if @bundler_output.empty?
         @default = true
-        @version = if @app[:is_new]
-          DEFAULT_VERSION
-        elsif @app[:last_version]
-          @app[:last_version]
-        else
-          LEGACY_VERSION
-        end
+        @version = @app.fetch(:last_version, DEFAULT_VERSION)
       else
         @default = false
         @version = @bundler_output
