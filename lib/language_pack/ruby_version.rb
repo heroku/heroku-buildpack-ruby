@@ -83,7 +83,7 @@ module LanguagePack
     end
 
     def rake_is_vendored?
-      Gem::Version.new(self.ruby_version) >= Gem::Version.new("1.9")
+      true
     end
 
     def default?
