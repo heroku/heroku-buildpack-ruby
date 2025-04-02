@@ -85,10 +85,6 @@ module LanguagePack
       "#{version_for_download}.tgz"
     end
 
-    def rake_is_vendored?
-      true
-    end
-
     def default?
       @default
     end
