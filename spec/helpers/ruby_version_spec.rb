@@ -126,31 +126,38 @@ describe "RubyVersion" do
         dir.join("Gemfile").write(<<~EOF)
           source "https://rubygems.org"
 
-          ruby '2.6.8', engine: 'jruby', engine_version: '9.3.6.0'
+          ruby '>3', engine: 'jruby', engine_version: '9.4.9.0'
         EOF
         dir.join("Gemfile.lock").write(<<~EOF)
           GEM
             remote: https://rubygems.org/
             specs:
+              rake (13.2.1)
+
           PLATFORMS
-            java
+            arm64-darwin-24
+            ruby
+            universal-java-21
 
           DEPENDENCIES
+            rake
 
           RUBY VERSION
-            ruby 2.6.8p001 (jruby 9.3.6.0)
+            ruby 3.1.4p0 (jruby 9.4.9.0)
 
           BUNDLED WITH
-            2.3.25
+            2.6.6
         EOF
 
         ruby_version   = LanguagePack::RubyVersion.new(
           @bundler.install.ruby_version,
           is_new: true
         )
-        version_number = "2.6.8"
-        engine_version = "9.3.6.0"
+        version_number = "3.1.4"
+        engine_version = "9.4.9.0"
         engine = :jruby
+
+        expect(@bundler.install.ruby_version).to eq("ruby-3.1.4-p0-jruby-9.4.9.0")
         expect(ruby_version.version_without_patchlevel).to eq("ruby-#{version_number}-#{engine}-#{engine_version}")
         expect(ruby_version.engine_version).to eq(engine_version)
         expect(ruby_version.engine).to eq(engine)
