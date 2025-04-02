@@ -117,15 +117,15 @@ module LanguagePack
     end
 
     def major
-      @version_without_patchlevel.split(".")[0].gsub(/ruby-/, "").to_i
+      @ruby_version.split(".")[0].to_i
     end
 
     def minor
-      @version_without_patchlevel.split(".")[1].to_i
+      @ruby_version.split(".")[1].to_i
     end
 
     def patch
-      @version_without_patchlevel.split(".")[2].to_i
+      @ruby_version.split(".")[2].to_i
     end
 
     # Returns the next logical version in the minor series
