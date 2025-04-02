@@ -26,7 +26,25 @@ module LanguagePack
         ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
       }x
 
-    attr_reader :set, :version, :version_without_patchlevel, :patchlevel, :engine, :ruby_version, :engine_version
+
+    # `version` is the bundler output like `ruby-3.4.2`
+    attr_reader :version,
+      # `set` is either `:gemfile` when the app specified a version or `nil` when using
+      # the default version
+      :set,
+      # `version_without_patchlevel` removes any `-p<number>` as they're not significant
+      # effectively this is `version_for_download`
+      :version_without_patchlevel,
+      # `patchlevel` is the `-p<number>` or is empty
+      :patchlevel,
+      # `engine` is `:ruby` or `:jruby`
+      :engine,
+      # `ruby_version` is `<major>.<minor>.<patch>` extracted from `version`
+      :ruby_version,
+      # `engine_version` is the Jruby version or for MRI it is the same as `ruby_version`
+      # i.e. `<major>.<minor>.<patch>`
+      :engine_version
+
     include LanguagePack::ShellHelpers
 
     def initialize(bundler_output, app = {})
