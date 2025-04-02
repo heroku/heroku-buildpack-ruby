@@ -15,8 +15,6 @@ module LanguagePack
     BOOTSTRAP_VERSION_NUMBER = "3.1.6".freeze
     DEFAULT_VERSION_NUMBER = "3.3.7".freeze
     DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
-    LEGACY_VERSION_NUMBER  = "1.9.2".freeze
-    LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}".freeze
     RUBY_VERSION_REGEX     = %r{
         (?<ruby_version>\d+\.\d+\.\d+){0}
         (?<patchlevel>p-?\d+){0}
@@ -92,7 +90,7 @@ module LanguagePack
     end
 
     def default?
-      @version == none
+      !set
     end
 
     # determine if we're using jruby
@@ -156,21 +154,10 @@ module LanguagePack
     end
 
     private
-
-    def none
-      if @app[:is_new]
-        DEFAULT_VERSION
-      elsif @app[:last_version]
-        @app[:last_version]
-      else
-        LEGACY_VERSION
-      end
-    end
-
     def set_version
       if @bundler_output.empty?
         @set     = false
-        @version = none
+        @version = @app[:last_version] || DEFAULT_VERSION
       else
         @set     = :gemfile
         @version = @bundler_output
