@@ -1,5 +1,35 @@
 require 'spec_helper'
 
+describe "RubyVersion::ParsedVersion" do
+  it "parses jruby" do
+    parsed = LanguagePack::RubyVersion::ParsedVersion.new(
+      from_bundler: "ruby-3.1.4-p0-jruby-9.4.9.0"
+    )
+
+    expect(parsed.version).to eq("3.1.4")
+    expect(parsed.engine).to eq(:jruby)
+    expect(parsed.engine_version).to eq("9.4.9.0")
+
+    expect(parsed.major).to eq("3")
+    expect(parsed.minor).to eq("1")
+    expect(parsed.patch).to eq("4")
+  end
+
+  it "parses mri" do
+    parsed = LanguagePack::RubyVersion::ParsedVersion.new(
+      from_bundler: "ruby-3.4.2p28"
+    )
+
+    expect(parsed.version).to eq("3.4.2")
+    expect(parsed.engine).to eq(:ruby)
+    expect(parsed.engine_version).to eq("3.4.2")
+
+    expect(parsed.major).to eq("3")
+    expect(parsed.minor).to eq("4")
+    expect(parsed.patch).to eq("2")
+  end
+end
+
 describe "RubyVersion" do
   before(:each) do
     if ENV['RUBYOPT']

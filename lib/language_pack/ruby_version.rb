@@ -159,6 +159,30 @@ module LanguagePack
       end
     end
 
+    class ParsedVersion
+      attr_reader :version, :major, :minor, :patch, :engine, :engine_version
+
+      # Input is the raw string from bundler like `ruby-3.1.4`
+      def initialize(from_bundler: )
+        @raw = from_bundler
+        match = RUBY_VERSION_REGEX.match(@raw)
+        raise BadVersionError.new("'#{version}' is not valid") unless match
+
+        @version = match[:ruby_version] # like "3.1.4"
+        if match[:engine]
+          @engine = match[:engine].to_sym
+          @engine_version = match[:engine_version]
+        else
+          @engine = :ruby
+          @engine_version = @version
+        end
+        parts = @version.split(".")
+        @major = parts.shift
+        @minor = parts.shift
+        @patch = parts.shift
+      end
+    end
+
     def parse_version
       md = RUBY_VERSION_REGEX.match(version)
       raise BadVersionError.new("'#{version}' is not valid") unless md
