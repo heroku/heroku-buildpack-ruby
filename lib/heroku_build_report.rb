@@ -43,7 +43,16 @@ module HerokuBuildReport
 
   # Current load order of the various "language packs"
   def self.set_global(path: )
-    YamlReport.new(path: path).tap { |report| const_set(:GLOBAL, report) }
+    YamlReport.new(path: path).tap { |report|
+      # Silence warning about setting a constant
+      begin
+        old_verbose = $VERBOSE
+        $VERBOSE = nil
+        const_set(:GLOBAL, report)
+      ensure
+        $VERBOSE = old_verbose
+      end
+    }
   end
 
   # Stores data in memory only, does not persist to disk
