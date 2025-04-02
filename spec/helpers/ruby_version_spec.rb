@@ -111,6 +111,7 @@ describe "RubyVersion" do
         ruby_version   = LanguagePack::RubyVersion.new(@bundler.install.ruby_version, is_new: true)
         version_number = "3.2.3"
         version        = "ruby-#{version_number}"
+        expect(@bundler.install.ruby_version).to eq("ruby-3.2.3")
         expect(ruby_version.version_without_patchlevel).to eq(version)
         expect(ruby_version.engine_version).to eq(version_number)
         expect(ruby_version.engine).to eq(:ruby)
