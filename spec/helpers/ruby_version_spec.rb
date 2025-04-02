@@ -10,9 +10,9 @@ describe "RubyVersion::ParsedVersion" do
     expect(parsed.engine).to eq(:jruby)
     expect(parsed.engine_version).to eq("9.4.9.0")
 
-    expect(parsed.major).to eq("3")
-    expect(parsed.minor).to eq("1")
-    expect(parsed.patch).to eq("4")
+    expect(parsed.major).to eq(3)
+    expect(parsed.minor).to eq(1)
+    expect(parsed.patch).to eq(4)
   end
 
   it "parses mri" do
@@ -24,9 +24,9 @@ describe "RubyVersion::ParsedVersion" do
     expect(parsed.engine).to eq(:ruby)
     expect(parsed.engine_version).to eq("3.4.2")
 
-    expect(parsed.major).to eq("3")
-    expect(parsed.minor).to eq("4")
-    expect(parsed.patch).to eq("2")
+    expect(parsed.major).to eq(3)
+    expect(parsed.minor).to eq(4)
+    expect(parsed.patch).to eq(2)
   end
 end
 

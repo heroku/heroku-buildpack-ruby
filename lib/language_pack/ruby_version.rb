@@ -62,6 +62,9 @@ module LanguagePack
       @ruby_version = parsed.version
       @engine = parsed.engine
       @engine_version = parsed.engine_version
+      @major = parsed.major
+      @minor = parsed.minor
+      @patch = parsed.patch
 
       @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
     end
@@ -111,42 +114,20 @@ module LanguagePack
       false
     end
 
-    def major
-      @version_without_patchlevel.split(".")[0].gsub(/ruby-/, "").to_i
-    end
-
-    def minor
-      @version_without_patchlevel.split(".")[1].to_i
-    end
-
-    def patch
-      @version_without_patchlevel.split(".")[2].to_i
-    end
-
     # Returns the next logical version in the minor series
     # for example if the current ruby version is
     # `ruby-2.3.1` then then `next_logical_version(1)`
     # will produce `ruby-2.3.2`.
     def next_logical_version(increment = 1)
-      split_version = @version_without_patchlevel.split(".")
-      teeny = split_version.pop
-      split_version << teeny.to_i + increment
-      split_version.join(".")
+      "ruby-#{[major, minor, patch + increment].join(".")}"
     end
 
     def next_minor_version(increment = 1)
-      split_version = @version_without_patchlevel.split(".")
-      split_version[1] = split_version[1].to_i + increment
-      split_version[2] = 0
-      split_version.join(".")
+      "ruby-#{[major, minor + increment, 0].join(".")}"
     end
 
     def next_major_version(increment = 1)
-      split_version = @version_without_patchlevel.split("-").last.split(".")
-      split_version[0] = Integer(split_version[0]) + increment
-      split_version[1] = 0
-      split_version[2] = 0
-      return "ruby-#{split_version.join(".")}"
+      "ruby-#{[major + increment, 0, 0].join(".")}"
     end
 
     class ParsedVersion
@@ -167,9 +148,9 @@ module LanguagePack
           @engine_version = @version
         end
         parts = @version.split(".")
-        @major = parts.shift
-        @minor = parts.shift
-        @patch = parts.shift
+        @major = Integer(parts.shift)
+        @minor = Integer(parts.shift)
+        @patch = Integer(parts.shift)
       end
     end
   end
