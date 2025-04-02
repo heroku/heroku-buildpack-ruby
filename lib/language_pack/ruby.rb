@@ -596,10 +596,6 @@ EOF
     Dir.chdir(bundler_dir) do |dir|
       `cp -R #{bundler.bundler_path}/. .`
     end
-
-    # write bundler shim, so we can control the version bundler used
-    # Ruby 2.6.0 started vendoring bundler
-    write_bundler_shim("vendor/bundle/bin") if ruby_version.vendored_bundler?
   end
 
   # default set of binaries to install

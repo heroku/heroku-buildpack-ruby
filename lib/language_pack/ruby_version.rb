@@ -109,11 +109,6 @@ module LanguagePack
       end
     end
 
-    # does this vendor bundler
-    def vendored_bundler?
-      false
-    end
-
     # Returns the next logical version in the minor series
     # for example if the current ruby version is
     # `ruby-2.3.1` then then `next_logical_version(1)`
