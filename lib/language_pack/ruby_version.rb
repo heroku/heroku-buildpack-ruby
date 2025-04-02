@@ -4,11 +4,12 @@ module LanguagePack
   class RubyVersion
     class BadVersionError < BuildpackError
       def initialize(output = "")
-        msg = ""
-        msg << output
-        msg << "Can not parse Ruby Version:\n"
-        msg << "Valid versions listed on: https://devcenter.heroku.com/articles/ruby-support\n"
-        super msg
+        super <<~EOL
+          Cannot parse Ruby version: #{output}
+
+          Valid versions:
+            https://devcenter.heroku.com/articles/ruby-support-reference
+        EOL
       end
     end
 
