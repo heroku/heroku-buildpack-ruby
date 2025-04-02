@@ -27,17 +27,14 @@ module LanguagePack
         ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
       }x
 
-    attr_reader :set, :version, :version_without_patchlevel, :engine, :ruby_version, :engine_version
+    attr_reader :version, :version_without_patchlevel, :engine, :ruby_version, :engine_version
     include LanguagePack::ShellHelpers
 
     def initialize(bundler_output, app = {})
-      @set = nil
-      @default = false
       @bundler_output = bundler_output
-      @app            = app
+      @app = app
       if @bundler_output.empty?
         @default = true
-        @set     = false
         @version = if @app[:is_new]
           DEFAULT_VERSION
         elsif @app[:last_version]
@@ -46,7 +43,7 @@ module LanguagePack
           LEGACY_VERSION
         end
       else
-        @set = :gemfile
+        @default = false
         @version = @bundler_output
       end
       parsed = ParsedVersion.new(from_bundler: @version)
