@@ -13,17 +13,12 @@ module LanguagePack
       end
     end
 
-    BOOTSTRAP_VERSION_NUMBER = "3.1.6".freeze
+    # Version of Ruby that customers will get if they haven't specified a Ruby version
     DEFAULT_VERSION_NUMBER = "3.3.7".freeze
-    DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
-    RUBY_VERSION_REGEX     = %r{
-        (?<ruby_version>\d+\.\d+\.\d+){0}
-        (?<patchlevel>p-?\d+){0}
-        (?<engine>\w+){0}
-        (?<engine_version>.+){0}
+    DEFAULT_VERSION = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
 
-        ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
-      }x
+    # Version of Ruby that the buildpack uses
+    BOOTSTRAP_VERSION_NUMBER = "3.1.6".freeze
 
     # `version`  is the raw input or default usually `ruby-<major>.<minor>.<patch>`
     attr_reader :version,
@@ -112,6 +107,15 @@ module LanguagePack
     end
 
     class ParsedVersion
+      RUBY_VERSION_REGEX = %r{
+        (?<ruby_version>\d+\.\d+\.\d+){0}
+        (?<patchlevel>p-?\d+){0}
+        (?<engine>\w+){0}
+        (?<engine_version>.+){0}
+
+        ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
+      }x
+
       attr_reader :version, :major, :minor, :patch, :engine, :engine_version
 
       # Input is the raw string from bundler like `ruby-3.1.4`
