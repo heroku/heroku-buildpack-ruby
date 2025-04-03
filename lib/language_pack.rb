@@ -23,6 +23,8 @@ end
 $:.unshift File.expand_path("../../vendor", __FILE__)
 $:.unshift File.expand_path("..", __FILE__)
 
+require 'heroku_build_report'
+
 require 'language_pack/shell_helpers'
 require "language_pack/helpers/plugin_installer"
 require "language_pack/helpers/stale_file_cleaner"

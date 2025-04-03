@@ -10,6 +10,13 @@ $stdout.sync = true
 $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
+HerokuBuildReport.set_global(
+  # Coupled with `bin/report`
+  path: Pathname(ARGV[1])
+        .join(".heroku")
+        .join("ruby")
+        .join("build_report.yml")
+).tap(&:clear!)
 
 begin
   LanguagePack::ShellHelpers.initialize_env(ARGV[2])

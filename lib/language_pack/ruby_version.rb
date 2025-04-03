@@ -15,8 +15,6 @@ module LanguagePack
     BOOTSTRAP_VERSION_NUMBER = "3.1.6".freeze
     DEFAULT_VERSION_NUMBER = "3.3.7".freeze
     DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
-    LEGACY_VERSION_NUMBER  = "1.9.2".freeze
-    LEGACY_VERSION         = "ruby-#{LEGACY_VERSION_NUMBER}".freeze
     RUBY_VERSION_REGEX     = %r{
         (?<ruby_version>\d+\.\d+\.\d+){0}
         (?<patchlevel>p-?\d+){0}
@@ -26,7 +24,25 @@ module LanguagePack
         ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
       }x
 
-    attr_reader :set, :version, :version_without_patchlevel, :patchlevel, :engine, :ruby_version, :engine_version
+
+    # `version` is the bundler output like `ruby-3.4.2`
+    attr_reader :version,
+      # `set` is either `:gemfile` when the app specified a version or `nil` when using
+      # the default version
+      :set,
+      # `version_without_patchlevel` removes any `-p<number>` as they're not significant
+      # effectively this is `version_for_download`
+      :version_without_patchlevel,
+      # `patchlevel` is the `-p<number>` or is empty
+      :patchlevel,
+      # `engine` is `:ruby` or `:jruby`
+      :engine,
+      # `ruby_version` is `<major>.<minor>.<patch>` extracted from `version`
+      :ruby_version,
+      # `engine_version` is the Jruby version or for MRI it is the same as `ruby_version`
+      # i.e. `<major>.<minor>.<patch>`
+      :engine_version
+
     include LanguagePack::ShellHelpers
 
     def initialize(bundler_output, app = {})
@@ -74,7 +90,7 @@ module LanguagePack
     end
 
     def default?
-      @version == none
+      !set
     end
 
     # determine if we're using jruby
@@ -96,6 +112,18 @@ module LanguagePack
     # does this vendor bundler
     def vendored_bundler?
       false
+    end
+
+    def major
+      @ruby_version.split(".")[0].to_i
+    end
+
+    def minor
+      @ruby_version.split(".")[1].to_i
+    end
+
+    def patch
+      @ruby_version.split(".")[2].to_i
     end
 
     # Returns the next logical version in the minor series
@@ -126,21 +154,10 @@ module LanguagePack
     end
 
     private
-
-    def none
-      if @app[:is_new]
-        DEFAULT_VERSION
-      elsif @app[:last_version]
-        @app[:last_version]
-      else
-        LEGACY_VERSION
-      end
-    end
-
     def set_version
       if @bundler_output.empty?
         @set     = false
-        @version = none
+        @version = @app[:last_version] || DEFAULT_VERSION
       else
         @set     = :gemfile
         @version = @bundler_output

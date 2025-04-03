@@ -145,7 +145,8 @@ describe "Ruby apps" do
     it "works" do
       buildpacks = [
         :default,
-        "https://github.com/sharpstone/force_absolute_paths_buildpack"
+        "https://github.com/sharpstone/force_absolute_paths_buildpack",
+        "https://github.com/heroku/heroku-buildpack-inline.git",
       ]
       config = {FORCE_ABSOLUTE_PATHS_BUILDPACK_IGNORE_PATHS: "BUNDLE_PATH"}
 
@@ -189,12 +190,47 @@ describe "Ruby apps" do
           dir = Pathname("client")
           dir.mkpath
           FileUtils.touch(dir.join(".gitkeep"))
+
+          # Inline buildpack to ensure build_report file is emitted on compile
+          bin = Pathname("bin").tap(&:mkpath)
+          detect = bin.join("detect")
+          compile = bin.join("compile")
+          release = bin.join("release")
+
+          [detect, compile, release].each do |path|
+            FileUtils.touch(path)
+            FileUtils.chmod("+x", path)
+            path.write(<<~EOF)
+              #!/usr/bin/env bash
+              exit 0
+            EOF
+          end
+
+          compile.write(<<~EOF)
+            #!/usr/bin/env bash
+            REPORT_FILE="${CACHE_DIR}/.heroku/ruby/build_report.yml"
+            echo "## PRINTING REPORT FILE ##"
+            #{Pathname(__dir__).join("..").join("..").join("bin").join("report").read}
+            echo "## REPORT FILE DONE ##"
+          EOF
         end
 
         app.deploy do |app|
           expected = "3.3.1"
           expect(expected).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
           expect(app.output).to match("cd version ruby #{expected}")
+          begin
+            report_match = app.output.match(/## PRINTING REPORT FILE ##(?<yaml>.*)## REPORT FILE DONE/m) # https://rubular.com/r/FfaV5AEstigaMO
+            expect(report_match).to be_truthy
+            yaml = report_match[:yaml].gsub(/remote: /, "")
+            report = YAML.load(yaml)
+            expect(report.fetch("ruby.version")).to eq(expected)
+          rescue Exception => e
+            puts app.output
+            puts yaml if yaml
+            puts report.inspect if report
+            raise e
+          end
 
           expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
         end

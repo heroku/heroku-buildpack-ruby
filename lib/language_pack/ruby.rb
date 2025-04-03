@@ -97,6 +97,10 @@ WARNING
       install_binaries
       run_assets_precompile_rake_task
     end
+    @report.capture(
+      "railties_version" => bundler.gem_version('railties'),
+      "rack_version" => bundler.gem_version('rack')
+    )
     config_detect
     best_practice_warnings
     warn_outdated_ruby
