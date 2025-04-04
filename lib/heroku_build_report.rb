@@ -27,12 +27,21 @@ module HerokuBuildReport
       @path.write("")
     end
 
+    def complex_object?(value)
+      value.to_yaml.match?(/!ruby\/object:/)
+    end
+
     def capture(metrics = {})
       metrics.each do |(key, value)|
         return if key.nil? || key.to_s.strip.empty?
 
         key = key&.strip
         raise "Key  cannot be empty (#{key.inspect} => #{value})" if key.nil? || key.empty?
+
+        # Don't serialize complex values by accident
+        if complex_object?(value)
+          value = value.to_s
+        end
 
         @data["#{key}"] = value
       end
