@@ -29,3 +29,9 @@ begin
 rescue Exception => e
   LanguagePack::ShellHelpers.display_error_and_exit(e)
 end
+
+include LanguagePack::ShellHelpers
+if env("HEROKU_DEBUG_BIN_REPORT")
+  puts "## Debug info for bin/report"
+  puts HerokuBuildReport::GLOBAL.data.inspect
+end
