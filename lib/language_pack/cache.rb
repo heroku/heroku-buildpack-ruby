@@ -58,7 +58,7 @@ class LanguagePack::Cache
     return unless @cache_base
 
     dest ||= path
-    copy (@cache_base + path), dest, '-a -n'
+    copy (@cache_base + path), dest, '-a --update=none'
   end
 
   # copy cache contents
