@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Observe `.ruby-version` formats (https://github.com/heroku/heroku-buildpack-ruby/pull/1576)
 
 ## [v299] - 2025-04-07
 
