@@ -112,8 +112,14 @@ class LanguagePack::Helpers::BundlerWrapper
 
     contents = @gemfile_lock_path.read(mode: "rt")
     bundled_with = contents.match(BUNDLED_WITH_REGEX)
+    dot_ruby_version_file = @gemfile_lock_path.join("..").join(".ruby-version")
     @report.capture(
-      "bundled_with" => bundled_with&.[]("version") || "empty"
+      "bundler.bundled_with" => bundled_with&.[]("version") || "empty",
+      # We use this bundler class to detect the Requested ruby version from the Gemfile.lock
+      # Rails 8 stopped generating `RUBY VERSION` in the Gemfile.lock and started generating
+      # a `.ruby-version` file. This will observe the formats to help guide implementation
+      # decisions
+      "ruby.dot_ruby_version" => dot_ruby_version_file.exist? ? dot_ruby_version_file.read&.strip : nil
     )
     @version = self.class.detect_bundler_version(
       contents: contents,
@@ -121,10 +127,10 @@ class LanguagePack::Helpers::BundlerWrapper
     )
     parts = @version.split(".")
     @report.capture(
-      "bundler_version_installed" => @version,
-      "bundler_major" => parts&.shift,
-      "bundler_minor" => parts&.shift,
-      "bundler_patch" => parts&.shift
+      "bundler.version_installed" => @version,
+      "bundler.major" => parts&.shift,
+      "bundler.minor" => parts&.shift,
+      "bundler.patch" => parts&.shift
     )
     @dir_name = "bundler-#{@version}"
 
