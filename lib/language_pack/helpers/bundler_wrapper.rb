@@ -113,7 +113,7 @@ class LanguagePack::Helpers::BundlerWrapper
     contents = @gemfile_lock_path.read(mode: "rt")
     bundled_with = contents.match(BUNDLED_WITH_REGEX)
     @report.capture(
-      "bundled_with" => bundled_with&.[]("version") || "empty"
+      "bundler.bundled_with" => bundled_with&.[]("version") || "empty"
     )
     @version = self.class.detect_bundler_version(
       contents: contents,
@@ -121,10 +121,10 @@ class LanguagePack::Helpers::BundlerWrapper
     )
     parts = @version.split(".")
     @report.capture(
-      "bundler_version_installed" => @version,
-      "bundler_major" => parts&.shift,
-      "bundler_minor" => parts&.shift,
-      "bundler_patch" => parts&.shift
+      "bundler.version_installed" => @version,
+      "bundler.major" => parts&.shift,
+      "bundler.minor" => parts&.shift,
+      "bundler.patch" => parts&.shift
     )
     @dir_name = "bundler-#{@version}"
 
