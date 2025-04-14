@@ -64,11 +64,12 @@ describe "Multiple platform detection" do
 
       expect(report.data).to eq(
         {
-          "bundled_with" => "2.5.7",
-          "bundler_major" => "2",
-          "bundler_minor" => "5",
-          "bundler_patch" => "23",
-          "bundler_version_installed" => "2.5.23",
+          "ruby.dot_ruby_version" => nil,
+          "bundler.bundled_with" => "2.5.7",
+          "bundler.major" => "2",
+          "bundler.minor" => "5",
+          "bundler.patch" => "23",
+          "bundler.version_installed" => "2.5.23",
         }
       )
     end
