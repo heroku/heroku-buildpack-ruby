@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v301] - 2025-04-14
+
 - Observe `.ruby-version` formats (https://github.com/heroku/heroku-buildpack-ruby/pull/1576)
 
 ## [v300] - 2025-04-14
@@ -1668,7 +1671,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v300...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v301...main
+[v301]: https://github.com/heroku/heroku-buildpack-ruby/compare/v300...v301
 [v300]: https://github.com/heroku/heroku-buildpack-ruby/compare/v299...v300
 [v299]: https://github.com/heroku/heroku-buildpack-ruby/compare/v298...v299
 [v298]: https://github.com/heroku/heroku-buildpack-ruby/compare/v297...v298
