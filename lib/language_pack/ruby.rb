@@ -1112,7 +1112,7 @@ params = CGI.parse(uri.query || "")
     return true unless precompile.is_defined?
 
     topic "Precompiling assets"
-    precompile.invoke(env: rake_env)
+    precompile.invoke(env: rake_env.merge("HEROKU_BUILD_SKIP_APPLICATION_EAGER_LOAD" => "true" ))
     if precompile.success?
       puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
     else
