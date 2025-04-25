@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+
+## [v303] - 2025-04-25
+
+- Ruby 3.5.0-preview1 is now available
+
 - Fix warning message about `cp -n` (https://github.com/heroku/heroku-buildpack-ruby/pull/1583)
 
 ## [v302] - 2025-04-16
@@ -1677,7 +1682,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v302...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v303...main
+[v303]: https://github.com/heroku/heroku-buildpack-ruby/compare/v302...v303
 [v302]: https://github.com/heroku/heroku-buildpack-ruby/compare/v301...v302
 [v301]: https://github.com/heroku/heroku-buildpack-ruby/compare/v300...v301
 [v300]: https://github.com/heroku/heroku-buildpack-ruby/compare/v299...v300
