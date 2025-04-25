@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix warning message about `cp -n` (https://github.com/heroku/heroku-buildpack-ruby/pull/1583)
 
 ## [v302] - 2025-04-16
 
