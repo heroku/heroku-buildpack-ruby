@@ -74,7 +74,9 @@ class LanguagePack::Cache
 
     return false unless File.exist?(from)
     FileUtils.mkdir_p File.dirname(to)
-    system("cp #{options} #{from}/. #{to}")
+    command = "cp #{options} #{from}/. #{to}"
+    system(command)
+    raise "Command failed `#{command}`" unless $?
   end
 
   # copy contents between to places in the cache
