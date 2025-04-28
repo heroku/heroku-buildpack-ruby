@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix `cp --update=none` warning `heroku-22` (https://github.com/heroku/heroku-buildpack-ruby/pull/1588)
 
 ## [v304] - 2025-04-28
 
