@@ -58,7 +58,12 @@ class LanguagePack::Cache
     return unless @cache_base
 
     dest ||= path
-    copy (@cache_base + path), dest, '-a --update=none'
+
+    if ENV["STACK"] == "heroku-20"
+      copy (@cache_base + path), dest, "-a -n"
+    else
+      copy (@cache_base + path), dest, "-a --update=none"
+    end
   end
 
   # copy cache contents
