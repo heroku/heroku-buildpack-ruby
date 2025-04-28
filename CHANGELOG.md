@@ -2,11 +2,11 @@
 
 ## [Unreleased]
 
+- Fix `cp --update` on `heroku-22` (https://github.com/heroku/heroku-buildpack-ruby/pull/1585)
 
 ## [v303] - 2025-04-25
 
 - Ruby 3.5.0-preview1 is now available
-
 - Fix warning message about `cp -n` (https://github.com/heroku/heroku-buildpack-ruby/pull/1583)
 
 ## [v302] - 2025-04-16

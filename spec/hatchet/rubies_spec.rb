@@ -49,10 +49,30 @@ describe "Ruby versions" do
 end
 
 describe "Upgrading ruby apps" do
-  it "works when changing versions" do
+  it "works when changing versions on #{DEFAULT_STACK}" do
     version = "3.3.1"
     expect(version).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
     app = Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK)
+    app.deploy do |app|
+      # default version
+      expect(app.run("env | grep MALLOC_ARENA_MAX")).to match("MALLOC_ARENA_MAX=2")
+      expect(app.run("env | grep DISABLE_SPRING")).to match("DISABLE_SPRING=1")
+
+      # Deploy again
+      run!(%Q{echo "ruby '#{version}'" >> Gemfile})
+      run!("git add -A; git commit -m update-ruby")
+      app.push!
+      expect(app.output).to match(version)
+      expect(app.run("ruby -v")).to match(version)
+      expect(app.output).to match("Ruby version change detected")
+    end
+  end
+
+  it "works when changing versions on heroku-22" do
+    version = "3.3.1"
+    expect(DEFAULT_STACK).to_not eq("herou-22")
+    expect(version).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
+    app = Hatchet::Runner.new("default_ruby", stack: "heroku-22")
     app.deploy do |app|
       # default version
       expect(app.run("env | grep MALLOC_ARENA_MAX")).to match("MALLOC_ARENA_MAX=2")
