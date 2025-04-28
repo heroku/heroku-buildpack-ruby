@@ -58,7 +58,12 @@ class LanguagePack::Cache
     return unless @cache_base
 
     dest ||= path
-    copy (@cache_base + path), dest, '-a --update=none'
+
+    if ENV["STACK"] == "heroku-20"
+      copy (@cache_base + path), dest, "-a -n"
+    else
+      copy (@cache_base + path), dest, "-a --update=none"
+    end
   end
 
   # copy cache contents
@@ -69,7 +74,9 @@ class LanguagePack::Cache
 
     return false unless File.exist?(from)
     FileUtils.mkdir_p File.dirname(to)
-    system("cp #{options} #{from}/. #{to}")
+    command = "cp #{options} #{from}/. #{to}"
+    system(command)
+    raise "Command failed `#{command}`" unless $?
   end
 
   # copy contents between to places in the cache
