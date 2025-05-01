@@ -98,7 +98,6 @@ class LanguagePack::Base
       puts @deprecations.join("\n")
     end
     Kernel.puts ""
-    mcount "success"
   end
 
   def build_release
@@ -126,32 +125,6 @@ class LanguagePack::Base
     msg << "We recommend explicitly declaring how to boot your server process via a Procfile.\n"
     msg << "https://devcenter.heroku.com/articles/ruby-default-web-server"
     warn msg
-  end
-
-
-
-  # log output
-  # Ex. log "some_message", "here", :someattr="value"
-  def log(*args)
-    args.concat [:id => @id]
-    args.concat [:framework => self.class.to_s.split("::").last.downcase]
-
-    start = Time.now.to_f
-    log_internal args, :start => start
-
-    if block_given?
-      begin
-        ret = yield
-        finish = Time.now.to_f
-        log_internal args, :status => "complete", :finish => finish, :elapsed => (finish - start)
-        return ret
-      rescue StandardError => ex
-        finish  = Time.now.to_f
-        message = Shellwords.escape(ex.message)
-        log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => message
-        raise ex
-      end
-    end
   end
 
 private ##################################

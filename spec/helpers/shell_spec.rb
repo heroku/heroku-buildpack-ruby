@@ -28,21 +28,6 @@ describe "ShellHelpers" do
     end
   end
 
-  describe "mcount" do
-    it "logs to a file" do
-      begin
-        original = ENV["BUILDPACK_LOG_FILE"]
-        Tempfile.open("logfile.log") do |f|
-          ENV["BUILDPACK_LOG_FILE"] = f.path
-          FakeShell.new.mcount "foo"
-          expect(File.read(f.path)).to match("count#buildpack.ruby.foo=1")
-        end
-      ensure
-        ENV["BUILDPACK_LOG_FILE"] = original
-      end
-    end
-  end
-
   describe "#command_options_to_string" do
     it "formats ugly keys correctly" do
       env      = {%Q{ un"matched } => "bad key"}
@@ -73,24 +58,25 @@ describe "ShellHelpers" do
 
   describe "#puts" do
     context 'when the message has an invalid utf-8 character' do
-      it 'no error is raised' do
+      it 'no error is raised by puts directly' do
         sh = FakeShell.new
 
         bad_lines = File.read("spec/fixtures/invalid_encoding.log")
         sh.puts(bad_lines)
       end
 
-      it 'catches it just in case' do
+      it 'from an internal call, it catches and annotates it' do
         sh = FakeShell.new
 
-        def sh.print(string); string.strip; end
-        def sh.mcount(*args); @error_caught = true; end
+        def sh.print(string)
+          # Strip emits a UTF-8 error
+          string.strip
+        end
 
         bad_lines = File.read("spec/fixtures/invalid_encoding.log")
-        expect { sh.puts(bad_lines) }.to raise_error(ArgumentError)
-
-        error_caught = sh.instance_variable_get(:"@error_caught")
-        expect(error_caught).to eq(true)
+        expect { sh.puts(bad_lines) }.to raise_error(ArgumentError) do |error|
+          expect(error.message).to include("Invalid string:")
+        end
       end
     end
   end

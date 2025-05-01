@@ -667,133 +667,126 @@ BUNDLE
 
   # runs bundler to install the dependencies
   def build_bundler
-    log("bundle") do
-      if File.exist?("#{Dir.pwd}/.bundle/config")
-        warn(<<~WARNING, inline: true)
-          You have the `.bundle/config` file checked into your repository
-            It contains local state like the location of the installed bundle
-            as well as configured git local gems, and other settings that should
-          not be shared between multiple checkouts of a single repo. Please
-          remove the `.bundle/` folder from your repo and add it to your `.gitignore` file.
+    if File.exist?("#{Dir.pwd}/.bundle/config")
+      warn(<<~WARNING, inline: true)
+        You have the `.bundle/config` file checked into your repository
+          It contains local state like the location of the installed bundle
+          as well as configured git local gems, and other settings that should
+        not be shared between multiple checkouts of a single repo. Please
+        remove the `.bundle/` folder from your repo and add it to your `.gitignore` file.
 
-          https://devcenter.heroku.com/articles/bundler-configuration
-        WARNING
-      end
+        https://devcenter.heroku.com/articles/bundler-configuration
+      WARNING
+    end
 
-      if bundler.windows_gemfile_lock?
-        if bundler.supports_multiple_platforms?
-          puts "Windows platform detected, preserving `Gemfile.lock` (#{bundler.version} >= 2.2)"
-        else
-            File.unlink("Gemfile.lock")
-            ENV.delete("BUNDLE_DEPLOYMENT")
-
-            warn(<<~WARNING, inline: true)
-              Removing `Gemfile.lock` because it was generated on Windows.
-
-              Bundler will do a full resolve so native gems are handled properly.
-              This may result in unexpected gem versions being used in your app.
-              In rare occasions Bundler may not be able to resolve your dependencies at all.
-
-              Upgrade to bundler version 2.2 or higher to skip this behavior and use built in support
-              for multiple platforms. Running these commands below (after the `>`) in a command prompt
-              should resolve this warning:
-
-                > gem install bundler
-                > bundle update --bundler
-                > bundle lock --add-platform ruby
-                > bundle lock --add-platform x86_64-linux
-                > bundle install
-                > git add Gemfile.lock
-                > git commit -m "Upgrade bundler"
-
-              For more information see:
-                https://devcenter.heroku.com/articles/bundler-windows-gemfile
-            WARNING
-        end
-      end
-
-      bundle_command = String.new("")
-      bundle_command << "BUNDLE_WITHOUT='#{ENV["BUNDLE_WITHOUT"]}' "
-      bundle_command << "BUNDLE_PATH=#{ENV["BUNDLE_PATH"]} "
-      bundle_command << "BUNDLE_BIN=#{ENV["BUNDLE_BIN"]} "
-      bundle_command << "BUNDLE_DEPLOYMENT=#{ENV["BUNDLE_DEPLOYMENT"]} " if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
-      bundle_command << "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=#{ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"]} " if bundler.needs_ruby_global_append_path?
-      bundle_command << "bundle install -j4"
-
-      topic("Installing dependencies using bundler #{bundler.version}")
-
-      bundler_output = String.new("")
-      bundle_time    = nil
-      env_vars = {}
-      Dir.mktmpdir("libyaml-") do |tmpdir|
-        libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
-
-        # need to setup compile environment for the psych gem
-        yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
-        yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
-        pwd            = Dir.pwd
-        bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{bundler.dir_name}/lib"
-
-        # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
-        # codon since it uses bundler.
-        env_vars["BUNDLE_GEMFILE"] = "#{pwd}/Gemfile"
-        env_vars["BUNDLE_CONFIG"] = "#{pwd}/.bundle/config"
-        env_vars["CPATH"] = noshellescape("#{yaml_include}:$CPATH")
-        env_vars["CPPATH"] = noshellescape("#{yaml_include}:$CPPATH")
-        env_vars["LIBRARY_PATH"] = noshellescape("#{yaml_lib}:$LIBRARY_PATH")
-        env_vars["RUBYOPT"] = ""
-        env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
-        env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
-
-        puts "Running: #{bundle_command}"
-        bundle_time = Benchmark.realtime do
-          bundler_output << pipe("#{bundle_command} --no-clean", out: "2>&1", env: env_vars, user_env: true)
-        end
-      end
-
-      if $?.success?
-        puts "Bundle completed (#{"%.2f" % bundle_time}s)"
-        log "bundle", :status => "success"
-        puts "Cleaning up the bundler cache."
-        pipe("bundle clean", out: "2> /dev/null", user_env: true, env: env_vars)
-        @bundler_cache.store
-
-        # Keep gem cache out of the slug
-        FileUtils.rm_rf("#{slug_vendor_base}/cache")
+    if bundler.windows_gemfile_lock?
+      if bundler.supports_multiple_platforms?
+        puts "Windows platform detected, preserving `Gemfile.lock` (#{bundler.version} >= 2.2)"
       else
-        mcount "fail.bundle.install"
-        log "bundle", :status => "failure"
-        error_message = "Failed to install gems via Bundler."
-        puts "Bundler Output: #{bundler_output}"
-        if bundler_output.match(/An error occurred while installing sqlite3/)
-          mcount "fail.sqlite3"
-          error_message += <<~ERROR
+          File.unlink("Gemfile.lock")
+          ENV.delete("BUNDLE_DEPLOYMENT")
 
-            Detected sqlite3 gem which is not supported on Heroku:
-            https://devcenter.heroku.com/articles/sqlite3
-          ERROR
-        end
+          warn(<<~WARNING, inline: true)
+            Removing `Gemfile.lock` because it was generated on Windows.
 
-        if bundler_output.match(/but your Gemfile specified/)
-          mcount "fail.ruby_version_mismatch"
-          error_message += <<~ERROR
+            Bundler will do a full resolve so native gems are handled properly.
+            This may result in unexpected gem versions being used in your app.
+            In rare occasions Bundler may not be able to resolve your dependencies at all.
 
-            Detected a mismatch between your Ruby version installed and
-            Ruby version specified in Gemfile or Gemfile.lock. You can
-            correct this by running:
+            Upgrade to bundler version 2.2 or higher to skip this behavior and use built in support
+            for multiple platforms. Running these commands below (after the `>`) in a command prompt
+            should resolve this warning:
 
-                $ bundle update --ruby
-                $ git add Gemfile.lock
-                $ git commit -m "update ruby version"
+              > gem install bundler
+              > bundle update --bundler
+              > bundle lock --add-platform ruby
+              > bundle lock --add-platform x86_64-linux
+              > bundle install
+              > git add Gemfile.lock
+              > git commit -m "Upgrade bundler"
 
-            If this does not solve the issue please see this documentation:
-
-            https://devcenter.heroku.com/articles/ruby-versions#your-ruby-version-is-x-but-your-gemfile-specified-y
-          ERROR
-        end
-
-        error error_message
+            For more information see:
+              https://devcenter.heroku.com/articles/bundler-windows-gemfile
+          WARNING
       end
+    end
+
+    bundle_command = String.new("")
+    bundle_command << "BUNDLE_WITHOUT='#{ENV["BUNDLE_WITHOUT"]}' "
+    bundle_command << "BUNDLE_PATH=#{ENV["BUNDLE_PATH"]} "
+    bundle_command << "BUNDLE_BIN=#{ENV["BUNDLE_BIN"]} "
+    bundle_command << "BUNDLE_DEPLOYMENT=#{ENV["BUNDLE_DEPLOYMENT"]} " if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
+    bundle_command << "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=#{ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"]} " if bundler.needs_ruby_global_append_path?
+    bundle_command << "bundle install -j4"
+
+    topic("Installing dependencies using bundler #{bundler.version}")
+
+    bundler_output = String.new("")
+    bundle_time    = nil
+    env_vars = {}
+    Dir.mktmpdir("libyaml-") do |tmpdir|
+      libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
+
+      # need to setup compile environment for the psych gem
+      yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
+      yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
+      pwd            = Dir.pwd
+      bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{bundler.dir_name}/lib"
+
+      # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
+      # codon since it uses bundler.
+      env_vars["BUNDLE_GEMFILE"] = "#{pwd}/Gemfile"
+      env_vars["BUNDLE_CONFIG"] = "#{pwd}/.bundle/config"
+      env_vars["CPATH"] = noshellescape("#{yaml_include}:$CPATH")
+      env_vars["CPPATH"] = noshellescape("#{yaml_include}:$CPPATH")
+      env_vars["LIBRARY_PATH"] = noshellescape("#{yaml_lib}:$LIBRARY_PATH")
+      env_vars["RUBYOPT"] = ""
+      env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
+      env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
+
+      puts "Running: #{bundle_command}"
+      bundle_time = Benchmark.realtime do
+        bundler_output << pipe("#{bundle_command} --no-clean", out: "2>&1", env: env_vars, user_env: true)
+      end
+    end
+
+    if $?.success?
+      puts "Bundle completed (#{"%.2f" % bundle_time}s)"
+      puts "Cleaning up the bundler cache."
+      pipe("bundle clean", out: "2> /dev/null", user_env: true, env: env_vars)
+      @bundler_cache.store
+
+      # Keep gem cache out of the slug
+      FileUtils.rm_rf("#{slug_vendor_base}/cache")
+    else
+      error_message = "Failed to install gems via Bundler."
+      puts "Bundler Output: #{bundler_output}"
+      if bundler_output.match(/An error occurred while installing sqlite3/)
+        error_message += <<~ERROR
+
+          Detected sqlite3 gem which is not supported on Heroku:
+          https://devcenter.heroku.com/articles/sqlite3
+        ERROR
+      end
+
+      if bundler_output.match(/but your Gemfile specified/)
+        error_message += <<~ERROR
+
+          Detected a mismatch between your Ruby version installed and
+          Ruby version specified in Gemfile or Gemfile.lock. You can
+          correct this by running:
+
+              $ bundle update --ruby
+              $ git add Gemfile.lock
+              $ git commit -m "update ruby version"
+
+          If this does not solve the issue please see this documentation:
+
+          https://devcenter.heroku.com/articles/ruby-versions#your-ruby-version-is-x-but-your-gemfile-specified-y
+        ERROR
+      end
+
+      error error_message
     end
   end
 
@@ -809,10 +802,9 @@ BUNDLE
     return false unless File.directory?("config")
     return false if  bundler.has_gem?('activerecord') && bundler.gem_version('activerecord') >= Gem::Version.new('4.1.0.beta1')
 
-    log("create_database_yml") do
-      topic("Writing config/database.yml to read from DATABASE_URL")
-      File.open("config/database.yml", "w") do |file|
-        file.puts <<-DATABASE_YML
+    topic("Writing config/database.yml to read from DATABASE_URL")
+    File.open("config/database.yml", "w") do |file|
+      file.puts <<-DATABASE_YML
 <%
 
 require 'cgi'
@@ -867,7 +859,6 @@ params = CGI.parse(uri.query || "")
   <%= key %>: <%= value.first %>
 <% end %>
         DATABASE_YML
-      end
     end
   end
 
@@ -1064,8 +1055,6 @@ params = CGI.parse(uri.query || "")
   end
 
   def precompile_fail(output)
-    mcount "fail.assets_precompile"
-    log "assets_precompile", :status => "failure"
     msg = "Precompiling assets failed.\n"
     if output.match(/(127\.0\.0\.1)|(org\.postgresql\.util)/)
       msg << "Attempted to access a nonexistent database:\n"
@@ -1074,7 +1063,6 @@ params = CGI.parse(uri.query || "")
 
     sprockets_version = bundler.gem_version('sprockets')
     if output.match(/Sprockets::FileNotFound/) && (sprockets_version < Gem::Version.new('4.0.0.beta7') && sprockets_version > Gem::Version.new('4.0.0.beta4'))
-      mcount "fail.assets_precompile.file_not_found_beta"
       msg << "If you have this file in your project\n"
       msg << "try upgrading to Sprockets 4.0.0.beta7 or later:\n"
       msg << "https://github.com/rails/sprockets/pull/547\n"
