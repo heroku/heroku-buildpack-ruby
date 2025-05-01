@@ -79,7 +79,6 @@ WARNING
     Dir.chdir(build_path)
     remove_vendor_bundle
     warn_bundler_upgrade
-    warn_bundler_1x
     warn_bad_binstubs
     install_ruby(slug_vendor_ruby)
     setup_language_pack_environment(
@@ -111,30 +110,6 @@ WARNING
   rescue => e
     warn_outdated_ruby
     raise e
-  end
-
-  def warn_bundler_1x
-    bundler_versions = LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS
-    if bundler.version == bundler_versions["1"]
-      warn(<<~EOF, inline: true)
-        Deprecating bundler 1.17.3
-
-        Your application requested bundler `1.x` in the `Gemfile.lock`
-        which resolved to `1.17.3`. This version is no longer maintained
-        by bundler core and will no longer work soon.
-
-        Please upgrade to bundler `2.3.x` or higher:
-
-        ```
-        $ gem install bundler -v #{bundler_versions["2.3"]}
-        $ bundle update --bundler
-        $ git add Gemfile.lock
-        $ git commit -m "Updated bundler version"
-        ```
-
-        https://devcenter.heroku.com/changelog-items/3166
-      EOF
-    end
   end
 
   def cleanup
