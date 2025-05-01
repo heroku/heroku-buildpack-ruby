@@ -64,21 +64,11 @@ module LanguagePack
 
     # https://github.com/bundler/bundler/issues/4621
     def version_for_download
-      if patchlevel_is_significant? && @patchlevel && @patchlevel.sub(/p/, '').to_i >= 0
-        @version
-      else
-        version_without_patchlevel
-      end
+      version_without_patchlevel
     end
 
     def file_name
       "#{version_for_download}.tgz"
-    end
-
-    # Before Ruby 2.1 patch releases were done via patchlevel i.e. 1.9.3-p426 versus 1.9.3-p448
-    # With 2.1 and above patches are released in the "minor" version instead i.e. 2.1.0 versus 2.1.1
-    def patchlevel_is_significant?
-      !jruby? && Gem::Version.new(self.ruby_version) <= Gem::Version.new("2.1")
     end
 
     def rake_is_vendored?
@@ -127,7 +117,6 @@ module LanguagePack
     # `ruby-2.3.1` then then `next_logical_version(1)`
     # will produce `ruby-2.3.2`.
     def next_logical_version(increment = 1)
-      return false if patchlevel_is_significant?
       split_version = @version_without_patchlevel.split(".")
       teeny = split_version.pop
       split_version << teeny.to_i + increment
