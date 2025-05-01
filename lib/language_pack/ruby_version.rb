@@ -62,10 +62,6 @@ module LanguagePack
       return true
     end
 
-    def ruby_192_or_lower?
-      Gem::Version.new(self.ruby_version) <= Gem::Version.new("1.9.2")
-    end
-
     # https://github.com/bundler/bundler/issues/4621
     def version_for_download
       if patchlevel_is_significant? && @patchlevel && @patchlevel.sub(/p/, '').to_i >= 0

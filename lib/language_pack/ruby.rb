@@ -269,10 +269,7 @@ EOF
     # Rails has a binstub for yarn that doesn't work for all applications
     # we need to ensure that yarn comes before local bin dir for that case
     paths << yarn_preinstall_bin_path if yarn_preinstalled?
-
-    # Need to remove `./bin` folder since it links to the wrong --prefix ruby binstubs breaking require in Ruby 1.9.2 and 1.8.7.
-    # Because for 1.9.2 and 1.8.7 there is a "build" ruby and a non-"build" Ruby
-    paths << "#{File.expand_path(".")}/bin" unless ruby_version.ruby_192_or_lower?
+    paths << "#{File.expand_path(".")}/bin"
 
     paths << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
     paths << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
