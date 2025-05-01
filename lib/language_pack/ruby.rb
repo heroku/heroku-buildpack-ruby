@@ -1094,7 +1094,6 @@ params = CGI.parse(uri.query || "")
 
     old_rubygems_version = metadata[:ruby_version]
     old_stack = metadata[:stack]
-    old_stack ||= DEFAULT_LEGACY_STACK
 
     stack_change = old_stack != @stack
     if !new_app? && stack_change
@@ -1179,7 +1178,6 @@ MESSAGE
 
     old_rubygems_version = @metadata.read(ruby_version_cache).strip if @metadata.exists?(ruby_version_cache)
     old_stack = @metadata.read(stack_cache).strip if @metadata.exists?(stack_cache)
-    old_stack ||= DEFAULT_LEGACY_STACK
 
     stack_change  = old_stack != @stack
     convert_stack = @bundler_cache.old?
