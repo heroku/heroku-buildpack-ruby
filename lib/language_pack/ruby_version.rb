@@ -71,10 +71,6 @@ module LanguagePack
       "#{version_for_download}.tgz"
     end
 
-    def rake_is_vendored?
-      Gem::Version.new(self.ruby_version) >= Gem::Version.new("1.9")
-    end
-
     def default?
       !set
     end
