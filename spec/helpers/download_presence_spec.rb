@@ -52,37 +52,6 @@ describe LanguagePack::Helpers::DownloadPresence do
     expect(download.exists_on_next_stack?(current_stack:"heroku-22")).to be_truthy
   end
 
-  it "detects when a package is present on higher stacks" do
-    download = LanguagePack::Helpers::DownloadPresence.new(
-      multi_arch_stacks: [],
-      file_name: 'ruby-2.6.5.tgz',
-      stacks: ['cedar-14', 'heroku-16', 'heroku-18'],
-      arch: nil
-    )
-
-    download.call
-
-    expect(download.exists?).to eq(true)
-    expect(download.valid_stack_list).to eq(['cedar-14', 'heroku-16', 'heroku-18'])
-
-    expect(download.exists_on_next_stack?(current_stack: "heroku-16")).to be_truthy
-    expect(download.next_stack(current_stack: "heroku-16")).to eq("heroku-18")
-  end
-
-  it "detects when a package is not present on higher stacks" do
-    download = LanguagePack::Helpers::DownloadPresence.new(
-      multi_arch_stacks: [],
-      file_name: 'ruby-1.9.3.tgz',
-      stacks: ['cedar-14', 'heroku-16', 'heroku-18'],
-      arch: nil
-    )
-
-    download.call
-
-    expect(download.exists?).to eq(true)
-    expect(download.valid_stack_list).to eq(['cedar-14'])
-  end
-
   it "detects when a package is present on two stacks but not a third" do
     download = LanguagePack::Helpers::DownloadPresence.new(
       multi_arch_stacks: [],
@@ -101,7 +70,7 @@ describe LanguagePack::Helpers::DownloadPresence do
     download = LanguagePack::Helpers::DownloadPresence.new(
       multi_arch_stacks: [],
       file_name: 'does-not-exist.tgz',
-      stacks: ['cedar-14', 'heroku-16', 'heroku-18'],
+      stacks: ['heroku-22', 'heroku-24'],
       arch: nil
     )
 
