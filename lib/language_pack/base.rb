@@ -186,20 +186,4 @@ private ##################################
   def set_export_path(key, val)
     export key, val, option: :path
   end
-
-  def log_internal(*args)
-    message = build_log_message(args)
-    %x{ logger -p user.notice -t "slugc[$$]" "buildpack-ruby #{message}" }
-  end
-
-  def build_log_message(args)
-    args.map do |arg|
-      case arg
-        when Float then "%0.2f" % arg
-        when Array then build_log_message(arg)
-        when Hash  then arg.map { |k,v| "#{k}=#{build_log_message([v])}" }.join(" ")
-        else arg
-      end
-    end.join(" ")
-  end
 end
