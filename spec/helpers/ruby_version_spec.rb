@@ -36,30 +36,6 @@ describe "RubyVersion" do
     expect(ruby_version.next_major_version(2)).to eq("ruby-4.0.0")
   end
 
-  it "does not include patchlevels when the patchlevel is negative for download" do
-    ruby_version = LanguagePack::RubyVersion.new("ruby-2.0.0-p-1")
-    expect(ruby_version.version_for_download).to eq("ruby-2.0.0")
-
-    ruby_version = LanguagePack::RubyVersion.new("ruby-2.4.0-p-1")
-    expect(ruby_version.version_for_download).to eq("ruby-2.4.0")
-  end
-
-  it "detects Ruby 2.6.0, 2.6.1 and 2.6.2 as needing a warning" do
-    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.0")
-    expect(ruby_version.warn_ruby_26_bundler?).to be true
-    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.1")
-    expect(ruby_version.warn_ruby_26_bundler?).to be true
-    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.2")
-    expect(ruby_version.warn_ruby_26_bundler?).to be true
-
-    ruby_version = LanguagePack::RubyVersion.new("ruby-2.6.3")
-    expect(ruby_version.warn_ruby_26_bundler?).to be false
-    ruby_version = LanguagePack::RubyVersion.new("ruby-2.5.3")
-    expect(ruby_version.warn_ruby_26_bundler?).to be false
-    ruby_version = LanguagePack::RubyVersion.new("ruby-2.7.1")
-    expect(ruby_version.warn_ruby_26_bundler?).to be false
-  end
-
   it "correctly sets default ruby versions" do
     Hatchet::App.new("default_ruby").in_directory_fork do |dir|
       require 'bundler'

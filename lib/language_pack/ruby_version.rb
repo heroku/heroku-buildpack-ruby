@@ -55,13 +55,6 @@ module LanguagePack
       @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
     end
 
-    def warn_ruby_26_bundler?
-      return false if Gem::Version.new(self.ruby_version) >= Gem::Version.new("2.6.3")
-      return false if Gem::Version.new(self.ruby_version) < Gem::Version.new("2.6.0")
-
-      return true
-    end
-
     # https://github.com/bundler/bundler/issues/4621
     def version_for_download
       version_without_patchlevel
