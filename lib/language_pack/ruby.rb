@@ -556,7 +556,7 @@ EOF
           On Heroku CI you can set your stack in the `app.json`. For example:
 
           ```
-          "stack": "heroku-20"
+          "stack": "heroku-24"
           ```
         ERROR
       end
