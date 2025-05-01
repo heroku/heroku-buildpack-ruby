@@ -21,6 +21,9 @@ describe LanguagePack::Helpers::DownloadPresence do
     download = LanguagePack::Helpers::DownloadPresence.new(
       multi_arch_stacks: ["heroku-24"],
       file_name: 'ruby-3.0.5.tgz',
+      # Heroku 20 is not longer supported however heroku-22 and heroku-24
+      # have identical Ruby versions supported, this test can be updated to
+      # use heroku-24 and heroku-26 (when that stack is released)
       stacks: ["heroku-20", "heroku-24"],
       arch: "amd64"
     )
@@ -35,18 +38,18 @@ describe LanguagePack::Helpers::DownloadPresence do
 
   it "knows if exists on the next stack" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      multi_arch_stacks: [],
-      file_name: 'ruby-3.1.4.tgz',
-      stacks: ['heroku-20', 'heroku-22'],
-      arch: nil
+      multi_arch_stacks: ["heroku-24"],
+      file_name: "#{LanguagePack::RubyVersion::DEFAULT_VERSION}.tgz",
+      stacks: ['heroku-22', 'heroku-24'],
+      arch: "amd64"
     )
 
     download.call
 
-    expect(download.next_stack(current_stack: "heroku-20")).to eq("heroku-22")
-    expect(download.next_stack(current_stack: "heroku-22")).to be_falsey
+    expect(download.next_stack(current_stack: "heroku-22")).to eq("heroku-24")
+    expect(download.next_stack(current_stack: "heroku-24")).to be_falsey
 
-    expect(download.exists_on_next_stack?(current_stack:"heroku-20")).to be_truthy
+    expect(download.exists_on_next_stack?(current_stack:"heroku-22")).to be_truthy
   end
 
   it "detects when a package is present on higher stacks" do
@@ -110,9 +113,9 @@ describe LanguagePack::Helpers::DownloadPresence do
 
   it "detects default ruby version" do
     download = LanguagePack::Helpers::DownloadPresence.new(
-      multi_arch_stacks: [],
-      file_name: "ruby-3.1.1.tgz",
-      arch: nil
+      multi_arch_stacks: ['heroku-24'],
+      file_name: "#{LanguagePack::RubyVersion::DEFAULT_VERSION}.tgz",
+      arch: "amd64"
     )
 
     download.call
