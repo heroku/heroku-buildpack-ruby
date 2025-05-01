@@ -181,13 +181,12 @@ WARNING
   # @return [String, nil] returns the ruby version if detected or nil if none is detected
   def ruby_version
     return @ruby_version if @ruby_version
-    new_app           = !File.exist?("vendor/heroku")
     last_version_file = "buildpack_ruby_version"
     last_version      = nil
     last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
 
     @ruby_version = LanguagePack::RubyVersion.new(bundler.ruby_version,
-      is_new:       new_app,
+      is_new:       new_app?,
       last_version: last_version)
     return @ruby_version
   end
