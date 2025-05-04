@@ -84,11 +84,6 @@ module LanguagePack
       end
     end
 
-    # does this vendor bundler
-    def vendored_bundler?
-      false
-    end
-
     def major
       @ruby_version.split(".")[0].to_i
     end
