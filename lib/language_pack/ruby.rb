@@ -1036,58 +1036,12 @@ params = CGI.parse(uri.query || "")
       @bundler_cache.load
     end
 
-    # fix bug from v37 deploy
-    if File.exist?("vendor/ruby_version")
-      puts "Broken cache detected. Purging build cache."
-      cache.clear("vendor")
-      FileUtils.rm_rf("vendor/ruby_version")
-      purge_bundler_cache
-      # fix bug introduced in v38
-    elsif !@metadata.include?(buildpack_version_cache) && @metadata.exists?(ruby_version_cache)
-      puts "Broken cache detected. Purging build cache."
-      purge_bundler_cache
-    elsif (@bundler_cache.exists? || @bundler_cache.old?) && @metadata.exists?(ruby_version_cache) && full_ruby_version != @metadata.read(ruby_version_cache).strip
+    if (@bundler_cache.exists? || @bundler_cache.old?) &&
+        @metadata.exists?(ruby_version_cache) &&
+        full_ruby_version != @metadata.read(ruby_version_cache).strip
       puts "Ruby version change detected. Clearing bundler cache."
       puts "Old: #{@metadata.read(ruby_version_cache).strip}"
       puts "New: #{full_ruby_version}"
-      purge_bundler_cache
-    end
-
-    # fix git gemspec bug from Bundler 1.3.0+ upgrade
-    if File.exist?(bundler_cache) && !@metadata.exists?(bundler_version_cache) && !run("find vendor/bundle/*/*/bundler/gems/*/ -name *.gemspec").include?("No such file or directory")
-      puts "Old bundler cache detected. Clearing bundler cache."
-      purge_bundler_cache
-    end
-
-    # fix for https://github.com/heroku/heroku-buildpack-ruby/issues/86
-    if (!@metadata.exists?(rubygems_version_cache) ||
-        (old_rubygems_version == "2.0.0" && old_rubygems_version != rubygems_version)) &&
-        @metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).strip.include?("ruby 2.0.0p0")
-      puts "Updating to rubygems #{rubygems_version}. Clearing bundler cache."
-      purge_bundler_cache
-    end
-
-    # fix for https://github.com/sparklemotion/nokogiri/issues/923
-    if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 76
-      puts "Fixing nokogiri install. Clearing bundler cache."
-      puts "See https://github.com/sparklemotion/nokogiri/issues/923."
-      purge_bundler_cache
-    end
-
-    # recompile nokogiri to use new libyaml
-    if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 99 && bundler.has_gem?("psych")
-      puts "Need to recompile psych for CVE-2013-6393. Clearing bundler cache."
-      puts "See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=737076."
-      purge_bundler_cache
-    end
-
-    # recompile gems for libyaml 0.1.7 update
-    if @metadata.exists?(buildpack_version_cache) && (bv = @metadata.read(buildpack_version_cache).sub('v', '').to_i) && bv != 0 && bv <= 147 &&
-        (@metadata.exists?(ruby_version_cache) && @metadata.read(ruby_version_cache).strip.match(/ruby 2\.1\.(9|10)/) ||
-          bundler.has_gem?("psych")
-        )
-      puts "Need to recompile gems for CVE-2014-2014-9130. Clearing bundler cache."
-      puts "See https://devcenter.heroku.com/changelog-items/1016."
       purge_bundler_cache
     end
 
