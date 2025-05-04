@@ -202,28 +202,26 @@ class LanguagePack::Helpers::BundlerWrapper
 
     ruby_version = self.class.platform_to_version(output)
     if ruby_version.nil? || ruby_version.empty?
-      if Gem::Version.new(self.version) > Gem::Version.new("2.3")
-        warn(<<~WARNING, inline: true)
-          No ruby version specified in the Gemfile.lock
+      warn(<<~WARNING, inline: true)
+        No ruby version specified in the Gemfile.lock
 
-          We could not determine the version of Ruby from your Gemfile.lock.
+        We could not determine the version of Ruby from your Gemfile.lock.
 
-            $ bundle platform --ruby
-            #{output}
+          $ bundle platform --ruby
+          #{output}
 
-            $ bundle -v
-            #{run("bundle -v", user_env: true, env: env)}
+          $ bundle -v
+          #{run("bundle -v", user_env: true, env: env)}
 
-          Ensure the above command outputs the version of Ruby you expect. If you have a ruby version specified in your Gemfile, you can update the Gemfile.lock by running the following command:
+        Ensure the above command outputs the version of Ruby you expect. If you have a ruby version specified in your Gemfile, you can update the Gemfile.lock by running the following command:
 
-            $ bundle update --ruby
+          $ bundle update --ruby
 
-          Make sure you commit the results to git before attempting to deploy again:
+        Make sure you commit the results to git before attempting to deploy again:
 
-            $ git add Gemfile.lock
-            $ git commit -m "update ruby version"
-        WARNING
-      end
+          $ git add Gemfile.lock
+          $ git commit -m "update ruby version"
+      WARNING
     end
     ruby_version
   end
