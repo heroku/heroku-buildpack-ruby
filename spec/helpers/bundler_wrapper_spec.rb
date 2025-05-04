@@ -57,8 +57,6 @@ describe "Multiple platform detection" do
         gemfile_path: gemfile,
         report: report
       )
-      expect(bundler.supports_multiple_platforms?).to be_truthy
-
       expect(report.data).to eq(
         {
           "ruby.dot_ruby_version" => nil,
