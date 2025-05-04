@@ -240,13 +240,6 @@ class LanguagePack::Helpers::BundlerWrapper
     @lockfile_parser ||= parse_gemfile_lock
   end
 
-  # Some bundler versions have different behavior
-  # if config is global versus local. These versions need
-  # the environment variable BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=1
-  def needs_ruby_global_append_path?
-    Gem::Version.new(@version) < Gem::Version.new("2.1.4")
-  end
-
   def bundler_version_escape_valve!
     topic("Removing BUNDLED WITH version in the Gemfile.lock")
     contents = File.read(@gemfile_lock_path, mode: "rt")

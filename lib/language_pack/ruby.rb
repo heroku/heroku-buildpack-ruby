@@ -285,7 +285,6 @@ EOF
     ENV["BUNDLE_PATH"] = bundle_path
     ENV["BUNDLE_BIN"] = bundler_binstubs_path
     ENV["BUNDLE_DEPLOYMENT"] = "1"
-    ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"] = "1" if bundler.needs_ruby_global_append_path?
   end
 
   # Sets up the environment variables for subsequent processes run by
@@ -348,7 +347,6 @@ EOF
     set_env_default "BUNDLE_PATH", ENV["BUNDLE_PATH"]
     set_env_default "BUNDLE_WITHOUT", ENV["BUNDLE_WITHOUT"]
     set_env_default "BUNDLE_BIN", ENV["BUNDLE_BIN"]
-    set_env_default "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE", ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"] if bundler.needs_ruby_global_append_path?
     set_env_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"] if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
   end
 
@@ -649,7 +647,6 @@ WARNING
     bundle_command << "BUNDLE_PATH=#{ENV["BUNDLE_PATH"]} "
     bundle_command << "BUNDLE_BIN=#{ENV["BUNDLE_BIN"]} "
     bundle_command << "BUNDLE_DEPLOYMENT=#{ENV["BUNDLE_DEPLOYMENT"]} " if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
-    bundle_command << "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=#{ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"]} " if bundler.needs_ruby_global_append_path?
     bundle_command << "bundle install -j4"
 
     topic("Installing dependencies using bundler #{bundler.version}")
