@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Removed support for Ubuntu 20.04 (and thus Heroku-20 / `heroku/builder:20`). This includes removing support for Ruby < 3.1 and Bundler < 2.3. (https://github.com/heroku/buildpacks-ruby/pull/1591)
 
 ## [v305] - 2025-04-28
 
