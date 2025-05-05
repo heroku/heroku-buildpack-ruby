@@ -14,8 +14,6 @@ require "language_pack/version"
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
-  LIBYAML_VERSION      = "0.1.7"
-  LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   NODE_BP_PATH         = "vendor/node/bin"
 
   # detects if this is a valid Ruby app
@@ -652,32 +650,21 @@ WARNING
     topic("Installing dependencies using bundler #{bundler.version}")
 
     bundler_output = String.new("")
-    bundle_time    = nil
+    bundle_time = nil
     env_vars = {}
-    Dir.mktmpdir("libyaml-") do |tmpdir|
-      libyaml_dir = "#{tmpdir}/#{LIBYAML_PATH}"
+    pwd = Dir.pwd
+    bundler_path = "#{pwd}/#{slug_vendor_base}/gems/#{bundler.dir_name}/lib"
 
-      # need to setup compile environment for the psych gem
-      yaml_include   = File.expand_path("#{libyaml_dir}/include").shellescape
-      yaml_lib       = File.expand_path("#{libyaml_dir}/lib").shellescape
-      pwd            = Dir.pwd
-      bundler_path   = "#{pwd}/#{slug_vendor_base}/gems/#{bundler.dir_name}/lib"
+    # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
+    # codon since it uses bundler.
+    env_vars["BUNDLE_GEMFILE"] = "#{pwd}/Gemfile"
+    env_vars["BUNDLE_CONFIG"] = "#{pwd}/.bundle/config"
+    env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
+    env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
 
-      # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
-      # codon since it uses bundler.
-      env_vars["BUNDLE_GEMFILE"] = "#{pwd}/Gemfile"
-      env_vars["BUNDLE_CONFIG"] = "#{pwd}/.bundle/config"
-      env_vars["CPATH"] = noshellescape("#{yaml_include}:$CPATH")
-      env_vars["CPPATH"] = noshellescape("#{yaml_include}:$CPPATH")
-      env_vars["LIBRARY_PATH"] = noshellescape("#{yaml_lib}:$LIBRARY_PATH")
-      env_vars["RUBYOPT"] = ""
-      env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
-      env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
-
-      puts "Running: #{bundle_command}"
-      bundle_time = Benchmark.realtime do
-        bundler_output << pipe("#{bundle_command} --no-clean", out: "2>&1", env: env_vars, user_env: true)
-      end
+    puts "Running: #{bundle_command}"
+    bundle_time = Benchmark.realtime do
+      bundler_output << pipe("#{bundle_command} --no-clean", out: "2>&1", env: env_vars, user_env: true)
     end
 
     if $?.success?
