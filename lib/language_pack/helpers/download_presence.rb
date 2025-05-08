@@ -7,16 +7,17 @@
 # Example
 #
 #    download = LanguagePack::Helpers::DownloadPresence.new(
-#      'ruby-1.9.3.tgz',
-#      stacks: ['heroku-20', 'heroku-22']
+#      'ruby-3.1.7.tgz',
+#      stacks: ['heroku-22', 'heroku-24']
 #    )
 #
 #    download.call
 #
 #    puts download.exists? #=> true
-#    puts download.valid_stack_list #=> ['cedar-14']
+#    puts download.valid_stack_list #=> ['heroku-22', 'heroku-24']
 class LanguagePack::Helpers::DownloadPresence
-  STACKS = ['heroku-20', 'heroku-22']
+  # heroku-22 and heroku-24 have identical ruby versions supported
+  STACKS = ['heroku-22', 'heroku-24']
 
   def initialize(file_name:, arch: , multi_arch_stacks:, stacks: STACKS )
     @file_name = file_name

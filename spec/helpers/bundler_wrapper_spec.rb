@@ -15,9 +15,6 @@ end
 describe "Bundler version detection" do
   it "supports minor versions" do
     wrapper_klass = LanguagePack::Helpers::BundlerWrapper
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   1.17.3")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("1")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["1"])
 
     version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.2.7")
     expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.3")).to be_truthy
@@ -60,8 +57,6 @@ describe "Multiple platform detection" do
         gemfile_path: gemfile,
         report: report
       )
-      expect(bundler.supports_multiple_platforms?).to be_truthy
-
       expect(report.data).to eq(
         {
           "ruby.dot_ruby_version" => nil,

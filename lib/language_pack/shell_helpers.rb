@@ -24,18 +24,6 @@ module LanguagePack
       @@deprecations
     end
 
-    def mcount(key, value = 1)
-      private_log("count", key => value)
-    end
-
-    def mmeasure(key, value)
-      private_log("measure", key => value)
-    end
-
-    def munique(key, value)
-      private_log("unique", key => value)
-    end
-
     def self.user_env_hash
       @@user_env_hash
     end
@@ -259,7 +247,6 @@ module LanguagePack
       error_message = e.message
       raise e if error_message !~ /invalid byte sequence/
 
-      mcount "fail.invalid_utf8"
       error_message << "\n       Invalid string: #{message}"
       raise e, error_message
     end
@@ -286,18 +273,5 @@ module LanguagePack
     def noshellescape(string)
       NoShellEscape.new(string)
     end
-
-    private
-      def private_log(name, key_value_hash)
-        File.open(ENV["BUILDPACK_LOG_FILE"] || "/dev/null", "a+") do |f|
-          key_value_hash.each do |key, value|
-            metric = String.new("#{name}#")
-            metric << "#{ENV["BPLOG_PREFIX"]}"
-            metric << "." unless metric.end_with?('.')
-            metric << "#{key}=#{value}"
-            f.puts metric
-          end
-        end
-      end
   end
 end

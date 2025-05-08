@@ -3,15 +3,15 @@ require "spec_helper"
 describe LanguagePack::Installers::HerokuRubyInstaller do
   def installer(report: HerokuBuildReport::GLOBAL)
     LanguagePack::Installers::HerokuRubyInstaller.new(
-      multi_arch_stacks: [],
-      stack: "cedar-14",
-      arch: nil,
+      multi_arch_stacks: ["heroku-24"],
+      stack: "heroku-24",
+      arch: "amd64",
       report: report
     )
   end
 
   def ruby_version
-    LanguagePack::RubyVersion.new("ruby-2.3.3")
+    LanguagePack::RubyVersion.new("ruby-3.1.7")
   end
 
   describe "#fetch_unpack" do
@@ -37,12 +37,12 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
           expect(File.symlink?("#{dir}/bin/ruby.exe")).to be true
           expect(File).to exist("#{dir}/vendor/ruby/bin/ruby")
 
-          expect(report.data["ruby.version"]).to eq("2.3.3")
+          expect(report.data["ruby.version"]).to eq("3.1.7")
           expect(report.data["ruby.engine"]).to eq(:ruby)
           expect(report.data["ruby.engine.version"]).to eq(report.data["ruby.version"])
-          expect(report.data["ruby.major"]).to eq(2)
-          expect(report.data["ruby.minor"]).to eq(3)
-          expect(report.data["ruby.patch"]).to eq(3)
+          expect(report.data["ruby.major"]).to eq(3)
+          expect(report.data["ruby.minor"]).to eq(1)
+          expect(report.data["ruby.patch"]).to eq(7)
         end
       end
     end

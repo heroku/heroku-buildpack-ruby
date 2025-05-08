@@ -68,12 +68,7 @@ WARNING
 
 private
   def has_jobs_work_task?
-    if result = rake.task("jobs:work").is_defined?
-      mcount("task.jobs:work.enabled")
-    else
-      mcount("task.jobs:work.disabled")
-    end
-    result
+    rake.task("jobs:work").is_defined?
   end
 
   def install_plugins

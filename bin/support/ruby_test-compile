@@ -22,9 +22,7 @@ begin
   if pack = LanguagePack.detect(ARGV[0], ARGV[1])
     LanguagePack::ShellHelpers.initialize_env(ARGV[2])
     pack.topic("Setting up Test for #{pack.name}")
-    pack.log("test_compile") do
-      pack.compile
-    end
+    pack.compile
   end
 rescue Exception => e
   LanguagePack::ShellHelpers.display_error_and_exit(e)
