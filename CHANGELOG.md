@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v306] - 2025-05-08
+
+- JRuby 9.4.12.0, 9.4.12.1, 10.0.0.0, and 10.0.0.1 is now available
+
+
 ## [v305] - 2025-04-28
 
 - Fix `cp --update=none` warning `heroku-22` (https://github.com/heroku/heroku-buildpack-ruby/pull/1588)
@@ -1689,7 +1694,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v305...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v306...main
+[v306]: https://github.com/heroku/heroku-buildpack-ruby/compare/v305...v306
 [v305]: https://github.com/heroku/heroku-buildpack-ruby/compare/v304...v305
 [v304]: https://github.com/heroku/heroku-buildpack-ruby/compare/v303...v304
 [v303]: https://github.com/heroku/heroku-buildpack-ruby/compare/v302...v303
