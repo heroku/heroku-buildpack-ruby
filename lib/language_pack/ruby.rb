@@ -781,11 +781,10 @@ params = CGI.parse(uri.query || "")
 
   def rake
     @rake ||= begin
-      rake_gem_available = true
-      raise_on_fail      = bundler.gem_version('railties') && bundler.gem_version('railties') > Gem::Version.new('3.x')
+      raise_on_fail = bundler.gem_version('railties') && bundler.gem_version('railties') > Gem::Version.new('3.x')
 
       topic "Detecting rake tasks"
-      rake = LanguagePack::Helpers::RakeRunner.new(rake_gem_available)
+      rake = LanguagePack::Helpers::RakeRunner.new
       rake.load_rake_tasks!({ env: rake_env }, raise_on_fail)
       rake
     end
