@@ -3,6 +3,7 @@ require_relative '../spec_helper'
 describe "Heroku ruby getting started" do
   it "works on Heroku-24" do
     Hatchet::Runner.new("ruby-getting-started", stack: "heroku-24").deploy do |app|
+      expect(app.output).to_not include("Purging Cache")
       # Assert sprockets build cache not present on runtime
       expect(app.run("ls tmp/cache/assets")).to_not match("sprockets")
 
