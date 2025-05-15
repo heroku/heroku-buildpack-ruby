@@ -48,8 +48,6 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     warn_x_sendfile_use!
 
     if assets_compile_enabled?
-      mcount("warn.assets.compile.true")
-
       safe_sprockets_version_needed = sprocket_version_upgrade_needed
       if safe_sprockets_version_needed
         message = <<ERROR
@@ -88,7 +86,6 @@ private
   def warn_x_sendfile_use!
     return false unless @x_sendfile_config.success?
     if @x_sendfile_config.did_match?("X-Sendfile") && !has_apache? # Apache
-      mcount("warn.x_sendfile_header.apache")
       warn(<<-WARNING)
 You set `config.action_dispatch.x_sendfile_header = 'X-Sendfile'` in production,
 but you do not have `apache` installed on this app. This setting will cause any assets
@@ -103,8 +100,6 @@ WARNING
     end
 
     if @x_sendfile_config.did_match?("X-Accel-Redirect") && !has_nginx? # Nginx
-      mcount("warn.x_sendfile_header.nginx")
-
       warn(<<-WARNING)
 You set `config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'` in production,
 but you do not have `nginx` installed on this app. This setting will cause any assets
@@ -168,25 +163,22 @@ WARNING
 
   # runs the tasks for the Rails 3.1 asset pipeline
   def run_assets_precompile_rake_task
-    log("assets_precompile") do
-      if File.exist?("public/assets/manifest.yml")
-        puts "Detected manifest.yml, assuming assets were compiled locally"
-        return true
-      end
+    if File.exist?("public/assets/manifest.yml")
+      puts "Detected manifest.yml, assuming assets were compiled locally"
+      return true
+    end
 
-      precompile = rake.task("assets:precompile")
-      return true unless precompile.is_defined?
+    precompile = rake.task("assets:precompile")
+    return true unless precompile.is_defined?
 
-      topic("Preparing app for Rails asset pipeline")
+    topic("Preparing app for Rails asset pipeline")
 
-      precompile.invoke(env: rake_env)
+    precompile.invoke(env: rake_env)
 
-      if precompile.success?
-        log "assets_precompile", :status => "success"
-        puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
-      else
-        precompile_fail(precompile.output)
-      end
+    if precompile.success?
+      puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
+    else
+      precompile_fail(precompile.output)
     end
   end
 

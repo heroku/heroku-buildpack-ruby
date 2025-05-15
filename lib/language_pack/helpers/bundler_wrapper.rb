@@ -36,8 +36,7 @@ class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
   BLESSED_BUNDLER_VERSIONS = {}
-  # Heroku-20's oldest Ruby verison is 2.5.x which doesn't work with bundler 2.4
-  BLESSED_BUNDLER_VERSIONS["1"] = "1.17.3"
+  # Heroku-22's oldest Ruby version is 3.1
   BLESSED_BUNDLER_VERSIONS["2.3"] = "2.3.25"
   BLESSED_BUNDLER_VERSIONS["2.4"] = "2.4.22"
   BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.23"
@@ -47,9 +46,8 @@ class LanguagePack::Helpers::BundlerWrapper
 
   # Convert arbitrary `<Major>.<Minor>.x` versions
   BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
-    if Gem::Version.new(key).segments.first == 1
-      hash["1"]
-    elsif Gem::Version::new(key).segments.first == 2
+    case Gem::Version.new(key).segments.first
+    when 2
       if Gem::Version.new(key) > Gem::Version.new("2.6")
         hash["2.6"]
       elsif Gem::Version.new(key) < Gem::Version.new("2.3")
@@ -204,28 +202,26 @@ class LanguagePack::Helpers::BundlerWrapper
 
     ruby_version = self.class.platform_to_version(output)
     if ruby_version.nil? || ruby_version.empty?
-      if Gem::Version.new(self.version) > Gem::Version.new("2.3")
-        warn(<<~WARNING, inline: true)
-          No ruby version specified in the Gemfile.lock
+      warn(<<~WARNING, inline: true)
+        No ruby version specified in the Gemfile.lock
 
-          We could not determine the version of Ruby from your Gemfile.lock.
+        We could not determine the version of Ruby from your Gemfile.lock.
 
-            $ bundle platform --ruby
-            #{output}
+          $ bundle platform --ruby
+          #{output}
 
-            $ bundle -v
-            #{run("bundle -v", user_env: true, env: env)}
+          $ bundle -v
+          #{run("bundle -v", user_env: true, env: env)}
 
-          Ensure the above command outputs the version of Ruby you expect. If you have a ruby version specified in your Gemfile, you can update the Gemfile.lock by running the following command:
+        Ensure the above command outputs the version of Ruby you expect. If you have a ruby version specified in your Gemfile, you can update the Gemfile.lock by running the following command:
 
-            $ bundle update --ruby
+          $ bundle update --ruby
 
-          Make sure you commit the results to git before attempting to deploy again:
+        Make sure you commit the results to git before attempting to deploy again:
 
-            $ git add Gemfile.lock
-            $ git commit -m "update ruby version"
-        WARNING
-      end
+          $ git add Gemfile.lock
+          $ git commit -m "update ruby version"
+      WARNING
     end
     ruby_version
   end
@@ -240,19 +236,6 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def lockfile_parser
     @lockfile_parser ||= parse_gemfile_lock
-  end
-
-  # Some bundler versions have different behavior
-  # if config is global versus local. These versions need
-  # the environment variable BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=1
-  def needs_ruby_global_append_path?
-    Gem::Version.new(@version) < Gem::Version.new("2.1.4")
-  end
-
-  # Bundler 2.2 introduced support for multiple "platforms" in the Gemfile.lock
-  # For more information see https://github.com/heroku/heroku-buildpack-ruby/issues/1157
-  def supports_multiple_platforms?
-    Gem::Version.new(@version) >= Gem::Version.new("2.2")
   end
 
   def bundler_version_escape_valve!

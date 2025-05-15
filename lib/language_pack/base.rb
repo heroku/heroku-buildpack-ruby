@@ -17,7 +17,6 @@ class LanguagePack::Base
   extend LanguagePack::ShellHelpers
 
   VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com"
-  DEFAULT_LEGACY_STACK = "cedar"
   ROOT_DIR             = File.expand_path("../../..", __FILE__)
   MULTI_ARCH_STACKS    = ["heroku-24"]
   KNOWN_ARCHITECTURES  = ["amd64", "arm64"]
@@ -99,7 +98,6 @@ class LanguagePack::Base
       puts @deprecations.join("\n")
     end
     Kernel.puts ""
-    mcount "success"
   end
 
   def build_release
@@ -127,32 +125,6 @@ class LanguagePack::Base
     msg << "We recommend explicitly declaring how to boot your server process via a Procfile.\n"
     msg << "https://devcenter.heroku.com/articles/ruby-default-web-server"
     warn msg
-  end
-
-
-
-  # log output
-  # Ex. log "some_message", "here", :someattr="value"
-  def log(*args)
-    args.concat [:id => @id]
-    args.concat [:framework => self.class.to_s.split("::").last.downcase]
-
-    start = Time.now.to_f
-    log_internal args, :start => start
-
-    if block_given?
-      begin
-        ret = yield
-        finish = Time.now.to_f
-        log_internal args, :status => "complete", :finish => finish, :elapsed => (finish - start)
-        return ret
-      rescue StandardError => ex
-        finish  = Time.now.to_f
-        message = Shellwords.escape(ex.message)
-        log_internal args, :status => "error", :finish => finish, :elapsed => (finish - start), :message => message
-        raise ex
-      end
-    end
   end
 
 private ##################################
@@ -213,21 +185,5 @@ private ##################################
 
   def set_export_path(key, val)
     export key, val, option: :path
-  end
-
-  def log_internal(*args)
-    message = build_log_message(args)
-    %x{ logger -p user.notice -t "slugc[$$]" "buildpack-ruby #{message}" }
-  end
-
-  def build_log_message(args)
-    args.map do |arg|
-      case arg
-        when Float then "%0.2f" % arg
-        when Array then build_log_message(arg)
-        when Hash  then arg.map { |k,v| "#{k}=#{build_log_message([v])}" }.join(" ")
-        else arg
-      end
-    end.join(" ")
   end
 end

@@ -75,7 +75,7 @@ describe "Bash functions" do
     root_dir.join("bin", "support", "bash_functions.sh")
   end
 
-  def exec_with_bash_functions(code, stack: "heroku-18")
+  def exec_with_bash_functions(code, stack: "heroku-24")
     contents = <<~EOM
       #! /usr/bin/env bash
       set -eu
