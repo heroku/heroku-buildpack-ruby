@@ -36,7 +36,7 @@ class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
   BLESSED_BUNDLER_VERSIONS = {}
-  # Heroku-22's oldest Ruby verison is 3.1
+  # Heroku-22's oldest Ruby version is 3.1
   BLESSED_BUNDLER_VERSIONS["2.3"] = "2.3.25"
   BLESSED_BUNDLER_VERSIONS["2.4"] = "2.4.22"
   BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.23"
