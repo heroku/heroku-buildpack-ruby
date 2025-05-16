@@ -74,7 +74,7 @@ describe "ShellHelpers" do
         end
 
         bad_lines = File.read("spec/fixtures/invalid_encoding.log")
-        expect { sh.puts(bad_lines) }.to raise_error(ArgumentError) do |error|
+        expect { sh.puts(bad_lines) }.to raise_error do |error|
           expect(error.message).to include("Invalid string:")
         end
       end
