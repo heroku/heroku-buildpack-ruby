@@ -14,8 +14,8 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     return is_rails2
   end
 
-  def initialize(*args)
-    super(*args)
+  def initialize(app_path: , cache_path: )
+    super(app_path: app_path, cache_path: cache_path)
     @rails_runner = LanguagePack::Helpers::RailsRunner.new
   end
 

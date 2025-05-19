@@ -30,8 +30,8 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.bundler
   end
 
-  def initialize(*args)
-    super(*args)
+  def initialize(app_path: , cache_path: )
+    super(app_path: app_path, cache_path: cache_path)
     @node_installer = LanguagePack::Helpers::NodeInstaller.new(arch: @arch)
     @yarn_installer = LanguagePack::Helpers::YarnInstaller.new
   end

@@ -9,10 +9,8 @@ module LanguagePack
   end
 
   # detects which language pack to use
-  # @param [Array] first argument is a String of the build directory
-  # @return [LanguagePack] the {LanguagePack} detected
-  def self.detect(*args)
-    Dir.chdir(args.first)
+  def self.detect(app_path:, cache_path:)
+    Dir.chdir(app_path)
 
     if !File.exist?("Gemfile.lock")
       raise BuildpackError.new("Gemfile.lock required. Please check it in.")
@@ -22,7 +20,7 @@ module LanguagePack
       klass.use?
     end
 
-    return pack ? pack.new(*args) : nil
+    return pack ? pack.new(app_path: app_path, cache_path: cache_path) : nil
   end
 end
 

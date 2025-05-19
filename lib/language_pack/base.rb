@@ -22,9 +22,7 @@ class LanguagePack::Base
 
   attr_reader :app_path, :cache, :stack
 
-  # @param [String] the path of the app dir (directory where the build is invoked)
-  # @param [String] the path of the cache dir
-  def initialize(app_path, cache_path)
+  def initialize(app_path: , cache_path: )
     @app_path = app_path
     @stack         = ENV.fetch("STACK")
     @cache         = LanguagePack::Cache.new(cache_path)
