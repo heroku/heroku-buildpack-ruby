@@ -30,7 +30,6 @@ class LanguagePack::Base
     @cache         = LanguagePack::Cache.new(cache_path)
     @metadata      = LanguagePack::Metadata.new(@cache)
     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
-    @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
     @arch = get_arch
     @report = HerokuBuildReport::GLOBAL
