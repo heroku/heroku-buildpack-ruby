@@ -6,7 +6,7 @@
 class LanguagePack::Ruby
   def compile
     new_app?
-    Dir.chdir(build_path)
+    Dir.chdir(app_path)
     remove_vendor_bundle
     warn_bad_binstubs
     install_ruby(slug_vendor_ruby)

@@ -74,7 +74,7 @@ WARNING
   def compile
     # check for new app at the beginning of the compile
     new_app?
-    Dir.chdir(build_path)
+    Dir.chdir(app_path)
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
@@ -289,13 +289,13 @@ EOF
   # muiltibuildpack. We can't use profile.d because $HOME isn't set up
   def setup_export
     paths = ENV["PATH"].split(":").map do |path|
-      /^\/.*/ !~ path ? "#{build_path}/#{path}" : path
+      /^\/.*/ !~ path ? "#{app_path}/#{path}" : path
     end.join(":")
 
     # TODO ensure path exported is correct
     set_export_path "PATH", paths
 
-    gem_path = "#{build_path}/#{slug_vendor_base}"
+    gem_path = "#{app_path}/#{slug_vendor_base}"
     set_export_path "GEM_PATH", gem_path
     set_export_default "LANG", "en_US.UTF-8"
 
@@ -836,7 +836,7 @@ params = CGI.parse(uri.query || "")
   def add_node_js_binary
     return [] if node_js_preinstalled?
 
-    if Pathname(build_path).join("package.json").exist? ||
+    if Pathname(app_path).join("package.json").exist? ||
          bundler.has_gem?('execjs') ||
          bundler.has_gem?('webpacker')
 
@@ -873,7 +873,7 @@ params = CGI.parse(uri.query || "")
   def add_yarn_binary
     return [] if yarn_preinstalled?
 
-    if Pathname(build_path).join("yarn.lock").exist? || bundler.has_gem?('webpacker')
+    if Pathname(app_path).join("yarn.lock").exist? || bundler.has_gem?('webpacker')
 
       version = @yarn_installer.version
       old_version = @metadata.fetch("default_yarn_version") { version }
