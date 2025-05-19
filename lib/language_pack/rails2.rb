@@ -84,5 +84,4 @@ private
       set_env_default key, value
     end
   end
-
 end
