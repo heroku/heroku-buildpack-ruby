@@ -10,8 +10,6 @@ module LanguagePack
 
   # detects which language pack to use
   def self.detect(app_path:, cache_path:)
-    Dir.chdir(app_path)
-
     if !File.exist?("Gemfile.lock")
       raise BuildpackError.new("Gemfile.lock required. Please check it in.")
     end

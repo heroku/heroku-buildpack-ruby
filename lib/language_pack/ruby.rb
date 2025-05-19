@@ -74,7 +74,6 @@ WARNING
   def compile
     # check for new app at the beginning of the compile
     new_app?
-    Dir.chdir(app_path)
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
