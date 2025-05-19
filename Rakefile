@@ -16,10 +16,18 @@ namespace :buildpack do
 
   desc "releases the next version of the buildpack"
   task :release do
+    puts "Checking login state"
+    sh("heroku whoami") do |out, status|
+      if status.success?
+        puts "Success"
+      else
+        raise "Ensure login works: `heroku login`"
+      end
+    end
+
     deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby")
     puts "Attempting to deploy #{deploy.next_version}, overwrite with RELEASE_VERSION env var"
     deploy.check!
-
     if deploy.push_tag?
       sh("git tag -f #{deploy.next_version}") do |out, status|
         raise "Could not `git tag -f #{deploy.next_version}`: #{out}" unless status.success?
