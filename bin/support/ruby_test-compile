@@ -19,7 +19,10 @@ require "language_pack/test"
 include LanguagePack::ShellHelpers
 
 begin
-  if pack = LanguagePack.detect(app_path: ARGV[0], cache_path: ARGV[1])
+  app_path = Pathname(ARGV[0])
+  cache_path = Pathname(ARGV[1])
+
+  if pack = LanguagePack.detect(app_path: app_path, cache_path: cache_path)
     LanguagePack::ShellHelpers.initialize_env(ARGV[2])
     pack.topic("Setting up Test for #{pack.name}")
     pack.compile
