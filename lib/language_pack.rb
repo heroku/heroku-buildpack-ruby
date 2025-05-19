@@ -8,12 +8,17 @@ module LanguagePack
   module Helpers
   end
 
-  # detects which language pack to use
-  def self.detect(app_path:, cache_path:)
-    if !File.exist?("Gemfile.lock")
+  def self.gemfile_lock_path(app_path: )
+    gemfile_lock_path = app_path.join("Gemfile.lock")
+    if gemfile_lock_path.exist?
+      gemfile_lock_path
+    else
       raise BuildpackError.new("Gemfile.lock required. Please check it in.")
     end
+  end
 
+  # detects which language pack to use
+  def self.detect(app_path:, cache_path:)
     pack = [ Rails8, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
       klass.use?
     end

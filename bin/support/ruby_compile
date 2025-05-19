@@ -21,6 +21,7 @@ HerokuBuildReport.set_global(
 begin
   app_path = Pathname(ARGV[0])
   cache_path = Pathname(ARGV[1])
+  gemfile_lock_path = LanguagePack.gemfile_lock_path(app_path: app_path)
   Dir.chdir(app_path)
 
   LanguagePack::ShellHelpers.initialize_env(ARGV[2])
