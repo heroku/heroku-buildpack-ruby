@@ -3,15 +3,20 @@ require 'benchmark'
 
 require 'language_pack/shell_helpers'
 
-# General Language Pack module
+# Define modules
 module LanguagePack
   module Helpers
   end
+end
 
-  def self.gemfile_lock_path(app_path: )
+require "language_pack/helpers/gemfile_lock"
+
+# General Language Pack module
+module LanguagePack
+  def self.gemfile_lock(app_path: )
     gemfile_lock_path = app_path.join("Gemfile.lock")
     if gemfile_lock_path.exist?
-      gemfile_lock_path
+      Helpers::GemfileLock.new(contents: gemfile_lock_path.read)
     else
       raise BuildpackError.new("Gemfile.lock required. Please check it in.")
     end
