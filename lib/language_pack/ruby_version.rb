@@ -46,16 +46,12 @@ module LanguagePack
     include LanguagePack::ShellHelpers
 
     def initialize(bundler_output:, last_version: nil)
-      @set            = nil
-      @bundler_output = bundler_output
-      @default_version = last_version || DEFAULT_VERSION
-
-      if @bundler_output.empty?
+      if bundler_output.empty?
         @set     = false
-        @version = @default_version
+        @version = last_version || DEFAULT_VERSION
       else
         @set     = :gemfile
-        @version = @bundler_output
+        @version = bundler_output
       end
 
       md = RUBY_VERSION_REGEX.match(version)
