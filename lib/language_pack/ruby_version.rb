@@ -25,11 +25,10 @@ module LanguagePack
       }x
 
 
-    # `version` is the bundler output like `ruby-3.4.2`
+    # The bundler output like `ruby-3.4.2` or `ruby-3.4.2-p100`
     attr_reader :version,
-      # `version_without_patchlevel` removes any `-p<number>` as they're not significant
-      # effectively this is `version_for_download`
-      :version_without_patchlevel,
+      # `The bundler output like `ruby-3.4.2` without patchlevel
+      :version_for_download,
       # `engine` is `:ruby` or `:jruby`
       :engine,
       # `ruby_version` is `<major>.<minor>.<patch>` extracted from `version`
@@ -48,19 +47,15 @@ module LanguagePack
         @default = false
         @version = bundler_output
       end
+      # Remove patchlevel (if one is present)
+      # https://github.com/bundler/bundler/issues/4621
+      @version_for_download = @version.sub(/-p-?\d+/, '')
 
       md = RUBY_VERSION_REGEX.match(version)
       raise BadVersionError.new("'#{version}' is not valid") unless md
       @ruby_version   = md[:ruby_version]
       @engine_version = md[:engine_version] || @ruby_version
       @engine         = (md[:engine]        || :ruby).to_sym
-
-      @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
-    end
-
-    # https://github.com/bundler/bundler/issues/4621
-    def version_for_download
-      version_without_patchlevel
     end
 
     def file_name
