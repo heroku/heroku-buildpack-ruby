@@ -45,10 +45,11 @@ module LanguagePack
 
     include LanguagePack::ShellHelpers
 
-    def initialize(bundler_output, app = {})
+    def initialize(bundler_output:, last_version: nil)
       @set            = nil
       @bundler_output = bundler_output
-      @app            = app
+      @default_version = last_version || DEFAULT_VERSION
+
       set_version
       parse_version
 
@@ -126,7 +127,7 @@ module LanguagePack
     def set_version
       if @bundler_output.empty?
         @set     = false
-        @version = @app[:last_version] || DEFAULT_VERSION
+        @version = @default_version
       else
         @set     = :gemfile
         @version = @bundler_output
