@@ -33,8 +33,6 @@ module LanguagePack
       # `version_without_patchlevel` removes any `-p<number>` as they're not significant
       # effectively this is `version_for_download`
       :version_without_patchlevel,
-      # `patchlevel` is the `-p<number>` or is empty
-      :patchlevel,
       # `engine` is `:ruby` or `:jruby`
       :engine,
       # `ruby_version` is `<major>.<minor>.<patch>` extracted from `version`
@@ -57,7 +55,6 @@ module LanguagePack
       md = RUBY_VERSION_REGEX.match(version)
       raise BadVersionError.new("'#{version}' is not valid") unless md
       @ruby_version   = md[:ruby_version]
-      @patchlevel     = md[:patchlevel]
       @engine_version = md[:engine_version] || @ruby_version
       @engine         = (md[:engine]        || :ruby).to_sym
 
