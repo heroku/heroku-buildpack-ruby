@@ -104,25 +104,15 @@ module LanguagePack
     # `ruby-2.3.1` then then `next_logical_version(1)`
     # will produce `ruby-2.3.2`.
     def next_logical_version(increment = 1)
-      split_version = @version_without_patchlevel.split(".")
-      teeny = split_version.pop
-      split_version << teeny.to_i + increment
-      split_version.join(".")
+      "ruby-#{major}.#{minor}.#{patch + increment}"
     end
 
     def next_minor_version(increment = 1)
-      split_version = @version_without_patchlevel.split(".")
-      split_version[1] = split_version[1].to_i + increment
-      split_version[2] = 0
-      split_version.join(".")
+      "ruby-#{major}.#{minor + increment}.0"
     end
 
     def next_major_version(increment = 1)
-      split_version = @version_without_patchlevel.split("-").last.split(".")
-      split_version[0] = Integer(split_version[0]) + increment
-      split_version[1] = 0
-      split_version[2] = 0
-      return "ruby-#{split_version.join(".")}"
+      "ruby-#{major + increment}.0.0"
     end
   end
 end
