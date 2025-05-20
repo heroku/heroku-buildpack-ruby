@@ -21,7 +21,7 @@ module LanguagePack
         (?<engine>\w+){0}
         (?<engine_version>.+){0}
 
-        ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
+        ruby-\g<ruby_version>(-\g<patchlevel>)?(\.(?<pre>\S*\d+))?(-\g<engine>-\g<engine_version>)?
       }x
 
     # String formatted `<major>.<minor>.<patch>` for Ruby and JRuby
@@ -38,9 +38,11 @@ module LanguagePack
       default = bundler_output.empty?
       if default
         ruby_version = last_version&.split("-")&.last || DEFAULT_VERSION_NUMBER
+        pre = nil
         engine = :ruby
         engine_version = ruby_version
       elsif md = RUBY_VERSION_REGEX.match(bundler_output)
+        pre = md[:pre]
         engine = md[:engine]&.to_sym || :ruby
         ruby_version = md[:ruby_version]
         engine_version = md[:engine_version] || ruby_version
@@ -49,6 +51,7 @@ module LanguagePack
       end
 
       new(
+        pre: pre,
         engine: engine,
         default: default,
         ruby_version: ruby_version,
@@ -57,11 +60,13 @@ module LanguagePack
     end
 
     def initialize(
+        pre:,
         engine:,
         default:,
         ruby_version:,
         engine_version:
       )
+        @pre = pre
         @engine = engine
         @default = default
         @ruby_version = ruby_version
@@ -72,6 +77,8 @@ module LanguagePack
     def version_for_download
       if @engine == :jruby
         "ruby-#{ruby_version}-jruby-#{engine_version}"
+      elsif @pre
+        "ruby-#{ruby_version}.#{@pre}"
       else
         "ruby-#{ruby_version}"
       end
