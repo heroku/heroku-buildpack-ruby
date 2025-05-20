@@ -68,6 +68,7 @@ module LanguagePack
         @engine_version = engine_version
     end
 
+    # i.e. `ruby-3.4.2`
     def version_for_download
       if @engine == :jruby
         "ruby-#{ruby_version}-jruby-#{engine_version}"
