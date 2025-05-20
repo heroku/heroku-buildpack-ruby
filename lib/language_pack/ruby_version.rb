@@ -50,8 +50,20 @@ module LanguagePack
       @bundler_output = bundler_output
       @default_version = last_version || DEFAULT_VERSION
 
-      set_version
-      parse_version
+      if @bundler_output.empty?
+        @set     = false
+        @version = @default_version
+      else
+        @set     = :gemfile
+        @version = @bundler_output
+      end
+
+      md = RUBY_VERSION_REGEX.match(version)
+      raise BadVersionError.new("'#{version}' is not valid") unless md
+      @ruby_version   = md[:ruby_version]
+      @patchlevel     = md[:patchlevel]
+      @engine_version = md[:engine_version] || @ruby_version
+      @engine         = (md[:engine]        || :ruby).to_sym
 
       @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
     end
@@ -121,26 +133,6 @@ module LanguagePack
       split_version[1] = 0
       split_version[2] = 0
       return "ruby-#{split_version.join(".")}"
-    end
-
-    private
-    def set_version
-      if @bundler_output.empty?
-        @set     = false
-        @version = @default_version
-      else
-        @set     = :gemfile
-        @version = @bundler_output
-      end
-    end
-
-    def parse_version
-      md = RUBY_VERSION_REGEX.match(version)
-      raise BadVersionError.new("'#{version}' is not valid") unless md
-      @ruby_version   = md[:ruby_version]
-      @patchlevel     = md[:patchlevel]
-      @engine_version = md[:engine_version] || @ruby_version
-      @engine         = (md[:engine]        || :ruby).to_sym
     end
   end
 end
