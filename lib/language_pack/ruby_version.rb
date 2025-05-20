@@ -24,12 +24,10 @@ module LanguagePack
         ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
       }x
 
-    # `The bundler output like `ruby-3.4.2` without patchlevel
-    attr_reader :version_for_download,
+    # `ruby_version` is `<major>.<minor>.<patch>` extracted from `version`
+    attr_reader :ruby_version,
       # `engine` is `:ruby` or `:jruby`
       :engine,
-      # `ruby_version` is `<major>.<minor>.<patch>` extracted from `version`
-      :ruby_version,
       # `engine_version` is the Jruby version or for MRI it is the same as `ruby_version`
       # i.e. `<major>.<minor>.<patch>`
       :engine_version
@@ -37,21 +35,26 @@ module LanguagePack
     include LanguagePack::ShellHelpers
 
     def initialize(bundler_output:, last_version: nil)
-      if bundler_output.empty?
-        @default = true
-        bundler_output = last_version || DEFAULT_VERSION
+      @default = bundler_output.empty?
+      if @default
+        @ruby_version = last_version&.split("-")&.last || DEFAULT_VERSION
+        @engine = :ruby
+        @engine_version = @ruby_version
+      elsif md = RUBY_VERSION_REGEX.match(bundler_output)
+        @ruby_version   = md[:ruby_version]
+        @engine_version = md[:engine_version] || @ruby_version
+        @engine         = (md[:engine]        || :ruby).to_sym
       else
-        @default = false
+        raise BadVersionError.new("'#{bundler_output}' is not valid") unless md
       end
-      # Remove patchlevel (if one is present)
-      # https://github.com/bundler/bundler/issues/4621
-      @version_for_download = bundler_output.sub(/-p-?\d+/, '')
+    end
 
-      md = RUBY_VERSION_REGEX.match(bundler_output)
-      raise BadVersionError.new("'#{bundler_output}' is not valid") unless md
-      @ruby_version   = md[:ruby_version]
-      @engine_version = md[:engine_version] || @ruby_version
-      @engine         = (md[:engine]        || :ruby).to_sym
+    def version_for_download
+      if @engine == :jruby
+        "ruby-#{ruby_version}-jruby-#{engine_version}"
+      else
+        "ruby-#{ruby_version}"
+      end
     end
 
     def file_name
