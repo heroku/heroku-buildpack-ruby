@@ -24,11 +24,8 @@ module LanguagePack
         ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
       }x
 
-
-    # The bundler output like `ruby-3.4.2` or `ruby-3.4.2-p100`
-    attr_reader :version,
-      # `The bundler output like `ruby-3.4.2` without patchlevel
-      :version_for_download,
+    # `The bundler output like `ruby-3.4.2` without patchlevel
+    attr_reader :version_for_download,
       # `engine` is `:ruby` or `:jruby`
       :engine,
       # `ruby_version` is `<major>.<minor>.<patch>` extracted from `version`
@@ -42,17 +39,16 @@ module LanguagePack
     def initialize(bundler_output:, last_version: nil)
       if bundler_output.empty?
         @default = true
-        @version = last_version || DEFAULT_VERSION
+        bundler_output = last_version || DEFAULT_VERSION
       else
         @default = false
-        @version = bundler_output
       end
       # Remove patchlevel (if one is present)
       # https://github.com/bundler/bundler/issues/4621
-      @version_for_download = @version.sub(/-p-?\d+/, '')
+      @version_for_download = bundler_output.sub(/-p-?\d+/, '')
 
-      md = RUBY_VERSION_REGEX.match(version)
-      raise BadVersionError.new("'#{version}' is not valid") unless md
+      md = RUBY_VERSION_REGEX.match(bundler_output)
+      raise BadVersionError.new("'#{bundler_output}' is not valid") unless md
       @ruby_version   = md[:ruby_version]
       @engine_version = md[:engine_version] || @ruby_version
       @engine         = (md[:engine]        || :ruby).to_sym
