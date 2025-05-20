@@ -8,7 +8,7 @@ describe LanguagePack::Helpers::GemfileLock do
     )
     expect(gemfile_lock.ruby.ruby_version).to eq(nil)
     expect(gemfile_lock.ruby.pre).to eq(nil)
-    expect(gemfile_lock.ruby.engine).to eq(:mri)
+    expect(gemfile_lock.ruby.engine).to eq(:ruby)
     expect(gemfile_lock.ruby.empty?).to eq(true)
     expect(gemfile_lock.ruby.engine_version).to eq(nil)
 
@@ -28,7 +28,7 @@ describe LanguagePack::Helpers::GemfileLock do
     )
     expect(gemfile_lock.ruby.ruby_version).to eq("3.3.5")
     expect(gemfile_lock.ruby.pre).to eq(nil)
-    expect(gemfile_lock.ruby.engine).to eq(:mri)
+    expect(gemfile_lock.ruby.engine).to eq(:ruby)
     expect(gemfile_lock.ruby.empty?).to eq(false)
     expect(gemfile_lock.ruby.engine_version).to eq("3.3.5")
 
@@ -67,7 +67,7 @@ describe LanguagePack::Helpers::GemfileLock do
     )
     expect(gemfile_lock.ruby.ruby_version).to eq("3.4.0")
     expect(gemfile_lock.ruby.pre).to eq("rc1")
-    expect(gemfile_lock.ruby.engine).to eq(:mri)
+    expect(gemfile_lock.ruby.engine).to eq(:ruby)
     expect(gemfile_lock.ruby.empty?).to eq(false)
     expect(gemfile_lock.ruby.engine_version).to eq("3.4.0")
   end
@@ -84,7 +84,7 @@ describe LanguagePack::Helpers::GemfileLock do
     )
     expect(gemfile_lock.ruby.ruby_version).to eq("3.4.0")
     expect(gemfile_lock.ruby.pre).to eq("preview2")
-    expect(gemfile_lock.ruby.engine).to eq(:mri)
+    expect(gemfile_lock.ruby.engine).to eq(:ruby)
     expect(gemfile_lock.ruby.empty?).to eq(false)
     expect(gemfile_lock.ruby.engine_version).to eq("3.4.0")
   end

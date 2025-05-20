@@ -23,9 +23,9 @@ module LanguagePack
           # - String: i.e. ".rc2" is a prerelease
           # - nil: No pre-release (or no version at all)
           :pre,
-          # Either :mri or :jruby
+          # Either :ruby or :jruby
           :engine,
-          # `engine_version` is the Jruby version or for MRI it is the same as `ruby_version`
+          # `engine_version` is the JRuby version or for Ruby it is the same as `ruby_version`
           # i.e. `<major>.<minor>.<patch>`
           :engine_version
 
@@ -45,7 +45,7 @@ module LanguagePack
             @engine = :jruby
             @engine_version = jruby[:version]
           else
-            @engine = :mri
+            @engine = :ruby
             @engine_version = ruby_version
           end
         end
