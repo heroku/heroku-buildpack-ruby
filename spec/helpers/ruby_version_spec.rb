@@ -18,7 +18,7 @@ describe "RubyVersion" do
 
   it "knows the next logical version" do
     version_number = "2.5.0"
-    ruby_version   = LanguagePack::RubyVersion.new(bundler_output: "ruby-#{version_number}-p0")
+    ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-#{version_number}-p0")
     version        = "ruby-#{version_number}"
 
     expect(ruby_version.version_for_download).to eq(version)
@@ -40,7 +40,7 @@ describe "RubyVersion" do
     Hatchet::App.new("default_ruby").in_directory_fork do |dir|
       require 'bundler'
       Bundler.with_unbundled_env do
-        ruby_version   = LanguagePack::RubyVersion.new(bundler_output: @bundler.install.ruby_version)
+        ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
         version_number = LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER
         version        = LanguagePack::RubyVersion::DEFAULT_VERSION
         expect(ruby_version.version_for_download).to eq(version)
@@ -84,7 +84,7 @@ describe "RubyVersion" do
             2.4.19
         EOF
 
-        ruby_version   = LanguagePack::RubyVersion.new(bundler_output: @bundler.install.ruby_version)
+        ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
         version_number = "3.2.3"
         version        = "ruby-#{version_number}"
         expect(ruby_version.version_for_download).to eq(version)
@@ -120,7 +120,7 @@ describe "RubyVersion" do
             2.3.25
         EOF
 
-        ruby_version   = LanguagePack::RubyVersion.new(
+        ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(
           bundler_output: @bundler.install.ruby_version,
         )
         version_number = "2.6.8"

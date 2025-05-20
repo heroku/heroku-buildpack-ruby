@@ -182,7 +182,7 @@ private
     last_version      = nil
     last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
 
-    @ruby_version = LanguagePack::RubyVersion.new(
+    @ruby_version = LanguagePack::RubyVersion.bundle_platform_ruby(
       bundler_output: bundler.ruby_version,
       last_version: last_version
     )
