@@ -94,6 +94,48 @@ describe "RubyVersion" do
     end
   end
 
+  it "detects RC Ruby from Gemfile.lock" do
+    Hatchet::App.new("default_ruby").in_directory_fork do |_|
+      require 'bundler'
+      dir = Pathname(Dir.pwd)
+      Bundler.with_unbundled_env do
+        dir.join("Gemfile").write(<<~EOF)
+          source "https://rubygems.org"
+
+          gem 'rake'
+          ruby '3.2.3'
+        EOF
+        dir.join("Gemfile.lock").write(<<~EOF)
+          GEM
+            remote: https://rubygems.org/
+            specs:
+              rake (13.2.1)
+
+          PLATFORMS
+            arm64-darwin-22
+            ruby
+            x86_64-linux
+
+          DEPENDENCIES
+            rake
+
+          RUBY VERSION
+            ruby 3.2.3.rc1
+
+          BUNDLED WITH
+            2.4.19
+        EOF
+
+        ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
+        version_number = "3.2.3"
+        version        = "ruby-#{version_number}.rc1"
+        expect(ruby_version.version_for_download).to eq(version)
+        expect(ruby_version.engine_version).to eq(version_number)
+        expect(ruby_version.engine).to eq(:ruby)
+      end
+    end
+  end
+
   it "detects non mri engines" do
     Hatchet::App.new("default_ruby").in_directory_fork do |_|
       require 'bundler'
