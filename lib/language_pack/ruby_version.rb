@@ -24,7 +24,7 @@ module LanguagePack
         ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
       }x
 
-    # `ruby_version` is `<major>.<minor>.<patch>` extracted from `version`
+    # String formatted `<major>.<minor>.<patch>` for Ruby and JRuby
     attr_reader :ruby_version,
       # `engine` is `:ruby` or `:jruby`
       :engine,
@@ -34,19 +34,38 @@ module LanguagePack
 
     include LanguagePack::ShellHelpers
 
-    def initialize(bundler_output:, last_version: nil)
-      @default = bundler_output.empty?
-      if @default
-        @ruby_version = last_version&.split("-")&.last || DEFAULT_VERSION
-        @engine = :ruby
-        @engine_version = @ruby_version
+    def self.bundle_platform_ruby(bundler_output:, last_version: nil)
+      default = bundler_output.empty?
+      if default
+        ruby_version = last_version&.split("-")&.last || DEFAULT_VERSION_NUMBER
+        engine = :ruby
+        engine_version = ruby_version
       elsif md = RUBY_VERSION_REGEX.match(bundler_output)
-        @ruby_version   = md[:ruby_version]
-        @engine_version = md[:engine_version] || @ruby_version
-        @engine         = (md[:engine]        || :ruby).to_sym
+        engine = md[:engine]&.to_sym || :ruby
+        ruby_version = md[:ruby_version]
+        engine_version = md[:engine_version] || ruby_version
       else
         raise BadVersionError.new("'#{bundler_output}' is not valid") unless md
       end
+
+      new(
+        engine: engine,
+        default: default,
+        ruby_version: ruby_version,
+        engine_version: engine_version,
+      )
+    end
+
+    def initialize(
+        engine:,
+        default:,
+        ruby_version:,
+        engine_version:
+      )
+        @engine = engine
+        @default = default
+        @ruby_version = ruby_version
+        @engine_version = engine_version
     end
 
     def version_for_download
