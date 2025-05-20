@@ -471,7 +471,7 @@ private
     @metadata.write("buildpack_ruby_version", ruby_version.version_for_download)
 
     topic "Using Ruby version: #{ruby_version.version_for_download}"
-    if !ruby_version.set
+    if ruby_version.default?
       warn(<<~WARNING)
         You have not declared a Ruby version in your Gemfile.
 
