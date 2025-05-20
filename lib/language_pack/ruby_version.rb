@@ -27,9 +27,6 @@ module LanguagePack
 
     # `version` is the bundler output like `ruby-3.4.2`
     attr_reader :version,
-      # `set` is either `:gemfile` when the app specified a version or `nil` when using
-      # the default version
-      :set,
       # `version_without_patchlevel` removes any `-p<number>` as they're not significant
       # effectively this is `version_for_download`
       :version_without_patchlevel,
@@ -45,10 +42,10 @@ module LanguagePack
 
     def initialize(bundler_output:, last_version: nil)
       if bundler_output.empty?
-        @set     = false
+        @default = true
         @version = last_version || DEFAULT_VERSION
       else
-        @set     = :gemfile
+        @default = false
         @version = bundler_output
       end
 
@@ -71,7 +68,7 @@ module LanguagePack
     end
 
     def default?
-      !set
+      @default
     end
 
     # determine if we're using jruby
