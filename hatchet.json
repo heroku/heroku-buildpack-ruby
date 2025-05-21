@@ -23,7 +23,6 @@
   "rails_versions": [
     "sharpstone/rails_lts_23_default_ruby",
     "sharpstone/rails3_default_ruby",
-    "sharpstone/rails4_windows_mri193",
     "sharpstone/rails42_default_ruby",
     "sharpstone/rails61",
     "sharpstone/rails-jsbundling",
