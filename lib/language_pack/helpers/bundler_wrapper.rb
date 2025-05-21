@@ -104,8 +104,7 @@ class LanguagePack::Helpers::BundlerWrapper
   def initialize(
       bundler_path: nil,
       gemfile_path: Pathname.new("./Gemfile"),
-      report: HerokuBuildReport::GLOBAL,
-      **options
+      report: HerokuBuildReport::GLOBAL
     )
     @report               = report
     @bundler_tmp          = Pathname.new(Dir.mktmpdir)
@@ -138,7 +137,7 @@ class LanguagePack::Helpers::BundlerWrapper
     @dir_name = "bundler-#{@version}"
 
     @bundler_path         = bundler_path || @bundler_tmp.join(@dir_name)
-    @bundler_tar          = options[:bundler_tar]  || "bundler/#{@dir_name}.tgz"
+    @bundler_tar          = "bundler/#{@dir_name}.tgz"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
     @path                 = Pathname.new("#{@bundler_path}/gems/#{@dir_name}/lib")
   end
