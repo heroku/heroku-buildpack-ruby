@@ -60,6 +60,20 @@ module LanguagePack
       )
     end
 
+    def self.from_gemfile_lock(ruby: , last_version: nil)
+      if ruby.empty?
+        default(last_version: last_version)
+      else
+        new(
+          pre: ruby.pre,
+          engine: ruby.engine,
+          default: false,
+          ruby_version: ruby.ruby_version,
+          engine_version: ruby.engine_version,
+        )
+      end
+    end
+
     def initialize(
         pre:,
         engine:,
