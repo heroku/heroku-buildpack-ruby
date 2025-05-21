@@ -35,25 +35,28 @@ module LanguagePack
     def self.bundle_platform_ruby(bundler_output:, last_version: nil)
       default = bundler_output.empty?
       if default
-        ruby_version = last_version&.split("-")&.last || DEFAULT_VERSION_NUMBER
-        pre = nil
-        engine = :ruby
-        engine_version = ruby_version
+        default(last_version: last_version)
       elsif md = RUBY_VERSION_REGEX.match(bundler_output)
-        pre = md[:pre]
-        engine = md[:engine]&.to_sym || :ruby
-        ruby_version = md[:ruby_version]
-        engine_version = md[:engine_version] || ruby_version
+        new(
+          pre: md[:pre],
+          engine: md[:engine]&.to_sym || :ruby,
+          default: default,
+          ruby_version: md[:ruby_version],
+          engine_version: md[:engine_version] || md[:ruby_version],
+        )
       else
         raise BadVersionError.new("'#{bundler_output}' is not valid") unless md
       end
+    end
 
+    def self.default(last_version: )
+      ruby_version = last_version&.split("-")&.last || DEFAULT_VERSION_NUMBER
       new(
-        pre: pre,
-        engine: engine,
-        default: default,
+        pre: nil,
+        engine: :ruby,
+        default: true,
         ruby_version: ruby_version,
-        engine_version: engine_version,
+        engine_version: ruby_version,
       )
     end
 
