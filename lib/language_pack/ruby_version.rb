@@ -1,4 +1,4 @@
-require "language_pack/shell_helpers"
+require "language_pack/shell_helpers" # Holds BuildpackError
 
 module LanguagePack
   class RubyVersion
@@ -31,8 +31,6 @@ module LanguagePack
       # `engine_version` is the Jruby version or for MRI it is the same as `ruby_version`
       # i.e. `<major>.<minor>.<patch>`
       :engine_version
-
-    include LanguagePack::ShellHelpers
 
     def self.bundle_platform_ruby(bundler_output:, last_version: nil)
       default = bundler_output.empty?
