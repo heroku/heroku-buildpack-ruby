@@ -101,11 +101,15 @@ class LanguagePack::Helpers::BundlerWrapper
 
   attr_reader :bundler_path
 
-  def initialize(report: HerokuBuildReport::GLOBAL, **options)
+  def initialize(
+      gemfile_path: Pathname.new("./Gemfile"),
+      report: HerokuBuildReport::GLOBAL,
+      **options
+    )
     @report               = report
     @bundler_tmp          = Pathname.new(Dir.mktmpdir)
-    @fetcher              = options[:fetcher]      || LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
-    @gemfile_path         = options[:gemfile_path] || Pathname.new("./Gemfile")
+    @fetcher              = LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
+    @gemfile_path         = gemfile_path
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
 
     contents = @gemfile_lock_path.read(mode: "rt")
