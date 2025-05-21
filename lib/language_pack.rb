@@ -23,12 +23,17 @@ module LanguagePack
   end
 
   # detects which language pack to use
-  def self.detect(app_path:, cache_path:)
+  def self.detect(app_path:, cache_path:, gemfile_lock: )
     pack = [ Rails8, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
       klass.use?
     end
 
-    return pack ? pack.new(app_path: app_path, cache_path: cache_path) : nil
+    kwargs = {
+      app_path: app_path,
+      cache_path: cache_path,
+      gemfile_lock: gemfile_lock
+    }
+    return pack ? pack.new(**kwargs) : nil
   end
 end
 

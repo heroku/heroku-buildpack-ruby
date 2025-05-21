@@ -25,7 +25,11 @@ begin
   Dir.chdir(app_path)
 
   LanguagePack::ShellHelpers.initialize_env(ARGV[2])
-  if pack = LanguagePack.detect(app_path: app_path, cache_path: cache_path)
+  if pack = LanguagePack.detect(
+      app_path: app_path,
+      cache_path: cache_path,
+      gemfile_lock: gemfile_lock
+    )
     pack.topic("Compiling #{pack.name}")
     pack.compile
   end
