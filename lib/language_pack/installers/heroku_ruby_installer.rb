@@ -27,6 +27,7 @@ class LanguagePack::Installers::HerokuRubyInstaller
       "ruby.major" => ruby_version.major,
       "ruby.minor" => ruby_version.minor,
       "ruby.patch" => ruby_version.patch,
+      "ruby.default" => ruby_version.default?,
     )
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)
