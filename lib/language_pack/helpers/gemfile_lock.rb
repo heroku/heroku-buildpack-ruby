@@ -41,7 +41,7 @@ module LanguagePack
             @ruby_version = nil
           end
 
-          if jruby = contents.to_s.match(/\(jruby (?<version>(\d+|\.)+)\)/)
+          if jruby = contents.to_s.match(/^RUBY VERSION(\r?\n)   ruby [^\(]*\(jruby (?<version>(\d+|\.)+)\)/m)
             @engine = :jruby
             @engine_version = jruby[:version]
           else
