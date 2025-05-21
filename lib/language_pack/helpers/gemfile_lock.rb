@@ -31,7 +31,7 @@ module LanguagePack
 
         def initialize(contents: )
 
-          if match = contents.match(/^RUBY VERSION(\r?\n)   ruby (?<version>\d+\.\d+\.\d+)((\-|\.)(?<pre>\S*\d+))?/m)
+          if match = contents.match(/^RUBY VERSION(\r?\n)   ruby (?<version>\d+\.\d+\.\d+)((\-|\.)(?<pre>\S*))?/m)
             @pre = match[:pre]
             @empty = false
             @ruby_version = match[:version]

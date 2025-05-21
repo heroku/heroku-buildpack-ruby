@@ -21,7 +21,7 @@ module LanguagePack
         (?<engine>\w+){0}
         (?<engine_version>.+){0}
 
-        ruby-\g<ruby_version>(-\g<patchlevel>)?(\.(?<pre>\S*\d+))?(-\g<engine>-\g<engine_version>)?
+        ruby-\g<ruby_version>(-\g<patchlevel>)?(\.(?<pre>\S*))?(-\g<engine>-\g<engine_version>)?
       }x
 
     # String formatted `<major>.<minor>.<patch>` for Ruby and JRuby
