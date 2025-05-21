@@ -170,10 +170,6 @@ class LanguagePack::Helpers::BundlerWrapper
     @specs ||= lockfile_parser.specs.each_with_object({}) {|spec, hash| hash[spec.name] = spec }
   end
 
-  def platforms
-    @platforms ||= lockfile_parser.platforms
-  end
-
   def version
     @version
   end
