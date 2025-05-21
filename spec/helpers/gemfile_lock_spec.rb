@@ -36,6 +36,27 @@ describe LanguagePack::Helpers::GemfileLock do
     expect(gemfile_lock.bundler.empty?).to eq(false)
   end
 
+  it "works with windows line endings" do
+    gemfile_lock = LanguagePack::Helpers::GemfileLock.new(
+      contents: <<~EOF.gsub("\n", "\r\n")
+        RUBY VERSION
+           ruby 3.3.5p100
+
+        BUNDLED WITH
+           2.3.4
+      EOF
+    )
+    expect(gemfile_lock.ruby.ruby_version).to eq("3.3.5")
+    expect(gemfile_lock.ruby.pre).to eq(nil)
+    expect(gemfile_lock.ruby.engine).to eq(:ruby)
+    expect(gemfile_lock.ruby.empty?).to eq(false)
+    expect(gemfile_lock.ruby.engine_version).to eq("3.3.5")
+
+    expect(gemfile_lock.bundler.version).to eq("2.3.4")
+    expect(gemfile_lock.bundler.empty?).to eq(false)
+  end
+
+
   it "captures jruby version" do
     gemfile_lock = LanguagePack::Helpers::GemfileLock.new(
       contents: <<~EOF

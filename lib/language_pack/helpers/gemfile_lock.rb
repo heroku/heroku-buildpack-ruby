@@ -60,7 +60,7 @@ module LanguagePack
         attr_reader :version
 
         def initialize(contents: )
-          if match = contents.match(/^BUNDLED WITH$(\r?\n)   (?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m)
+          if match = contents.match(/^BUNDLED WITH(\r?\n)   (?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m)
             @empty = false
             @version = match[:version]
           else
