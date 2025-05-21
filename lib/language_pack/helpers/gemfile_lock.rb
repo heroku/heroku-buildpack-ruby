@@ -9,9 +9,9 @@ module LanguagePack
     class GemfileLock
       attr_reader :ruby, :bundler
 
-      def initialize(contents: )
-        @ruby = RubyVersionParse.new(contents: contents)
-        @bundler = BundlerVersionParse.new(contents: contents)
+      def initialize(contents: , report: HerokuBuildReport::GLOBAL)
+        @ruby = RubyVersionParse.new(contents: contents, report: report)
+        @bundler = BundlerVersionParse.new(contents: contents, report: report)
       end
 
       # Holds information about the RUBY VERSION of the parsed Gemfile.lock
@@ -29,13 +29,18 @@ module LanguagePack
           # i.e. `<major>.<minor>.<patch>`
           :engine_version
 
-        def initialize(contents: )
-
+        def initialize(contents: , report: HerokuBuildReport::GLOBAL)
           if match = contents.match(/^RUBY VERSION(\r?\n)   ruby (?<version>\d+\.\d+\.\d+)((\-|\.)(?<pre>\S*))?/m)
             @pre = match[:pre]
             @empty = false
             @ruby_version = match[:version]
           else
+            if contents.match?(/RUBY VERSION/)
+              report.capture("gemfile_lock.ruby_version.failed_parse" => true)
+              if match = contents.match(/(?<contents>RUBY VERSION(\r?\n).*)$/)
+                report.capture("gemfile_lock.ruby_version.failed_contents" => match[:contents])
+              end
+            end
             @pre = nil
             @empty = true
             @ruby_version = nil
@@ -59,11 +64,17 @@ module LanguagePack
         # Bundler value from `Gemfile.lock` (String or nil) i.e. `2.5.23`
         attr_reader :version
 
-        def initialize(contents: )
+        def initialize(contents: , report: HerokuBuildReport::GLOBAL)
           if match = contents.match(/^BUNDLED WITH(\r?\n)   (?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m)
             @empty = false
             @version = match[:version]
           else
+            if contents.match?(/BUNDLED WITH/)
+              report.capture("gemfile_lock.bundler_version.failed_parse" => true)
+              if match = contents.match(/(?<contents>BUNDLED WITH(\r?\n).*)$/)
+                report.capture("gemfile_lock.bundler_version.failed_contents" => match[:contents])
+              end
+            end
             @empty = true
             @version = nil
           end

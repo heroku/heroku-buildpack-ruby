@@ -2,9 +2,10 @@ require "spec_helper"
 
 describe LanguagePack::Helpers::GemfileLock do
   it "Parses empty gemfile without error" do
+    report = HerokuBuildReport.dev_null
     gemfile_lock = LanguagePack::Helpers::GemfileLock.new(
-      contents: <<~EOF
-      EOF
+      report: report,
+      contents: ""
     )
     expect(gemfile_lock.ruby.ruby_version).to eq(nil)
     expect(gemfile_lock.ruby.pre).to eq(nil)
@@ -14,6 +15,40 @@ describe LanguagePack::Helpers::GemfileLock do
 
     expect(gemfile_lock.bundler.version).to eq(nil)
     expect(gemfile_lock.bundler.empty?).to eq(true)
+    expect(report.data).to be_empty
+  end
+
+  it "Records invalid parsing" do
+    report = HerokuBuildReport.dev_null
+    gemfile_lock = LanguagePack::Helpers::GemfileLock.new(
+      report: report,
+      contents: <<~EOF
+        RUBY VERSION
+        ruby 3.3.5p100
+
+        BUNDLED WITH
+        2.3.4
+      EOF
+    )
+    expect(
+      report.data["gemfile_lock.bundler_version.failed_parse"]
+    ).to eq(true)
+    expect(
+      report.data["gemfile_lock.bundler_version.failed_contents"]
+    ).to eq(<<~EOF.strip)
+      BUNDLED WITH
+      2.3.4
+    EOF
+
+    expect(
+      report.data["gemfile_lock.ruby_version.failed_parse"]
+    ).to eq(true)
+    expect(
+      report.data["gemfile_lock.ruby_version.failed_contents"]
+    ).to eq(<<~EOF.strip)
+      RUBY VERSION
+      ruby 3.3.5p100
+    EOF
   end
 
   it "Captures MRI version and ignores patchlevel" do
