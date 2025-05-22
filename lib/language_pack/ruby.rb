@@ -187,6 +187,12 @@ private
       bundler_output: bundler.ruby_version,
       last_version: last_version
     )
+
+    # New logic, running in parallel to old logic for reporting differences
+    lockfile_ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
+      ruby: @gemfile_lock.ruby,
+      last_version: last_version
+    )
     return @ruby_version
   end
 
