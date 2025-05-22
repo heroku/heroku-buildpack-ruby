@@ -2,6 +2,7 @@ require "pathname"
 require 'benchmark'
 
 require 'language_pack/shell_helpers'
+require "language_pack/helpers/gemfile_lock"
 
 # General Language Pack module
 module LanguagePack
