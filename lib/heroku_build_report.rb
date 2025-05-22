@@ -36,7 +36,7 @@ module HerokuBuildReport
         return if key.nil? || key.to_s.strip.empty?
 
         key = key&.strip
-        raise "Key  cannot be empty (#{key.inspect} => #{value})" if key.nil? || key.empty?
+        raise "Key cannot be empty (#{key.inspect} => #{value})" if key.nil? || key.empty?
 
         # Don't serialize complex values by accident
         if complex_object?(value)

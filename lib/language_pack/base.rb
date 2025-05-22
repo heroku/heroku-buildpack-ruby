@@ -9,7 +9,6 @@ require "language_pack/metadata"
 require "language_pack/fetcher"
 
 Encoding.default_external = Encoding::UTF_8 if defined?(Encoding)
-ENV["BPLOG_PREFIX"] = "buildpack.ruby"
 
 # abstract class that all the Ruby based Language Packs inherit from
 class LanguagePack::Base
@@ -21,23 +20,19 @@ class LanguagePack::Base
   MULTI_ARCH_STACKS    = ["heroku-24"]
   KNOWN_ARCHITECTURES  = ["amd64", "arm64"]
 
-  attr_reader :build_path, :cache, :stack
+  attr_reader :app_path, :cache, :stack
 
-  # changes directory to the build_path
-  # @param [String] the path of the build dir
-  # @param [String] the path of the cache dir this is nil during detect and release
-  def initialize(build_path, cache_path = nil)
-    @build_path    = build_path
+  def initialize(app_path: , cache_path: )
+    @app_path = app_path
     @stack         = ENV.fetch("STACK")
     @cache         = LanguagePack::Cache.new(cache_path)
     @metadata      = LanguagePack::Metadata.new(@cache)
     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
-    @id            = Digest::SHA1.hexdigest("#{Time.now.to_f}-#{rand(1000000)}")[0..10]
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
     @arch = get_arch
     @report = HerokuBuildReport::GLOBAL
 
-    Dir.chdir build_path
+    Dir.chdir app_path
   end
 
   def get_arch
@@ -54,7 +49,7 @@ class LanguagePack::Base
     arch
   end
 
-  def self.===(build_path)
+  def self.===(app_path)
     raise "must subclass"
   end
 
@@ -134,7 +129,7 @@ private ##################################
   end
 
   def add_to_profiled(string, filename: "ruby.sh", mode: "a")
-    profiled_path = "#{build_path}/.profile.d/"
+    profiled_path = "#{app_path}/.profile.d/"
 
     FileUtils.mkdir_p profiled_path
     File.open("#{profiled_path}/#{filename}", mode) do |file|

@@ -70,14 +70,14 @@ ERROR
         error(message)
       end
 
-      warn(<<-WARNING)
-You set your `config.assets.compile = true` in production.
-This can negatively impact the performance of your application.
+      warn(<<~WARNING)
+        You set your `config.assets.compile = true` in production.
+        This can negatively impact the performance of your application.
 
-For more information can be found in this article:
-  https://devcenter.heroku.com/articles/rails-asset-pipeline#compile-set-to-true-in-production
+        For more information can be found in this article:
+          https://devcenter.heroku.com/articles/rails-asset-pipeline#compile-set-to-true-in-production
 
-WARNING
+      WARNING
     end
   end
 
@@ -86,31 +86,31 @@ private
   def warn_x_sendfile_use!
     return false unless @x_sendfile_config.success?
     if @x_sendfile_config.did_match?("X-Sendfile") && !has_apache? # Apache
-      warn(<<-WARNING)
-You set `config.action_dispatch.x_sendfile_header = 'X-Sendfile'` in production,
-but you do not have `apache` installed on this app. This setting will cause any assets
-being served by your application to be returned without a body.
+      warn(<<~WARNING)
+        You set `config.action_dispatch.x_sendfile_header = 'X-Sendfile'` in production,
+        but you do not have `apache` installed on this app. This setting will cause any assets
+        being served by your application to be returned without a body.
 
-To fix this issue, please set:
+        To fix this issue, please set:
 
-```
-config.action_dispatch.x_sendfile_header = nil
-```
-WARNING
+        ```
+        config.action_dispatch.x_sendfile_header = nil
+        ```
+      WARNING
     end
 
     if @x_sendfile_config.did_match?("X-Accel-Redirect") && !has_nginx? # Nginx
-      warn(<<-WARNING)
-You set `config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'` in production,
-but you do not have `nginx` installed on this app. This setting will cause any assets
-being served by your application to be returned without a body.
+      warn(<<~WARNING)
+        You set `config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'` in production,
+        but you do not have `nginx` installed on this app. This setting will cause any assets
+        being served by your application to be returned without a body.
 
-To fix this issue, please set:
+        To fix this issue, please set:
 
-```
-config.action_dispatch.x_sendfile_header = nil
-```
-WARNING
+        ```
+        config.action_dispatch.x_sendfile_header = nil
+        ```
+      WARNING
     end
   end
 

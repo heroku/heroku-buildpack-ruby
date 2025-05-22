@@ -74,7 +74,8 @@ detect_needs_java()
   if which_java; then
     return $skip_java_install
   fi
-  grep "(jruby " "$gemfile_lock" --quiet
+
+  grep "(jruby " "$gemfile_lock" --quiet &> /dev/null
 }
 
 # Runs another buildpack against the build dir

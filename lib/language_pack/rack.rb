@@ -38,6 +38,4 @@ private
     super(**args)
     set_env_default "RACK_ENV", "production"
   end
-
 end
-

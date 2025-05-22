@@ -30,8 +30,8 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.bundler
   end
 
-  def initialize(*args)
-    super(*args)
+  def initialize(app_path: , cache_path: )
+    super(app_path: app_path, cache_path: cache_path)
     @node_installer = LanguagePack::Helpers::NodeInstaller.new(arch: @arch)
     @yarn_installer = LanguagePack::Helpers::YarnInstaller.new
   end
@@ -63,18 +63,17 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def best_practice_warnings
     if bundler.has_gem?("asset_sync")
-      warn(<<-WARNING)
-You are using the `asset_sync` gem.
-This is not recommended.
-See https://devcenter.heroku.com/articles/please-do-not-use-asset-sync for more information.
-WARNING
+      warn(<<~WARNING)
+        You are using the `asset_sync` gem.
+        This is not recommended.
+        See https://devcenter.heroku.com/articles/please-do-not-use-asset-sync for more information.
+      WARNING
     end
   end
 
   def compile
     # check for new app at the beginning of the compile
     new_app?
-    Dir.chdir(build_path)
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
@@ -142,14 +141,14 @@ private
     old_bundler_version  = @metadata.read("bundler_version").strip if @metadata.exists?("bundler_version")
 
     if old_bundler_version && old_bundler_version != bundler.version
-      warn(<<-WARNING, inline: true)
-Your app was upgraded to bundler #{ bundler.version }.
-Previously you had a successful deploy with bundler #{ old_bundler_version }.
+      warn(<<~WARNING, inline: true)
+        Your app was upgraded to bundler #{ bundler.version }.
+        Previously you had a successful deploy with bundler #{ old_bundler_version }.
 
-If you see problems related to the bundler version please refer to:
-https://devcenter.heroku.com/articles/bundler-version#known-upgrade-issues
+        If you see problems related to the bundler version please refer to:
+        https://devcenter.heroku.com/articles/bundler-version#known-upgrade-issues
 
-WARNING
+      WARNING
     end
   end
 
@@ -204,28 +203,28 @@ WARNING
       - https://help.heroku.com/88G3XLA6/what-is-an-acceptable-amount-of-dyno-load
     WARNING
 
-    <<-EOF
-case $(ulimit -u) in
-256)
-  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-512}
-  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
-  ;;
-512)
-  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-1024}
-  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
-  ;;
-16384)
-  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-2560}
-  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-8}
-  ;;
-32768)
-  export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-6144}
-  export WEB_CONCURRENCY=${WEB_CONCURRENCY:-16}
-  ;;
-*)
-  ;;
-esac
-EOF
+    return <<~EOF
+      case $(ulimit -u) in
+      256)
+        export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-512}
+        export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+        ;;
+      512)
+        export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-1024}
+        export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
+        ;;
+      16384)
+        export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-2560}
+        export WEB_CONCURRENCY=${WEB_CONCURRENCY:-8}
+        ;;
+      32768)
+        export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-6144}
+        export WEB_CONCURRENCY=${WEB_CONCURRENCY:-16}
+        ;;
+      *)
+        ;;
+      esac
+    EOF
   end
 
   # default JRUBY_OPTS
@@ -289,13 +288,13 @@ EOF
   # muiltibuildpack. We can't use profile.d because $HOME isn't set up
   def setup_export
     paths = ENV["PATH"].split(":").map do |path|
-      /^\/.*/ !~ path ? "#{build_path}/#{path}" : path
+      /^\/.*/ !~ path ? "#{app_path}/#{path}" : path
     end.join(":")
 
     # TODO ensure path exported is correct
     set_export_path "PATH", paths
 
-    gem_path = "#{build_path}/#{slug_vendor_base}"
+    gem_path = "#{app_path}/#{slug_vendor_base}"
     set_export_path "GEM_PATH", gem_path
     set_export_default "LANG", "en_US.UTF-8"
 
@@ -608,12 +607,12 @@ EOF
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
   def remove_vendor_bundle
     if File.exist?("vendor/bundle")
-      warn(<<-WARNING)
-Removing `vendor/bundle`.
-Checking in `vendor/bundle` is not supported. Please remove this directory
-and add it to your .gitignore. To vendor your gems with Bundler, use
-`bundle pack` instead.
-WARNING
+      warn(<<~WARNING)
+        Removing `vendor/bundle`.
+        Checking in `vendor/bundle` is not supported. Please remove this directory
+        and add it to your .gitignore. To vendor your gems with Bundler, use
+        `bundle pack` instead.
+      WARNING
       FileUtils.rm_rf("vendor/bundle")
     end
   end
@@ -721,61 +720,61 @@ WARNING
 
     topic("Writing config/database.yml to read from DATABASE_URL")
     File.open("config/database.yml", "w") do |file|
-      file.puts <<-DATABASE_YML
-<%
+      file.puts <<~DATABASE_YML
+        <%
 
-require 'cgi'
-require 'uri'
+        require 'cgi'
+        require 'uri'
 
-begin
-  uri = URI.parse(ENV["DATABASE_URL"])
-rescue URI::InvalidURIError
-  raise "Invalid DATABASE_URL"
-end
+        begin
+          uri = URI.parse(ENV["DATABASE_URL"])
+        rescue URI::InvalidURIError
+          raise "Invalid DATABASE_URL"
+        end
 
-raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
+        raise "No RACK_ENV or RAILS_ENV found" unless ENV["RAILS_ENV"] || ENV["RACK_ENV"]
 
-def attribute(name, value, force_string = false)
-  if value
-    value_string =
-      if force_string
-        '"' + value + '"'
-      else
-        value
-      end
-    "\#{name}: \#{value_string}"
-  else
-    ""
-  end
-end
+        def attribute(name, value, force_string = false)
+          if value
+            value_string =
+              if force_string
+                '"' + value + '"'
+              else
+                value
+              end
+            "\#{name}: \#{value_string}"
+          else
+            ""
+          end
+        end
 
-adapter = uri.scheme
-adapter = "postgresql" if adapter == "postgres"
+        adapter = uri.scheme
+        adapter = "postgresql" if adapter == "postgres"
 
-database = (uri.path || "").split("/")[1]
+        database = (uri.path || "").split("/")[1]
 
-username = uri.user
-password = uri.password
+        username = uri.user
+        password = uri.password
 
-host = uri.host
-port = uri.port
+        host = uri.host
+        port = uri.port
 
-params = CGI.parse(uri.query || "")
+        params = CGI.parse(uri.query || "")
 
-%>
+        %>
 
-<%= ENV["RAILS_ENV"] || ENV["RACK_ENV"] %>:
-  <%= attribute "adapter",  adapter %>
-  <%= attribute "database", database %>
-  <%= attribute "username", username %>
-  <%= attribute "password", password, true %>
-  <%= attribute "host",     host %>
-  <%= attribute "port",     port %>
+        <%= ENV["RAILS_ENV"] || ENV["RACK_ENV"] %>:
+          <%= attribute "adapter",  adapter %>
+          <%= attribute "database", database %>
+          <%= attribute "username", username %>
+          <%= attribute "password", password, true %>
+          <%= attribute "host",     host %>
+          <%= attribute "port",     port %>
 
-<% params.each do |key, value| %>
-  <%= key %>: <%= value.first %>
-<% end %>
-        DATABASE_YML
+        <% params.each do |key, value| %>
+          <%= key %>: <%= value.first %>
+        <% end %>
+      DATABASE_YML
     end
   end
 
@@ -836,7 +835,7 @@ params = CGI.parse(uri.query || "")
   def add_node_js_binary
     return [] if node_js_preinstalled?
 
-    if Pathname(build_path).join("package.json").exist? ||
+    if Pathname(app_path).join("package.json").exist? ||
          bundler.has_gem?('execjs') ||
          bundler.has_gem?('webpacker')
 
@@ -873,7 +872,7 @@ params = CGI.parse(uri.query || "")
   def add_yarn_binary
     return [] if yarn_preinstalled?
 
-    if Pathname(build_path).join("yarn.lock").exist? || bundler.has_gem?('webpacker')
+    if Pathname(app_path).join("yarn.lock").exist? || bundler.has_gem?('webpacker')
 
       version = @yarn_installer.version
       old_version = @metadata.fetch("default_yarn_version") { version }

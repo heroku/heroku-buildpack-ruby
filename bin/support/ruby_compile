@@ -19,8 +19,12 @@ HerokuBuildReport.set_global(
 ).tap(&:clear!)
 
 begin
+  app_path = Pathname(ARGV[0])
+  cache_path = Pathname(ARGV[1])
+  Dir.chdir(app_path)
+
   LanguagePack::ShellHelpers.initialize_env(ARGV[2])
-  if pack = LanguagePack.detect(ARGV[0], ARGV[1])
+  if pack = LanguagePack.detect(app_path: app_path, cache_path: cache_path)
     pack.topic("Compiling #{pack.name}")
     pack.compile
   end

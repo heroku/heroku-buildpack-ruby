@@ -94,41 +94,41 @@ describe "Rails Runner" do
   end
 
   def mock_rails_runner(try_code = "")
-        executable_contents = <<-FILE
-#!/usr/bin/env ruby
-require 'ostruct'
+    executable_contents = <<~FILE
+      #!/usr/bin/env ruby
+      require 'ostruct'
 
-module Rails; end
-def Rails.application
-  OpenStruct.new(config: TryMock.new) # Rails.application.config #=> TryMock instance
-end
+      module Rails; end
+      def Rails.application
+        OpenStruct.new(config: TryMock.new) # Rails.application.config #=> TryMock instance
+      end
 
-# Mock object used to record calls
-# for example:
-#
-#   obj = Try.new
-#   obj.try(:active_storage).try(:service)
-#   puts obj.to_s # => "active_storage.service"
-#
-class TryMock
-  def initialize(array = [])
-    @try_array = array
-  end
+      # Mock object used to record calls
+      # for example:
+      #
+      #   obj = Try.new
+      #   obj.try(:active_storage).try(:service)
+      #   puts obj.to_s # => "active_storage.service"
+      #
+      class TryMock
+        def initialize(array = [])
+          @try_array = array
+        end
 
-  def try(value)
-    @try_array << value
-    #{try_code}
-    return TryMock.new(@try_array)
-  end
+        def try(value)
+          @try_array << value
+          #{try_code}
+          return TryMock.new(@try_array)
+        end
 
-  def to_s
-    @try_array.join(".")
-  end
-end
+        def to_s
+          @try_array.join(".")
+        end
+      end
 
-ARGV.shift           # remove "runner"
-eval(ARGV.join(" ")) # Execute command passed in
-FILE
+      ARGV.shift           # remove "runner"
+      eval(ARGV.join(" ")) # Execute command passed in
+    FILE
     FileUtils.mkdir("bin")
     File.open("bin/rails", "w") { |f| f << executable_contents }
     File.chmod(0777, "bin/rails")
