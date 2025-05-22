@@ -10,7 +10,7 @@ group :development, :test do
   gem "rspec-expectations"
   gem "excon"
   gem "rake"
-  gem "parallel_tests"
+  gem "parallel_split_test"
   gem 'rspec-retry'
   gem 'json'
   gem 'ci-queue'
