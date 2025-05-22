@@ -78,10 +78,10 @@ describe "RubyVersion" do
             rake
 
           RUBY VERSION
-            ruby 3.2.3p157
+             ruby 3.2.3p157
 
           BUNDLED WITH
-            2.4.19
+             2.4.19
         EOF
 
         ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
@@ -120,10 +120,10 @@ describe "RubyVersion" do
             rake
 
           RUBY VERSION
-            ruby 3.2.3.rc1
+             ruby 3.2.3.rc1
 
           BUNDLED WITH
-            2.4.19
+             2.4.19
         EOF
 
         ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
@@ -151,16 +151,20 @@ describe "RubyVersion" do
             remote: https://rubygems.org/
             specs:
               rake (13.2.1)
+
           PLATFORMS
             arm64-darwin-22
             ruby
             x86_64-linux
+
           DEPENDENCIES
             rake
+
           RUBY VERSION
-            ruby 3.2.3.lol
+             ruby 3.2.3.lol
+
           BUNDLED WITH
-            2.4.19
+             2.4.19
         EOF
 
         ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
@@ -193,10 +197,10 @@ describe "RubyVersion" do
           DEPENDENCIES
 
           RUBY VERSION
-            ruby 2.6.8p001 (jruby 9.3.6.0)
+             ruby 2.6.8p001 (jruby 9.3.6.0)
 
           BUNDLED WITH
-            2.3.25
+             2.3.25
         EOF
 
         ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(
