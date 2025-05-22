@@ -2,11 +2,10 @@ GEM
   remote: https://rubygems.org/
   specs:
     base64 (0.2.0)
-    ci-queue (0.65.0)
+    ci-queue (0.67.0)
       logger
     citrus (3.0.2)
     connection_pool (2.5.3)
-    dead_end (4.0.0)
     diff-lcs (1.6.1)
     erubis (2.7.0)
     excon (0.110.0)
@@ -62,7 +61,6 @@ PLATFORMS
 
 DEPENDENCIES
   ci-queue
-  dead_end
   excon
   heroku_hatchet
   json
