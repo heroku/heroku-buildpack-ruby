@@ -11,7 +11,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
   end
 
   def ruby_version
-    LanguagePack::RubyVersion.new("ruby-3.1.7")
+    LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-3.1.7")
   end
 
   describe "#fetch_unpack" do
@@ -58,7 +58,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
             arch: "arm64",
             report: report
           ).install(
-            LanguagePack::RubyVersion.new("ruby-3.1.4-p0-jruby-9.4.9.0"),
+            LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-3.1.4-p0-jruby-9.4.9.0"),
             "#{dir}/vendor/ruby"
           )
 

@@ -171,7 +171,7 @@ private
   # the relative path to the vendored ruby directory
   # @return [String] resulting path
   def slug_vendor_ruby
-    "vendor/#{ruby_version.version_without_patchlevel}"
+    "vendor/#{ruby_version.version_for_download}"
   end
 
   # fetch the ruby version from bundler
@@ -182,9 +182,10 @@ private
     last_version      = nil
     last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
 
-    @ruby_version = LanguagePack::RubyVersion.new(bundler.ruby_version,
-      is_new:       new_app?,
-      last_version: last_version)
+    @ruby_version = LanguagePack::RubyVersion.bundle_platform_ruby(
+      bundler_output: bundler.ruby_version,
+      last_version: last_version
+    )
     return @ruby_version
   end
 
@@ -470,7 +471,7 @@ private
     @metadata.write("buildpack_ruby_version", ruby_version.version_for_download)
 
     topic "Using Ruby version: #{ruby_version.version_for_download}"
-    if !ruby_version.set
+    if ruby_version.default?
       warn(<<~WARNING)
         You have not declared a Ruby version in your Gemfile.
 

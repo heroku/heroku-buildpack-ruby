@@ -1,4 +1,4 @@
-require "language_pack/shell_helpers"
+require "language_pack/shell_helpers" # Holds BuildpackError
 
 module LanguagePack
   class RubyVersion
@@ -21,43 +21,68 @@ module LanguagePack
         (?<engine>\w+){0}
         (?<engine_version>.+){0}
 
-        ruby-\g<ruby_version>(-\g<patchlevel>)?(-\g<engine>-\g<engine_version>)?
+        ruby-\g<ruby_version>(-\g<patchlevel>)?(\.(?<pre>\S*))?(-\g<engine>-\g<engine_version>)?
       }x
 
-
-    # `version` is the bundler output like `ruby-3.4.2`
-    attr_reader :version,
-      # `set` is either `:gemfile` when the app specified a version or `nil` when using
-      # the default version
-      :set,
-      # `version_without_patchlevel` removes any `-p<number>` as they're not significant
-      # effectively this is `version_for_download`
-      :version_without_patchlevel,
-      # `patchlevel` is the `-p<number>` or is empty
-      :patchlevel,
+    # String formatted `<major>.<minor>.<patch>` for Ruby and JRuby
+    attr_reader :ruby_version,
       # `engine` is `:ruby` or `:jruby`
       :engine,
-      # `ruby_version` is `<major>.<minor>.<patch>` extracted from `version`
-      :ruby_version,
       # `engine_version` is the Jruby version or for MRI it is the same as `ruby_version`
       # i.e. `<major>.<minor>.<patch>`
       :engine_version
 
-    include LanguagePack::ShellHelpers
-
-    def initialize(bundler_output, app = {})
-      @set            = nil
-      @bundler_output = bundler_output
-      @app            = app
-      set_version
-      parse_version
-
-      @version_without_patchlevel = @version.sub(/-p-?\d+/, '')
+    def self.bundle_platform_ruby(bundler_output:, last_version: nil)
+      default = bundler_output.empty?
+      if default
+        default(last_version: last_version)
+      elsif md = RUBY_VERSION_REGEX.match(bundler_output)
+        new(
+          pre: md[:pre],
+          engine: md[:engine]&.to_sym || :ruby,
+          default: default,
+          ruby_version: md[:ruby_version],
+          engine_version: md[:engine_version] || md[:ruby_version],
+        )
+      else
+        raise BadVersionError.new("'#{bundler_output}' is not valid") unless md
+      end
     end
 
-    # https://github.com/bundler/bundler/issues/4621
+    def self.default(last_version: )
+      ruby_version = last_version&.split("-")&.last || DEFAULT_VERSION_NUMBER
+      new(
+        pre: nil,
+        engine: :ruby,
+        default: true,
+        ruby_version: ruby_version,
+        engine_version: ruby_version,
+      )
+    end
+
+    def initialize(
+        pre:,
+        engine:,
+        default:,
+        ruby_version:,
+        engine_version:
+      )
+        @pre = pre
+        @engine = engine
+        @default = default
+        @ruby_version = ruby_version
+        @engine_version = engine_version
+    end
+
+    # i.e. `ruby-3.4.2`
     def version_for_download
-      version_without_patchlevel
+      if @engine == :jruby
+        "ruby-#{ruby_version}-jruby-#{engine_version}"
+      elsif @pre
+        "ruby-#{ruby_version}.#{@pre}"
+      else
+        "ruby-#{ruby_version}"
+      end
     end
 
     def file_name
@@ -65,7 +90,7 @@ module LanguagePack
     end
 
     def default?
-      !set
+      @default
     end
 
     # determine if we're using jruby
@@ -101,45 +126,15 @@ module LanguagePack
     # `ruby-2.3.1` then then `next_logical_version(1)`
     # will produce `ruby-2.3.2`.
     def next_logical_version(increment = 1)
-      split_version = @version_without_patchlevel.split(".")
-      teeny = split_version.pop
-      split_version << teeny.to_i + increment
-      split_version.join(".")
+      "ruby-#{major}.#{minor}.#{patch + increment}"
     end
 
     def next_minor_version(increment = 1)
-      split_version = @version_without_patchlevel.split(".")
-      split_version[1] = split_version[1].to_i + increment
-      split_version[2] = 0
-      split_version.join(".")
+      "ruby-#{major}.#{minor + increment}.0"
     end
 
     def next_major_version(increment = 1)
-      split_version = @version_without_patchlevel.split("-").last.split(".")
-      split_version[0] = Integer(split_version[0]) + increment
-      split_version[1] = 0
-      split_version[2] = 0
-      return "ruby-#{split_version.join(".")}"
-    end
-
-    private
-    def set_version
-      if @bundler_output.empty?
-        @set     = false
-        @version = @app[:last_version] || DEFAULT_VERSION
-      else
-        @set     = :gemfile
-        @version = @bundler_output
-      end
-    end
-
-    def parse_version
-      md = RUBY_VERSION_REGEX.match(version)
-      raise BadVersionError.new("'#{version}' is not valid") unless md
-      @ruby_version   = md[:ruby_version]
-      @patchlevel     = md[:patchlevel]
-      @engine_version = md[:engine_version] || @ruby_version
-      @engine         = (md[:engine]        || :ruby).to_sym
+      "ruby-#{major + increment}.0.0"
     end
   end
 end
