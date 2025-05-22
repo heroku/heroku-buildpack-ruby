@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Introduce internal metrics for deriving Ruby version directly from the `Gemfile.lock` to avoid needing to call `bundle platform --ruby` in the future. No change in behavior is expected. (https://github.com/heroku/heroku-buildpack-ruby/pull/1603)
 
 ## [v309] - 2025-05-19
 
