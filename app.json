@@ -10,7 +10,6 @@
         "HATCHET_RETRIES": "3",
         "IS_RUNNING_ON_CI": "true",
         "HATCHET_APP_LIMIT": "100",
-        "BUILDPACK_LOG_FILE": "tmp/buildpack.log"
       },
       "formation": {
         "test": {

@@ -132,9 +132,5 @@ describe "Rails Runner" do
     FileUtils.mkdir("bin")
     File.open("bin/rails", "w") { |f| f << executable_contents }
     File.chmod(0777, "bin/rails")
-
-    # BUILDPACK_LOG_FILE support for logging
-    FileUtils.mkdir("tmp")
-    FileUtils.touch("buildpack.log")
   end
 end
