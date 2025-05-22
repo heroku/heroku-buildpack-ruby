@@ -26,7 +26,15 @@ module LanguagePack
       klass.use?
     end
 
-    return pack ? pack.new(app_path: app_path, cache_path: cache_path) : nil
+    if pack
+      pack.new(
+        app_path: app_path,
+        cache_path: cache_path,
+        gemfile_lock: gemfile_lock
+      )
+    else
+      nil
+    end
   end
 end
 
