@@ -110,15 +110,6 @@ describe "BundlerWrapper mutates rubyopt" do
     end
   end
 
-  it "detects windows gemfiles" do
-    Hatchet::App.new("rails4_windows_mri193").in_directory_fork do |dir|
-      require "bundler"
-      Bundler.with_unbundled_env do
-        expect(@bundler.install.windows_gemfile_lock?).to be_truthy
-      end
-    end
-  end
-
   describe "when executing bundler" do
     it "handles JRuby pre gemfiles" do
       Hatchet::App.new("jruby-minimal").in_directory_fork do |dir|

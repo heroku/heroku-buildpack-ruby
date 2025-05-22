@@ -101,11 +101,15 @@ class LanguagePack::Helpers::BundlerWrapper
 
   attr_reader :bundler_path
 
-  def initialize(options = {})
-    @report               = options[:report] || HerokuBuildReport::GLOBAL
+  def initialize(
+      bundler_path: nil,
+      gemfile_path: Pathname.new("./Gemfile"),
+      report: HerokuBuildReport::GLOBAL
+    )
+    @report               = report
     @bundler_tmp          = Pathname.new(Dir.mktmpdir)
-    @fetcher              = options[:fetcher]      || LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
-    @gemfile_path         = options[:gemfile_path] || Pathname.new("./Gemfile")
+    @fetcher              = LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
+    @gemfile_path         = gemfile_path
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
 
     contents = @gemfile_lock_path.read(mode: "rt")
@@ -132,8 +136,8 @@ class LanguagePack::Helpers::BundlerWrapper
     )
     @dir_name = "bundler-#{@version}"
 
-    @bundler_path         = options[:bundler_path] || @bundler_tmp.join(@dir_name)
-    @bundler_tar          = options[:bundler_tar]  || "bundler/#{@dir_name}.tgz"
+    @bundler_path         = bundler_path || @bundler_tmp.join(@dir_name)
+    @bundler_tar          = "bundler/#{@dir_name}.tgz"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
     @path                 = Pathname.new("#{@bundler_path}/gems/#{@dir_name}/lib")
   end
@@ -162,20 +166,8 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  # detects whether the Gemfile.lock contains the Windows platform
-  # @return [Boolean] true if the Gemfile.lock was created on Windows
-  def windows_gemfile_lock?
-    platforms.detect do |platform|
-      /mingw|mswin/.match(platform.os) if platform.is_a?(Gem::Platform)
-    end
-  end
-
   def specs
     @specs ||= lockfile_parser.specs.each_with_object({}) {|spec, hash| hash[spec.name] = spec }
-  end
-
-  def platforms
-    @platforms ||= lockfile_parser.platforms
   end
 
   def version

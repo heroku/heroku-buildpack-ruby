@@ -21,8 +21,6 @@
   - 984b6d02353519251c2d1e885bf8914a2584f26a
 - - "./repos/rails_versions/rails42_default_ruby"
   - fbdaf031823f09d1514ec1d55dcb04ca2f4264ca
-- - "./repos/rails_versions/rails4_windows_mri193"
-  - f4c7b6209835050468bbb87827acf652b8f4d8ce
 - - "./repos/rails_versions/rails61"
   - 47828a3e8c79b7869ca0d9a3afa4be065fa46e96
 - - "./repos/rails_versions/rails_8_ruby_schema"
