@@ -193,6 +193,23 @@ private
       ruby: @gemfile_lock.ruby,
       last_version: last_version
     )
+    @report.capture(
+      "gemfile_lock.ruby_version.version" => lockfile_ruby_version.ruby_version,
+      "gemfile_lock.ruby_version.engine" => lockfile_ruby_version.engine,
+      "gemfile_lock.ruby_version.engine.version" => lockfile_ruby_version.engine_version,
+      "gemfile_lock.ruby_version.major" => lockfile_ruby_version.major,
+      "gemfile_lock.ruby_version.minor" => lockfile_ruby_version.minor,
+      "gemfile_lock.ruby_version.patch" => lockfile_ruby_version.patch,
+      "gemfile_lock.ruby_version.default" => lockfile_ruby_version.default?,
+    )
+
+    if lockfile_ruby_version.version_for_download != @ruby_version.version_for_download
+      @report.capture(
+        "gemfile_lock.ruby_version.got" => lockfile_ruby_version.version_for_download,
+        "gemfile_lock.ruby_version.expected" => @ruby_version.version_for_download,
+        "gemfile_lock.ruby_version.different_version" => true,
+      )
+    end
     return @ruby_version
   end
 
