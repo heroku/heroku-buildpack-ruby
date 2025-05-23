@@ -30,8 +30,9 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.bundler
   end
 
-  def initialize(app_path: , cache_path: )
-    super(app_path: app_path, cache_path: cache_path)
+  def initialize(app_path: , cache_path: , gemfile_lock:)
+    super(app_path: app_path, cache_path: cache_path, gemfile_lock: gemfile_lock)
+    @gemfile_lock = gemfile_lock
     @node_installer = LanguagePack::Helpers::NodeInstaller.new(arch: @arch)
     @yarn_installer = LanguagePack::Helpers::YarnInstaller.new
   end
@@ -186,6 +187,29 @@ private
       bundler_output: bundler.ruby_version,
       last_version: last_version
     )
+
+    # New logic, running in parallel to old logic for reporting differences
+    lockfile_ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
+      ruby: @gemfile_lock.ruby,
+      last_version: last_version
+    )
+    @report.capture(
+      "gemfile_lock.ruby_version.version" => lockfile_ruby_version.ruby_version,
+      "gemfile_lock.ruby_version.engine" => lockfile_ruby_version.engine,
+      "gemfile_lock.ruby_version.engine.version" => lockfile_ruby_version.engine_version,
+      "gemfile_lock.ruby_version.major" => lockfile_ruby_version.major,
+      "gemfile_lock.ruby_version.minor" => lockfile_ruby_version.minor,
+      "gemfile_lock.ruby_version.patch" => lockfile_ruby_version.patch,
+      "gemfile_lock.ruby_version.default" => lockfile_ruby_version.default?,
+    )
+
+    if lockfile_ruby_version.version_for_download != @ruby_version.version_for_download
+      @report.capture(
+        "gemfile_lock.ruby_version.got" => lockfile_ruby_version.version_for_download,
+        "gemfile_lock.ruby_version.expected" => @ruby_version.version_for_download,
+        "gemfile_lock.ruby_version.different_version" => true,
+      )
+    end
     return @ruby_version
   end
 

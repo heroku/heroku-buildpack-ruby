@@ -39,10 +39,23 @@ describe "RubyVersion" do
   it "correctly sets default ruby versions" do
     Hatchet::App.new("default_ruby").in_directory_fork do |dir|
       require 'bundler'
+      dir = Pathname(Dir.pwd)
       Bundler.with_unbundled_env do
         ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
         version_number = LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER
         version        = LanguagePack::RubyVersion::DEFAULT_VERSION
+        expect(ruby_version.version_for_download).to eq(version)
+        expect(ruby_version.engine_version).to eq(version_number)
+        expect(ruby_version.to_gemfile).to eq("ruby '#{version_number}'")
+        expect(ruby_version.engine).to eq(:ruby)
+        expect(ruby_version.default?).to eq(true)
+
+        # Shadow logic validation
+        ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
+          ruby: LanguagePack::Helpers::GemfileLock.new(
+            contents: dir.join("Gemfile.lock").read
+          ).ruby
+        )
         expect(ruby_version.version_for_download).to eq(version)
         expect(ruby_version.engine_version).to eq(version_number)
         expect(ruby_version.to_gemfile).to eq("ruby '#{version_number}'")
@@ -78,15 +91,25 @@ describe "RubyVersion" do
             rake
 
           RUBY VERSION
-            ruby 3.2.3p157
+             ruby 3.2.3p157
 
           BUNDLED WITH
-            2.4.19
+             2.4.19
         EOF
 
         ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
         version_number = "3.2.3"
         version        = "ruby-#{version_number}"
+        expect(ruby_version.version_for_download).to eq(version)
+        expect(ruby_version.engine_version).to eq(version_number)
+        expect(ruby_version.engine).to eq(:ruby)
+
+        # Shadow logic validation
+        ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
+          ruby: LanguagePack::Helpers::GemfileLock.new(
+            contents: dir.join("Gemfile.lock").read
+          ).ruby
+        )
         expect(ruby_version.version_for_download).to eq(version)
         expect(ruby_version.engine_version).to eq(version_number)
         expect(ruby_version.engine).to eq(:ruby)
@@ -120,15 +143,25 @@ describe "RubyVersion" do
             rake
 
           RUBY VERSION
-            ruby 3.2.3.rc1
+             ruby 3.2.3.rc1
 
           BUNDLED WITH
-            2.4.19
+             2.4.19
         EOF
 
         ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
         version_number = "3.2.3"
         version        = "ruby-#{version_number}.rc1"
+        expect(ruby_version.version_for_download).to eq(version)
+        expect(ruby_version.engine_version).to eq(version_number)
+        expect(ruby_version.engine).to eq(:ruby)
+
+        # Shadow logic validation
+        ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
+          ruby: LanguagePack::Helpers::GemfileLock.new(
+            contents: dir.join("Gemfile.lock").read
+          ).ruby
+        )
         expect(ruby_version.version_for_download).to eq(version)
         expect(ruby_version.engine_version).to eq(version_number)
         expect(ruby_version.engine).to eq(:ruby)
@@ -151,21 +184,35 @@ describe "RubyVersion" do
             remote: https://rubygems.org/
             specs:
               rake (13.2.1)
+
           PLATFORMS
             arm64-darwin-22
             ruby
             x86_64-linux
+
           DEPENDENCIES
             rake
+
           RUBY VERSION
-            ruby 3.2.3.lol
+             ruby 3.2.3.lol
+
           BUNDLED WITH
-            2.4.19
+             2.4.19
         EOF
 
         ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: @bundler.install.ruby_version)
         version_number = "3.2.3"
         version        = "ruby-#{version_number}.lol"
+        expect(ruby_version.version_for_download).to eq(version)
+        expect(ruby_version.engine_version).to eq(version_number)
+        expect(ruby_version.engine).to eq(:ruby)
+
+        # Shadow logic validation
+        ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
+          ruby: LanguagePack::Helpers::GemfileLock.new(
+            contents: dir.join("Gemfile.lock").read
+          ).ruby
+        )
         expect(ruby_version.version_for_download).to eq(version)
         expect(ruby_version.engine_version).to eq(version_number)
         expect(ruby_version.engine).to eq(:ruby)
@@ -193,10 +240,10 @@ describe "RubyVersion" do
           DEPENDENCIES
 
           RUBY VERSION
-            ruby 2.6.8p001 (jruby 9.3.6.0)
+             ruby 2.6.8p001 (jruby 9.3.6.0)
 
           BUNDLED WITH
-            2.3.25
+             2.3.25
         EOF
 
         ruby_version   = LanguagePack::RubyVersion.bundle_platform_ruby(
@@ -205,6 +252,16 @@ describe "RubyVersion" do
         version_number = "2.6.8"
         engine_version = "9.3.6.0"
         engine = :jruby
+        expect(ruby_version.version_for_download).to eq("ruby-#{version_number}-#{engine}-#{engine_version}")
+        expect(ruby_version.engine_version).to eq(engine_version)
+        expect(ruby_version.engine).to eq(engine)
+
+        # Shadow logic validation
+        ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
+          ruby: LanguagePack::Helpers::GemfileLock.new(
+            contents: dir.join("Gemfile.lock").read
+          ).ruby
+        )
         expect(ruby_version.version_for_download).to eq("ruby-#{version_number}-#{engine}-#{engine_version}")
         expect(ruby_version.engine_version).to eq(engine_version)
         expect(ruby_version.engine).to eq(engine)
