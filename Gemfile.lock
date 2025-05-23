@@ -27,9 +27,10 @@ GEM
     logger (1.7.0)
     moneta (1.0.0)
     multi_json (1.15.0)
-    parallel (1.25.1)
-    parallel_tests (4.7.1)
-      parallel
+    parallel (1.27.0)
+    parallel_split_test (0.10.0)
+      parallel (>= 0.5.13)
+      rspec-core (>= 3.9.0)
     platform-api (3.8.0)
       heroics (~> 0.1.1)
       moneta (~> 1.0.0)
@@ -66,7 +67,7 @@ DEPENDENCIES
   excon
   heroku_hatchet
   json
-  parallel_tests
+  parallel_split_test
   rake
   redis
   rspec-core

@@ -50,12 +50,6 @@ To use this buildpack, fork it on Github.  Push up changes to your fork, then cr
 
 ### Testing
 
-The tests on this buildpack are written in Rspec to allow the use of
-`focused: true`. Parallelization of testing is provided by
-https://github.com/grosser/parallel_tests this lib spins up an arbitrary
-number of processes and running a different test file in each process,
-it does not parallelize tests within a test file. To run the tests: clone the repo, then `bundle install` then clone the test fixtures by running:
-
 ```sh
 $ bundle exec hatchet install
 ```

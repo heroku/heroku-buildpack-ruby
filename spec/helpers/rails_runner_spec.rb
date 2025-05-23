@@ -2,16 +2,17 @@ require 'spec_helper'
 
 describe "Rails Runner" do
   around(:each) do |test|
-    original_path = ENV["PATH"]
-    ENV["PATH"] = "./bin/:#{ENV['PATH']}"
+    # Process and disk isolation
+    Hatchet::App.new("default_ruby").in_directory_fork do
+      original_path = ENV["PATH"]
+      ENV["PATH"] = "./bin/:#{ENV['PATH']}"
 
-    Dir.mktmpdir do |tmpdir|
-      Dir.chdir(tmpdir) do
-        test.run
+      Dir.mktmpdir do |tmpdir|
+        Dir.chdir(tmpdir) do
+          test.run
+        end
       end
     end
-  ensure
-    ENV["PATH"] = original_path if original_path
   end
 
   it "config objects build propperly formatted commands" do
@@ -132,9 +133,5 @@ describe "Rails Runner" do
     FileUtils.mkdir("bin")
     File.open("bin/rails", "w") { |f| f << executable_contents }
     File.chmod(0777, "bin/rails")
-
-    # BUILDPACK_LOG_FILE support for logging
-    FileUtils.mkdir("tmp")
-    FileUtils.touch("buildpack.log")
   end
 end
