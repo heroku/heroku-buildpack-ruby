@@ -2,23 +2,39 @@ require "pathname"
 require 'benchmark'
 
 require 'language_pack/shell_helpers'
+require "language_pack/helpers/gemfile_lock"
 
 # General Language Pack module
 module LanguagePack
   module Helpers
   end
 
-  # detects which language pack to use
-  def self.detect(app_path:, cache_path:)
-    if !File.exist?("Gemfile.lock")
+  def self.gemfile_lock(app_path: )
+    path = app_path.join("Gemfile.lock")
+    if path.exist?
+      LanguagePack::Helpers::GemfileLock.new(
+        contents: path.read
+      )
+    else
       raise BuildpackError.new("Gemfile.lock required. Please check it in.")
     end
+  end
 
-    pack = [ Rails8, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+  # detects which language pack to use
+  def self.detect(app_path:, cache_path:, gemfile_lock: )
+    pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
       klass.use?
     end
 
-    return pack ? pack.new(app_path: app_path, cache_path: cache_path) : nil
+    if pack_klass
+      pack_klass.new(
+        app_path: app_path,
+        cache_path: cache_path,
+        gemfile_lock: gemfile_lock
+      )
+    else
+      nil
+    end
   end
 end
 
