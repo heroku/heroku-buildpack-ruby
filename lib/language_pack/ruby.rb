@@ -78,7 +78,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
-    install_ruby(slug_vendor_ruby)
+    install_ruby(install_path: slug_vendor_ruby)
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
       gem_layer_path: File.expand_path("."),
@@ -470,7 +470,7 @@ private
 
   # install the vendored ruby
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
-  def install_ruby(install_path)
+  def install_ruby(install_path: )
     # Could do a compare operation to avoid re-downloading ruby
     return false unless ruby_version
 
