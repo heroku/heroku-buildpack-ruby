@@ -129,7 +129,7 @@ private
   def warn_bad_binstubs
     check = LanguagePack::Helpers::BinstubCheck.new(
       warn_object: self,
-      app_root_dir: Dir.pwd,
+      app_root_dir: self.app_path,
     )
     check.call
   end
