@@ -634,14 +634,15 @@ private
   # users should be using `bundle pack` instead.
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
   def remove_vendor_bundle
-    if File.exist?("vendor/bundle")
+    vendor_bundle = self.app_path.join("vendor").join("bundle")
+    if vendor_bundle.exist?
       warn(<<~WARNING)
         Removing `vendor/bundle`.
         Checking in `vendor/bundle` is not supported. Please remove this directory
         and add it to your .gitignore. To vendor your gems with Bundler, use
         `bundle pack` instead.
       WARNING
-      FileUtils.rm_rf("vendor/bundle")
+      vendor_bundle.rmtree
     end
   end
 
