@@ -127,7 +127,10 @@ private
   # Since `ruby2.5` is not a valid binary name
   #
   def warn_bad_binstubs
-    check = LanguagePack::Helpers::BinstubCheck.new(app_root_dir: Dir.pwd, warn_object: self)
+    check = LanguagePack::Helpers::BinstubCheck.new(
+      warn_object: self,
+      app_root_dir: Dir.pwd,
+    )
     check.call
   end
 
