@@ -555,7 +555,7 @@ private
   end
 
   def new_app?
-    @new_app ||= !File.exist?("vendor/heroku")
+    @new_app ||= !app_path.join("vendor").join("heroku").exist?
   end
 
   # find the ruby install path for its binstubs during build
