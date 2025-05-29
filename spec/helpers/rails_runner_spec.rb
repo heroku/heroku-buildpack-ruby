@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Rails Runner" do
-  around(:each) do |test|
+  def isolate(&block)
     # Process and disk isolation
     Hatchet::App.new("default_ruby").in_directory_fork do
       original_path = ENV["PATH"]
@@ -9,83 +9,95 @@ describe "Rails Runner" do
 
       Dir.mktmpdir do |tmpdir|
         Dir.chdir(tmpdir) do
-          test.run
+          block.call
         end
       end
     end
   end
 
   it "config objects build propperly formatted commands" do
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new
-    local_storage = rails_runner.detect("active_storage.service")
+    isolate do
+      rails_runner  = LanguagePack::Helpers::RailsRunner.new
+      local_storage = rails_runner.detect("active_storage.service")
 
-    expected = 'rails runner "begin; puts %Q{heroku.detecting.config.for.active_storage.service=#{Rails.application.config.try(:active_storage).try(:service)}}; rescue => e; end;"'
-    expect(rails_runner.command).to eq(expected)
+      expected = 'rails runner "begin; puts %Q{heroku.detecting.config.for.active_storage.service=#{Rails.application.config.try(:active_storage).try(:service)}}; rescue => e; end;"'
+      expect(rails_runner.command).to eq(expected)
 
-    rails_runner.detect("assets.compile")
+      rails_runner.detect("assets.compile")
 
-    expected = 'rails runner "begin; puts %Q{heroku.detecting.config.for.active_storage.service=#{Rails.application.config.try(:active_storage).try(:service)}}; rescue => e; end; begin; puts %Q{heroku.detecting.config.for.assets.compile=#{Rails.application.config.try(:assets).try(:compile)}}; rescue => e; end;"'
-    expect(rails_runner.command).to eq(expected)
+      expected = 'rails runner "begin; puts %Q{heroku.detecting.config.for.active_storage.service=#{Rails.application.config.try(:active_storage).try(:service)}}; rescue => e; end; begin; puts %Q{heroku.detecting.config.for.assets.compile=#{Rails.application.config.try(:assets).try(:compile)}}; rescue => e; end;"'
+      expect(rails_runner.command).to eq(expected)
+    end
   end
 
   it "calls run through child object" do
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new
-    def rails_runner.call; @called ||= 0 ; @called += 1; "" end
-    def rails_runner.called; @called; end
+    isolate do
+      rails_runner  = LanguagePack::Helpers::RailsRunner.new
+      def rails_runner.call; @called ||= 0 ; @called += 1; "" end
+      def rails_runner.called; @called; end
 
-    local_storage = rails_runner.detect("active_storage.service")
-    local_storage.success?
-    expect(rails_runner.called).to eq(1)
+      local_storage = rails_runner.detect("active_storage.service")
+      local_storage.success?
+      expect(rails_runner.called).to eq(1)
 
-    local_storage.success?
-    local_storage.did_match?("foo")
-    expect(rails_runner.called).to eq(1)
+      local_storage.success?
+      local_storage.did_match?("foo")
+      expect(rails_runner.called).to eq(1)
+    end
   end
 
   it "calls a mock interface" do
-    mock_rails_runner
-    expect(File.executable?("bin/rails")).to eq(true)
+    isolate do
+      mock_rails_runner
+      expect(File.executable?("bin/rails")).to eq(true)
 
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new
-    local_storage = rails_runner.detect("active_storage.service")
-    local_storage = rails_runner.detect("foo.bar")
+      rails_runner  = LanguagePack::Helpers::RailsRunner.new
+      local_storage = rails_runner.detect("active_storage.service")
+      local_storage = rails_runner.detect("foo.bar")
 
-    expect(rails_runner.output).to match("heroku.detecting.config.for.active_storage.service=active_storage.service")
-    expect(rails_runner.output).to match("heroku.detecting.config.for.foo.bar=foo.bar")
-    expect(rails_runner.success?).to be(true)
+      expect(rails_runner.output).to match("heroku.detecting.config.for.active_storage.service=active_storage.service")
+      expect(rails_runner.output).to match("heroku.detecting.config.for.foo.bar=foo.bar")
+      expect(rails_runner.success?).to be(true)
+    end
   end
 
   it "timeout works as expected" do
-    mock_rails_runner("pid = Process.spawn('sleep 5'); Process.wait(pid)")
+    isolate do
+      mock_rails_runner("pid = Process.spawn('sleep 5'); Process.wait(pid)")
 
-    diff = time_it do
-      rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
-      local_storage = rails_runner.detect("active_storage.service")
-      expect(rails_runner.success?).to eq(false)
-      expect(rails_runner.timeout?).to eq(true)
+      diff = time_it do
+        rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
+        local_storage = rails_runner.detect("active_storage.service")
+        expect(rails_runner.success?).to eq(false)
+        expect(rails_runner.timeout?).to eq(true)
+      end
+
+      expect(diff < 1).to eq(true), "expected time difference #{diff} to be less than 1 second, but was longer"
     end
-
-    expect(diff < 1).to eq(true), "expected time difference #{diff} to be less than 1 second, but was longer"
   end
 
   it "failure in one task does not cause another to fail" do
-    mock_rails_runner('raise "bad" if value == :bad')
+    isolate do
+      mock_rails_runner('raise "bad" if value == :bad')
 
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 1)
-    bad_value     = rails_runner.detect("bad.value")
-    local_storage = rails_runner.detect("active_storage.service")
+      rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 1)
+      bad_value     = rails_runner.detect("bad.value")
+      local_storage = rails_runner.detect("active_storage.service")
 
-    expect(!!bad_value.success?).to     eq(false)
-    expect(!!local_storage.success?).to eq(true)
+      expect(!!bad_value.success?).to     eq(false)
+      expect(!!local_storage.success?).to eq(true)
+    end
   end
 
   it "does not fail when there is an invalid byte sequence" do
-    mock_rails_runner('puts "hi \255"')
+    isolate do
+      mock_rails_runner('puts "hi \255"')
 
-    rails_runner  = LanguagePack::Helpers::RailsRunner.new
-    local_storage = rails_runner.detect("active_storage.service")
+      rails_runner  = LanguagePack::Helpers::RailsRunner.new
+      local_storage = rails_runner.detect("active_storage.service")
 
-    expect(local_storage.success?).to be_truthy
+      expect(local_storage.success?).to be_truthy
+    end
   end
 
   def time_it
