@@ -44,11 +44,6 @@ def create_file_with_size_in(size, dir)
   Pathname.new name
 end
 
-if ENV['TRAVIS']
-  # Don't execute tests against "merge" commits
-  exit 0 if ENV['TRAVIS_PULL_REQUEST'] != 'false' && ENV['TRAVIS_BRANCH'] == 'master'
-end
-
 def buildpack_path
   File.expand_path(File.join("../.."), __FILE__)
 end

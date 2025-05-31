@@ -31,8 +31,6 @@ class LanguagePack::Base
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
     @arch = get_arch
     @report = HerokuBuildReport::GLOBAL
-
-    Dir.chdir app_path
   end
 
   def get_arch
