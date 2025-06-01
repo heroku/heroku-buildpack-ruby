@@ -78,7 +78,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
-    install_ruby(slug_vendor_ruby)
+    install_ruby(install_path: slug_vendor_ruby)
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
       gem_layer_path: File.expand_path("."),
@@ -127,7 +127,10 @@ private
   # Since `ruby2.5` is not a valid binary name
   #
   def warn_bad_binstubs
-    check = LanguagePack::Helpers::BinstubCheck.new(app_root_dir: Dir.pwd, warn_object: self)
+    check = LanguagePack::Helpers::BinstubCheck.new(
+      warn_object: self,
+      app_root_dir: self.app_path,
+    )
     check.call
   end
 
@@ -467,7 +470,7 @@ private
 
   # install the vendored ruby
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
-  def install_ruby(install_path)
+  def install_ruby(install_path: )
     # Could do a compare operation to avoid re-downloading ruby
     return false unless ruby_version
 
@@ -552,7 +555,7 @@ private
   end
 
   def new_app?
-    @new_app ||= !File.exist?("vendor/heroku")
+    @new_app ||= !app_path.join("vendor").join("heroku").exist?
   end
 
   # find the ruby install path for its binstubs during build
@@ -631,14 +634,15 @@ private
   # users should be using `bundle pack` instead.
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
   def remove_vendor_bundle
-    if File.exist?("vendor/bundle")
+    vendor_bundle = self.app_path.join("vendor").join("bundle")
+    if vendor_bundle.exist?
       warn(<<~WARNING)
         Removing `vendor/bundle`.
         Checking in `vendor/bundle` is not supported. Please remove this directory
         and add it to your .gitignore. To vendor your gems with Bundler, use
         `bundle pack` instead.
       WARNING
-      FileUtils.rm_rf("vendor/bundle")
+      vendor_bundle.rmtree
     end
   end
 

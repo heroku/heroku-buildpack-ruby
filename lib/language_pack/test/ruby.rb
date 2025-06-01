@@ -8,7 +8,7 @@ class LanguagePack::Ruby
     new_app?
     remove_vendor_bundle
     warn_bad_binstubs
-    install_ruby(slug_vendor_ruby)
+    install_ruby(install_path: slug_vendor_ruby)
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
       gem_layer_path: File.expand_path("."),
