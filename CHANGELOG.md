@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 
+- Stream `bundle list` when `bundle install` emits no gem information. This condition happens when bundler 2.4+ runs with no gem additions or deletions (https://github.com/heroku/heroku-buildpack-ruby/pull/1610)
+
 ## [v310] - 2025-05-27
 
 - Introduce internal metrics for deriving Ruby version directly from the `Gemfile.lock` to avoid needing to call `bundle platform --ruby` in the future. No change in behavior is expected. (https://github.com/heroku/heroku-buildpack-ruby/pull/1603)

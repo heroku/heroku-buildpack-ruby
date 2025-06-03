@@ -116,6 +116,34 @@ class LanguagePack::Ruby < LanguagePack::Base
   def config_detect
   end
 
+  # Runs `bundle list` and optionally streams the result to the user
+  #
+  # Streaming helps with build log visibility i.e. "what version of X" am I using at a glance.
+  #
+  # Checks if the information from `bundle list` matches information collected from bundler internals
+  # if not, emits the difference. The goal is to eventually replace requiring bundler internals with
+  # information retrieved from `bundle list`.
+  private def bundle_list(stream_to_user: )
+    bundle_list = LanguagePack::Helpers::BundleList::HumanCommand.new(
+      stream_to_user: stream_to_user
+    ).call
+    differences = bundler.specs.filter_map do |(name, spec)|
+      expected = Gem::Version.new(spec.version)
+      actual = bundle_list.gem_version(name)
+      if expected != actual
+        "#{name}: (`#{expected}` `#{actual}`)"
+      end
+    end
+
+    if !differences.empty?
+      @report.capture(
+        "bundle_list.differences" => differences.join(", "),
+      )
+    end
+
+    bundle_list
+  end
+
 private
 
   # A bad shebang line looks like this:
@@ -703,6 +731,10 @@ private
 
       # Keep gem cache out of the slug
       FileUtils.rm_rf("#{slug_vendor_base}/cache")
+
+      bundle_list(
+        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
+      )
     else
       error_message = "Failed to install gems via Bundler."
       puts "Bundler Output: #{bundler_output}"
