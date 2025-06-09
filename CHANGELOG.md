@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 
+## [v311] - 2025-06-09
+
+
 - Stream `bundle list` when `bundle install` emits no gem information. This condition happens when bundler 2.4+ runs with no gem additions or deletions (https://github.com/heroku/heroku-buildpack-ruby/pull/1610)
 
 ## [v310] - 2025-05-27
@@ -1713,7 +1716,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v310...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v311...main
+[v311]: https://github.com/heroku/heroku-buildpack-ruby/compare/v310...v311
 [v310]: https://github.com/heroku/heroku-buildpack-ruby/compare/v309...v310
 [v309]: https://github.com/heroku/heroku-buildpack-ruby/compare/v308...v309
 [v308]: https://github.com/heroku/heroku-buildpack-ruby/compare/v307...v308
