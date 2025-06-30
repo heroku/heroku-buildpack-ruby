@@ -820,9 +820,7 @@ private
         host = uri.host
         port = uri.port
 
-        params = CGI.parse(uri.query || "")
-
-        %>
+        params = CGI.parse(uri.query || "") %>
 
         <%= ENV["RAILS_ENV"] || ENV["RACK_ENV"] %>:
           <%= attribute "adapter",  adapter %>
