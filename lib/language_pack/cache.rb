@@ -1,7 +1,14 @@
 require "pathname"
 require "language_pack"
 
-# Manipulates/handles contents of the cache directory
+# Manipulates and handles contents of the cache directory
+#
+# In a build, the cache directory is passed to the buildpack. This
+# class is responsible for moving folders/files in that cache directory
+# into their correct runtime (or build) needed location at the start of the build.
+# It is then responsible for storing the updated contents at the runtime (or build)
+# location and putting them back into the cache directory which will be passed to the
+# next build.
 class LanguagePack::Cache
   # @param [String] path to the cache store
   def initialize(cache_path)
