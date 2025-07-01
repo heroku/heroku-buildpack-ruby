@@ -6,12 +6,12 @@ module LanguagePack
     class FetchError < StandardError; end
 
     include ShellHelpers
-    CDN_YAML_FILE = File.expand_path("../../../config/cdn.yml", __FILE__)
 
-    def initialize(host_url, stack = nil)
-      @config   = load_config
-      @host_url = fetch_cdn(host_url)
+    def initialize(host_url, stack: nil, arch: nil)
+      @host_url = Pathname.new(host_url)
+      # File.basename prevents accidental directory traversal
       @host_url += File.basename(stack) if stack
+      @host_url += File.basename(arch) if arch
     end
 
     def exists?(path, max_attempts = 1)
@@ -26,9 +26,10 @@ module LanguagePack
       run!(curl, error_class: FetchError)
     end
 
-    def fetch_untar(path, files_to_extract = nil)
+    def fetch_untar(path, files_to_extract = nil, strip_components: 0)
       curl = curl_command("#{@host_url.join(path)} -s -o")
-      run! "#{curl} - | tar zxf - #{files_to_extract}",
+      tar_cmd = ["tar", "--strip-components=#{strip_components}", "-xzf", "- #{files_to_extract}"]
+      run! "#{curl} - | #{tar_cmd.join(" ")}",
         error_class: FetchError,
         max_attempts: 3
     end
@@ -49,15 +50,6 @@ module LanguagePack
 
     def curl_connect_timeout_in_seconds
       env('CURL_CONNECT_TIMEOUT') || 3
-    end
-
-    def load_config
-      YAML.load_file(CDN_YAML_FILE) || {}
-    end
-
-    def fetch_cdn(url)
-      url = @config[url] || url
-      Pathname.new(url)
     end
   end
 end

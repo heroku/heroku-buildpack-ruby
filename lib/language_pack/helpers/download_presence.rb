@@ -7,24 +7,29 @@
 # Example
 #
 #    download = LanguagePack::Helpers::DownloadPresence.new(
-#      'ruby-1.9.3.tgz',
-#      stacks: ['cedar-14', 'heroku-16', 'heroku-18', 'heroku-20']
+#      'ruby-3.1.7.tgz',
+#      stacks: ['heroku-22', 'heroku-24']
 #    )
 #
 #    download.call
 #
 #    puts download.exists? #=> true
-#    puts download.valid_stack_list #=> ['cedar-14']
+#    puts download.valid_stack_list #=> ['heroku-22', 'heroku-24']
 class LanguagePack::Helpers::DownloadPresence
-  STACKS = ['cedar-14', 'heroku-16', 'heroku-18', 'heroku-20']
+  # heroku-22 and heroku-24 have identical ruby versions supported
+  STACKS = ['heroku-22', 'heroku-24']
 
-  def initialize(path, stacks: STACKS)
-    @path = path
+  def initialize(file_name:, arch: , multi_arch_stacks:, stacks: STACKS )
+    @file_name = file_name
     @stacks = stacks
     @fetchers = []
     @threads = []
     @stacks.each do |stack|
-      @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack)
+      if multi_arch_stacks.include?(stack)
+        @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack, arch: arch)
+      else
+        @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack)
+      end
     end
   end
 
@@ -43,7 +48,7 @@ class LanguagePack::Helpers::DownloadPresence
     return false unless supported_stack?(current_stack: current_stack)
 
     next_index = @stacks.index(current_stack) + 1
-    @threads[next_index]
+    @threads[next_index].value
   end
 
   def valid_stack_list
@@ -67,7 +72,7 @@ class LanguagePack::Helpers::DownloadPresence
   def call
     @fetchers.map do |fetcher|
       @threads << Thread.new do
-        fetcher.exists?(@path, 3)
+        fetcher.exists?(@file_name, 3)
       end
     end
   end

@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe "Rails 6" do
   it "should detect successfully" do
-    Hatchet::App.new('rails6-basic').in_directory_fork do
+    Hatchet::App.new('rails61').in_directory_fork do
       expect(LanguagePack::Rails5.use?).to eq(false)
       expect(LanguagePack::Rails6.use?).to eq(true)
     end
@@ -17,7 +17,7 @@ describe "Rails 6" do
       run! %Q{echo 'task "assets:precompile" do ; end' > Rakefile}
     end
 
-    Hatchet::Runner.new('rails6-basic', before_deploy: before_deploy).deploy do |app|
+    Hatchet::Runner.new('rails61', before_deploy: before_deploy, config: rails_lts_config, stack: rails_lts_stack).deploy do |app|
       expect(app.output).to match("Fetching railties 6")
 
       expect(app.output).to match("rake assets:precompile")

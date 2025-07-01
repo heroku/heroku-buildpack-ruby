@@ -65,8 +65,7 @@ class LanguagePack::Helpers::RakeRunner
     end
   end
 
-  def initialize(has_rake_gem = true)
-    @has_rake_gem = has_rake_gem
+  def initialize
     if !has_rake_installed?
       @rake_tasks    = ""
       @rakefile_can_load = false
@@ -81,16 +80,10 @@ class LanguagePack::Helpers::RakeRunner
     @rakefile_can_load
   end
 
-  def instrument(*args, &block)
-    LanguagePack::Instrument.instrument(*args, &block)
-  end
-
   def load_rake_tasks(options = {})
-    instrument "ruby.rake_task_defined" do
-      @rake_tasks        ||= RakeTask.new("-P --trace").invoke(options.merge(quiet: true)).output
-      @rakefile_can_load ||= $?.success?
-      @rake_tasks
-    end
+    @rake_tasks        ||= RakeTask.new("-P --trace").invoke(options.merge(quiet: true)).output
+    @rakefile_can_load ||= $?.success?
+    @rake_tasks
   end
 
   def load_rake_tasks!(options = {}, raise_on_fail = false)
@@ -132,12 +125,10 @@ class LanguagePack::Helpers::RakeRunner
   end
 
   def has_rake_installed?
-    @has_rake ||= (@has_rake_gem && has_rakefile?)
+    @has_rake ||= has_rakefile?
   end
 
-private
-
-  def has_rakefile?
+  private def has_rakefile?
     %W{ Rakefile rakefile  rakefile.rb Rakefile.rb}.detect {|file| File.exist?(file) }
   end
 end

@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    # Avoid duplicate builds on PRs.
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run ShellCheck bin top level
+        run: |
+            shellcheck bin/support/bash_functions.sh bin/support/download_ruby -x &&
+            shellcheck bin/compile bin/detect bin/release bin/test bin/test-compile -x
+
+  integration-test:
+      runs-on: ubuntu-24.04
+      env:
+        HATCHET_APP_LIMIT: 300
+        HATCHET_EXPENSIVE_MODE: 1
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        HEROKU_API_USER: ${{ secrets.HEROKU_API_USER }}
+        RAILS_LTS_CREDS: ${{ secrets.RAILS_LTS_CREDS }}
+        HEROKU_DISABLE_AUTOUPDATE: 1
+        PARALLEL_SPLIT_TEST_PROCESSES: 85
+        RSPEC_RETRY_RETRY_COUNT: 1
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Install Ruby and dependencies
+          uses: ruby/setup-ruby@v1
+          with:
+            bundler-cache: true
+            ruby-version: "3.3.8"
+        - name: Hatchet setup
+          run: bundle exec hatchet ci:setup
+        - name: Run Hatchet integration tests
+          # parallel_split_test runs rspec in parallel, with concurrency equal to PARALLEL_SPLIT_TEST_PROCESSES.
+          run: bundle exec parallel_split_test spec/

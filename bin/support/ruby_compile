@@ -10,16 +10,28 @@ $stdout.sync = true
 $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
+HerokuBuildReport.set_global(
+  # Coupled with `bin/report`
+  path: Pathname(ARGV[1])
+        .join(".heroku")
+        .join("ruby")
+        .join("build_report.yml")
+).tap(&:clear!)
 
 begin
-  LanguagePack::Instrument.trace 'compile', 'app.compile' do
-    LanguagePack::ShellHelpers.initialize_env(ARGV[2])
-    if pack = LanguagePack.detect(ARGV[0], ARGV[1])
-      pack.topic("Compiling #{pack.name}")
-      pack.log("compile") do
-        pack.compile
-      end
-    end
+  app_path = Pathname(ARGV[0])
+  cache_path = Pathname(ARGV[1])
+  gemfile_lock = LanguagePack.gemfile_lock(app_path: app_path)
+  Dir.chdir(app_path)
+
+  LanguagePack::ShellHelpers.initialize_env(ARGV[2])
+  if pack = LanguagePack.detect(
+    app_path: app_path,
+    cache_path: cache_path,
+    gemfile_lock: gemfile_lock
+  )
+    pack.topic("Compiling #{pack.name}")
+    pack.compile
   end
 rescue Exception => e
   LanguagePack::ShellHelpers.display_error_and_exit(e)

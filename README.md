@@ -40,7 +40,7 @@ For more information about using Ruby and buildpacks on Heroku, see these Dev Ce
 
 - [Heroku Ruby Support](https://devcenter.heroku.com/articles/ruby-support)
 - [Getting Started with Ruby on Heroku](https://devcenter.heroku.com/articles/getting-started-with-ruby)
-- [Getting Started with Rails 4 on Heroku](https://devcenter.heroku.com/articles/getting-started-with-rails4)
+- [Getting Started with Rails 7 on Heroku](https://devcenter.heroku.com/articles/getting-started-with-rails7)
 - [Buildpacks](https://devcenter.heroku.com/articles/buildpacks)
 - [Buildpack API](https://devcenter.heroku.com/articles/buildpack-api)
 
@@ -49,12 +49,6 @@ For more information about using Ruby and buildpacks on Heroku, see these Dev Ce
 To use this buildpack, fork it on Github.  Push up changes to your fork, then create a test app with `--buildpack <your-github-url>` and push to it.
 
 ### Testing
-
-The tests on this buildpack are written in Rspec to allow the use of
-`focused: true`. Parallelization of testing is provided by
-https://github.com/grosser/parallel_tests this lib spins up an arbitrary
-number of processes and running a different test file in each process,
-it does not parallelize tests within a test file. To run the tests: clone the repo, then `bundle install` then clone the test fixtures by running:
 
 ```sh
 $ bundle exec hatchet install

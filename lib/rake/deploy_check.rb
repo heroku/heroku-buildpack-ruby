@@ -67,8 +67,8 @@ class DeployCheck
 
   # Raises an error if the changelog does not have an entry with the designated version
   def check_changelog!
-    if !File.read("CHANGELOG.md").include?("## #{next_version}")
-      raise "Expected CHANGELOG.md to include #{next_version} but it did not"
+    if !File.read("CHANGELOG.md").include?("## [#{next_version}]")
+      raise "Expected CHANGELOG.md to include [#{next_version}] but it did not"
     end
   end
 
@@ -77,7 +77,7 @@ class DeployCheck
     return if remote_sha == local_sha
 
     raise <<~EOM
-      Must be in-sync with #{@github}. Local comit: #{local_sha.inspect} #{@github}: #{remote_sha.inspect}
+      Must be in-sync with #{@github}. Local commit: #{local_sha.inspect} #{@github}: #{remote_sha.inspect}
       "Make sure that you've pulled: `git pull --rebase #{@github_url} main`
     EOM
   end

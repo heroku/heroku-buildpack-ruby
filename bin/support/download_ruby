@@ -12,6 +12,9 @@ set -eu
 BIN_DIR=$1
 RUBY_BOOTSTRAP_DIR=$2
 
+# Stack is set by codon, listed here so shellcheck knows about it
+STACK=${STACK:-}
+
 curl_retry_on_18() {
   local ec=18;
   local attempts=0;
@@ -22,19 +25,33 @@ curl_retry_on_18() {
   return $ec
 }
 
+ruby_url() {
+  local stack=$1
+  local version=$2
+
+  if [ "$stack" == "heroku-24" ]; then
+    local arch
+    arch=$(dpkg --print-architecture)
+    echo "${BUILDPACK_VENDOR_URL:-https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com}/$stack/$arch/ruby-$version.tgz"
+  else
+    echo "${BUILDPACK_VENDOR_URL:-https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com}/$stack/ruby-$version.tgz"
+  fi
+}
+
 # Pull ruby version out of buildpack.toml to be used with bootstrapping
 regex=".*ruby_version = [\'\"]([0-9]+\.[0-9]+\.[0-9]+)[\'\"].*"
 if [[ $(cat "$BIN_DIR/../buildpack.toml") =~ $regex ]]
   then
-    heroku_buildpack_ruby_url="https://s3-external-1.amazonaws.com/heroku-buildpack-ruby/$STACK/ruby-${BASH_REMATCH[1]}.tgz"
+    heroku_buildpack_ruby_url=$(ruby_url "$STACK" "${BASH_REMATCH[1]}")
   else
+    heroku_buildpack_ruby_url=""
     echo "Could not detect ruby version to bootstrap"
     exit 1
 fi
 
 mkdir -p "$RUBY_BOOTSTRAP_DIR"
 
-curl_retry_on_18 --fail --silent --location -o "$RUBY_BOOTSTRAP_DIR/ruby.tgz" "$heroku_buildpack_ruby_url" || {
+curl_retry_on_18 --fail --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" --silent --location -o "$RUBY_BOOTSTRAP_DIR/ruby.tgz" "$heroku_buildpack_ruby_url" || {
 cat<<EOF
   Failed to download a Ruby executable for bootstrapping!
 

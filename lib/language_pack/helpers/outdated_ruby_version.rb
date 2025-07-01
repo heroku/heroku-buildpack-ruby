@@ -4,10 +4,11 @@
 #
 # Example:
 #
-#   ruby_version = LanguagePack::RubyVersion.new("ruby-2.2.5")
+#   ruby_version = LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-2.2.5")
 #   outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
 #     current_ruby_version: ruby_version,
-#     fetcher: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, "heroku-16")
+#     fetcher: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: "heroku-22")
+#     fetcher: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: "heroku-22", arch: "amd64")
 #   )
 #
 #   outdated.call
@@ -33,8 +34,6 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   end
 
   def can_check?
-    return false if current_ruby_version.patchlevel_is_significant?
-    return false if current_ruby_version.rbx?
     return false if current_ruby_version.jruby?
 
     true
@@ -176,7 +175,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
       next if !@fetcher.exists?("#{version}.tgz")
 
       check_eol_versions_minor(
-        base_version: LanguagePack::RubyVersion.new(version)
+        base_version: LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: version)
       )
 
       version

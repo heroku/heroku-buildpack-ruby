@@ -19,14 +19,19 @@ require "language_pack/test"
 include LanguagePack::ShellHelpers
 
 begin
-  LanguagePack::Instrument.trace 'test_compile', 'app.test_compile' do
-    if pack = LanguagePack.detect(ARGV[0], ARGV[1])
-      LanguagePack::ShellHelpers.initialize_env(ARGV[2])
-      pack.topic("Setting up Test for #{pack.name}")
-      pack.log("test_compile") do
-        pack.compile
-      end
-    end
+  app_path = Pathname(ARGV[0])
+  cache_path = Pathname(ARGV[1])
+  gemfile_lock = LanguagePack.gemfile_lock(app_path: app_path)
+  Dir.chdir(app_path)
+
+  if pack = LanguagePack.detect(
+      app_path: app_path,
+      cache_path: cache_path,
+      gemfile_lock: gemfile_lock
+    )
+    LanguagePack::ShellHelpers.initialize_env(ARGV[2])
+    pack.topic("Setting up Test for #{pack.name}")
+    pack.compile
   end
 rescue Exception => e
   LanguagePack::ShellHelpers.display_error_and_exit(e)

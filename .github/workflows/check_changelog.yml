@@ -1,16 +1,20 @@
 name: Check Changelog
 
 on:
- pull_request:
-  types: [opened, reopened, edited, synchronize]
+  pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+
+permissions:
+  contents: read
+
 jobs:
-  build:
-    if: |
-      !contains(github.event.pull_request.labels.*.name, 'dependencies') &&
-      !contains(github.event.pull_request.labels.*.name, 'automation')
+  check-changelog:
     runs-on: ubuntu-latest
+    if: (!contains(github.event.pull_request.labels.*.name, 'skip changelog'))
     steps:
-    - uses: actions/checkout@v1
-    - name: Check that CHANGELOG is touched
-      run: |
-        cat $GITHUB_EVENT_PATH | jq .pull_request.title |  grep -i '\[\(\(changelog skip\)\|\(ci skip\)\)\]' ||  git diff remotes/origin/${{ github.base_ref }} --name-only | grep CHANGELOG.md
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check that CHANGELOG is touched
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth 1 && \
+          git diff remotes/origin/${{ github.base_ref }} --name-only | grep CHANGELOG.md

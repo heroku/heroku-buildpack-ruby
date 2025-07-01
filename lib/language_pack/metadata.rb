@@ -26,7 +26,7 @@ class LanguagePack::Metadata
 
   def exists?(key)
     full_key = "#{FOLDER}/#{key}"
-    File.exists?(full_key) && !Dir.exists?(full_key)
+    File.exist?(full_key) && !Dir.exist?(full_key)
   end
   alias_method :include?, :exists?
 
