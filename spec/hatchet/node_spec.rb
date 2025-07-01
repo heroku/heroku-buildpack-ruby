@@ -34,11 +34,11 @@ describe "Node and Yarn" do
 
     Hatchet::Runner.new("minimal_webpacker", buildpacks: buildpacks, config: config).deploy do |app, heroku|
       expect(app.output).to include("yarn install")
-      expect(app.output).to include(".heroku/yarn/bin/yarn is the yarn directory")
+      expect(app.output).to include(".heroku/node/bin/yarn is the yarn directory ")
       expect(app.output).to include(".heroku/node/bin/node is the node directory")
 
       expect(app.run("which node")).to match("/app/.heroku/node/bin")
-      expect(app.run("which yarn")).to match("/app/.heroku/yarn/bin")
+      expect(app.run("which yarn")).to match("/app/.heroku/node/bin")
     end
   end
 end
