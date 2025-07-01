@@ -4,7 +4,7 @@ require "language_pack/base"
 class LanguagePack::Metadata
   FOLDER = "vendor/heroku"
 
-  def initialize(cache)
+  def initialize(cache: )
     if cache
       @cache = cache
       @cache.load FOLDER
