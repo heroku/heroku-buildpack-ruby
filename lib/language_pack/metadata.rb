@@ -11,14 +11,6 @@ class LanguagePack::Metadata
     end
   end
 
-  def [](key)
-    read(key)
-  end
-
-  def []=(key, value)
-    write(key, value)
-  end
-
   def read(key)
     full_key = "#{FOLDER}/#{key}"
     File.read(full_key).strip if exists?(key)
