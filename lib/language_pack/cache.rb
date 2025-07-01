@@ -18,7 +18,7 @@ class LanguagePack::Cache
   # removes the the specified path from the cache
   # @param [String] relative path from the cache_base
   def clear(path)
-    target = (@cache_base + path)
+    target = @cache_base.join(path)
     target.exist? && target.rmtree
   end
 
@@ -31,14 +31,14 @@ class LanguagePack::Cache
   def store(from, path = nil)
     path ||= from
     clear path
-    copy from, (@cache_base + path)
+    copy from, @cache_base.join(path)
   end
 
   # Adds file to cache without clearing the destination
   # Use LanguagePack::Cache#store to avoid accidental cache bloat
   def add(from, path = nil)
     path ||= from
-    copy from, (@cache_base + path)
+    copy from, @cache_base.join(path)
   end
 
   # load cache contents
@@ -46,7 +46,7 @@ class LanguagePack::Cache
   # @param [String] path of where to store it locally, if nil, assume same relative path as the cache contents
   def load(path, dest = nil)
     dest ||= path
-    copy (@cache_base + path), dest
+    copy @cache_base.join(path), dest
   end
 
   def load_without_overwrite(path, dest=nil)
@@ -54,9 +54,9 @@ class LanguagePack::Cache
 
     case ENV["STACK"]
     when "heroku-22"
-      copy (@cache_base + path), dest, "-a -n"
+      copy @cache_base.join(path), dest, "-a -n"
     else
-      copy (@cache_base + path), dest, "-a --update=none"
+      copy @cache_base.join(path), dest, "-a --update=none"
     end
   end
 
@@ -75,13 +75,13 @@ class LanguagePack::Cache
   # @param [String] source cache directory
   # @param [String] destination directory
   def cache_copy(from,to)
-    copy(@cache_base + from, @cache_base + to)
+    copy(@cache_base.join(from), @cache_base.join(to))
   end
 
   # check if the cache content exists
   # @param [String] relative path of the cache contents
   # @param [Boolean] true if the path exists in the cache and false if otherwise
   def exists?(path)
-    File.exist?(@cache_base + path)
+    File.exist?(@cache_base.join(path))
   end
 end
