@@ -1,6 +1,15 @@
 require "language_pack"
 require "language_pack/base"
 
+# Stores durable information about the build
+#
+# For example, SECRET_KEY_BASE, which is used when signing Rails cookies.
+# Stores other build-related information, such as the last version of Bundler requested.
+#
+# The LanguagePack::Cache is responsible for moving files to/from the cache dir
+# provided to the buildpack. This class is responsible for updating files on disk
+# and using the LanguagePack::Cache to manage loading/saving data from
+# builds.
 class LanguagePack::Metadata
   FOLDER = "vendor/heroku"
 
