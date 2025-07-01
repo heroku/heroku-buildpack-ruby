@@ -1142,6 +1142,13 @@ params = CGI.parse(uri.query || "")
       return true unless precompile.is_defined?
 
       topic "Precompiling assets"
+
+      if env('SKIP_ASSETS_PRECOMPILE') == 'true'
+        mcount "skip.assets_precompile"
+        puts 'Skipping asset precompilation due to environment variable.'
+        return true
+      end
+
       precompile.invoke(env: rake_env)
       if precompile.success?
         puts "Asset precompilation completed (#{"%.2f" % precompile.time}s)"
