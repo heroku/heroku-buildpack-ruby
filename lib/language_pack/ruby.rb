@@ -170,7 +170,7 @@ private
   end
 
   def warn_bundler_upgrade
-    old_bundler_version  = @metadata.read("bundler_version").strip if @metadata.exists?("bundler_version")
+    old_bundler_version  = @metadata.read("bundler_version")
 
     if old_bundler_version && old_bundler_version != bundler.version
       warn(<<~WARNING, inline: true)
@@ -212,7 +212,7 @@ private
     return @ruby_version if @ruby_version
     last_version_file = "buildpack_ruby_version"
     last_version      = nil
-    last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
+    last_version      = @metadata.read(last_version_file)
 
     @ruby_version = LanguagePack::RubyVersion.bundle_platform_ruby(
       bundler_output: bundler.ruby_version,
@@ -1056,8 +1056,8 @@ private
     # bundle clean does not remove binstubs
     FileUtils.rm_rf("vendor/bundler/bin")
 
-    old_rubygems_version = @metadata.read(ruby_version_cache).strip if @metadata.exists?(ruby_version_cache)
-    old_stack = @metadata.read(stack_cache).strip if @metadata.exists?(stack_cache)
+    old_rubygems_version = @metadata.read(ruby_version_cache)
+    old_stack = @metadata.read(stack_cache)
 
     stack_change  = old_stack != @stack
     convert_stack = @bundler_cache.old?
@@ -1071,7 +1071,7 @@ private
 
     if (@bundler_cache.exists? || @bundler_cache.old?) &&
         @metadata.exists?(ruby_version_cache) &&
-        full_ruby_version != @metadata.read(ruby_version_cache).strip
+        full_ruby_version != @metadata.read(ruby_version_cache)
       puts "Ruby version change detected. Clearing bundler cache."
       puts "Old: #{@metadata.read(ruby_version_cache).strip}"
       puts "New: #{full_ruby_version}"
