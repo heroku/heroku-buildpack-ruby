@@ -162,10 +162,11 @@ private
   end
 
   def default_malloc_arena_max?
-    return true if @metadata.exists?("default_malloc_arena_max")
-    return @metadata.touch("default_malloc_arena_max") if new_app?
-
-    return false
+    if new_app?
+      @metadata.touch("default_malloc_arena_max")
+    else
+      @metadata.exists?("default_malloc_arena_max")
+    end
   end
 
   def warn_bundler_upgrade
