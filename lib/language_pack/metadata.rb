@@ -1,47 +1,43 @@
 require "language_pack"
 require "language_pack/base"
 
+# Stores durable information about the build
+#
+# For example, SECRET_KEY_BASE, which is used when signing Rails cookies.
+# Stores other build-related information, such as the last version of Bundler requested.
+#
+# The LanguagePack::Cache is responsible for moving files to/from the cache dir
+# provided to the buildpack. This class is responsible for updating files on disk
+# and using the LanguagePack::Cache to manage loading/saving data from
+# builds.
 class LanguagePack::Metadata
   FOLDER = "vendor/heroku"
 
-  def initialize(cache)
-    if cache
-      @cache = cache
-      @cache.load FOLDER
-    end
-  end
-
-  def [](key)
-    read(key)
-  end
-
-  def []=(key, value)
-    write(key, value)
+  def initialize(cache: , app_path: )
+    @cache = cache
+    @metadata_path = app_path.join(FOLDER)
+    FileUtils.mkdir_p(@metadata_path)
+    @cache.load(FOLDER, @metadata_path)
   end
 
   def read(key)
-    full_key = "#{FOLDER}/#{key}"
-    File.read(full_key).strip if exists?(key)
+    path = @metadata_path.join(key)
+    path.read.strip if path.file?
   end
 
   def exists?(key)
-    full_key = "#{FOLDER}/#{key}"
-    File.exist?(full_key) && !Dir.exist?(full_key)
+    @metadata_path.join(key).file?
   end
-  alias_method :include?, :exists?
 
   def write(key, value, isave = true)
-    FileUtils.mkdir_p(FOLDER)
-
-    full_key = "#{FOLDER}/#{key}"
-    File.open(full_key, 'w') {|f| f.puts value }
+    @metadata_path.join(key).write(value)
     save if isave
 
     return true
   end
 
   def touch(key)
-    write(key, "true")
+    write(@metadata_path.join(key), "true")
   end
 
   def fetch(key)
@@ -53,7 +49,7 @@ class LanguagePack::Metadata
     return value
   end
 
-  def save(file = FOLDER)
-    @cache ? @cache.add(file) : false
+  def save(path = @metadata_path)
+    @cache.add(path)
   end
 end

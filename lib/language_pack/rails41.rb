@@ -24,19 +24,7 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
     })
   end
 
-  private
-  def app_secret
-    key = "secret_key_base"
-
-    @app_secret ||= begin
-      if @metadata.exists?(key)
-        @metadata.read(key).strip
-      else
-        secret = SecureRandom.hex(64)
-        @metadata.write(key, secret)
-
-        secret
-      end
-    end
+  private def app_secret
+    @app_secret ||= @metadata.fetch("secret_key_base") { SecureRandom.hex(64) }
   end
 end

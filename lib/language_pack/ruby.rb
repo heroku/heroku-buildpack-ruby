@@ -85,15 +85,14 @@ class LanguagePack::Ruby < LanguagePack::Base
       bundle_path: "vendor/bundle",
       bundle_default_without: "development:test"
     )
-    allow_git do
-      install_bundler_in_app(slug_vendor_base)
-      load_bundler_cache
-      build_bundler
-      post_bundler
-      create_database_yml
-      install_binaries
-      run_assets_precompile_rake_task
-    end
+    install_bundler_in_app(slug_vendor_base)
+    load_bundler_cache
+    build_bundler
+    post_bundler
+    create_database_yml
+    install_binaries
+    run_assets_precompile_rake_task
+
     @report.capture(
       "gem.railties_version" => bundler.gem_version('railties'),
       "gem.rack_version" => bundler.gem_version('rack')
@@ -163,14 +162,15 @@ private
   end
 
   def default_malloc_arena_max?
-    return true if @metadata.exists?("default_malloc_arena_max")
-    return @metadata.touch("default_malloc_arena_max") if new_app?
-
-    return false
+    if new_app?
+      @metadata.touch("default_malloc_arena_max")
+    else
+      @metadata.exists?("default_malloc_arena_max")
+    end
   end
 
   def warn_bundler_upgrade
-    old_bundler_version  = @metadata.read("bundler_version").strip if @metadata.exists?("bundler_version")
+    old_bundler_version  = @metadata.read("bundler_version")
 
     if old_bundler_version && old_bundler_version != bundler.version
       warn(<<~WARNING, inline: true)
@@ -212,7 +212,7 @@ private
     return @ruby_version if @ruby_version
     last_version_file = "buildpack_ruby_version"
     last_version      = nil
-    last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
+    last_version      = @metadata.read(last_version_file)
 
     @ruby_version = LanguagePack::RubyVersion.bundle_platform_ruby(
       bundler_output: bundler.ruby_version,
@@ -820,9 +820,7 @@ private
         host = uri.host
         port = uri.port
 
-        params = CGI.parse(uri.query || "")
-
-        %>
+        params = CGI.parse(uri.query || "") %>
 
         <%= ENV["RAILS_ENV"] || ENV["RACK_ENV"] %>:
           <%= attribute "adapter",  adapter %>
@@ -860,14 +858,6 @@ private
 
   def database_url
     env("DATABASE_URL") if env("DATABASE_URL")
-  end
-
-  # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
-  # @param [block] block to be executed in the GIT_DIR free context
-  def allow_git(&blk)
-    git_dir = ENV.delete("GIT_DIR") # can mess with bundler
-    blk.call
-    ENV["GIT_DIR"] = git_dir
   end
 
   # decides if we need to enable the dev database addon
@@ -1066,8 +1056,8 @@ private
     # bundle clean does not remove binstubs
     FileUtils.rm_rf("vendor/bundler/bin")
 
-    old_rubygems_version = @metadata.read(ruby_version_cache).strip if @metadata.exists?(ruby_version_cache)
-    old_stack = @metadata.read(stack_cache).strip if @metadata.exists?(stack_cache)
+    old_rubygems_version = @metadata.read(ruby_version_cache)
+    old_stack = @metadata.read(stack_cache)
 
     stack_change  = old_stack != @stack
     convert_stack = @bundler_cache.old?
@@ -1081,7 +1071,7 @@ private
 
     if (@bundler_cache.exists? || @bundler_cache.old?) &&
         @metadata.exists?(ruby_version_cache) &&
-        full_ruby_version != @metadata.read(ruby_version_cache).strip
+        full_ruby_version != @metadata.read(ruby_version_cache)
       puts "Ruby version change detected. Clearing bundler cache."
       puts "Old: #{@metadata.read(ruby_version_cache).strip}"
       puts "New: #{full_ruby_version}"

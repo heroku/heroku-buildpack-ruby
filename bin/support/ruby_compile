@@ -25,6 +25,17 @@ begin
   Dir.chdir(app_path)
 
   LanguagePack::ShellHelpers.initialize_env(ARGV[2])
+  LanguagePack.install_ruby(
+    app_path: app_path,
+    cache_path: cache_path,
+    gemfile_lock: gemfile_lock
+  )
+  LanguagePack.install_bundler(
+    app_path: app_path,
+    cache_path: cache_path,
+    gemfile_lock: gemfile_lock
+  )
+
   if pack = LanguagePack.detect(
     app_path: app_path,
     cache_path: cache_path,

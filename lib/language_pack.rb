@@ -20,6 +20,14 @@ module LanguagePack
     end
   end
 
+  def self.install_ruby(app_path:, cache_path:, gemfile_lock: )
+    puts "TODO"
+  end
+
+  def self.install_bundler(app_path:, cache_path:, gemfile_lock: )
+    puts "TODO"
+  end
+
   # detects which language pack to use
   def self.detect(app_path:, cache_path:, gemfile_lock: )
     pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
