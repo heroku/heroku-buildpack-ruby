@@ -13,6 +13,5 @@ group :development, :test do
   gem "parallel_split_test"
   gem 'rspec-retry'
   gem 'json'
-  gem 'ci-queue'
   gem 'redis'
 end

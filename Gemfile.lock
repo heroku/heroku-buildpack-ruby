@@ -2,8 +2,6 @@ GEM
   remote: https://rubygems.org/
   specs:
     base64 (0.2.0)
-    ci-queue (0.67.0)
-      logger
     citrus (3.0.2)
     connection_pool (2.5.3)
     diff-lcs (1.6.2)
@@ -23,7 +21,6 @@ GEM
       thor (~> 1)
       threaded (~> 0)
     json (2.12.2)
-    logger (1.7.0)
     moneta (1.0.0)
     multi_json (1.15.0)
     parallel (1.27.0)
@@ -42,7 +39,7 @@ GEM
     redis-client (0.24.0)
       connection_pool
     rrrretry (1.0.0)
-    rspec-core (3.13.4)
+    rspec-core (3.13.5)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -61,7 +58,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ci-queue
   excon
   heroku_hatchet
   json
