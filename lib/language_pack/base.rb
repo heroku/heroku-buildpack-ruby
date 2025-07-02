@@ -26,7 +26,7 @@ class LanguagePack::Base
     @app_path = app_path
     @stack         = ENV.fetch("STACK")
     @cache         = LanguagePack::Cache.new(cache_path)
-    @metadata      = LanguagePack::Metadata.new(cache: @cache)
+    @metadata      = LanguagePack::Metadata.new(cache: @cache, app_path: app_path)
     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
     @arch = get_arch

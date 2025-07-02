@@ -13,9 +13,10 @@ require "language_pack/base"
 class LanguagePack::Metadata
   FOLDER = "vendor/heroku"
 
-  def initialize(cache: )
+  def initialize(cache: , app_path: )
     @cache = cache
-    @cache.load(FOLDER)
+    @metadata_path = app_path.join(FOLDER)
+    @cache.load(FOLDER, @metadata_path)
   end
 
   def read(key)
