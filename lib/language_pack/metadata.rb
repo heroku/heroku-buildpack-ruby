@@ -16,31 +16,28 @@ class LanguagePack::Metadata
   def initialize(cache: , app_path: )
     @cache = cache
     @metadata_path = app_path.join(FOLDER)
+    FileUtils.mkdir_p(@metadata_path)
     @cache.load(FOLDER, @metadata_path)
   end
 
   def read(key)
-    full_key = "#{FOLDER}/#{key}"
-    File.read(full_key).strip if exists?(key)
+    path = @metadata_path.join(key)
+    path.read.strip if path.file?
   end
 
   def exists?(key)
-    full_key = "#{FOLDER}/#{key}"
-    File.exist?(full_key) && !Dir.exist?(full_key)
+    @metadata_path.join(key).file?
   end
 
   def write(key, value, isave = true)
-    FileUtils.mkdir_p(FOLDER)
-
-    full_key = "#{FOLDER}/#{key}"
-    File.open(full_key, 'w') {|f| f.puts value }
+    @metadata_path.join(key).write(value)
     save if isave
 
     return true
   end
 
   def touch(key)
-    write(key, "true")
+    write(@metadata_path.join(key), "true")
   end
 
   def fetch(key)
@@ -52,7 +49,7 @@ class LanguagePack::Metadata
     return value
   end
 
-  def save(file = FOLDER)
-    @cache.add(file)
+  def save(path = @metadata_path)
+    @cache.add(path)
   end
 end
