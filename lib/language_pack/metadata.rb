@@ -15,7 +15,7 @@ class LanguagePack::Metadata
 
   def initialize(cache: )
     @cache = cache
-    @cache.load FOLDER
+    @cache.load(FOLDER)
   end
 
   def read(key)
