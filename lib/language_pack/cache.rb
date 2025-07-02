@@ -30,15 +30,15 @@ class LanguagePack::Cache
   # @param [String] relative path to store the cache contents, if nil it will assume the from path
   def store(from, path = nil)
     path ||= from
-    clear path
-    copy from, @cache_base.join(path)
+    clear(path)
+    copy(from, @cache_base.join(path))
   end
 
   # Adds file to cache without clearing the destination
   # Use LanguagePack::Cache#store to avoid accidental cache bloat
   def add(from, path = nil)
     path ||= from
-    copy from, @cache_base.join(path)
+    copy(from, @cache_base.join(path))
   end
 
   # load cache contents
@@ -46,7 +46,7 @@ class LanguagePack::Cache
   # @param [String] path of where to store it locally, if nil, assume same relative path as the cache contents
   def load(path, dest = nil)
     dest ||= path
-    copy @cache_base.join(path), dest
+    copy(@cache_base.join(path), dest)
   end
 
   def load_without_overwrite(path, dest=nil)
@@ -54,9 +54,9 @@ class LanguagePack::Cache
 
     case ENV["STACK"]
     when "heroku-22"
-      copy @cache_base.join(path), dest, "-a -n"
+      copy(@cache_base.join(path), dest, "-a -n")
     else
-      copy @cache_base.join(path), dest, "-a --update=none"
+      copy(@cache_base.join(path), dest, "-a --update=none")
     end
   end
 
