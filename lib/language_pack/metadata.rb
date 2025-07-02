@@ -27,7 +27,6 @@ class LanguagePack::Metadata
     full_key = "#{FOLDER}/#{key}"
     File.exist?(full_key) && !Dir.exist?(full_key)
   end
-  alias_method :include?, :exists?
 
   def write(key, value, isave = true)
     FileUtils.mkdir_p(FOLDER)
