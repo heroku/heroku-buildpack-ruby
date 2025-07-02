@@ -11,7 +11,7 @@ require "language_pack"
 # next build.
 class LanguagePack::Cache
   # @param [String] path to the cache store
-  def initialize(cache_path)
+  def initialize(cache_path:)
     @cache_base = Pathname.new(cache_path)
   end
 
