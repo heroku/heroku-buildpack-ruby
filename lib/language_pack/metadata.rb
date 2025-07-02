@@ -14,10 +14,8 @@ class LanguagePack::Metadata
   FOLDER = "vendor/heroku"
 
   def initialize(cache: )
-    if cache
-      @cache = cache
-      @cache.load FOLDER
-    end
+    @cache = cache
+    @cache.load FOLDER
   end
 
   def read(key)
@@ -55,6 +53,6 @@ class LanguagePack::Metadata
   end
 
   def save(file = FOLDER)
-    @cache ? @cache.add(file) : false
+    @cache.add(file)
   end
 end
