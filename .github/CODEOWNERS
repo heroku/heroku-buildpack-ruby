@@ -7,5 +7,6 @@
 # by Dependabot or release automation, to reduce team review request noise.
 CHANGELOG.md @schneems
 Gemfile.lock @schneems
+/.github/workflows/ @schneems
 /changelogs/ @schneems
 /lib/language_pack/version.rb @schneems
