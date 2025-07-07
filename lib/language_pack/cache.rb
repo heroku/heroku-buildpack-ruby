@@ -62,8 +62,8 @@ class LanguagePack::Cache
     end
 
     FileUtils.mkdir_p File.dirname(to)
-    command = "cp #{options} #{from}/. #{to}"
+    command = "cp #{options} #{from}/. #{to} 2>&1"
     system(command)
-    raise "Command failed `#{command}`" unless $?
+    raise "Command failed `#{command}`" unless $?.success?
   end
 end
