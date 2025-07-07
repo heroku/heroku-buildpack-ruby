@@ -47,8 +47,8 @@ class LanguagePack::Cache
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
-  private def copy(from, to, force: )
-    return false unless File.exist?(from)
+  private def copy(from_path, to_path, force: )
+    return false unless from_path.exist?
 
     if force
       options = "-a"
@@ -61,8 +61,8 @@ class LanguagePack::Cache
       end
     end
 
-    FileUtils.mkdir_p File.dirname(to)
-    command = "cp #{options} #{from}/. #{to} 2>&1"
+    to_path.dirname.mkpath
+    command = "cp #{options} #{from_path}/. #{to_path} 2>&1"
     system(command)
     raise "Command failed `#{command}`" unless $?.success?
   end
