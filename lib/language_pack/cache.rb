@@ -26,6 +26,10 @@ class LanguagePack::Cache
     copy(@app_path.join(dir), @cache_base.join(rename || dir), force: force)
   end
 
+  def cache_to_cache(dir: , rename: nil, force:)
+    copy(@cache_base.join(dir), @cache_base.join(rename || dir), force: force)
+  end
+
   # removes the the specified path from the cache
   # @param [String] relative path from the cache_base
   def clear(path)
@@ -54,13 +58,6 @@ class LanguagePack::Cache
     command = "cp #{options} #{from}/. #{to}"
     system(command)
     raise "Command failed `#{command}`" unless $?
-  end
-
-  # copy contents between to places in the cache
-  # @param [String] source cache directory
-  # @param [String] destination directory
-  def cache_copy(from,to)
-    copy(@cache_base.join(from), @cache_base.join(to), force: true)
   end
 
   # check if the cache content exists
