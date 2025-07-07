@@ -37,6 +37,13 @@ class LanguagePack::Cache
     target.exist? && target.rmtree
   end
 
+  # check if the cache content exists
+  # @param [String] relative path of the cache contents
+  # @param [Boolean] true if the path exists in the cache and false if otherwise
+  def exists?(path)
+    @cache_base.join(path).exists?
+  end
+
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
@@ -58,12 +65,5 @@ class LanguagePack::Cache
     command = "cp #{options} #{from}/. #{to}"
     system(command)
     raise "Command failed `#{command}`" unless $?
-  end
-
-  # check if the cache content exists
-  # @param [String] relative path of the cache contents
-  # @param [Boolean] true if the path exists in the cache and false if otherwise
-  def exists?(path)
-    File.exist?(@cache_base.join(path))
   end
 end
