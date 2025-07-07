@@ -49,6 +49,6 @@ class LanguagePack::Metadata
   end
 
   def save(path = @metadata_path)
-    @cache.add(path)
+    @cache.app_to_cache(dir: FOLDER)
   end
 end

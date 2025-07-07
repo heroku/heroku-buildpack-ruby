@@ -33,13 +33,6 @@ class LanguagePack::Cache
     target.exist? && target.rmtree
   end
 
-  # Adds file to cache without clearing the destination
-  # Use LanguagePack::Cache#store to avoid accidental cache bloat
-  def add(from, path = nil)
-    path ||= from
-    copy(from, @cache_base.join(path), force: true)
-  end
-
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
