@@ -41,7 +41,12 @@ class LanguagePack::BundlerCache
 
   # writes cache contents to cache store
   def store
-    @cache.store(@bundler_dir, @stack_dir)
+    @cache.clear(@stack_dir)
+    @cache.app_to_cache(
+      dir: @bundler_dir,
+      rename: @stack_dir,
+      force: true
+    )
   end
 
   # loads cache contents from the cache store

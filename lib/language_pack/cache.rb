@@ -22,23 +22,15 @@ class LanguagePack::Cache
     copy(@cache_base.join(dir), @app_path.join(rename || dir), force: force)
   end
 
+  def app_to_cache(dir: , rename: nil, force:)
+    copy(@app_path.join(dir), @cache_base.join(rename || dir), force: force)
+  end
+
   # removes the the specified path from the cache
   # @param [String] relative path from the cache_base
   def clear(path)
     target = @cache_base.join(path)
     target.exist? && target.rmtree
-  end
-
-  # Overwrite cache contents
-  # When called the cache destination will be cleared and the new contents coppied over
-  # This method is perferable as LanguagePack::Cache#add can cause accidental cache bloat.
-  #
-  # @param [String] path of contents to store. it will be stored using this a relative path from the cache_base.
-  # @param [String] relative path to store the cache contents, if nil it will assume the from path
-  def store(from, path = nil)
-    path ||= from
-    clear(path)
-    copy(from, @cache_base.join(path), force: true)
   end
 
   # Adds file to cache without clearing the destination

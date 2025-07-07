@@ -84,8 +84,11 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
         clean_task.invoke(env: rake_env)
 
         cleanup_assets_cache
-        @cache.store public_assets_folder
-        @cache.store default_assets_cache
+
+        [public_assets_folder, default_assets_cache].each do |dir|
+          @cache.clear(dir)
+          @cache.app_to_cache(dir: dir)
+        end
       end
     else
       precompile_fail(precompile.output)
