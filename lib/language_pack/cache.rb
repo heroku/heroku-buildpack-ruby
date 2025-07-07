@@ -31,14 +31,14 @@ class LanguagePack::Cache
   def store(from, path = nil)
     path ||= from
     clear(path)
-    copy(from, @cache_base.join(path))
+    copy(from, @cache_base.join(path), force: true)
   end
 
   # Adds file to cache without clearing the destination
   # Use LanguagePack::Cache#store to avoid accidental cache bloat
   def add(from, path = nil)
     path ||= from
-    copy(from, @cache_base.join(path))
+    copy(from, @cache_base.join(path), force: true)
   end
 
   # load cache contents
@@ -46,25 +46,32 @@ class LanguagePack::Cache
   # @param [String] path of where to store it locally, if nil, assume same relative path as the cache contents
   def load(path, dest = nil)
     dest ||= path
-    copy(@cache_base.join(path), dest)
+    copy(@cache_base.join(path), dest, force: true)
   end
 
   def load_without_overwrite(path, dest=nil)
     dest ||= path
 
-    case ENV["STACK"]
-    when "heroku-22"
-      copy(@cache_base.join(path), dest, "-a -n")
-    else
-      copy(@cache_base.join(path), dest, "-a --update=none")
-    end
+    copy(@cache_base.join(path), dest, force: false)
   end
 
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
-  def copy(from, to, options='-a')
+  def copy(from, to, force: )
     return false unless File.exist?(from)
+
+    if force
+      options = "-a"
+    else
+      case ENV["STACK"]
+      when "heroku-22"
+        options = "-a -n"
+      else
+        options = "-a --update=none"
+      end
+    end
+
     FileUtils.mkdir_p File.dirname(to)
     command = "cp #{options} #{from}/. #{to}"
     system(command)
@@ -75,7 +82,7 @@ class LanguagePack::Cache
   # @param [String] source cache directory
   # @param [String] destination directory
   def cache_copy(from,to)
-    copy(@cache_base.join(from), @cache_base.join(to))
+    copy(@cache_base.join(from), @cache_base.join(to), force: true)
   end
 
   # check if the cache content exists
