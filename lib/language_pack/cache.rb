@@ -17,8 +17,9 @@ class LanguagePack::Cache
     @cache_base = Pathname(cache_path)
   end
 
-  def cache_to_app(dir: , force:)
-    copy(@cache_base.join(dir), @app_path.join(dir), force: force)
+  # Move cache directory contents into application directory
+  def cache_to_app(dir: , rename: nil, force:)
+    copy(@cache_base.join(dir), @app_path.join(rename || dir), force: force)
   end
 
   # removes the the specified path from the cache
@@ -45,14 +46,6 @@ class LanguagePack::Cache
   def add(from, path = nil)
     path ||= from
     copy(from, @cache_base.join(path), force: true)
-  end
-
-  # load cache contents
-  # @param [String] relative path of the cache contents
-  # @param [String] path of where to store it locally, if nil, assume same relative path as the cache contents
-  def load(path, dest = nil)
-    dest ||= path
-    copy(@cache_base.join(path), dest, force: true)
   end
 
   # copy cache contents
