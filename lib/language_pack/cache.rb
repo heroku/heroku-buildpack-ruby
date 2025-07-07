@@ -11,7 +11,8 @@ require "language_pack"
 # next build.
 class LanguagePack::Cache
   # @param [String] path to the cache store
-  def initialize(cache_path:)
+  def initialize(cache_path:, stack: ENV["STACK"])
+    @stack = stack
     @cache_base = Pathname.new(cache_path)
   end
 
@@ -64,7 +65,7 @@ class LanguagePack::Cache
     if force
       options = "-a"
     else
-      case ENV["STACK"]
+      case @stack
       when "heroku-22"
         options = "-a -n"
       else
