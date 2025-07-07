@@ -11,9 +11,10 @@ require "language_pack"
 # next build.
 class LanguagePack::Cache
   # @param [String] path to the cache store
-  def initialize(cache_path:, stack: ENV["STACK"])
+  def initialize(cache_path:, app_path: , stack: ENV["STACK"])
     @stack = stack
-    @cache_base = Pathname.new(cache_path)
+    @app_path = Pathname(app_path)
+    @cache_base = Pathname(cache_path)
   end
 
   # removes the the specified path from the cache
@@ -59,7 +60,7 @@ class LanguagePack::Cache
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
-  def copy(from, to, force: )
+  private def copy(from, to, force: )
     return false unless File.exist?(from)
 
     if force
