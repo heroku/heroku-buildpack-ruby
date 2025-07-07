@@ -29,7 +29,7 @@ class LanguagePack::BundlerCache
     if !stack_change
       @cache.cache_to_cache(
         dir: @bundler_dir,
-        rename: @stack_dir
+        rename: @stack_dir,
         force: true
       )
     end
