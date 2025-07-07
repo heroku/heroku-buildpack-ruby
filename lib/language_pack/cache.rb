@@ -18,15 +18,15 @@ class LanguagePack::Cache
   end
 
   # Move cache directory contents into application directory
-  def cache_to_app(dir: , rename: nil, force:)
+  def cache_to_app(dir: , force:, rename: nil)
     copy(@cache_base.join(dir), @app_path.join(rename || dir), force: force)
   end
 
-  def app_to_cache(dir: , rename: nil, force:)
+  def app_to_cache(dir: , force:, rename: nil)
     copy(@app_path.join(dir), @cache_base.join(rename || dir), force: force)
   end
 
-  def cache_to_cache(dir: , rename: nil, force:)
+  def cache_to_cache(dir: , force:, rename: nil)
     copy(@cache_base.join(dir), @cache_base.join(rename || dir), force: force)
   end
 
