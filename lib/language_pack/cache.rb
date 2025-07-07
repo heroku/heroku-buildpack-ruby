@@ -17,6 +17,10 @@ class LanguagePack::Cache
     @cache_base = Pathname(cache_path)
   end
 
+  def cache_to_app(dir: , force:)
+    copy(@cache_base.join(dir), @app_path.join(dir), force: force)
+  end
+
   # removes the the specified path from the cache
   # @param [String] relative path from the cache_base
   def clear(path)
@@ -49,12 +53,6 @@ class LanguagePack::Cache
   def load(path, dest = nil)
     dest ||= path
     copy(@cache_base.join(path), dest, force: true)
-  end
-
-  def load_without_overwrite(path, dest=nil)
-    dest ||= path
-
-    copy(@cache_base.join(path), dest, force: false)
   end
 
   # copy cache contents

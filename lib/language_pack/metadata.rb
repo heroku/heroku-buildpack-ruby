@@ -15,9 +15,8 @@ class LanguagePack::Metadata
 
   def initialize(cache: , app_path: )
     @cache = cache
-    @metadata_path = app_path.join(FOLDER)
-    FileUtils.mkdir_p(@metadata_path)
-    @cache.load(FOLDER, @metadata_path)
+    @metadata_path = app_path.join(FOLDER).tap(&:mkpath)
+    @cache.cache_to_app(dir: FOLDER, force: true)
   end
 
   def read(key)
