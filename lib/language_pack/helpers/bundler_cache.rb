@@ -8,9 +8,10 @@ class LanguagePack::BundlerCache
 
   # @param [LanguagePack::Cache] cache object
   # @param [String] stack buildpack is running on
-  def initialize(cache:, stack:)
+  def initialize(cache:, stack:, app_path:)
     @cache       = cache
     @stack       = stack
+    @app_path = app_path
     @app_folder = Pathname.new("vendor/bundle")
     @cache_folder   = Pathname.new(@stack).join(@app_folder)
   end

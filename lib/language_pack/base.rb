@@ -27,7 +27,7 @@ class LanguagePack::Base
     @stack         = ENV.fetch("STACK")
     @cache         = LanguagePack::Cache.new(cache_path: cache_path, app_path: app_path)
     @metadata      = LanguagePack::Metadata.new(cache: @cache, app_path: app_path)
-    @bundler_cache = LanguagePack::BundlerCache.new(cache: @cache, stack: @stack)
+    @bundler_cache = LanguagePack::BundlerCache.new(cache: @cache, stack: @stack, app_path: app_path)
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
     @arch = get_arch
     @report = HerokuBuildReport::GLOBAL
