@@ -26,7 +26,7 @@ class LanguagePack::Cache
     copy(@app_path.join(dir), @cache_base.join(rename || dir), force: force)
   end
 
-  def cache_to_cache(dir: , force:, rename: nil)
+  def cache_to_cache(dir: , force:, rename: )
     copy(@cache_base.join(dir), @cache_base.join(rename || dir), force: force)
   end
 
