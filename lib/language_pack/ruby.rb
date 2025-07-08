@@ -1036,8 +1036,6 @@ private
   end
 
   def load_bundler_cache
-    @cache.cache_to_app(dir: "vendor", force: true)
-
     full_ruby_version       = run_stdout(%q(ruby -v)).strip
     rubygems_version        = run_stdout(%q(gem -v)).strip
     old_rubygems_version    = nil
