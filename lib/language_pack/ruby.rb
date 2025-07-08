@@ -722,7 +722,7 @@ private
       puts "Bundle completed (#{"%.2f" % bundle_time}s)"
       puts "Cleaning up the bundler cache."
       pipe("bundle clean", out: "2> /dev/null", user_env: true, env: env_vars)
-      @bundler_cache.store
+      @bundler_cache.app_to_cache
 
       # Keep gem cache out of the slug
       FileUtils.rm_rf("#{slug_vendor_base}/cache")
@@ -1061,7 +1061,7 @@ private
       puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
       purge_bundler_cache(old_stack)
     elsif !@metadata.new_app? && !convert_stack
-      @bundler_cache.load
+      @bundler_cache.cache_to_app
     end
 
     if (@bundler_cache.exists? || @bundler_cache.old?) &&
