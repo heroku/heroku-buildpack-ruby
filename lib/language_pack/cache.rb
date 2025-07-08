@@ -14,26 +14,26 @@ class LanguagePack::Cache
   def initialize(cache_path:, app_path: , stack: ENV["STACK"])
     @stack = stack
     @app_path = Pathname(app_path)
-    @cache_base = Pathname(cache_path)
+    @cache_path = Pathname(cache_path)
   end
 
   # Move cache directory contents into application directory
   def cache_to_app(dir: , force:, rename: nil)
-    copy(@cache_base.join(dir), @app_path.join(rename || dir), force: force)
+    copy(@cache_path.join(dir), @app_path.join(rename || dir), force: force)
   end
 
   def app_to_cache(dir: , force:, rename: nil)
-    copy(@app_path.join(dir), @cache_base.join(rename || dir), force: force)
+    copy(@app_path.join(dir), @cache_path.join(rename || dir), force: force)
   end
 
   def cache_to_cache(dir: , force:, rename: )
-    copy(@cache_base.join(dir), @cache_base.join(rename || dir), force: force)
+    copy(@cache_path.join(dir), @cache_path.join(rename || dir), force: force)
   end
 
   # removes the the specified path from the cache
-  # @param [String] relative path from the cache_base
+  # @param [String] relative path from thecache_path
   def clear(path)
-    target = @cache_base.join(path)
+    target = @cache_path.join(path)
     target.exist? && target.rmtree
   end
 
@@ -41,7 +41,7 @@ class LanguagePack::Cache
   # @param [String] relative path of the cache contents
   # @param [Boolean] true if the path exists in the cache and false if otherwise
   def exists?(path)
-    @cache_base.join(path).exist?
+    @cache_path.join(path).exist?
   end
 
   # Extracted for testing
