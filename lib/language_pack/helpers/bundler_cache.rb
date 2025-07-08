@@ -16,7 +16,11 @@ class LanguagePack::BundlerCache
     @cache_folder   = Pathname.new(@stack).join(@app_folder)
   end
 
-  # removes the bundler cache dir BOTH in the cache and local directory
+  # Removes the bundler cache dir BOTH in the cache and local directory
+  #
+  # Used for clearing old bundler cache (after migrating from heroku-22 to heroku-24, for example)
+  # When called with no arguments is used for clearing the current cache. For example, if a Ruby
+  # version changes and gems need to be reinstalled.
   def clear(stack = nil)
     stack ||= @stack
     @cache.clear(stack)
