@@ -1031,10 +1031,6 @@ private
     error msg
   end
 
-  def bundler_cache
-    "vendor/bundle"
-  end
-
   def load_bundler_cache
     full_ruby_version       = run_stdout(%q(ruby -v)).strip
     rubygems_version        = run_stdout(%q(gem -v)).strip
