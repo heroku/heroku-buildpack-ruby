@@ -87,7 +87,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
         [public_assets_folder, default_assets_cache].each do |dir|
           @cache.clear(dir)
-          @cache.app_to_cache(dir: dir)
+          @cache.app_to_cache(dir: dir, force: true)
         end
       end
     else
