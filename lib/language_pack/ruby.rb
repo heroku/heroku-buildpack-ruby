@@ -1055,16 +1055,14 @@ private
     old_stack = @metadata.read(stack_cache)
 
     stack_change  = old_stack != @stack
-    convert_stack = @bundler_cache.old?
-    @bundler_cache.convert_stack(stack_change) if convert_stack
     if !@metadata.new_app? && stack_change
       puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
       purge_bundler_cache(old_stack)
-    elsif !@metadata.new_app? && !convert_stack
+    elsif !@metadata.new_app?
       @bundler_cache.cache_to_app
     end
 
-    if (@bundler_cache.exists? || @bundler_cache.old?) &&
+    if @bundler_cache.exists? &&
         @metadata.exists?(ruby_version_cache) &&
         full_ruby_version != @metadata.read(ruby_version_cache)
       puts "Ruby version change detected. Clearing bundler cache."

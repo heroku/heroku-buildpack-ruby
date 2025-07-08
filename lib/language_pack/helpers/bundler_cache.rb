@@ -23,24 +23,6 @@ class LanguagePack::BundlerCache
     @bundler_dir.rmtree
   end
 
-  # converts to cache directory to support stacks. only copy contents if the stack hasn't changed
-  # @param [Boolean] denote if there's a stack change or not
-  def convert_stack(stack_change)
-    if !stack_change
-      @cache.cache_to_cache(
-        dir: @bundler_dir,
-        rename: @stack_dir,
-        force: true
-      )
-    end
-    @cache.clear(@bundler_dir)
-  end
-
-  # detects if using the non stack directory layout
-  def old?
-    @cache.exists?(@bundler_dir)
-  end
-
   def exists?
     @cache.exists?(@stack_dir)
   end
