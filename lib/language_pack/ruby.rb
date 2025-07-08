@@ -1054,10 +1054,12 @@ private
     old_stack = @metadata.read(stack_cache)
 
     stack_change  = old_stack != @stack
-    if !@metadata.new_app? && stack_change
+    if @metadata.new_app?
+      # Nothing in the cache
+    elsif stack_change
       puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
       purge_bundler_cache(old_stack)
-    elsif !@metadata.new_app?
+    else
       @bundler_cache.cache_to_app
     end
 
