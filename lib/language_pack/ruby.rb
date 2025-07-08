@@ -1053,10 +1053,9 @@ private
     old_rubygems_version = @metadata.read(ruby_version_cache)
     old_stack = @metadata.read(stack_cache)
 
-    stack_change  = old_stack != @stack
     if @metadata.new_app?
       # Nothing in the cache
-    elsif stack_change
+    elsif old_stack != @stack
       puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
       purge_bundler_cache(old_stack)
     else
