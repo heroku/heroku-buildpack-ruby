@@ -5,34 +5,33 @@ require "language_pack/cache"
 # manipulating the `vendor/bundle` Bundler cache directory.
 # supports storing the cache in a "stack" directory
 class LanguagePack::BundlerCache
-  attr_reader :bundler_dir
 
   # @param [LanguagePack::Cache] cache object
   # @param [String] stack buildpack is running on
   def initialize(cache:, stack:)
     @cache       = cache
     @stack       = stack
-    @bundler_dir = Pathname.new("vendor/bundle")
-    @stack_dir   = Pathname.new(@stack).join(@bundler_dir)
+    @app_folder = Pathname.new("vendor/bundle")
+    @cache_folder   = Pathname.new(@stack).join(@app_folder)
   end
 
   # removes the bundler cache dir BOTH in the cache and local directory
   def clear(stack = nil)
     stack ||= @stack
     @cache.clear(stack)
-    @bundler_dir.rmtree
+    @app_folder.rmtree
   end
 
   def exists?
-    @cache.exists?(@stack_dir)
+    @cache.exists?(@cache_folder)
   end
 
   # writes cache contents to cache store
   def app_to_cache
-    @cache.clear(@stack_dir)
+    @cache.clear(@cache_folder)
     @cache.app_to_cache(
-      dir: @bundler_dir,
-      rename: @stack_dir,
+      dir: @app_folder,
+      rename: @cache_folder,
       force: true
     )
   end
@@ -40,8 +39,8 @@ class LanguagePack::BundlerCache
   # loads cache contents from the cache store
   def cache_to_app
     @cache.cache_to_app(
-      dir: @stack_dir,
-      rename: @bundler_dir,
+      dir: @cache_folder,
+      rename: @app_folder,
       force: true
     )
   end
