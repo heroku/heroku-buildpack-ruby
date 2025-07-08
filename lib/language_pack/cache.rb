@@ -26,10 +26,6 @@ class LanguagePack::Cache
     copy(@app_path.join(dir), @cache_path.join(rename || dir), force: force)
   end
 
-  def cache_to_cache(dir: , force:, rename: )
-    copy(@cache_path.join(dir), @cache_path.join(rename || dir), force: force)
-  end
-
   # removes the the specified path from the cache
   # @param [String] relative path from thecache_path
   def clear(path)

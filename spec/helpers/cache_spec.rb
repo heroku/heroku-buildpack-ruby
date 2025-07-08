@@ -87,31 +87,6 @@ describe LanguagePack::Cache do
     end
   end
 
-  it "cache_to_cache with force: true/false" do
-    with_cache_app do |cache_path:, app_path:|
-      cache = LanguagePack::Cache.new(
-        app_path: app_path,
-        cache_path: cache_path
-      )
-      allow(cache).to receive(:copy)
-
-      dir = Pathname("vendor/heroku")
-      cache.cache_to_cache(dir: dir, force: false, rename: "different_dir")
-      expect(cache).to have_received(:copy).with(
-        cache_path.join(dir),
-        cache_path.join("different_dir"),
-        force: false
-      ).once
-
-      cache.cache_to_cache(dir: dir, force: true, rename: "different_dir")
-      expect(cache).to have_received(:copy).with(
-        cache_path.join(dir),
-        cache_path.join("different_dir"),
-        force: true
-      ).once
-    end
-  end
-
   it "copy_options heroku-22" do
     cache = LanguagePack::Cache.new(
       app_path: "/dev/null/app",
