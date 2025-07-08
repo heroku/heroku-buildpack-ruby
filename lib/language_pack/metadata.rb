@@ -16,7 +16,7 @@ class LanguagePack::Metadata
   def initialize(cache: , app_path: )
     @cache = cache
     @metadata_path = app_path.join(FOLDER)
-    @new_app = !@metadata_path.exist?
+    @new_app = !@cache.exists?(FOLDER)
     @metadata_path.mkpath
     @cache.cache_to_app(dir: FOLDER, force: true)
   end
