@@ -11,7 +11,7 @@ class LanguagePack::BundlerCache
   def initialize(cache:, stack:, app_path:)
     @cache       = cache
     @stack       = stack
-    @app_path = app_path
+    @app_path = Pathname(app_path)
     @app_folder = Pathname.new("vendor/bundle")
     @cache_folder   = Pathname.new(@stack).join(@app_folder)
   end
@@ -20,7 +20,7 @@ class LanguagePack::BundlerCache
   def clear(stack = nil)
     stack ||= @stack
     @cache.clear(stack)
-    @app_folder.rmtree
+    @app_path.join(@app_folder).rmtree
   end
 
   def exists?
