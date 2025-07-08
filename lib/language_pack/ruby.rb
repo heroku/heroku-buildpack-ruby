@@ -522,7 +522,7 @@ private
     )
     @outdated_version_check.call
 
-    @metadata.write("buildpack_ruby_version", ruby_version.version_for_download)
+    @metadata.write("buildpack_ruby_version" => ruby_version.version_for_download)
 
     topic "Using Ruby version: #{ruby_version.version_for_download}"
     if ruby_version.default?
@@ -1072,12 +1072,13 @@ private
     end
 
     FileUtils.mkdir_p(heroku_metadata)
-    @metadata.write(ruby_version_cache, full_ruby_version, false)
-    @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
-    @metadata.write(bundler_version_cache, bundler.version, false)
-    @metadata.write(rubygems_version_cache, rubygems_version, false)
-    @metadata.write(stack_cache, @stack, false)
-    @metadata.save
+    @metadata.write(
+      ruby_version_cache => full_ruby_version,
+      buildpack_version_cache => BUILDPACK_VERSION,
+      bundler_version_cache => bundler.version,
+      rubygems_version_cache => rubygems_version,
+      stack_cache => @stack,
+    )
   end
 
   def purge_bundler_cache(stack = nil)

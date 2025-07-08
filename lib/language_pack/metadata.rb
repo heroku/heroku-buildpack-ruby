@@ -35,15 +35,17 @@ class LanguagePack::Metadata
     @metadata_path.join(key).file?
   end
 
-  def write(key, value, isave = true)
-    @metadata_path.join(key).write(value)
-    save if isave
+  def write(metadata = {})
+    metadata.each do |(key, value)|
+      @metadata_path.join(key).write(value)
+    end
+    save
 
     return true
   end
 
   def touch(key)
-    write(@metadata_path.join(key), "true")
+    write(@metadata_path.join(key) => "true")
   end
 
   def fetch(key)
@@ -51,11 +53,11 @@ class LanguagePack::Metadata
 
     value = yield
 
-    write(key, value.to_s)
+    write(key => value.to_s)
     return value
   end
 
-  def save(path = @metadata_path)
+  private def save(path = @metadata_path)
     @cache.app_to_cache(dir: FOLDER, force: true)
   end
 end
