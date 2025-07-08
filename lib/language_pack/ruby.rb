@@ -74,7 +74,6 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     # check for new app at the beginning of the compile
-    new_app?
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
@@ -162,7 +161,7 @@ private
   end
 
   def default_malloc_arena_max?
-    if new_app?
+    if @metadata.new_app?
       @metadata.touch("default_malloc_arena_max")
     else
       @metadata.exists?("default_malloc_arena_max")
@@ -580,10 +579,6 @@ private
     ERROR
 
     error message
-  end
-
-  def new_app?
-    @new_app ||= !app_path.join("vendor").join("heroku").exist?
   end
 
   # find the ruby install path for its binstubs during build
@@ -1062,10 +1057,10 @@ private
     stack_change  = old_stack != @stack
     convert_stack = @bundler_cache.old?
     @bundler_cache.convert_stack(stack_change) if convert_stack
-    if !new_app? && stack_change
+    if !@metadata.new_app? && stack_change
       puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
       purge_bundler_cache(old_stack)
-    elsif !new_app? && !convert_stack
+    elsif !@metadata.new_app? && !convert_stack
       @bundler_cache.load
     end
 
