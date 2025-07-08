@@ -6,6 +6,7 @@ require 'hatchet'
 require 'rspec/retry'
 require 'language_pack'
 require 'language_pack/shell_helpers'
+require 'rspec/mocks'
 
 ENV["HATCHET_BUILDPACK_BASE"] ||= "https://github.com/heroku/heroku-buildpack-ruby"
 
@@ -28,7 +29,7 @@ RSpec.configure do |config|
     c.max_formatted_output_length = Float::INFINITY
     c.syntax = :expect
   end
-  config.mock_with :nothing
+  config.mock_with :rspec
   config.include LanguagePack::ShellHelpers
 end
 

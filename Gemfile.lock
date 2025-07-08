@@ -47,6 +47,9 @@ GEM
     rspec-expectations (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.5)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
     rspec-retry (0.6.2)
       rspec-core (> 3.3)
     rspec-support (3.13.4)
@@ -70,6 +73,7 @@ DEPENDENCIES
   redis
   rspec-core
   rspec-expectations
+  rspec-mocks
   rspec-retry
   toml-rb
 
