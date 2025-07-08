@@ -44,24 +44,30 @@ class LanguagePack::Cache
     @cache_base.join(path).exists?
   end
 
+  # Extracted for testing
+  #
+  # These options are used to determine the behavior of the `cp` command.
+  def copy_options(force: )
+    if force
+      "-a"
+    else
+      case @stack
+      when "heroku-22"
+        "-a -n"
+      else
+        "-a --update=none"
+      end
+    end
+  end
+
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
   private def copy(from_path, to_path, force: )
     return false unless from_path.exist?
 
-    if force
-      options = "-a"
-    else
-      case @stack
-      when "heroku-22"
-        options = "-a -n"
-      else
-        options = "-a --update=none"
-      end
-    end
-
     to_path.dirname.mkpath
+    options = copy_options(force: force)
     command = "cp #{options} #{from_path}/. #{to_path} 2>&1"
     system(command)
     raise "Command failed `#{command}`" unless $?.success?

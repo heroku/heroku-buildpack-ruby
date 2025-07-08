@@ -112,6 +112,28 @@ describe LanguagePack::Cache do
     end
   end
 
+  it "copy_options heroku-22" do
+    cache = LanguagePack::Cache.new(
+      app_path: "/dev/null/app",
+      cache_path: "/dev/null/cache",
+      stack: "heroku-22"
+    )
+
+    expect(cache.copy_options(force: true)).to eq("-a")
+    expect(cache.copy_options(force: false)).to eq("-a -n")
+  end
+
+  it "copy_options heroku-24" do
+    cache = LanguagePack::Cache.new(
+      app_path: "/dev/null/app",
+      cache_path: "/dev/null/cache",
+      stack: "heroku-24"
+    )
+
+    expect(cache.copy_options(force: true)).to eq("-a")
+    expect(cache.copy_options(force: false)).to eq("-a --update=none")
+  end
+
   def with_cache_app
     Dir.mktmpdir do |dir|
       cache_path = Pathname(dir).join("cache").tap(&:mkpath)
