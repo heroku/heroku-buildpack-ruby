@@ -51,6 +51,7 @@ $:.unshift File.expand_path("..", __FILE__)
 
 require 'heroku_build_report'
 
+require "language_pack/helpers/fs_extra"
 require "language_pack/helpers/plugin_installer"
 require "language_pack/helpers/stale_file_cleaner"
 require "language_pack/helpers/bundle_list"
