@@ -37,7 +37,7 @@ class LanguagePack::BundlerCache
     @cache.app_to_cache(
       dir: @app_folder,
       rename: @cache_folder,
-      force: true
+      overwrite: true
     )
   end
 
@@ -46,7 +46,7 @@ class LanguagePack::BundlerCache
     @cache.cache_to_app(
       dir: @cache_folder,
       rename: @app_folder,
-      force: true
+      overwrite: true
     )
   end
 end

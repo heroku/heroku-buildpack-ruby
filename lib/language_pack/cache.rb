@@ -18,12 +18,12 @@ class LanguagePack::Cache
   end
 
   # Move cache directory contents into application directory
-  def cache_to_app(dir: , force:, rename: nil)
-    copy(@cache_path.join(dir), @app_path.join(rename || dir), force: force)
+  def cache_to_app(dir: , overwrite:, rename: nil)
+    copy(@cache_path.join(dir), @app_path.join(rename || dir), overwrite: overwrite)
   end
 
-  def app_to_cache(dir: , force:, rename: nil)
-    copy(@app_path.join(dir), @cache_path.join(rename || dir), force: force)
+  def app_to_cache(dir: , overwrite:, rename: nil)
+    copy(@app_path.join(dir), @cache_path.join(rename || dir), overwrite: overwrite)
   end
 
   # removes the the specified path from the cache
@@ -43,8 +43,8 @@ class LanguagePack::Cache
   # Extracted for testing
   #
   # These options are used to determine the behavior of the `cp` command.
-  def copy_options(force: )
-    if force
+  def copy_options(overwrite: )
+    if overwrite
       "-a"
     else
       case @stack
@@ -59,11 +59,11 @@ class LanguagePack::Cache
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
-  private def copy(from_path, to_path, force: )
+  private def copy(from_path, to_path, overwrite: )
     return false unless from_path.exist?
 
     to_path.dirname.mkpath
-    options = copy_options(force: force)
+    options = copy_options(overwrite: overwrite)
     command = "cp #{options} #{from_path}/. #{to_path} 2>&1"
     system(command)
     raise "Command failed `#{command}`" unless $?.success?

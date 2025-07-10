@@ -18,7 +18,7 @@ class LanguagePack::Metadata
     @metadata_path = app_path.join(FOLDER)
     @new_app = !@cache.exists?(FOLDER)
     @metadata_path.mkpath
-    @cache.cache_to_app(dir: FOLDER, force: true)
+    @cache.cache_to_app(dir: FOLDER, overwrite: true)
   end
 
   # Cache will not exist on a new app
@@ -58,6 +58,6 @@ class LanguagePack::Metadata
   end
 
   private def save(path = @metadata_path)
-    @cache.app_to_cache(dir: FOLDER, force: true)
+    @cache.app_to_cache(dir: FOLDER, overwrite: true)
   end
 end

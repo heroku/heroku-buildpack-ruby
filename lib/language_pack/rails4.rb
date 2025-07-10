@@ -70,8 +70,8 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
     topic("Preparing app for Rails asset pipeline")
 
-    @cache.cache_to_app(dir: public_assets_folder, force: false)
-    @cache.cache_to_app(dir: default_assets_cache, force: true)
+    @cache.cache_to_app(dir: public_assets_folder, overwrite: false)
+    @cache.cache_to_app(dir: default_assets_cache, overwrite: true)
 
     precompile.invoke(env: rake_env)
 
@@ -87,7 +87,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
         [public_assets_folder, default_assets_cache].each do |dir|
           @cache.clear(dir)
-          @cache.app_to_cache(dir: dir, force: true)
+          @cache.app_to_cache(dir: dir, overwrite: true)
         end
       end
     else
