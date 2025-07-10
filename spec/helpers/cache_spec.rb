@@ -5,7 +5,8 @@ describe LanguagePack::Cache do
     with_cache_app do |cache_path:, app_path:|
       cache = LanguagePack::Cache.new(
         app_path: app_path,
-        cache_path: cache_path
+        cache_path: cache_path,
+        copy_method: :cp
       )
       allow(cache).to receive(:copy)
 
@@ -30,7 +31,8 @@ describe LanguagePack::Cache do
     with_cache_app do |cache_path:, app_path:|
       cache = LanguagePack::Cache.new(
         app_path: app_path,
-        cache_path: cache_path
+        cache_path: cache_path,
+        copy_method: :cp
       )
       allow(cache).to receive(:copy)
 
@@ -48,7 +50,8 @@ describe LanguagePack::Cache do
     with_cache_app do |cache_path:, app_path:|
       cache = LanguagePack::Cache.new(
         app_path: app_path,
-        cache_path: cache_path
+        cache_path: cache_path,
+        copy_method: :cp
       )
       allow(cache).to receive(:copy)
 
@@ -73,7 +76,8 @@ describe LanguagePack::Cache do
     with_cache_app do |cache_path:, app_path:|
       cache = LanguagePack::Cache.new(
         app_path: app_path,
-        cache_path: cache_path
+        cache_path: cache_path,
+        copy_method: :cp
       )
       allow(cache).to receive(:copy)
 
@@ -91,7 +95,8 @@ describe LanguagePack::Cache do
     cache = LanguagePack::Cache.new(
       app_path: "/dev/null/app",
       cache_path: "/dev/null/cache",
-      stack: "heroku-22"
+      stack: "heroku-22",
+      copy_method: :cp
     )
 
     expect(cache.copy_options(overwrite: true)).to eq("-a")
@@ -102,7 +107,8 @@ describe LanguagePack::Cache do
     cache = LanguagePack::Cache.new(
       app_path: "/dev/null/app",
       cache_path: "/dev/null/cache",
-      stack: "heroku-24"
+      stack: "heroku-24",
+      copy_method: :cp
     )
 
     expect(cache.copy_options(overwrite: true)).to eq("-a")

@@ -11,10 +11,12 @@ require "language_pack"
 # next build.
 class LanguagePack::Cache
   # @param [String] path to the cache store
-  def initialize(cache_path:, app_path: , stack: ENV["STACK"])
+  def initialize(cache_path:, app_path: , stack: ENV["STACK"], copy_method: )
     @stack = stack
     @app_path = Pathname(app_path)
     @cache_path = Pathname(cache_path)
+    @copy_method = copy_method
+    raise "Invalid copy method: #{copy_method}" unless [:fs_extra, :cp].include?(copy_method)
   end
 
   # Move cache directory contents into application directory
@@ -60,6 +62,15 @@ class LanguagePack::Cache
   # @param [String] source directory
   # @param [String] destination directory
   private def copy(from_path, to_path, overwrite: )
+    case @copy_method
+    when :fs_extra
+      copy_fs_extra(from_path, to_path, overwrite: overwrite)
+    when :cp
+      copy_cp(from_path, to_path, overwrite: overwrite)
+    end
+  end
+
+  private def copy_cp(from_path, to_path, overwrite: )
     return false unless from_path.exist?
 
     to_path.dirname.mkpath
@@ -67,5 +78,13 @@ class LanguagePack::Cache
     command = "cp #{options} #{from_path}/. #{to_path} 2>&1"
     system(command)
     raise "Command failed `#{command}`" unless $?.success?
+  end
+
+  private def copy_fs_extra(from_path, to_path, overwrite: )
+    LanguagePack::Helpers::FsExtra::Copy.new(
+      from_path: from_path,
+      to_path: to_path,
+      overwrite: overwrite
+    ).call
   end
 end
