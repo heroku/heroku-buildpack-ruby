@@ -2,6 +2,54 @@
 
 module LanguagePack::Helpers
   module FsExtra
+      # Formats and displays the results of the rsync diff
+      #
+      # Expected targets include print debugging and logging to otel (like honeycomb)
+      class RsyncDiffSummary
+        def initialize(from_path:, to_path:, output: , is_different:, notes: nil)
+          @from_path = from_path
+          @to_path = to_path
+          @output = output
+          @is_different = is_different
+          @notes = notes
+        end
+
+        def different?
+          @is_different
+        end
+
+        def summary
+          if different?
+            max_lines = 10
+            max_chars = 1024
+
+            lines = @output.lines
+            count = lines.length
+
+            if count > max_lines
+              selected_lines = lines.take(max_lines) + ["And more ...\n"]
+            else
+              selected_lines = lines
+            end
+            summary_text = selected_lines.join
+
+            # Truncate if over character limit
+            if summary_text.length > max_chars
+              summary_text = summary_text[0...max_chars] + "... (truncated)"
+            end
+
+            [
+              "Directories `#{@from_path}` and `#{@to_path}` differ (#{[max_lines, count].min}/#{count} lines):",
+              @notes,
+              summary_text
+            ].join("\n")
+          else
+            ["Directories `#{@from_path}` and `#{@to_path}` are identical", @notes, @output].join("\n")
+          end
+        end
+      end
+    end
+
     # This class is used to copy a directory from one location to another.
     #
     # It should behave the same as `cp -a` when `overwrite` is true.

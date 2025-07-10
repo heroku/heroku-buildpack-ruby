@@ -187,3 +187,54 @@ describe LanguagePack::Helpers::FsExtra::Copy do
   end
 end
 
+describe LanguagePack::Helpers::FsExtra::RsyncDiff::RsyncDiffSummary do
+  it "formats output when directories are different" do
+    diff = LanguagePack::Helpers::FsExtra::RsyncDiff::RsyncDiffSummary.new(
+      from_path: Pathname("/tmp/source"),
+      to_path: Pathname("/tmp/destination"),
+      output: ">f+++++++ file.txt\n",
+      is_different: true
+    )
+    expect(diff.summary).to eq(<<~EOL)
+      Directories `/tmp/source` and `/tmp/destination` differ (1/1 lines):
+
+      >f+++++++ file.txt
+    EOL
+  end
+
+  it "truncates output when over line limit" do
+    diff = LanguagePack::Helpers::FsExtra::RsyncDiff::RsyncDiffSummary.new(
+      from_path: Pathname("/tmp/source"),
+      to_path: Pathname("/tmp/destination"),
+      output: ">f+ file.txt\n" * 11,
+      is_different: true
+    )
+
+    expect(diff.summary).to eq(<<~EOL)
+      Directories `/tmp/source` and `/tmp/destination` differ (10/11 lines):
+
+      >f+ file.txt
+      >f+ file.txt
+      >f+ file.txt
+      >f+ file.txt
+      >f+ file.txt
+      >f+ file.txt
+      >f+ file.txt
+      >f+ file.txt
+      >f+ file.txt
+      >f+ file.txt
+      And more ...
+    EOL
+  end
+
+  it "formats output when directories are identical" do
+    diff = LanguagePack::Helpers::FsExtra::RsyncDiff::RsyncDiffSummary.new(
+      from_path: Pathname("/tmp/source"),
+      to_path: Pathname("/tmp/destination"),
+      output: "",
+      is_different: false
+    )
+    expect(diff.summary.strip).to eq("Directories `/tmp/source` and `/tmp/destination` are identical")
+  end
+end
+
