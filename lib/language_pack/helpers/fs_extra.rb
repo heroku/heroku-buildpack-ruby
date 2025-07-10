@@ -2,6 +2,65 @@
 
 module LanguagePack::Helpers
   module FsExtra
+    class RsyncDiff
+      def initialize(from_path:, to_path:, notes: nil, io: $stderr)
+        @io = io
+        @from_path = Pathname(from_path)
+        @to_path = Pathname(to_path)
+        @notes = notes
+      end
+
+      def call
+        from_path = Shellwords.escape(@from_path)
+        to_path = Shellwords.escape(@to_path)
+
+        # Use long-form flags as recommended in project plan
+        options = Shellwords.join([
+          #  -a, --archive               archive mode; equals -rlptgoD (no -H,-A,-X)
+          #
+          # That means it will
+          #   - r  copy recursively
+          #   - l  copy symlinks
+          #   - p  preserve permissions
+          #   - t  preserve times
+          #   - g  preserve group
+          #   - o  preserve owner
+          #   - D  preserve device files
+          "--archive",
+
+          #  -n, --dry-run               perform a trial run with no changes made
+          "--dry-run",
+
+          #  -i, --itemize-changes       output a change-summary for all updates
+          #
+          # This allows us to see if the directories are different if the output is empty
+          "--itemize-changes",
+
+          #  -c, --checksum              skip based on checksum, not mod-time & size
+          "--checksum",
+
+          #  --delete                    delete extraneous files from dest dirs
+          #
+          # This allows us to detect extra files in the destination that don't exist in source
+          "--delete",
+        ])
+        command = "rsync #{options} #{from_path}/ #{to_path}/ 2>&1"
+        output = `#{command}`.strip
+        exit_status = $?
+        @io.puts "WARNING: Diagnostic rsync command failed `#{command}`:\n#{output}" unless exit_status.success?
+
+        RsyncDiffSummary.new(
+          notes: @notes,
+          output: output,
+          from_path: @from_path,
+          to_path: @to_path,
+          # See: https://download.samba.org/pub/rsync/rsync.1 (search "EXIT VALUES")
+          # Note: exit code 0 means success, not necessarily that nothing would be transferred.
+          # Always check rsync output to determine if directories differ.
+          is_different: !output.strip.empty?,
+        )
+      end
+
       # Formats and displays the results of the rsync diff
       #
       # Expected targets include print debugging and logging to otel (like honeycomb)

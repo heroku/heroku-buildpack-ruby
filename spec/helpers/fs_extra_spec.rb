@@ -238,3 +238,220 @@ describe LanguagePack::Helpers::FsExtra::RsyncDiff::RsyncDiffSummary do
   end
 end
 
+describe LanguagePack::Helpers::FsExtra::RsyncDiff do
+  it "detects when directories are identical" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      from_path.join("file.txt").write("content")
+
+      # Copy to ensure identical timestamps and avoid race conditions
+      FileUtils.cp_r(
+        from_path.children,
+        to_path,
+        preserve: true,
+        dereference_root: false
+      )
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(io.string).to be_empty
+      expect(diff.different?).to be(false), "Unexpected diff summary:\n\n#{diff.summary}"
+    end
+  end
+
+  it "detects when directories are different (different file contents)" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      from_path.join("file.txt").write("content")
+
+      # Copy to ensure identical timestamps and avoid race conditions
+      FileUtils.cp_r(
+        from_path.children,
+        to_path,
+        preserve: true,
+        dereference_root: false
+      )
+      to_path.join("file.txt").write("different content")
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(io.string).to be_empty
+      expect(diff.different?).to be(true), "Unexpected diff summary:\n\n#{diff.summary}"
+    end
+  end
+
+  it "detects when directories are different (added file in one directory)" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      from_path.join("file.txt").write("content")
+      to_path.join("file.txt").write("different content")
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(io.string).to be_empty
+      expect(diff.different?).to be(true), "Unexpected diff summary:\n\n#{diff.summary}"
+    end
+  end
+
+  it "detects differences when symlinks differ" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      # Create source with symlink
+      from_path.join("realfile.txt").write("file contents")
+      from_path.join("symlink.txt").make_symlink(from_path.join("realfile.txt"))
+
+      # Create destination with different symlink target
+      to_path.join("realfile.txt").write("file contents")
+      to_path.join("symlink.txt").write("file contents")
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(diff.different?).to be(true), "Unexpected diff summary:\n\n#{diff.summary}"
+      expect(io.string).to be_empty
+    end
+  end
+
+  it "detects when the target directory has extra files that the source directory does not" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      from_path.join("file.txt").write("content")
+      to_path.join("file.txt").write("content")
+      to_path.join("otherfile.txt").write("other content")
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(diff.different?).to be(true), "Unexpected diff summary:\n\n#{diff.summary}"
+      expect(io.string).to be_empty
+    end
+  end
+
+  it "detects differences in file permissions" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      # Create identical files
+      from_path.join("file.txt").write("content")
+      to_path.join("file.txt").write("content")
+
+      # Set different permissions
+      from_path.join("file.txt").chmod(0755)
+      to_path.join("file.txt").chmod(0644)
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(diff.different?).to be(true), "Unexpected diff summary:\n\n#{diff.summary}"
+      expect(io.string).to be_empty
+    end
+  end
+
+  it "detects differences in file timestamps" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      # Create identical files
+      from_path.join("file.txt").write("content")
+      to_path.join("file.txt").write("content")
+
+      # Set different timestamps
+      from_path.join("file.txt").utime(Time.now - 1000, Time.now - 1000)
+      to_path.join("file.txt").utime(Time.now - 500, Time.now - 500)
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(diff.different?).to be(true), "Unexpected diff summary:\n\n#{diff.summary}"
+      expect(io.string).to be_empty
+    end
+  end
+
+  it "detects differences in directory structure" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      # Create nested structure in source
+      from_path.join("subdir").tap(&:mkpath)
+      from_path.join("subdir", "file.txt").write("content")
+
+      # Create flat structure in destination
+      to_path.join("file.txt").write("content")
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(diff.different?).to be(true), "Unexpected diff summary:\n\n#{diff.summary}"
+      expect(io.string).to be_empty
+    end
+  end
+
+  it "detects differences in empty vs non-empty directories" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      # Source has a file, destination is empty
+      from_path.join("file.txt").write("content")
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(diff.different?).to be(true), "Unexpected diff summary:\n\n#{diff.summary}"
+      expect(io.string).to be_empty
+    end
+  end
+end
+
