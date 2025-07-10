@@ -2,6 +2,10 @@
 
 module LanguagePack::Helpers
   module FsExtra
+    # This class is used to copy a directory from one location to another.
+    #
+    # It should behave the same as `cp -a` when `overwrite` is true.
+    # It should behave the same as `cp -a --update=none` when `overwrite` is false.
     class Copy
       def initialize(from_path:, to_path:, overwrite: )
         @from_path = Pathname(from_path)
