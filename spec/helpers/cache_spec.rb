@@ -98,27 +98,43 @@ describe LanguagePack::Cache do
   end
 
   it "copy_options heroku-22" do
-    cache = LanguagePack::Cache.new(
-      app_path: "/dev/null/app",
-      cache_path: "/dev/null/cache",
-      stack: "heroku-22",
-      experiment_enabled: false
-    )
+    options = LanguagePack::Helpers::FsExtra::ShellCopy.new(
+      from_path: "/dev/null/app",
+      to_path: "/dev/null/cache",
+      overwrite: true,
+      stack: "heroku-22"
+    ).options
 
-    expect(cache.copy_options(overwrite: true)).to eq("-a")
-    expect(cache.copy_options(overwrite: false)).to eq("-a -n")
+
+    expect(options).to eq("-a")
+
+    options = LanguagePack::Helpers::FsExtra::ShellCopy.new(
+      from_path: "/dev/null/app",
+      to_path: "/dev/null/cache",
+      overwrite: false,
+      stack: "heroku-22"
+    ).options
+    expect(options).to eq("-a -n")
   end
 
   it "copy_options heroku-24" do
-    cache = LanguagePack::Cache.new(
-      app_path: "/dev/null/app",
-      cache_path: "/dev/null/cache",
-      stack: "heroku-24",
-      experiment_enabled: false
-    )
+    options = LanguagePack::Helpers::FsExtra::ShellCopy.new(
+      from_path: "/dev/null/app",
+      to_path: "/dev/null/cache",
+      overwrite: true,
+      stack: "heroku-24"
+    ).options
 
-    expect(cache.copy_options(overwrite: true)).to eq("-a")
-    expect(cache.copy_options(overwrite: false)).to eq("-a --update=none")
+    expect(options).to eq("-a")
+
+    options = LanguagePack::Helpers::FsExtra::ShellCopy.new(
+      from_path: "/dev/null/app",
+      to_path: "/dev/null/cache",
+      overwrite: false,
+      stack: "heroku-24"
+    ).options
+
+    expect(options).to eq("-a --update=none")
   end
 
   def with_cache_app

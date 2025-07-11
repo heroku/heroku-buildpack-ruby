@@ -52,22 +52,6 @@ class LanguagePack::Cache
     @cache_path.join(path).exist?
   end
 
-  # Extracted for testing
-  #
-  # These options are used to determine the behavior of the `cp` command.
-  def copy_options(overwrite: )
-    if overwrite
-      "-a"
-    else
-      case @stack
-      when "heroku-22"
-        "-a -n"
-      else
-        "-a --update=none"
-      end
-    end
-  end
-
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
