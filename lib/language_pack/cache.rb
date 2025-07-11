@@ -11,21 +11,21 @@ require "language_pack"
 # next build.
 class LanguagePack::Cache
   # @param [String] path to the cache store
-  def initialize(cache_path:, app_path: , stack: ENV["STACK"], copy_method: )
+  def initialize(cache_path:, app_path: , stack: ENV["STACK"], report: HerokuBuildReport::GLOBAL, experiment_enabled: false)
+    @report = report
     @stack = stack
     @app_path = Pathname(app_path)
     @cache_path = Pathname(cache_path)
-    @copy_method = copy_method
-    raise "Invalid copy method: #{copy_method}" unless [:fs_extra, :cp].include?(copy_method)
+    @experiment_enabled = experiment_enabled
   end
 
   # Move cache directory contents into application directory
   def cache_to_app(dir: , overwrite:, rename: nil)
-    copy(@cache_path.join(dir), @app_path.join(rename || dir), overwrite: overwrite)
+    copy(@cache_path.join(dir), @app_path.join(rename || dir), overwrite: overwrite, name: "cache_to_app")
   end
 
   def app_to_cache(dir: , overwrite:, rename: nil)
-    copy(@app_path.join(dir), @cache_path.join(rename || dir), overwrite: overwrite)
+    copy(@app_path.join(dir), @cache_path.join(rename || dir), overwrite: overwrite, name: "app_to_cache")
   end
 
   # removes the the specified path from the cache
@@ -61,12 +61,29 @@ class LanguagePack::Cache
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
-  private def copy(from_path, to_path, overwrite: )
-    case @copy_method
-    when :fs_extra
-      copy_fs_extra(from_path, to_path, overwrite: overwrite)
-    when :cp
-      copy_cp(from_path, to_path, overwrite: overwrite)
+  private def copy(from_path, to_path, overwrite: , name: )
+    if @experiment_enabled
+      diff = LanguagePack::Helpers::FsExtra::CompareCopy.new(
+        from_path: from_path,
+        to_path: to_path,
+        report: @report,
+        stack: @stack,
+        reference_klass: LanguagePack::Helpers::FsExtra::ShellCopy,
+        test_klass: LanguagePack::Helpers::FsExtra::Copy
+      ).call
+      @report.capture(
+        "fs_extra_diff_different" => diff.different?,
+      )
+
+      if diff.different?
+        # Abort on first failed experiment
+        @experiment_enabled = false
+        @report.capture(
+          "fs_extra_diff_summary" => diff.summary,
+        )
+      end
+    else
+      copy_cp(from_path: from_path, to_path: to_path, overwrite: overwrite)
     end
   end
 
