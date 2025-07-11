@@ -504,7 +504,6 @@ describe LanguagePack::Helpers::FsExtra::RsyncDiff do
       to_path.join("symlink.txt").tap(&:unlink).make_symlink("lol")
 
       output = `rsync --archive --stats --itemize-changes #{from_path}/ #{to_path}/`
-      puts output
 
       expect(to_path.join("symlink.txt").readlink.to_s).to eq("../outside_file.txt")
       expect(to_path.join("symlink.txt").symlink?).to be_truthy
