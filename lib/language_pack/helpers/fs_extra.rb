@@ -108,15 +108,49 @@ module LanguagePack::Helpers
       end
     end
 
+    class ShellCopy
+      def initialize(from_path:, to_path:, overwrite: , stack: ENV["STACK"])
+        @from_path = Pathname(from_path)
+        @to_path = Pathname(to_path)
+        @overwrite = overwrite
+        @stack = stack
+      end
+
+      def options
+        if @overwrite
+          "-a"
+        else
+          case @stack
+          when "heroku-22"
+            "-a -n"
+          else
+            "-a --update=none"
+          end
+        end
+      end
+
+      def call
+        return false unless from_path.exist?
+
+        to_path.dirname.mkpath
+        options = copy_options(overwrite: overwrite)
+        command = "cp #{options} #{from_path}/. #{to_path} 2>&1"
+        system(command)
+        raise "Command failed `#{command}`" unless $?.success?
+      end
+    end
+
     # This class is used to copy a directory from one location to another.
     #
     # It should behave the same as `cp -a` when `overwrite` is true.
     # It should behave the same as `cp -a --update=none` when `overwrite` is false.
     class Copy
-      def initialize(from_path:, to_path:, overwrite: )
+      def initialize(from_path:, to_path:, overwrite: , stack: ENV["STACK"])
         @from_path = Pathname(from_path)
         @to_path = Pathname(to_path)
         @overwrite = overwrite
+        # Same interface as ShellCopy
+        _stack = stack
       end
 
       # When force is true, it should behaves the same as `cp -a`

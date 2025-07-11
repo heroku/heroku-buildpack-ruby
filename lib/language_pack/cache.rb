@@ -73,18 +73,22 @@ class LanguagePack::Cache
   private def copy_cp(from_path, to_path, overwrite: )
     return false unless from_path.exist?
 
-    to_path.dirname.mkpath
-    options = copy_options(overwrite: overwrite)
-    command = "cp #{options} #{from_path}/. #{to_path} 2>&1"
-    system(command)
-    raise "Command failed `#{command}`" unless $?.success?
+    LanguagePack::Helpers::FsExtra::ShellCopy.new(
+      from_path: from_path,
+      to_path: to_path,
+      overwrite: overwrite,
+      stack: @stack
+    ).call
   end
 
   private def copy_fs_extra(from_path, to_path, overwrite: )
+    return false unless from_path.exist?
+
     LanguagePack::Helpers::FsExtra::Copy.new(
       from_path: from_path,
       to_path: to_path,
-      overwrite: overwrite
+      overwrite: overwrite,
+      stack: @stack
     ).call
   end
 end
