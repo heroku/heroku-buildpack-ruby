@@ -453,5 +453,62 @@ describe LanguagePack::Helpers::FsExtra::RsyncDiff do
       expect(io.string).to be_empty
     end
   end
-end
 
+  it "detects differences when relative symlinks point outside directory with target existing" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      # Create a file outside the source directory
+      outside_file = Pathname(dir).join("outside_file.txt")
+      outside_file.write("outside content")
+
+      # Create a relative symlink in source pointing outside
+      from_path.join("symlink.txt").make_symlink("../outside_file.txt")
+
+      # Create a regular file in destination (not a symlink)
+      to_path.join("symlink.txt").make_symlink("different_content.txt")
+      expect(to_path.join("symlink.txt").readlink.to_s).to eq("different_content.txt")
+      expect(to_path.join("symlink.txt").symlink?).to be_truthy
+
+      io = StringIO.new
+      diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
+        from_path: from_path,
+        to_path: to_path,
+        io: io
+      ).call
+
+      expect(diff.different?).to be(true), "Unexpected diff summary:\n\n#{diff.summary}"
+      expect(io.string).to be_empty
+    end
+  end
+
+  it "detects if your version of rsync is recent enough (update rsync if this fails)" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      # Create a file outside the source directory
+      outside_file = Pathname(dir).join("outside_file.txt")
+      outside_file.write("outside content")
+
+      # Create a relative symlink in source pointing outside
+      from_path.join("symlink.txt").make_symlink("../outside_file.txt")
+
+      output = `rsync --archive --verbose #{from_path}/ #{to_path}/`
+      expect(output).to include("symlink.txt -> ../outside_file.txt")
+      raise "Failed to run rsync: #{output}" unless $?.success?
+      expect(to_path.join("symlink.txt").readlink.to_s).to eq("../outside_file.txt")
+      expect(to_path.join("symlink.txt").symlink?).to be_truthy
+
+      to_path.join("symlink.txt").tap(&:unlink).make_symlink("lol")
+
+      output = `rsync --archive --stats --itemize-changes #{from_path}/ #{to_path}/`
+      puts output
+
+      expect(to_path.join("symlink.txt").readlink.to_s).to eq("../outside_file.txt")
+      expect(to_path.join("symlink.txt").symlink?).to be_truthy
+      expect(output).to include("symlink.txt -> ../outside_file.txt")
+    end
+  end
+end
