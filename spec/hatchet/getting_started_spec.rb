@@ -30,7 +30,6 @@ describe "Heroku ruby getting started" do
       fetching_rake = "Fetching rake"
       expect(test_run.output).to match(fetching_rake)
 
-
       # Re-deploy with cache
       run!("git commit --allow-empty -m empty")
       app.push!

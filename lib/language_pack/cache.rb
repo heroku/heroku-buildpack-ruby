@@ -60,8 +60,9 @@ class LanguagePack::Cache
       diff = LanguagePack::Helpers::FsExtra::CompareCopy.new(
         from_path: from_path,
         to_path: to_path,
-        report: @report,
         stack: @stack,
+        name: name,
+        overwrite: overwrite,
         reference_klass: LanguagePack::Helpers::FsExtra::ShellCopy,
         test_klass: LanguagePack::Helpers::FsExtra::Copy
       ).call
