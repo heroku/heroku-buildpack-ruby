@@ -14,7 +14,6 @@ module LanguagePack::Helpers
         from_path = Shellwords.escape(@from_path)
         to_path = Shellwords.escape(@to_path)
 
-        # Use long-form flags as recommended in project plan
         options = Shellwords.join([
           #  -a, --archive               archive mode; equals -rlptgoD (no -H,-A,-X)
           #
