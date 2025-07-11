@@ -6,22 +6,24 @@ describe LanguagePack::Cache do
       cache = LanguagePack::Cache.new(
         app_path: app_path,
         cache_path: cache_path,
-        copy_method: :cp
+        experiment_enabled: false
       )
       allow(cache).to receive(:copy)
 
       dir = Pathname("vendor/heroku")
       cache.cache_to_app(dir: dir, overwrite: false)
       expect(cache).to have_received(:copy).with(
-        cache_path.join(dir),
-        app_path.join(dir),
+        from_path: cache_path.join(dir),
+        to_path: app_path.join(dir),
+        name: "cache_to_app",
         overwrite: false
       ).once
 
       cache.cache_to_app(dir: dir, overwrite: true)
       expect(cache).to have_received(:copy).with(
-        cache_path.join(dir),
-        app_path.join(dir),
+        from_path: cache_path.join(dir),
+        to_path: app_path.join(dir),
+        name: "cache_to_app",
         overwrite: true
       ).once
     end
@@ -32,15 +34,16 @@ describe LanguagePack::Cache do
       cache = LanguagePack::Cache.new(
         app_path: app_path,
         cache_path: cache_path,
-        copy_method: :cp
+        experiment_enabled: false
       )
       allow(cache).to receive(:copy)
 
       dir = Pathname("vendor/heroku")
       cache.cache_to_app(dir: dir, overwrite: false, rename: "different_dir")
       expect(cache).to have_received(:copy).with(
-        cache_path.join(dir),
-        app_path.join("different_dir"),
+        from_path: cache_path.join(dir),
+        to_path: app_path.join("different_dir"),
+        name: "cache_to_app",
         overwrite: false
       ).once
     end
@@ -51,23 +54,25 @@ describe LanguagePack::Cache do
       cache = LanguagePack::Cache.new(
         app_path: app_path,
         cache_path: cache_path,
-        copy_method: :cp
+        experiment_enabled: false
       )
       allow(cache).to receive(:copy)
 
       dir = Pathname("vendor/heroku")
       cache.app_to_cache(dir: dir, overwrite: false)
       expect(cache).to have_received(:copy).with(
-        app_path.join(dir),
-        cache_path.join(dir),
+        from_path: app_path.join(dir),
+        to_path: cache_path.join(dir),
+        name: "app_to_cache",
         overwrite: false
       ).once
 
       cache.app_to_cache(dir: dir, overwrite: true)
       expect(cache).to have_received(:copy).with(
-        app_path.join(dir),
-        cache_path.join(dir),
-        overwrite: true
+        from_path: app_path.join(dir),
+        to_path: cache_path.join(dir),
+        name: "app_to_cache",
+        overwrite: true,
       ).once
     end
   end
@@ -77,15 +82,16 @@ describe LanguagePack::Cache do
       cache = LanguagePack::Cache.new(
         app_path: app_path,
         cache_path: cache_path,
-        copy_method: :cp
+        experiment_enabled: false
       )
       allow(cache).to receive(:copy)
 
       dir = Pathname("vendor/heroku")
       cache.app_to_cache(dir: dir, overwrite: false, rename: "different_dir")
       expect(cache).to have_received(:copy).with(
-        app_path.join(dir),
-        cache_path.join("different_dir"),
+        from_path: app_path.join(dir),
+        to_path: cache_path.join("different_dir"),
+        name: "app_to_cache",
         overwrite: false
       ).once
     end
@@ -96,7 +102,7 @@ describe LanguagePack::Cache do
       app_path: "/dev/null/app",
       cache_path: "/dev/null/cache",
       stack: "heroku-22",
-      copy_method: :cp
+      experiment_enabled: false
     )
 
     expect(cache.copy_options(overwrite: true)).to eq("-a")
@@ -108,7 +114,7 @@ describe LanguagePack::Cache do
       app_path: "/dev/null/app",
       cache_path: "/dev/null/cache",
       stack: "heroku-24",
-      copy_method: :cp
+      experiment_enabled: false
     )
 
     expect(cache.copy_options(overwrite: true)).to eq("-a")

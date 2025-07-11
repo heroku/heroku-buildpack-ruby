@@ -21,11 +21,21 @@ class LanguagePack::Cache
 
   # Move cache directory contents into application directory
   def cache_to_app(dir: , overwrite:, rename: nil)
-    copy(@cache_path.join(dir), @app_path.join(rename || dir), overwrite: overwrite, name: "cache_to_app")
+    copy(
+      from_path: @cache_path.join(dir),
+      to_path: @app_path.join(rename || dir),
+      overwrite: overwrite,
+      name: "cache_to_app"
+    )
   end
 
   def app_to_cache(dir: , overwrite:, rename: nil)
-    copy(@app_path.join(dir), @cache_path.join(rename || dir), overwrite: overwrite, name: "app_to_cache")
+    copy(
+      from_path: @app_path.join(dir),
+      to_path: @cache_path.join(rename || dir),
+      overwrite: overwrite,
+      name: "app_to_cache"
+    )
   end
 
   # removes the the specified path from the cache
@@ -61,7 +71,7 @@ class LanguagePack::Cache
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
-  private def copy(from_path, to_path, overwrite: , name: )
+  private def copy(from_path:, to_path:, overwrite: , name: )
     if @experiment_enabled
       diff = LanguagePack::Helpers::FsExtra::CompareCopy.new(
         from_path: from_path,
@@ -87,7 +97,7 @@ class LanguagePack::Cache
     end
   end
 
-  private def copy_cp(from_path, to_path, overwrite: )
+  private def copy_cp(from_path: , to_path:, overwrite: )
     return false unless from_path.exist?
 
     LanguagePack::Helpers::FsExtra::ShellCopy.new(
@@ -98,7 +108,7 @@ class LanguagePack::Cache
     ).call
   end
 
-  private def copy_fs_extra(from_path, to_path, overwrite: )
+  private def copy_fs_extra(from_path:, to_path:, overwrite: )
     return false unless from_path.exist?
 
     LanguagePack::Helpers::FsExtra::Copy.new(
