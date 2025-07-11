@@ -1,7 +1,46 @@
 # frozen_string_literal: true
 
+require 'digest'
+
 module LanguagePack::Helpers
   module FsExtra
+    class CompareCopy
+      def initialize(from_path:, to_path:, reference_klass: , test_klass: , name: , overwrite:, stack: ENV["STACK"])
+        @name = name
+        @stack = stack
+        @from_path = Pathname(from_path)
+        @to_path = Pathname(to_path)
+        @reference_klass = reference_klass
+        @test_klass = test_klass
+        @overwrite = overwrite
+      end
+
+      def call
+        Dir.mktmpdir do |dir|
+          # Prepare fake operation
+          fake_from_path = Pathname(dir).join("source").tap(&:mkpath)
+          fake_to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+          # Setup fake directories
+          @reference_klass.new(from_path: @from_path, to_path: fake_from_path, overwrite: true).call
+          @reference_klass.new(from_path: @to_path, to_path: fake_to_path, overwrite: true).call
+
+          # Perform test operation
+          @test_klass.new(from_path: fake_from_path, to_path: fake_to_path, overwrite: @overwrite).call
+
+          # Perform reference operation
+          @reference_klass.new(from_path: @from_path, to_path: @to_path, overwrite: @overwrite).call
+
+          # Compare results
+          RsyncDiff.new(
+            from_path: @to_path,
+            to_path: fake_to_path,
+            notes: "Operation: #{@name}, Overwrite: #{@overwrite}"
+          ).call
+        end
+      end
+    end
+
     class RsyncDiff
       def initialize(from_path:, to_path:, notes: nil, io: $stderr)
         @io = io

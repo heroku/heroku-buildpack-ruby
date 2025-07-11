@@ -511,3 +511,79 @@ describe LanguagePack::Helpers::FsExtra::RsyncDiff do
     end
   end
 end
+
+describe LanguagePack::Helpers::FsExtra::CompareCopy do
+  it "compares two directories" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      from_path.join("file.txt").write("content")
+      to_path.join("file.txt").write("different content")
+
+      compare = LanguagePack::Helpers::FsExtra::CompareCopy.new(
+        from_path: from_path,
+        to_path: to_path,
+        reference_klass: LanguagePack::Helpers::FsExtra::Copy,
+        test_klass: LanguagePack::Helpers::FsExtra::Copy,
+        overwrite: true,
+        name: "copy_compare",
+      ).call
+
+      expect(compare.different?).to be(false)
+    end
+  end
+
+  it "reports a faulty copy operation produces a different result" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      from_path.join("file.txt").write("content")
+      to_path.join("file.txt").write("different content")
+
+      # test_klass is a mock that does nothing
+      test_klass = Class.new do
+        def initialize(**); end
+        def call; end
+      end
+
+      compare = LanguagePack::Helpers::FsExtra::CompareCopy.new(
+        from_path: from_path,
+        to_path: to_path,
+        reference_klass: LanguagePack::Helpers::FsExtra::Copy,
+        test_klass: test_klass,
+        overwrite: true,
+        name: "copy_compare"
+      ).call
+
+      expect(compare.different?).to be(true)
+    end
+  end
+
+    it "calls reference_klass.new 3 times and test_klass.new 1 time" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      reference = spy("reference")
+      test = spy("test")
+
+      allow(reference).to receive(:new).and_return(double("reference_instance", call: true))
+      allow(test).to receive(:new).and_return(double("test_instance", call: true))
+
+      LanguagePack::Helpers::FsExtra::CompareCopy.new(
+        from_path: from_path,
+        to_path: to_path,
+        reference_klass: reference,
+        test_klass: test,
+        overwrite: true,
+        name: "copy_compare"
+      ).call
+
+      # Verify the call counts
+      expect(reference).to have_received(:new).exactly(3).times
+      expect(test).to have_received(:new).exactly(1).time
+    end
+  end
+end
