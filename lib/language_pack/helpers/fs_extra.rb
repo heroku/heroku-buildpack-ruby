@@ -172,7 +172,6 @@ module LanguagePack::Helpers
         return false unless @from_path.exist?
 
         @to_path.dirname.mkpath
-        options = copy_options(overwrite: @overwrite)
         command = "cp #{options} #{@from_path}/. #{@to_path} 2>&1"
         system(command)
         raise "Command failed `#{command}`" unless $?.success?
