@@ -21,7 +21,7 @@ describe "Heroku ruby getting started" do
   # Temp test to make sure that the experiment is working in prod
   # Can be removed after FsExtra::Copy is the only copy implementation
   it "works with the copy experiment enabled" do
-    Hatchet::Runner.new("ruby-getting-started", stack: "heroku-24", env: { "HEROKU_FORCE_COPY_EXPERIMENT" => "1" }).deploy do |app|
+    Hatchet::Runner.new("ruby-getting-started", stack: "heroku-24", config: { "HEROKU_FORCE_COPY_EXPERIMENT" => "1" }).deploy do |app|
       expect(app.output).to_not include("Purging Cache")
       # Assert sprockets build cache not present on runtime
       expect(app.run("ls tmp/cache/assets")).to_not match("sprockets")
