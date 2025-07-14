@@ -587,18 +587,18 @@ describe LanguagePack::Helpers::FsExtra::CompareCopy do
     end
   end
 
-  it "should have no differences when source and destination directories have mtime set to days ago" do
+  it "should have no differences when source and destination directories have mtime set to days ago with overwrite true" do
     Dir.mktmpdir do |dir|
       from_path = Pathname(dir).join("source").tap(&:mkpath)
       to_path = Pathname(dir).join("destination").tap(&:mkpath)
 
-      days_ago = Time.now - (5 * 24 * 60 * 60)
-      from_path.utime(days_ago, days_ago)
-      to_path.utime(days_ago, days_ago)
-
       # Create identical files
       from_path.join("file.txt").write("content")
       to_path.join("file.txt").write("content")
+
+      days_ago = Time.now - (5 * 24 * 60 * 60)
+      from_path.utime(days_ago, days_ago)
+      to_path.utime(days_ago, days_ago)
 
       compare = LanguagePack::Helpers::FsExtra::CompareCopy.new(
         from_path: from_path,
@@ -609,6 +609,8 @@ describe LanguagePack::Helpers::FsExtra::CompareCopy do
         name: "copy_compare_with_old_mtime"
       ).call
 
+      expect(from_path.mtime).to be_within(1).of(days_ago), "Expected target directory #{from_path} to have mtime of #{days_ago} but got #{from_path.mtime}"
+      expect(to_path.mtime).to be_within(1).of(days_ago), "Expected target directory #{to_path} to have mtime of #{days_ago} but got #{to_path.mtime}"
       expect(compare.different?).to be(false), "Unexpected diff summary:\n\n#{compare.summary}"
     end
   end
@@ -618,11 +620,15 @@ describe LanguagePack::Helpers::FsExtra::CompareCopy do
       from_path = Pathname(dir).join("source").tap(&:mkpath)
       to_path = Pathname(dir).join("destination")
 
-      days_ago = Time.now - (5 * 24 * 60 * 60)
-      from_path.utime(days_ago, days_ago)
+      expect(to_path.exist?).to be(false)
 
       # Create identical files
       from_path.join("file.txt").write("content")
+
+      days_ago = Time.now - (5 * 24 * 60 * 60)
+      from_path.utime(days_ago, days_ago)
+
+      expect(from_path.mtime).to be_within(1).of(days_ago), "Expected target directory #{from_path} to have mtime of #{days_ago} but got #{from_path.mtime}"
 
       compare = LanguagePack::Helpers::FsExtra::CompareCopy.new(
         from_path: from_path,
@@ -633,7 +639,8 @@ describe LanguagePack::Helpers::FsExtra::CompareCopy do
         name: "copy_compare_with_old_mtime"
       ).call
 
-      expect(to_path.mtime).to be_within(1).of(days_ago)
+      expect(from_path.mtime).to be_within(1).of(days_ago), "Expected target directory #{from_path} to have mtime of #{days_ago} but got #{from_path.mtime}"
+      expect(to_path.mtime).to be_within(1).of(days_ago), "Expected target directory #{to_path} to have mtime of #{days_ago} but got #{to_path.mtime}"
       expect(compare.different?).to be(false), "Unexpected diff summary:\n\n#{compare.summary}"
     end
   end
