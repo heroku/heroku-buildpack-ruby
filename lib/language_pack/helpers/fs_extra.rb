@@ -18,8 +18,8 @@ module LanguagePack::Helpers
       def call
         Dir.mktmpdir do |dir|
           # Prepare fake operation
-          fake_from_path = Pathname(dir).join("source").tap(&:mkpath)
-          fake_to_path = Pathname(dir).join("destination").tap(&:mkpath)
+          fake_from_path = Pathname(dir).join("source")
+          fake_to_path = Pathname(dir).join("destination")
 
           # Setup fake directories
           @reference_klass.new(from_path: @from_path, to_path: fake_from_path, overwrite: true).call
@@ -203,7 +203,11 @@ module LanguagePack::Helpers
 
       private def copy_overwrite
         FileUtils.cp_r(
-          @from_path.children,
+          # If to and from are both directories, like `source/` and `destination/` then
+          # calling `cp_r` and passing in the directory will create a `destination/source/` directory which is not what we want.
+          #
+          # A workaround is to copy the children list into the destination directory.
+          @to_path.exist? ? @from_path.children : @from_path,
           @to_path,
           # Preserve file times and permissions
           preserve: true,
