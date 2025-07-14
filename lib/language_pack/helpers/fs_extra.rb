@@ -22,8 +22,12 @@ module LanguagePack::Helpers
           fake_to_path = Pathname(dir).join("destination")
 
           # Setup fake directories
-          @reference_klass.new(from_path: @from_path, to_path: fake_from_path, overwrite: true).call
-          @reference_klass.new(from_path: @to_path, to_path: fake_to_path, overwrite: true).call
+          if @from_path.exist?
+            @reference_klass.new(from_path: @from_path, to_path: fake_from_path, overwrite: true).call
+          end
+          if @to_path.exist?
+            @reference_klass.new(from_path: @to_path, to_path: fake_to_path, overwrite: true).call
+          end
 
           # Perform test operation
           @test_klass.new(from_path: fake_from_path, to_path: fake_to_path, overwrite: @overwrite).call

@@ -612,4 +612,29 @@ describe LanguagePack::Helpers::FsExtra::CompareCopy do
       expect(compare.different?).to be(false), "Unexpected diff summary:\n\n#{compare.summary}"
     end
   end
+
+  it "does not error if the target directory does not exist with overwrite false" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination")
+
+      days_ago = Time.now - (5 * 24 * 60 * 60)
+      from_path.utime(days_ago, days_ago)
+
+      # Create identical files
+      from_path.join("file.txt").write("content")
+
+      compare = LanguagePack::Helpers::FsExtra::CompareCopy.new(
+        from_path: from_path,
+        to_path: to_path,
+        reference_klass: LanguagePack::Helpers::FsExtra::Copy,
+        test_klass: LanguagePack::Helpers::FsExtra::Copy,
+        overwrite: false,
+        name: "copy_compare_with_old_mtime"
+      ).call
+
+      expect(to_path.mtime).to be_within(1).of(days_ago)
+      expect(compare.different?).to be(false), "Unexpected diff summary:\n\n#{compare.summary}"
+    end
+  end
 end
