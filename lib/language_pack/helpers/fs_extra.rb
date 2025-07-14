@@ -227,8 +227,20 @@ module LanguagePack::Helpers
           if target.exist?
             # Preserve original file
           else
-            parent = target.dirname
-            parent.mkpath unless parent.exist?
+            target_parent = target.dirname
+
+            if target_parent.exist?
+              # No need to create parent directory
+            else
+              # Parent directory does not exist in target, we can recursively copy it
+              #
+              # That's okay here because we validate that the directory is empty, therefore
+              # no files inside of it will be overwritten and we can bypass the update check.
+              #
+              # For all the other files in this directory, the above target.exist? check will return true
+              from_file = from_file.parent
+              target = target_parent
+            end
 
             # Use FileUtils.copy_entry for all files to properly handle symlinks
             # This will preserve symlinks and handle directories correctly
