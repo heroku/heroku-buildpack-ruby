@@ -29,10 +29,7 @@ module LanguagePack::Helpers
             @reference_klass.new(from_path: @to_path, to_path: fake_to_path, overwrite: true).call
           end
 
-          # Perform test operation
           @test_klass.new(from_path: fake_from_path, to_path: fake_to_path, overwrite: @overwrite).call
-
-          # Perform reference operation
           @reference_klass.new(from_path: @from_path, to_path: @to_path, overwrite: @overwrite).call
 
           # Compare results
@@ -206,12 +203,20 @@ module LanguagePack::Helpers
       end
 
       private def copy_overwrite
+
+        # If to and from are both directories, like `source/` and `destination/` then
+        # calling `cp_r` and passing in the directory will create a `destination/source/` directory which is not what we want.
+        #
+        # A workaround is to copy the children list into the destination directory.
+        if @to_path.exist?
+          from_args = @from_path.children
+        else
+          from_args = @from_path
+        end
+        from_args = @to_path.exist? ? @from_path.children : @from_path
+
         FileUtils.cp_r(
-          # If to and from are both directories, like `source/` and `destination/` then
-          # calling `cp_r` and passing in the directory will create a `destination/source/` directory which is not what we want.
-          #
-          # A workaround is to copy the children list into the destination directory.
-          @to_path.exist? ? @from_path.children : @from_path,
+          from_args,
           @to_path,
           # Preserve file times and permissions
           preserve: true,
