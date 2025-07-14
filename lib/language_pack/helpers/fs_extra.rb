@@ -22,10 +22,10 @@ module LanguagePack::Helpers
           fake_to_path = Pathname(dir).join("destination")
 
           # Setup fake directories
-          if @from_path.exist?
+          if from_path_exists = @from_path.exist?
             @reference_klass.new(from_path: @from_path, to_path: fake_from_path, overwrite: true).call
           end
-          if @to_path.exist?
+          if to_path_exists = @to_path.exist?
             @reference_klass.new(from_path: @to_path, to_path: fake_to_path, overwrite: true).call
           end
 
@@ -36,7 +36,7 @@ module LanguagePack::Helpers
           RsyncDiff.new(
             from_path: @to_path,
             to_path: fake_to_path,
-            notes: "Operation: #{@name}, Overwrite: #{@overwrite}"
+            notes: "Operation: #{@name}, Overwrite: #{@overwrite}, from_path: #{@from_path} (exists: #{from_path_exists}), to_path: #{@to_path} (exists: #{to_path_exists})"
           ).call
         end
       end
