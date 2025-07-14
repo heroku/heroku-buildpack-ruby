@@ -586,4 +586,30 @@ describe LanguagePack::Helpers::FsExtra::CompareCopy do
       expect(test).to have_received(:new).exactly(1).time
     end
   end
+
+  it "should have no differences when source and destination directories have mtime set to days ago" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      days_ago = Time.now - (5 * 24 * 60 * 60)
+      from_path.utime(days_ago, days_ago)
+      to_path.utime(days_ago, days_ago)
+
+      # Create identical files
+      from_path.join("file.txt").write("content")
+      to_path.join("file.txt").write("content")
+
+      compare = LanguagePack::Helpers::FsExtra::CompareCopy.new(
+        from_path: from_path,
+        to_path: to_path,
+        reference_klass: LanguagePack::Helpers::FsExtra::Copy,
+        test_klass: LanguagePack::Helpers::FsExtra::Copy,
+        overwrite: true,
+        name: "copy_compare_with_old_mtime"
+      ).call
+
+      expect(compare.different?).to be(false), "Unexpected diff summary:\n\n#{compare.summary}"
+    end
+  end
 end
