@@ -109,24 +109,19 @@ describe LanguagePack::Helpers::FsExtra::Copy do
 
   it "copies a directory containing a symlink to a directory when overwrite is false" do
     Dir.mktmpdir do |dir|
-      # Create source structure
       source_root = Pathname(dir).join("source").tap(&:mkpath)
       real_dir = source_root.join("real_dir").tap(&:mkpath)
       real_dir.join("file.txt").write("file contents")
 
-      # Create a symlink to the real directory
       symlink_dir = source_root.join("symlink_dir")
       symlink_dir.make_symlink(real_dir)
 
-      # Verify the symlink works
       expect(symlink_dir.symlink?).to be(true)
       expect(symlink_dir.directory?).to be(true)
       expect(symlink_dir.join("file.txt").read).to eq("file contents")
 
-      # Create destination
       dest_path = Pathname(dir).join("destination").tap(&:mkpath)
 
-      # Copy with overwrite: false
       LanguagePack::Helpers::FsExtra::Copy.new(
         from_path: source_root,
         to_path: dest_path,
@@ -152,15 +147,18 @@ describe LanguagePack::Helpers::FsExtra::Copy do
       to_path = Pathname(dir).join("destination").tap(&:mkpath)
 
       from_path.join("file.txt").write("file contents")
-      from_path.join("file.txt").utime(Time.now - 1000, Time.now - 1000)
+      old_time = Time.now - 1000
+      from_path.join("file.txt").utime(old_time, old_time)
       from_path.join("file.txt").chmod(0755)
 
+      expect(from_path.join("file.txt").mtime).to be_within(1).of(old_time), "Expected source file to have mtime of #{old_time} but got #{from_path.join("file.txt").mtime}"
       LanguagePack::Helpers::FsExtra::Copy.new(
         from_path: from_path,
         to_path: to_path,
         overwrite: true
       ).call
 
+      expect(to_path.join("file.txt").mtime).to be_within(1).of(old_time), "Expected source file to have mtime of #{old_time} but got #{to_path.join("file.txt").mtime}"
       expect(to_path.join("file.txt").mtime).to eq(from_path.join("file.txt").mtime)
       expect(to_path.join("file.txt").stat.mode).to eq(from_path.join("file.txt").stat.mode)
     end
@@ -172,8 +170,11 @@ describe LanguagePack::Helpers::FsExtra::Copy do
       to_path = Pathname(dir).join("destination").tap(&:mkpath)
 
       from_path.join("file.txt").write("file contents")
-      from_path.join("file.txt").utime(Time.now - 1000, Time.now - 1000)
+      old_time = Time.now - 1000
+      from_path.join("file.txt").utime(old_time, old_time)
       from_path.join("file.txt").chmod(0755)
+
+      expect(from_path.join("file.txt").mtime).to be_within(1).of(old_time), "Expected source file to have mtime of #{old_time} but got #{from_path.join("file.txt").mtime}"
 
       LanguagePack::Helpers::FsExtra::Copy.new(
         from_path: from_path,
@@ -181,6 +182,7 @@ describe LanguagePack::Helpers::FsExtra::Copy do
         overwrite: false
       ).call
 
+      expect(from_path.join("file.txt").mtime).to be_within(1).of(old_time), "Expected source file to have mtime of #{old_time} but got #{from_path.join("file.txt").mtime}"
       expect(to_path.join("file.txt").mtime).to eq(from_path.join("file.txt").mtime)
       expect(to_path.join("file.txt").stat.mode).to eq(from_path.join("file.txt").stat.mode)
     end
@@ -395,8 +397,13 @@ describe LanguagePack::Helpers::FsExtra::RsyncDiff do
       to_path.join("file.txt").write("content")
 
       # Set different timestamps
-      from_path.join("file.txt").utime(Time.now - 1000, Time.now - 1000)
-      to_path.join("file.txt").utime(Time.now - 500, Time.now - 500)
+      old_time1 = Time.now - 1000
+      old_time2 = Time.now - 500
+      from_path.join("file.txt").utime(old_time1, old_time1)
+      to_path.join("file.txt").utime(old_time2, old_time2)
+
+      expect(from_path.join("file.txt").mtime).to be_within(1).of(old_time1), "Expected source file to have mtime of #{old_time1} but got #{from_path.join("file.txt").mtime}"
+      expect(to_path.join("file.txt").mtime).to be_within(1).of(old_time2), "Expected destination file to have mtime of #{old_time2} but got #{to_path.join("file.txt").mtime}"
 
       io = StringIO.new
       diff = LanguagePack::Helpers::FsExtra::RsyncDiff.new(
@@ -581,7 +588,6 @@ describe LanguagePack::Helpers::FsExtra::CompareCopy do
         name: "copy_compare"
       ).call
 
-      # Verify the call counts
       expect(reference).to have_received(:new).exactly(3).times
       expect(test).to have_received(:new).exactly(1).time
     end
@@ -599,6 +605,10 @@ describe LanguagePack::Helpers::FsExtra::CompareCopy do
       days_ago = Time.now - (5 * 24 * 60 * 60)
       from_path.utime(days_ago, days_ago)
       to_path.utime(days_ago, days_ago)
+
+      # Verify the timestamps were actually set correctly
+      expect(from_path.mtime).to be_within(1).of(days_ago), "Expected source directory to have mtime of #{days_ago} but got #{from_path.mtime}"
+      expect(to_path.mtime).to be_within(1).of(days_ago), "Expected destination directory to have mtime of #{days_ago} but got #{to_path.mtime}"
 
       compare = LanguagePack::Helpers::FsExtra::CompareCopy.new(
         from_path: from_path,
