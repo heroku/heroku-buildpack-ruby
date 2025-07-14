@@ -1,6 +1,22 @@
 require 'spec_helper'
 
 describe LanguagePack::Helpers::FsExtra::Copy do
+  it "copies nothing if the from path does not exist" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source")
+      to_path = Pathname(dir).join("destination")
+
+      LanguagePack::Helpers::FsExtra::Copy.new(
+        from_path: from_path,
+        to_path: to_path,
+        overwrite: true
+      ).call
+
+      expect(from_path.exist?).to be(false)
+      expect(to_path.exist?).to be(false)
+    end
+  end
+
   it "copies a file" do
     Dir.mktmpdir do |dir|
       from_path = Pathname(dir).join("source").tap(&:mkpath)

@@ -195,6 +195,8 @@ module LanguagePack::Helpers
       # When force is true, it should behaves the same as `cp -a`
       # When force is false, it should behave the same as `cp -a --update=none`
       def call
+        return false unless @from_path.exist?
+
         if @overwrite
           copy_overwrite
         else
