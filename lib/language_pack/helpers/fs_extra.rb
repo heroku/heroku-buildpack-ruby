@@ -205,7 +205,6 @@ module LanguagePack::Helpers
       end
 
       private def copy_overwrite
-
         # If to and from are both directories, like `source/` and `destination/` then
         # calling `cp_r` and passing in the directory will create a `destination/source/` directory which is not what we want.
         #
@@ -225,6 +224,42 @@ module LanguagePack::Helpers
           # Preserve symlinks
           dereference_root: false
         )
+
+        if from_args != @from_path
+          # When copying children as a list, we don't copy the metadata of the parent directory
+          copy_metadata(from_path: @from_path, to_path: @to_path)
+        end
+      end
+
+      # The same code that FileUtils.copy_entry uses to preserve metadata
+      # https://github.com/ruby/ruby/blob/a6d483971a69436f5055cc9b5519256ef2630eb9/lib/fileutils.rb#L2287C1-L2314C8
+      private def copy_metadata(from_path:, to_path:)
+        st = from_path.lstat()
+        if !st.symlink?
+          to_path.utime(st.atime, st.mtime)
+        end
+        mode = st.mode
+        begin
+          if st.symlink?
+            begin
+              to_path.lchown(st.uid, st.gid)
+            rescue NotImplementedError
+            end
+          else
+            to_path.chown(st.uid, st.gid)
+          end
+        rescue Errno::EPERM, Errno::EACCES
+          # clear setuid/setgid
+          mode &= 01777
+        end
+        if st.symlink?
+          begin
+            to_path.lchmod(mode)
+          rescue NotImplementedError, Errno::EOPNOTSUPP
+          end
+        else
+          to_path.chmod(mode)
+        end
       end
 
       private def copy_update

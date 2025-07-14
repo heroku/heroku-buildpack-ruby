@@ -1,6 +1,30 @@
 require 'spec_helper'
 
 describe LanguagePack::Helpers::FsExtra::Copy do
+  it "preserves directory times when overwrite is true" do
+    Dir.mktmpdir do |dir|
+      from_path = Pathname(dir).join("source").tap(&:mkpath)
+      to_path = Pathname(dir).join("destination").tap(&:mkpath)
+
+      # Set the source directory to an old time
+      old_time = Time.now - 1000
+      from_path.utime(old_time, old_time)
+
+      # Verify the timestamp was set correctly
+      expect(from_path.mtime).to be_within(1).of(old_time)
+
+      LanguagePack::Helpers::FsExtra::Copy.new(
+        from_path: from_path,
+        to_path: to_path,
+        overwrite: true
+      ).call
+
+      # Assert that the destination directory has the same mtime
+      expect(to_path.mtime).to be_within(1).of(old_time)
+      expect(to_path.mtime).to eq(from_path.mtime)
+    end
+  end
+
   it "copies nothing if the from path does not exist" do
     Dir.mktmpdir do |dir|
       from_path = Pathname(dir).join("source")
