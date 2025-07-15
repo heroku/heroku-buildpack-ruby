@@ -5,47 +5,48 @@ require "language_pack/cache"
 # manipulating the `vendor/bundle` Bundler cache directory.
 # supports storing the cache in a "stack" directory
 class LanguagePack::BundlerCache
-  attr_reader :bundler_dir
 
   # @param [LanguagePack::Cache] cache object
   # @param [String] stack buildpack is running on
-  def initialize(cache, stack = nil)
+  def initialize(cache:, stack:, app_path:)
     @cache       = cache
     @stack       = stack
-    @bundler_dir = Pathname.new("vendor/bundle")
-    @stack_dir   = @stack ? Pathname.new(@stack) + @bundler_dir : @bundler_dir
+    @app_path = Pathname(app_path)
+    @app_folder = Pathname.new("vendor/bundle")
+    @cache_folder   = Pathname.new(@stack).join(@app_folder)
   end
 
-  # removes the bundler cache dir BOTH in the cache and local directory
+  # Removes the bundler cache dir BOTH in the cache and local directory
+  #
+  # Used for clearing old bundler cache (after migrating from heroku-22 to heroku-24, for example)
+  # When called with no arguments is used for clearing the current cache. For example, if a Ruby
+  # version changes and gems need to be reinstalled.
   def clear(stack = nil)
     stack ||= @stack
     @cache.clear(stack)
-    @bundler_dir.rmtree
-  end
-
-  # converts to cache directory to support stacks. only copy contents if the stack hasn't changed
-  # @param [Boolean] denote if there's a stack change or not
-  def convert_stack(stack_change)
-    @cache.cache_copy(@bundler_dir, @stack_dir) unless stack_change
-    @cache.clear(@bundler_dir)
-  end
-
-  # detects if using the non stack directory layout
-  def old?
-    @cache.exists?(@bundler_dir)
+    @app_path.join(@app_folder).rmtree
   end
 
   def exists?
-    @cache.exists?(@stack_dir)
+    @cache.exists?(@cache_folder)
   end
 
   # writes cache contents to cache store
-  def store
-    @cache.store(@bundler_dir, @stack_dir)
+  def app_to_cache
+    @cache.clear(@cache_folder)
+    @cache.app_to_cache(
+      dir: @app_folder,
+      rename: @cache_folder,
+      overwrite: true
+    )
   end
 
   # loads cache contents from the cache store
-  def load
-    @cache.load(@stack_dir, @bundler_dir)
+  def cache_to_app
+    @cache.cache_to_app(
+      dir: @cache_folder,
+      rename: @app_folder,
+      overwrite: true
+    )
   end
 end

@@ -25,9 +25,14 @@ class LanguagePack::Base
   def initialize(app_path: , cache_path: , gemfile_lock: )
     @app_path = app_path
     @stack         = ENV.fetch("STACK")
-    @cache         = LanguagePack::Cache.new(cache_path)
-    @metadata      = LanguagePack::Metadata.new(@cache)
-    @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
+
+    @cache         = LanguagePack::Cache.new(
+      cache_path: cache_path,
+      app_path: app_path,
+      experiment_enabled: env("HEROKU_FORCE_COPY_EXPERIMENT") || rand(1..10) == 1
+    )
+    @metadata      = LanguagePack::Metadata.new(cache: @cache, app_path: app_path)
+    @bundler_cache = LanguagePack::BundlerCache.new(cache: @cache, stack: @stack, app_path: app_path)
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
     @arch = get_arch
     @report = HerokuBuildReport::GLOBAL

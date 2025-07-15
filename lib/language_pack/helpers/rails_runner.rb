@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'tempfile'
 
 # This class is used for running `rails runner` against
 # apps, primarially for the intention of detecting configuration.
@@ -74,6 +75,7 @@ class LanguagePack::Helpers::RailsRunner
   include LanguagePack::ShellHelpers
 
   def initialize(debug = env('HEROKU_DEBUG_RAILS_RUNNER'), timeout = 65)
+    @file = Tempfile.new("rails-runner-output")
     @command_array = []
     @output        = nil
     @success       = false
@@ -116,7 +118,7 @@ class LanguagePack::Helpers::RailsRunner
       process = ProcessSpawn.new(command,
         user_env: true,
         timeout:  @timeout_val,
-        file:     "./.heroku/ruby/config_detect/rails.txt"
+        file:     @file
       )
 
       @success      = process.success?
