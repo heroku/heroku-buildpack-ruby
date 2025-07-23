@@ -74,7 +74,6 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     # check for new app at the beginning of the compile
-    new_app?
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
@@ -85,15 +84,14 @@ class LanguagePack::Ruby < LanguagePack::Base
       bundle_path: "vendor/bundle",
       bundle_default_without: "development:test"
     )
-    allow_git do
-      install_bundler_in_app(slug_vendor_base)
-      load_bundler_cache
-      build_bundler
-      post_bundler
-      create_database_yml
-      install_binaries
-      run_assets_precompile_rake_task
-    end
+    install_bundler_in_app(slug_vendor_base)
+    load_bundler_cache
+    build_bundler
+    post_bundler
+    create_database_yml
+    install_binaries
+    run_assets_precompile_rake_task
+
     @report.capture(
       "gem.railties_version" => bundler.gem_version('railties'),
       "gem.rack_version" => bundler.gem_version('rack')
@@ -163,14 +161,15 @@ private
   end
 
   def default_malloc_arena_max?
-    return true if @metadata.exists?("default_malloc_arena_max")
-    return @metadata.touch("default_malloc_arena_max") if new_app?
-
-    return false
+    if @metadata.new_app?
+      @metadata.touch("default_malloc_arena_max")
+    else
+      @metadata.exists?("default_malloc_arena_max")
+    end
   end
 
   def warn_bundler_upgrade
-    old_bundler_version  = @metadata.read("bundler_version").strip if @metadata.exists?("bundler_version")
+    old_bundler_version  = @metadata.read("bundler_version")
 
     if old_bundler_version && old_bundler_version != bundler.version
       warn(<<~WARNING, inline: true)
@@ -212,7 +211,7 @@ private
     return @ruby_version if @ruby_version
     last_version_file = "buildpack_ruby_version"
     last_version      = nil
-    last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
+    last_version      = @metadata.read(last_version_file)
 
     @ruby_version = LanguagePack::RubyVersion.bundle_platform_ruby(
       bundler_output: bundler.ruby_version,
@@ -523,7 +522,7 @@ private
     )
     @outdated_version_check.call
 
-    @metadata.write("buildpack_ruby_version", ruby_version.version_for_download)
+    @metadata.write("buildpack_ruby_version" => ruby_version.version_for_download)
 
     topic "Using Ruby version: #{ruby_version.version_for_download}"
     if ruby_version.default?
@@ -580,10 +579,6 @@ private
     ERROR
 
     error message
-  end
-
-  def new_app?
-    @new_app ||= !app_path.join("vendor").join("heroku").exist?
   end
 
   # find the ruby install path for its binstubs during build
@@ -727,7 +722,7 @@ private
       puts "Bundle completed (#{"%.2f" % bundle_time}s)"
       puts "Cleaning up the bundler cache."
       pipe("bundle clean", out: "2> /dev/null", user_env: true, env: env_vars)
-      @bundler_cache.store
+      @bundler_cache.app_to_cache
 
       # Keep gem cache out of the slug
       FileUtils.rm_rf("#{slug_vendor_base}/cache")
@@ -820,9 +815,7 @@ private
         host = uri.host
         port = uri.port
 
-        params = CGI.parse(uri.query || "")
-
-        %>
+        params = CGI.parse(uri.query || "") %>
 
         <%= ENV["RAILS_ENV"] || ENV["RACK_ENV"] %>:
           <%= attribute "adapter",  adapter %>
@@ -860,14 +853,6 @@ private
 
   def database_url
     env("DATABASE_URL") if env("DATABASE_URL")
-  end
-
-  # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
-  # @param [block] block to be executed in the GIT_DIR free context
-  def allow_git(&blk)
-    git_dir = ENV.delete("GIT_DIR") # can mess with bundler
-    blk.call
-    ENV["GIT_DIR"] = git_dir
   end
 
   # decides if we need to enable the dev database addon
@@ -1046,16 +1031,9 @@ private
     error msg
   end
 
-  def bundler_cache
-    "vendor/bundle"
-  end
-
   def load_bundler_cache
-    cache.load "vendor"
-
     full_ruby_version       = run_stdout(%q(ruby -v)).strip
     rubygems_version        = run_stdout(%q(gem -v)).strip
-    heroku_metadata         = "vendor/heroku"
     old_rubygems_version    = nil
     ruby_version_cache      = "ruby_version"
     buildpack_version_cache = "buildpack_version"
@@ -1066,35 +1044,34 @@ private
     # bundle clean does not remove binstubs
     FileUtils.rm_rf("vendor/bundler/bin")
 
-    old_rubygems_version = @metadata.read(ruby_version_cache).strip if @metadata.exists?(ruby_version_cache)
-    old_stack = @metadata.read(stack_cache).strip if @metadata.exists?(stack_cache)
+    old_rubygems_version = @metadata.read(ruby_version_cache)
+    old_stack = @metadata.read(stack_cache)
 
-    stack_change  = old_stack != @stack
-    convert_stack = @bundler_cache.old?
-    @bundler_cache.convert_stack(stack_change) if convert_stack
-    if !new_app? && stack_change
+    if @metadata.new_app?
+      # Nothing in the cache
+    elsif old_stack != @stack
       puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
       purge_bundler_cache(old_stack)
-    elsif !new_app? && !convert_stack
-      @bundler_cache.load
+    else
+      @bundler_cache.cache_to_app
     end
 
-    if (@bundler_cache.exists? || @bundler_cache.old?) &&
+    if @bundler_cache.exists? &&
         @metadata.exists?(ruby_version_cache) &&
-        full_ruby_version != @metadata.read(ruby_version_cache).strip
+        full_ruby_version != @metadata.read(ruby_version_cache)
       puts "Ruby version change detected. Clearing bundler cache."
       puts "Old: #{@metadata.read(ruby_version_cache).strip}"
       puts "New: #{full_ruby_version}"
       purge_bundler_cache
     end
 
-    FileUtils.mkdir_p(heroku_metadata)
-    @metadata.write(ruby_version_cache, full_ruby_version, false)
-    @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
-    @metadata.write(bundler_version_cache, bundler.version, false)
-    @metadata.write(rubygems_version_cache, rubygems_version, false)
-    @metadata.write(stack_cache, @stack, false)
-    @metadata.save
+    @metadata.write(
+      ruby_version_cache => full_ruby_version,
+      buildpack_version_cache => BUILDPACK_VERSION,
+      bundler_version_cache => bundler.version,
+      rubygems_version_cache => rubygems_version,
+      stack_cache => @stack,
+    )
   end
 
   def purge_bundler_cache(stack = nil)

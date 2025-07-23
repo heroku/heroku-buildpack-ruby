@@ -24,6 +24,17 @@ begin
   gemfile_lock = LanguagePack.gemfile_lock(app_path: app_path)
   Dir.chdir(app_path)
 
+  LanguagePack.install_ruby(
+    app_path: app_path,
+    cache_path: cache_path,
+    gemfile_lock: gemfile_lock
+  )
+  LanguagePack.install_bundler(
+    app_path: app_path,
+    cache_path: cache_path,
+    gemfile_lock: gemfile_lock
+  )
+
   if pack = LanguagePack.detect(
       app_path: app_path,
       cache_path: cache_path,
