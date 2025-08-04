@@ -1,6 +1,6 @@
-## Default Ruby version for new apps is now 3.3.8
+## Default Ruby version for new apps is now 3.3.9
 
-The [default Ruby version for new Ruby applications is 3.3.8](https://devcenter.heroku.com/articles/ruby-support#default-ruby-version-for-new-apps). You’ll only get the default if the application does not specify a Ruby version.
+The [default Ruby version for new Ruby applications is 3.3.9](https://devcenter.heroku.com/articles/ruby-support#default-ruby-version-for-new-apps). You’ll only get the default if the application does not specify a Ruby version.
 
 Heroku highly recommends specifying your desired Ruby version. You can specify a Ruby version in your `Gemfile`:
 

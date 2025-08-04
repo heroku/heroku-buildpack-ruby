@@ -39,7 +39,7 @@ jobs:
           uses: ruby/setup-ruby@v1
           with:
             bundler-cache: true
-            ruby-version: "3.3.8"
+            ruby-version: "3.3.9"
         - name: Hatchet setup
           run: bundle exec hatchet ci:setup
         - name: Run Hatchet integration tests
