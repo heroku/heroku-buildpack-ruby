@@ -12,8 +12,8 @@ module LanguagePack
       end
     end
 
-    BOOTSTRAP_VERSION_NUMBER = "3.3.8".freeze
-    DEFAULT_VERSION_NUMBER = "3.3.8".freeze
+    BOOTSTRAP_VERSION_NUMBER = "3.3.9".freeze
+    DEFAULT_VERSION_NUMBER = "3.3.9".freeze
     DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
     RUBY_VERSION_REGEX     = %r{
         (?<ruby_version>\d+\.\d+\.\d+){0}
