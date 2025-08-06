@@ -15,6 +15,14 @@ RUBY_BOOTSTRAP_DIR=$2
 # Stack is set by codon, listed here so shellcheck knows about it
 STACK=${STACK:-}
 
+if [ "$STACK" == "heroku-20" ]; then
+cat <<EOF
+  The heroku-20 stack reached end of life on April 30th. Please upgrade to a newer stack:
+  https://help.heroku.com/NPN275RK/heroku-20-end-of-life-faq
+EOF
+  exit 1
+fi
+
 curl_retry_on_18() {
   local ec=18;
   local attempts=0;
