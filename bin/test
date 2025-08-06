@@ -2,6 +2,8 @@
 # The actual `bin/test-compile` code lives in `bin/ruby_test-compile`. This file instead
 # bootstraps the ruby needed and then executes `bin/ruby_test-compile`
 
+set -euo pipefail
+
 BIN_DIR=$(cd "$(dirname "$0")" || exit; pwd) # absolute path
 BUILDPACK_DIR=$(dirname "$BIN_DIR")
 

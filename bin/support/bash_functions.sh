@@ -30,9 +30,10 @@ install_bootstrap_ruby()
 {
   local bin_dir=$1
   local buildpack_dir=$2
+  local stack="${STACK:?Required env var STACK is not set}"
 
   # Multi-arch aware stack support
-  if [ "$STACK" == "heroku-24" ]; then
+  if [ "$stack" == "heroku-24" ]; then
     local arch
     arch=$(dpkg --print-architecture)
     local heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$STACK/$arch"
@@ -154,3 +155,43 @@ compile_buildpack_v2()
   fi
 }
 
+# After a stack is EOL, updates to the buildpack may fail with unexpected or unhelpful errors.
+# This can happen when the buildpack is being used off of the platform such as with `dokku`
+# which is not officially supported.
+function checks::ensure_supported_stack() {
+	local stack="${1}"
+
+	case "${stack}" in
+		# When removing support from a stack, move it to the bottom of the list
+		heroku-22 | heroku-24)
+			return 0
+			;;
+		heroku-18 | heroku-20)
+			# This error will only ever be seen on non-Heroku environments, since the
+			# Heroku build system rejects builds using EOL stacks.
+			cat <<-EOF
+				Error: The '${stack}' stack is no longer supported.
+
+				This buildpack no longer supports the '${stack}' stack since it has
+				reached its end-of-life:
+				https://devcenter.heroku.com/articles/stack#stack-support-details
+
+				Upgrade to a newer stack to continue using this buildpack.
+			EOF
+			exit 1
+			;;
+		*)
+			cat <<-EOF
+				Error: The '${stack}' stack isn't recognised.
+
+				This buildpack doesn't recognise or support the '${stack}' stack.
+
+				If '${stack}' is a valid stack, make sure that you are using the latest
+				version of this buildpack and haven't pinned to an older release:
+				https://devcenter.heroku.com/articles/managing-buildpacks#view-your-buildpacks
+				https://devcenter.heroku.com/articles/managing-buildpacks#classic-buildpacks-references
+			EOF
+			exit 1
+			;;
+	esac
+}
