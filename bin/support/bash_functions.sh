@@ -30,9 +30,10 @@ install_bootstrap_ruby()
 {
   local bin_dir=$1
   local buildpack_dir=$2
+  local stack="${STACK:?Required env var STACK is not set}"
 
   # Multi-arch aware stack support
-  if [ "$STACK" == "heroku-24" ]; then
+  if [ "$stack" == "heroku-24" ]; then
     local arch
     arch=$(dpkg --print-architecture)
     local heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$STACK/$arch"
