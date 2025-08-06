@@ -2,6 +2,8 @@
 # The actual compilation code lives in `bin/support/ruby_compile`. This file instead
 # bootstraps the ruby needed and then executes `bin/support/ruby_compile`
 
+set -euo pipefail
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
