@@ -1,6 +1,23 @@
 require 'spec_helper'
 
 describe "Bash functions" do
+    it "fails on old stacks" do
+      out = exec_with_bash_functions(<<~EOM, raise_on_fail: false)
+        checks::ensure_supported_stack "heroku-20"
+      EOM
+
+      expect($?.success?).to be_falsey, "Expected command failure but got unexpected success. Output:\n\n#{out}"
+      expect(out).to include("This buildpack no longer supports the 'heroku-20' stack")
+    end
+
+    it "knows the latest stacks" do
+      out = exec_with_bash_functions(<<~EOM)
+        checks::ensure_supported_stack "heroku-24"
+      EOM
+
+      expect(out).to be_empty
+    end
+
     it "Detects jruby in the Gemfile.lock" do
       Dir.mktmpdir do |dir|
         dir = Pathname(dir)
@@ -8,7 +25,6 @@ describe "Bash functions" do
           RUBY VERSION
              ruby 2.5.7p001 (jruby 9.2.13.0)
         EOM
-
 
         out = exec_with_bash_functions <<~EOM
           which_java()
@@ -75,7 +91,7 @@ describe "Bash functions" do
     root_dir.join("bin", "support", "bash_functions.sh")
   end
 
-  def exec_with_bash_functions(code, stack: "heroku-24")
+  def exec_with_bash_functions(code, stack: "heroku-24", raise_on_fail: true)
     contents = <<~EOM
       #! /usr/bin/env bash
       set -eu
@@ -103,13 +119,14 @@ describe "Bash functions" do
       out = "Command timed out"
       success = false
     end
-    unless success
+
+    if raise_on_fail && !success
       message = <<~EOM
         Contents:
 
         #{contents.lines.map.with_index { |line, number| "  #{number.next} #{line.chomp}"}.join("\n") }
 
-        Expected running script to succeed, but it did not
+        Expected running script to succeed, but it did not. If this was expected, use `raise_on_fail: false`
 
         Output:
 
@@ -117,7 +134,8 @@ describe "Bash functions" do
       EOM
 
       raise message
+    else
+      out
     end
-    out
   end
 end
