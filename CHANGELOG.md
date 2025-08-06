@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v316] - 2025-08-06
+
 - Explicitly error on end-of-life (EOL) stack `heroku-20` (https://github.com/heroku/heroku-buildpack-ruby/pull/1629)
 - Default Ruby version is now 3.3.9 (https://github.com/heroku/heroku-buildpack-ruby/pull/1624)
 
@@ -1738,7 +1741,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v315...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v316...main
+[v316]: https://github.com/heroku/heroku-buildpack-ruby/compare/v315...v316
 [v315]: https://github.com/heroku/heroku-buildpack-ruby/compare/v314...v315
 [v314]: https://github.com/heroku/heroku-buildpack-ruby/compare/v313...v314
 [v313]: https://github.com/heroku/heroku-buildpack-ruby/compare/v312...v313
