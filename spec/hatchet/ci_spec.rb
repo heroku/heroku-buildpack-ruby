@@ -66,6 +66,7 @@ describe "CI" do
     runner = Hatchet::Runner.new("ruby_no_rails_test")
     runner.run_ci do |test_run|
       fetching_rake = "Fetching rake"
+      puts test_run.output
       expect(test_run.output).to match(fetching_rake)
 
       test_run.run_again

@@ -1,100 +1,106 @@
 require "pathname"
 require "language_pack"
 
-# Manipulates/handles contents of the cache directory
+# Manipulates and handles contents of the cache directory
+#
+# In a build, the cache directory is passed to the buildpack. This
+# class is responsible for moving folders/files in that cache directory
+# into their correct runtime (or build) needed location at the start of the build.
+# It is then responsible for storing the updated contents at the runtime (or build)
+# location and putting them back into the cache directory which will be passed to the
+# next build.
 class LanguagePack::Cache
   # @param [String] path to the cache store
-  def initialize(cache_path)
-    if cache_path
-      @cache_base = Pathname.new(cache_path)
-    else
-      @cache_base = nil
-    end
+  def initialize(cache_path:, app_path: , stack: ENV["STACK"], report: HerokuBuildReport::GLOBAL, experiment_enabled: false)
+    @report = report
+    @stack = stack
+    @app_path = Pathname(app_path)
+    @cache_path = Pathname(cache_path)
+    @experiment_enabled = experiment_enabled
+  end
+
+  # Move cache directory contents into application directory
+  def cache_to_app(dir: , overwrite:, rename: nil)
+    copy(
+      from_path: @cache_path.join(dir),
+      to_path: @app_path.join(rename || dir),
+      overwrite: overwrite,
+      name: "cache_to_app"
+    )
+  end
+
+  def app_to_cache(dir: , overwrite:, rename: nil)
+    copy(
+      from_path: @app_path.join(dir),
+      to_path: @cache_path.join(rename || dir),
+      overwrite: overwrite,
+      name: "app_to_cache"
+    )
   end
 
   # removes the the specified path from the cache
-  # @param [String] relative path from the cache_base
+  # @param [String] relative path from thecache_path
   def clear(path)
-    return unless @cache_base
-
-    target = (@cache_base + path)
+    target = @cache_path.join(path)
     target.exist? && target.rmtree
-  end
-
-  # Overwrite cache contents
-  # When called the cache destination will be cleared and the new contents coppied over
-  # This method is perferable as LanguagePack::Cache#add can cause accidental cache bloat.
-  #
-  # @param [String] path of contents to store. it will be stored using this a relative path from the cache_base.
-  # @param [String] relative path to store the cache contents, if nil it will assume the from path
-  def store(from, path = nil)
-    return unless @cache_base
-
-    path ||= from
-    clear path
-    copy from, (@cache_base + path)
-  end
-
-  # Adds file to cache without clearing the destination
-  # Use LanguagePack::Cache#store to avoid accidental cache bloat
-  def add(from, path = nil)
-    return unless @cache_base
-
-    path ||= from
-    copy from, (@cache_base + path)
-  end
-
-  # load cache contents
-  # @param [String] relative path of the cache contents
-  # @param [String] path of where to store it locally, if nil, assume same relative path as the cache contents
-  def load(path, dest = nil)
-    return unless @cache_base
-
-    dest ||= path
-    copy (@cache_base + path), dest
-  end
-
-  def load_without_overwrite(path, dest=nil)
-    return unless @cache_base
-
-    dest ||= path
-
-    case ENV["STACK"]
-    when "heroku-22"
-      copy (@cache_base + path), dest, "-a -n"
-    else
-      copy (@cache_base + path), dest, "-a --update=none"
-    end
-  end
-
-  # copy cache contents
-  # @param [String] source directory
-  # @param [String] destination directory
-  def copy(from, to, options='-a')
-    return unless @cache_base
-
-    return false unless File.exist?(from)
-    FileUtils.mkdir_p File.dirname(to)
-    command = "cp #{options} #{from}/. #{to}"
-    system(command)
-    raise "Command failed `#{command}`" unless $?
-  end
-
-  # copy contents between to places in the cache
-  # @param [String] source cache directory
-  # @param [String] destination directory
-  def cache_copy(from,to)
-    return unless @cache_base
-
-    copy(@cache_base + from, @cache_base + to)
   end
 
   # check if the cache content exists
   # @param [String] relative path of the cache contents
   # @param [Boolean] true if the path exists in the cache and false if otherwise
   def exists?(path)
-    return unless @cache_base
+    @cache_path.join(path).exist?
+  end
 
-    File.exist?(@cache_base + path)
+  # copy cache contents
+  # @param [String] source directory
+  # @param [String] destination directory
+  private def copy(from_path:, to_path:, overwrite: , name: )
+    if @experiment_enabled
+      diff = LanguagePack::Helpers::FsExtra::CompareCopy.new(
+        from_path: from_path,
+        to_path: to_path,
+        stack: @stack,
+        name: name,
+        overwrite: overwrite,
+        reference_klass: LanguagePack::Helpers::FsExtra::ShellCopy,
+        test_klass: LanguagePack::Helpers::FsExtra::Copy
+      ).call
+      @report.capture(
+        "fs_extra_diff_different" => diff.different?,
+      )
+
+      if diff.different?
+        # Abort on first failed experiment
+        @experiment_enabled = false
+        @report.capture(
+          "fs_extra_diff_summary" => diff.summary,
+        )
+      end
+    else
+      copy_cp(from_path: from_path, to_path: to_path, overwrite: overwrite)
+    end
+  end
+
+  private def copy_cp(from_path: , to_path:, overwrite: )
+    return false unless from_path.exist?
+
+    LanguagePack::Helpers::FsExtra::ShellCopy.new(
+      from_path: from_path,
+      to_path: to_path,
+      overwrite: overwrite,
+      stack: @stack
+    ).call
+  end
+
+  private def copy_fs_extra(from_path:, to_path:, overwrite: )
+    return false unless from_path.exist?
+
+    LanguagePack::Helpers::FsExtra::Copy.new(
+      from_path: from_path,
+      to_path: to_path,
+      overwrite: overwrite,
+      stack: @stack
+    ).call
   end
 end

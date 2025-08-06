@@ -5,7 +5,6 @@
 # methods or over writing methods defined here.
 class LanguagePack::Ruby
   def compile
-    new_app?
     remove_vendor_bundle
     warn_bad_binstubs
     install_ruby(install_path: slug_vendor_ruby)
@@ -16,15 +15,13 @@ class LanguagePack::Ruby
       bundle_default_without: "development"
     )
     setup_export
-    allow_git do
-      install_bundler_in_app(slug_vendor_base)
-      load_bundler_cache
-      build_bundler
-      post_bundler
-      create_database_yml
-      install_binaries
-      prepare_tests
-    end
+    install_bundler_in_app(slug_vendor_base)
+    load_bundler_cache
+    build_bundler
+    post_bundler
+    create_database_yml
+    install_binaries
+    prepare_tests
     setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
     super
   end

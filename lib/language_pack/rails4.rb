@@ -70,8 +70,8 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
     topic("Preparing app for Rails asset pipeline")
 
-    @cache.load_without_overwrite public_assets_folder
-    @cache.load default_assets_cache
+    @cache.cache_to_app(dir: public_assets_folder, overwrite: false)
+    @cache.cache_to_app(dir: default_assets_cache, overwrite: true)
 
     precompile.invoke(env: rake_env)
 
@@ -84,8 +84,11 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
         clean_task.invoke(env: rake_env)
 
         cleanup_assets_cache
-        @cache.store public_assets_folder
-        @cache.store default_assets_cache
+
+        [public_assets_folder, default_assets_cache].each do |dir|
+          @cache.clear(dir)
+          @cache.app_to_cache(dir: dir, overwrite: true)
+        end
       end
     else
       precompile_fail(precompile.output)
