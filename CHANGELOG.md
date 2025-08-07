@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v317] - 2025-08-07
+
+- JRuby 10.0.2.0 is now available
+
+
 ## [v316] - 2025-08-06
 
 - Explicitly error on end-of-life (EOL) stack `heroku-20` (https://github.com/heroku/heroku-buildpack-ruby/pull/1629)
@@ -1741,7 +1746,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v316...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v317...main
+[v317]: https://github.com/heroku/heroku-buildpack-ruby/compare/v316...v317
 [v316]: https://github.com/heroku/heroku-buildpack-ruby/compare/v315...v316
 [v315]: https://github.com/heroku/heroku-buildpack-ruby/compare/v314...v315
 [v314]: https://github.com/heroku/heroku-buildpack-ruby/compare/v313...v314
