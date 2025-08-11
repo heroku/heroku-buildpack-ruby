@@ -29,7 +29,6 @@ curl_retry_on_18() {
 install_bootstrap_ruby()
 {
   local bin_dir=$1
-  local stack="${STACK:?Required env var STACK is not set}"
   local heroku_buildpack_ruby_dir=$(mktemp -d)
 
   "$bin_dir"/support/download_ruby "$bin_dir" "$heroku_buildpack_ruby_dir"
