@@ -37,9 +37,9 @@ install_bootstrap_ruby()
   if [ "$stack" == "heroku-24" ]; then
     local arch
     arch=$(dpkg --print-architecture)
-    heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$STACK/$arch"
+    heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$stack/$arch"
   else
-    heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$STACK"
+    heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$stack"
   fi
 
   # The -d flag checks to see if a file exists and is a directory.
