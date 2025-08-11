@@ -29,30 +29,13 @@ curl_retry_on_18() {
 install_bootstrap_ruby()
 {
   local bin_dir=$1
-  local buildpack_dir=$2
   local stack="${STACK:?Required env var STACK is not set}"
-  local heroku_buildpack_ruby_dir
+  local heroku_buildpack_ruby_dir=$(mktemp -d)
 
-  # Multi-arch aware stack support
-  if [ "$stack" == "heroku-24" ]; then
-    local arch
-    arch=$(dpkg --print-architecture)
-    heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$stack/$arch"
-  else
-    heroku_buildpack_ruby_dir="$buildpack_dir/vendor/ruby/$stack"
-  fi
+  "$bin_dir"/support/download_ruby "$bin_dir" "$heroku_buildpack_ruby_dir"
 
-  # The -d flag checks to see if a file exists and is a directory.
-  # This directory may be non-empty if a previous compile has
-  # already placed a Ruby executable here.
-  if [ ! -d "$heroku_buildpack_ruby_dir" ]; then
-    heroku_buildpack_ruby_dir=$(mktemp -d)
-    # bootstrap ruby
-    "$bin_dir"/support/download_ruby "$bin_dir" "$heroku_buildpack_ruby_dir"
-
-    # Cleanup at exit
-    trap "rm -rf \"$heroku_buildpack_ruby_dir\"" EXIT
-  fi
+  # Cleanup at exit
+  trap "rm -rf \"$heroku_buildpack_ruby_dir\"" EXIT
 
   echo "$heroku_buildpack_ruby_dir"
 }
