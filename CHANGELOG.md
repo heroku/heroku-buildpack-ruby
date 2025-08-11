@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v318] - 2025-08-11
+
 - Fix `heroku_buildpack_ruby_dir: unbound variable` warning (https://github.com/heroku/heroku-buildpack-ruby/pull/1632)
 
 ## [v317] - 2025-08-07
@@ -1747,7 +1750,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v317...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v318...main
+[v318]: https://github.com/heroku/heroku-buildpack-ruby/compare/v317...v318
 [v317]: https://github.com/heroku/heroku-buildpack-ruby/compare/v316...v317
 [v316]: https://github.com/heroku/heroku-buildpack-ruby/compare/v315...v316
 [v315]: https://github.com/heroku/heroku-buildpack-ruby/compare/v314...v315
