@@ -49,11 +49,9 @@ install_bootstrap_ruby()
     heroku_buildpack_ruby_dir=$(mktemp -d)
     # bootstrap ruby
     "$bin_dir"/support/download_ruby "$bin_dir" "$heroku_buildpack_ruby_dir"
-    function atexit {
-      # shellcheck disable=SC2317
-      rm -rf "$heroku_buildpack_ruby_dir"
-    }
-    trap atexit EXIT
+
+    # Cleanup at exit
+    trap "rm -rf \"$heroku_buildpack_ruby_dir\"" EXIT
   fi
 
   echo "$heroku_buildpack_ruby_dir"
