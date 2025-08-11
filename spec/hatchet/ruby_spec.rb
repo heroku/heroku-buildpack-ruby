@@ -246,6 +246,8 @@ describe "Ruby apps" do
         end
 
         app.deploy do |app|
+          expect(app.output).to_not include("unbound variable")
+
           # Intentionally different than the default ruby version
           expect(app.output).to         match("#{version}")
           expect(app.run("ruby -v")).to match("#{version}")

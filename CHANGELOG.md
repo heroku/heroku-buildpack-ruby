@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix `heroku_buildpack_ruby_dir: unbound variable` warning (https://github.com/heroku/heroku-buildpack-ruby/pull/1632)
 
 ## [v317] - 2025-08-07
 
