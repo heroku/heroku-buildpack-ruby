@@ -10,35 +10,6 @@ curl_retry_on_18() {
   return $ec
 }
 
-# This function will install a version of Ruby onto the
-# system for the buildpack to use. It coordinates download
-# and setting appropriate env vars for execution
-#
-# Example:
-#
-#   install_bootstrap_ruby "$BIN_DIR" "$BUILDPACK_DIR"
-#
-# Takes two arguments, the first is the location of the buildpack's
-# `bin` directory. This is where the `download_ruby` script can be
-# found. The second argument is the root directory where Ruby
-# can be installed.
-#
-# This function relies on the env var `$STACK` being set. This
-# is set in codon outside of the buildpack. An example of a stack
-# would be "heroku-24".
-install_bootstrap_ruby()
-{
-  local bin_dir=$1
-  local heroku_buildpack_ruby_dir=$(mktemp -d)
-
-  "$bin_dir"/support/download_ruby "$bin_dir" "$heroku_buildpack_ruby_dir"
-
-  # Cleanup at exit
-  trap "rm -rf \"$heroku_buildpack_ruby_dir\"" EXIT
-
-  echo "$heroku_buildpack_ruby_dir"
-}
-
 which_java()
 {
   which java > /dev/null

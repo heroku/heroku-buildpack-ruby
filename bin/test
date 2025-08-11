@@ -9,7 +9,10 @@ BIN_DIR=$(cd "$(dirname "$0")" || exit; pwd) # absolute path
 # shellcheck source=bin/support/bash_functions.sh
 source "$BIN_DIR/support/bash_functions.sh"
 
-bootstrap_ruby_dir=$(install_bootstrap_ruby "$BIN_DIR" )
+bootstrap_ruby_dir=$(mktemp -d)
+"$BIN_DIR"/support/download_ruby "$BIN_DIR" "$bootstrap_ruby_dir"
+trap 'rm -rf "$bootstrap_ruby_dir"' EXIT
+
 export PATH="$bootstrap_ruby_dir/bin/:$PATH"
 unset GEM_PATH
 
