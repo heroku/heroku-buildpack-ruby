@@ -1,6 +1,44 @@
 require 'spec_helper'
 
 describe "Bash functions" do
+    describe "metrics" do
+      it "kv_string" do
+        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+          metrics::init "$(mktemp -d)"
+          metrics::clear
+
+          metrics::kv_string "ruby_version" "3.3.0"
+          metrics::print
+        EOM
+
+        expect(out).to eq("\nruby_version: '3.3.0'\n")
+      end
+
+      it "kv_string" do
+        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+          metrics::init "$(mktemp -d)"
+          metrics::clear
+
+          metrics::kv_string "ruby_version" "3.3.0"
+          metrics::print
+        EOM
+
+        expect(out).to eq("\nruby_version: '3.3.0'\n")
+      end
+
+      it "kv_raw" do
+        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+          metrics::init "$(mktemp -d)"
+          metrics::clear
+
+          metrics::kv_raw "ruby_minor" "3"
+          metrics::print
+        EOM
+
+        expect(out).to eq("\nruby_minor: 3\n")
+      end
+    end
+
     it "fails on old stacks" do
       out = exec_with_bash_functions(<<~EOM, raise_on_fail: false)
         checks::ensure_supported_stack "heroku-20"
