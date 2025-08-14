@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Run ShellCheck bin top level
         run: |
-            shellcheck bin/support/bash_functions.sh bin/support/download_ruby -x &&
+            shellcheck bin/support/bash_functions.sh bin/support/download_ruby bin/support/metrics.sh -x &&
             shellcheck bin/compile bin/detect bin/release bin/test bin/test-compile -x
 
   integration-test:
