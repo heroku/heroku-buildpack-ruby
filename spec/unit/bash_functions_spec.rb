@@ -2,6 +2,23 @@ require 'spec_helper'
 
 describe "Bash functions" do
     describe "metrics" do
+      it "kv_duration_since" do
+        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+          metrics::init "$(mktemp -d)"
+          metrics::clear
+
+          timer=$(metrics::start_timer)
+          sleep 0.1
+          metrics::kv_duration_since "ruby_install_ms" "${timer}"
+          metrics::print
+        EOM
+
+        expect(out).to include("ruby_install_ms:")
+
+        ruby_install_s = YAML.safe_load(out).fetch("ruby_install_ms").to_f
+        expect(ruby_install_s).to be_between(0.1, 1)
+      end
+
       it "kv_string" do
         out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
           metrics::init "$(mktemp -d)"
@@ -124,19 +141,22 @@ describe "Bash functions" do
       end
     end
 
-
   def bash_functions_file
     root_dir.join("bin", "support", "bash_functions.sh")
   end
 
-  def exec_with_bash_functions(code, stack: "heroku-24", raise_on_fail: true)
+  def metrics_functions_file
+    root_dir.join("bin", "support", "metrics.sh")
+  end
+
+  def exec_with_bash_file(file:, code:, stack: "heroku-24", raise_on_fail: true, strip_output: true)
     contents = <<~EOM
       #! /usr/bin/env bash
       set -eu
 
       STACK="#{stack}"
 
-      #{bash_functions_file.read}
+      #{file.read}
 
       #{code}
     EOM
@@ -150,7 +170,8 @@ describe "Bash functions" do
     success = false
     begin
       Timeout.timeout(60) do
-        out = `#{file.path} 2>&1`.strip
+        out = `#{file.path} 2>&1`
+        out = out.strip if strip_output
         success = $?.success?
       end
     rescue Timeout::Error
@@ -175,5 +196,14 @@ describe "Bash functions" do
     else
       out
     end
+  end
+
+  def exec_with_bash_functions(code, stack: "heroku-24", raise_on_fail: true)
+    exec_with_bash_file(
+      code: code,
+      file: bash_functions_file,
+      stack: stack,
+      raise_on_fail: raise_on_fail
+    )
   end
 end
