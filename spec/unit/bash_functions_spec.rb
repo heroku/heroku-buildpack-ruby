@@ -28,7 +28,7 @@ describe "Bash functions" do
           metrics::print
         EOM
 
-        expect(out).to eq("\nruby_version: '3.3.0'\n")
+        expect(out).to eq("---\nruby_version: '3.3.0'\n")
       end
 
       it "kv_string" do
@@ -40,7 +40,7 @@ describe "Bash functions" do
           metrics::print
         EOM
 
-        expect(out).to eq("\nruby_version: '3.3.0'\n")
+        expect(out).to eq("---\nruby_version: '3.3.0'\n")
       end
 
       it "kv_raw" do
@@ -52,7 +52,7 @@ describe "Bash functions" do
           metrics::print
         EOM
 
-        expect(out).to eq("\nruby_minor: 3\n")
+        expect(out).to eq("---\nruby_minor: 3\n")
       end
     end
 

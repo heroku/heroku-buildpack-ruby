@@ -2,9 +2,10 @@
 
 # File contains functions for storing metrics from the buildpack in bash.
 #
-# The format of the report file is line separated key-value pairs.
+# The format of the report file is YAML withline separated key-value pairs.
 #
 # Example:
+#   ---
 #   ruby_version: "3.3.3"
 #   ruby_install_duration: 1.234
 #
@@ -13,18 +14,18 @@
 set -euo pipefail
 
 # Variables shared by this whole module
-BASH_REPORT_FILE=""
+BUILD_REPORT_FILE=""
 
 # Must be called before you can use any other methods
 metrics::init() {
 	local cache_dir="${1}"
-	BASH_REPORT_FILE="${cache_dir}/.heroku/ruby/bash_build_report.yml"
+	BUILD_REPORT_FILE="${cache_dir}/.heroku/ruby/build_report.yml"
 }
 
 # This should be called after metrics::init in bin/compile
 metrics::clear() {
-	mkdir -p "$(dirname "${BASH_REPORT_FILE}")"
-	echo "" > "${BASH_REPORT_FILE}"
+	mkdir -p "$(dirname "${BUILD_REPORT_FILE}")"
+	echo "---" > "${BUILD_REPORT_FILE}"
 }
 
 # Adds a key-value pair to the report file without any attempt to quote or escape the value.
@@ -32,7 +33,7 @@ metrics::kv_raw() {
 	local key="${1}"
 	local value="${2}"
 	if [[ -n "${value}" ]]; then
-		echo "${key}: ${value}" >> "${BASH_REPORT_FILE}"
+		echo "${key}: ${value}" >> "${BUILD_REPORT_FILE}"
 	fi
 }
 
@@ -89,5 +90,5 @@ metrics::kv_duration_since() {
 
 # Does what it says on the tin.
 metrics::print() {
-	cat "${BASH_REPORT_FILE}"
+	cat "${BUILD_REPORT_FILE}"
 }
