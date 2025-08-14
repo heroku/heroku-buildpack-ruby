@@ -15,16 +15,19 @@ module HerokuBuildReport
   class YamlReport
     attr_reader :data
 
-    def initialize(path: )
+    def initialize(path: , io: $stdout)
+      @io = io
       @path = Pathname(path).expand_path
       @path.dirname.mkpath
       FileUtils.touch(@path)
-      @data = {}
+      @data = safe_load(@path.read)
     end
 
-    def clear!
-      @data.clear
-      @path.write("")
+    def safe_load(contents)
+      YAML.safe_load(contents) || {}
+    rescue => e
+      @io.puts "Internal Warning: Expected build report to be YAML, but it is malformed: #{contents.inspect}"
+      {}
     end
 
     def complex_object?(value)
