@@ -8,9 +8,16 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 BIN_DIR=$(cd "$(dirname "$0")" || exit; pwd) # absolute path
+# The absolute path to the root of the buildpack.
+BUILDPACK_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 
 # shellcheck source=bin/support/bash_functions.sh
 source "$BIN_DIR/support/bash_functions.sh"
+
+# Initialize metrics for bin/report
+source "${BUILDPACK_DIR}/bin/support/metrics.sh"
+metrics::init "${CACHE_DIR}"
+metrics::clear
 
 checks::ensure_supported_stack "${STACK:?Required env var STACK is not set}"
 
