@@ -32,6 +32,6 @@ CACHE_DIR="${2}"
 BUILDPACK_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 
 # Initialize metrics for bin/report
-source "${BUILDPACK_DIR}/bin/support/metrics.sh"
+source "$BIN_DIR/support/bash_functions.sh"
 metrics::init "${CACHE_DIR}"
 metrics::print
