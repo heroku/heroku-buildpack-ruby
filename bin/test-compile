@@ -19,7 +19,10 @@ metrics::init "${CACHE_DIR}"
 metrics::clear
 
 bootstrap_ruby_dir=$(mktemp -d)
-"$BIN_DIR"/support/download_ruby "$BIN_DIR" "$bootstrap_ruby_dir"
+"$BIN_DIR"/support/download_ruby "$BIN_DIR" "$bootstrap_ruby_dir" || {
+  metrics::kv_string "failure_reason" "bootstrap_ruby_fail"
+  exit 1
+}
 trap 'rm -rf "$bootstrap_ruby_dir"' EXIT
 
 export PATH="$bootstrap_ruby_dir/bin/:$PATH"
