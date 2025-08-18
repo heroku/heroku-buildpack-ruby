@@ -66,45 +66,62 @@ compile_buildpack_v2()
 
     if [[ "$url" =~ \.tgz$ ]] || [[ "$url" =~ \.tgz\? ]]; then
       mkdir -p "$dir"
-      curl_retry_on_18 -s --fail --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" "$url" | tar xvz -C "$dir" >/dev/null 2>&1
+      curl_retry_on_18 -s --fail --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" "$url" | tar xvz -C "$dir" >/dev/null 2>&1 || {
+        metrics::kv_string "failure_reason" "compile_buildpack_v2_download_fail"
+        metrics::kv_string "failure_detail" "url: $url"
+        exit 1
+      }
     else
-      git clone "$url" "$dir" >/dev/null 2>&1
+      git clone "$url" "$dir" >/dev/null 2>&1 || {
+        echo "Failed to clone $url"
+        metrics::kv_string "failure_reason" "compile_buildpack_v2_download_fail"
+        metrics::kv_string "failure_detail" "url: $url"
+        exit 1
+      }
     fi
     cd "$dir" || return
 
     if [ "$branch" != "" ]; then
-      git checkout "$branch" >/dev/null 2>&1
+      git checkout "$branch" >/dev/null 2>&1 || {
+        echo "Failed to checkout branch $branch"
+        metrics::kv_string "failure_reason" "compile_buildpack_v2_checkout_fail"
+        metrics::kv_string "failure_detail" "buildpack: $buildpack, branch: $branch"
+        exit 1
+      }
     fi
 
     # we'll get errors later if these are needed and don't exist
     chmod -f +x "$dir/bin/{detect,compile,release}" || true
 
-    framework=$("$dir"/bin/detect "$build_dir")
-
-    # shellcheck disable=SC2181
-    if [ $? == 0 ]; then
-      echo "-----> Detected Framework: $framework"
-      "$dir"/bin/compile "$build_dir" "$cache_dir" "$env_dir"
-
-      # shellcheck disable=SC2181
-      if [ $? != 0 ]; then
-        exit 1
-      fi
-
-      # check if the buildpack left behind an environment for subsequent ones
-      if [ -e "$dir/export" ]; then
-        set +u # http://redsymbol.net/articles/unofficial-bash-strict-mode/#sourcing-nonconforming-document
-        # shellcheck disable=SC1091
-        source "$dir/export"
-        set -u # http://redsymbol.net/articles/unofficial-bash-strict-mode/#sourcing-nonconforming-document
-      fi
-
-      if [ -x "$dir/bin/release" ]; then
-        "$dir"/bin/release "$build_dir" > "$1"/last_pack_release.out
-      fi
-    else
+    framework=$("$dir"/bin/detect "$build_dir") || {
       echo "Couldn't detect any framework for this buildpack. Exiting."
+      metrics::kv_string "failure_reason" "compile_buildpack_v2_detect_fail"
+      metrics::kv_string "failure_detail" "buildpack: $buildpack"
+
       exit 1
+    }
+
+    echo "-----> Detected Framework: $framework"
+    "$dir"/bin/compile "$build_dir" "$cache_dir" "$env_dir" || {
+      metrics::kv_string "failure_reason" "compile_buildpack_v2_compile_fail"
+      metrics::kv_string "failure_detail" "buildpack: $buildpack"
+      exit 1
+    }
+
+    # check if the buildpack left behind an environment for subsequent ones
+    if [ -e "$dir/export" ]; then
+      set +u # http://redsymbol.net/articles/unofficial-bash-strict-mode/#sourcing-nonconforming-document
+      # shellcheck disable=SC1091
+      source "$dir/export"
+      set -u # http://redsymbol.net/articles/unofficial-bash-strict-mode/#sourcing-nonconforming-document
+    fi
+
+    if [ -x "$dir/bin/release" ]; then
+      "$dir"/bin/release "$build_dir" > "$1"/last_pack_release.out || {
+        metrics::kv_string "failure_reason" "compile_buildpack_v2_release_fail"
+        metrics::kv_string "failure_detail" "buildpack: $buildpack"
+        exit 1
+      }
     fi
   fi
 }
