@@ -196,6 +196,9 @@ HEROKU_RUBY_BUILD_REPORT_FILE=""
 metrics::init() {
 	local cache_dir="${1}"
 	HEROKU_RUBY_BUILD_REPORT_FILE="${cache_dir}/.heroku/ruby/build_report.yml"
+
+	# Used later in the `HerokuBuildReport.set_global` call in `bin/support/ruby_compile`
+	export HEROKU_RUBY_BUILD_REPORT_FILE
 }
 
 # This should be called after metrics::init in bin/compile
