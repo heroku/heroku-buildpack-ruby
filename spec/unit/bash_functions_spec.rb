@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Bash functions" do
     describe "metrics" do
       it "prints error when missing report env var" do
-        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
           if [[ -z "${BUILD_REPORT_FILE}" ]]; then
             unset BUILD_REPORT_FILE
           fi
@@ -21,7 +21,7 @@ describe "Bash functions" do
       it "prints error when report env var is set to a non-existent file" do
         Dir.mktmpdir do |dir|
           file = Pathname(dir).join("does-not-exist").expand_path
-          out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+          out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
             export BUILD_REPORT_FILE="#{file}"
             metrics::print
           EOM
@@ -35,7 +35,7 @@ describe "Bash functions" do
       end
 
       it "kv_duration_since" do
-        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
           metrics::init "$(mktemp -d)"
           metrics::clear
 
@@ -52,7 +52,7 @@ describe "Bash functions" do
       end
 
       it "kv_string" do
-        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
           metrics::init "$(mktemp -d)"
           metrics::clear
 
@@ -64,7 +64,7 @@ describe "Bash functions" do
       end
 
       it "kv_string" do
-        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
           metrics::init "$(mktemp -d)"
           metrics::clear
 
@@ -76,7 +76,7 @@ describe "Bash functions" do
       end
 
       it "kv_raw" do
-        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
           metrics::init "$(mktemp -d)"
           metrics::clear
 
@@ -90,6 +90,9 @@ describe "Bash functions" do
 
     it "fails on old stacks" do
       out = exec_with_bash_functions(<<~EOM, raise_on_fail: false)
+        metrics::init "$(mktemp -d)"
+        metrics::clear
+
         checks::ensure_supported_stack "heroku-20"
       EOM
 
@@ -157,6 +160,9 @@ describe "Bash functions" do
         EOM
 
         out = exec_with_bash_functions <<~EOM
+          metrics::init "$(mktemp -d)"
+          metrics::clear
+
           which_java()
           {
             return 0
@@ -175,10 +181,6 @@ describe "Bash functions" do
 
   def bash_functions_file
     root_dir.join("bin", "support", "bash_functions.sh")
-  end
-
-  def metrics_functions_file
-    root_dir.join("bin", "support", "metrics.sh")
   end
 
   def exec_with_bash_file(file:, code:, stack: "heroku-24", raise_on_fail: true, strip_output: true)
