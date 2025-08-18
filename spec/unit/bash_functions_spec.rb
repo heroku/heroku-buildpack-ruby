@@ -4,8 +4,8 @@ describe "Bash functions" do
     describe "metrics" do
       it "prints error when missing report env var" do
         out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
-          if [[ -z "${BUILD_REPORT_FILE}" ]]; then
-            unset BUILD_REPORT_FILE
+          if [[ -z "${HEROKU_RUBY_BUILD_REPORT_FILE}" ]]; then
+            unset HEROKU_RUBY_BUILD_REPORT_FILE
           fi
 
           metrics::print
@@ -22,7 +22,7 @@ describe "Bash functions" do
         Dir.mktmpdir do |dir|
           file = Pathname(dir).join("does-not-exist").expand_path
           out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
-            export BUILD_REPORT_FILE="#{file}"
+            export HEROKU_RUBY_BUILD_REPORT_FILE="#{file}"
             metrics::print
           EOM
 

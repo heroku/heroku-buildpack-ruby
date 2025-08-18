@@ -190,18 +190,18 @@ function checks::ensure_supported_stack() {
 set -euo pipefail
 
 # Variables shared by this whole module
-BUILD_REPORT_FILE=""
+HEROKU_RUBY_BUILD_REPORT_FILE=""
 
 # Must be called before you can use any other methods
 metrics::init() {
 	local cache_dir="${1}"
-	BUILD_REPORT_FILE="${cache_dir}/.heroku/ruby/build_report.yml"
+	HEROKU_RUBY_BUILD_REPORT_FILE="${cache_dir}/.heroku/ruby/build_report.yml"
 }
 
 # This should be called after metrics::init in bin/compile
 metrics::clear() {
-	mkdir -p "$(dirname "${BUILD_REPORT_FILE}")"
-	echo "---" > "${BUILD_REPORT_FILE}"
+	mkdir -p "$(dirname "${HEROKU_RUBY_BUILD_REPORT_FILE}")"
+	echo "---" > "${HEROKU_RUBY_BUILD_REPORT_FILE}"
 }
 
 # Adds a key-value pair to the report file without any attempt to quote or escape the value.
@@ -209,7 +209,7 @@ metrics::kv_raw() {
 	local key="${1}"
 	local value="${2}"
 	if [[ -n "${value}" ]]; then
-		echo "${key}: ${value}" >> "${BUILD_REPORT_FILE}"
+		echo "${key}: ${value}" >> "${HEROKU_RUBY_BUILD_REPORT_FILE}"
 	fi
 }
 
@@ -271,7 +271,7 @@ metrics::kv_duration_since() {
 
 # Does what it says on the tin.
 metrics::print() {
-	local report=${BUILD_REPORT_FILE:-'(unset)'}
+	local report=${HEROKU_RUBY_BUILD_REPORT_FILE:-'(unset)'}
 	if [[ -f "${report}" ]]; then
 		cat "${report}"
 	else
