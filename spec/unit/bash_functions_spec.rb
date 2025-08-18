@@ -2,6 +2,38 @@ require 'spec_helper'
 
 describe "Bash functions" do
     describe "metrics" do
+      it "prints error when missing report env var" do
+        out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+          if [[ -z "${BUILD_REPORT_FILE}" ]]; then
+            unset BUILD_REPORT_FILE
+          fi
+
+          metrics::print
+        EOM
+
+        expect(out).to eq(<<~EOM)
+          ---
+          report_file_path: '(unset)'
+          report_file_missing: true
+        EOM
+      end
+
+      it "prints error when report env var is set to a non-existent file" do
+        Dir.mktmpdir do |dir|
+          file = Pathname(dir).join("does-not-exist").expand_path
+          out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
+            export BUILD_REPORT_FILE="#{file}"
+            metrics::print
+          EOM
+
+          expect(out).to eq(<<~EOM)
+            ---
+            report_file_path: '#{file}'
+            report_file_missing: true
+          EOM
+        end
+      end
+
       it "kv_duration_since" do
         out = exec_with_bash_file(code: <<~EOM, file: metrics_functions_file, strip_output: false)
           metrics::init "$(mktemp -d)"
