@@ -231,7 +231,8 @@ metrics::quote_string() {
 # E.g. metrics::nowms => 1755207400269 # 2025-08-14 21:36 UTC
 metrics::nowms() {
 	# Try Linux format first (date +%s%3N)
-	local timestamp=$(date +%s%3N 2>/dev/null)
+	local timestamp
+	timestamp=$(date +%s%3N 2>/dev/null)
 
 	# Check if it worked (should be numeric and longer than 10 digits)
 	if [[ "$timestamp" =~ ^[0-9]{13,}$ ]]; then
@@ -240,8 +241,10 @@ metrics::nowms() {
 	fi
 
 	# Fallback for BSD systems: use date +%s and add milliseconds
-	local seconds=$(date +%s)
-	local nanoseconds=$(date +%N 2>/dev/null || echo "000000000")
+	local seconds
+	seconds=$(date +%s)
+	local nanoseconds
+	nanoseconds=$(date +%N 2>/dev/null || echo "000000000")
 	# Convert nanoseconds to milliseconds (first 3 digits)
 	local milliseconds=${nanoseconds:0:3}
 	echo "${seconds}${milliseconds}"
