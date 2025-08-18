@@ -42,8 +42,13 @@ metrics::kv_string() {
 	local key="${1}"
 	local value="${2}"
 	if [[ -n "${value}" ]]; then
-		metrics::kv_raw "$key" "'${value//\'/\'\'}'"
+		metrics::kv_raw "$key" "$(metrics::quote_string "${value}")"
 	fi
+}
+
+metrics::quote_string() {
+	local value="${1}"
+	echo "'${value//\'/\'\'}'"
 }
 
 # Returns the current time, in milliseconds.
@@ -90,5 +95,12 @@ metrics::kv_duration_since() {
 
 # Does what it says on the tin.
 metrics::print() {
-	cat "${BUILD_REPORT_FILE}"
+	local report=${BUILD_REPORT_FILE:-'(unset)'}
+	if [[ -f "${report}" ]]; then
+		cat "${report}"
+	else
+		echo "---"
+		echo "report_file_path: $(metrics::quote_string "${report}")"
+		echo "report_file_missing: true"
+	fi
 }

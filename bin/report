@@ -3,11 +3,10 @@
 set -euo pipefail
 
 CACHE_DIR="${2}"
-REPORT_FILE="${CACHE_DIR}/.heroku/ruby/build_report.yml"
+# The absolute path to the root of the buildpack.
+BUILDPACK_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 
-# Whilst the release file is always written by the buildpack, some apps use
-# third-party slug cleaner buildpacks to remove this and other files, so we
-# cannot assume it still exists by the time the release step runs.
-if [[ -f "${REPORT_FILE}" ]]; then
-  cat "${REPORT_FILE}"
-fi
+# Initialize metrics for bin/report
+source "${BUILDPACK_DIR}/bin/support/metrics.sh"
+metrics::init "${CACHE_DIR}"
+metrics::print
