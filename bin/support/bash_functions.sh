@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source "$(dirname "$0")/metrics.sh"
+
 curl_retry_on_18() {
   local ec=18;
   local attempts=0;
@@ -119,6 +121,8 @@ function checks::ensure_supported_stack() {
 			return 0
 			;;
 		heroku-18 | heroku-20)
+			metrics::kv_string "failure_reason" "stack_eol"
+			metrics::kv_string "failure_detail" "${stack} stack"
 			# This error will only ever be seen on non-Heroku environments, since the
 			# Heroku build system rejects builds using EOL stacks.
 			cat <<-EOF
@@ -133,6 +137,8 @@ function checks::ensure_supported_stack() {
 			exit 1
 			;;
 		*)
+			metrics::kv_string "failure_reason" "stack_unknown"
+			metrics::kv_string "failure_detail" "${stack} stack"
 			cat <<-EOF
 				Error: The '${stack}' stack isn't recognised.
 
