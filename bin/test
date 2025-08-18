@@ -4,9 +4,8 @@
 
 set -euo pipefail
 
+CACHE_DIR=$2
 BIN_DIR=$(cd "$(dirname "$0")" || exit; pwd) # absolute path
-# The absolute path to the root of the buildpack.
-BUILDPACK_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 
 # shellcheck source=bin/support/bash_functions.sh
 source "$BIN_DIR/support/bash_functions.sh"
