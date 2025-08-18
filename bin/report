@@ -20,10 +20,6 @@
 # facing build logs) to avoid breaking builds unnecessarily / causing confusion. To debug
 # issues check the internal build system logs for `buildpack.report.failed` events, or
 # when developing run `make run` in this repo locally, which runs `bin/report` too.
-#
-# Note: The build system doesn't source the `export` script before running this script,
-# so Python/the package manager won't be on PATH. If we ever need to run them during
-# `bin/report` in the future, we'll need to manually source the export script again.
 
 set -euo pipefail
 
