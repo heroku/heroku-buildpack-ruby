@@ -27,6 +27,7 @@ detect_needs_java()
   local skip_java_install=1
 
   if which_java; then
+    metrics::kv_raw "which_java" "true"
     return $skip_java_install
   fi
 
