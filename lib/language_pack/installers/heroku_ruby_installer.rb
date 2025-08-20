@@ -21,7 +21,8 @@ class LanguagePack::Installers::HerokuRubyInstaller
 
   def install(ruby_version, install_dir)
     @report.capture(
-      "ruby.version" => ruby_version.ruby_version,
+      "ruby.spec_version" => ruby_version.ruby_version,
+      "ruby.version_for_download" => ruby_version.version_for_download,
       "ruby.engine" => ruby_version.engine,
       "ruby.engine.version" => ruby_version.engine_version,
       "ruby.major" => ruby_version.major,
