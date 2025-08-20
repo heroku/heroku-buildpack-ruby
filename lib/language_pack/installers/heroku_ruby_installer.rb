@@ -21,14 +21,19 @@ class LanguagePack::Installers::HerokuRubyInstaller
 
   def install(ruby_version, install_dir)
     @report.capture(
-      "ruby.spec_version" => ruby_version.ruby_version,
-      "ruby.version_for_download" => ruby_version.version_for_download,
-      "ruby.engine" => ruby_version.engine,
-      "ruby.engine.version" => ruby_version.engine_version,
-      "ruby.major" => ruby_version.major,
-      "ruby.minor" => ruby_version.minor,
-      "ruby.patch" => ruby_version.patch,
-      "ruby.origin" => ruby_version.default? ? "default" : "Gemfile.lock"
+      # i.e. `ruby-3.4.2-jruby-10.0.2.0` or `ruby-3.4.2`
+      "ruby_version" => ruby_version.version_for_download,
+      # i.e. `jruby` or `ruby`
+      "ruby_version_engine" => ruby_version.engine,
+      # i.e. 10.0.2.0 for Jruby, matches `ruby_version_spec` for MRI
+      "ruby_version_engine_version" => ruby_version.engine_version,
+      # i.e. `3.4.2` for both MRI and JRuby
+      "ruby_version_spec" => ruby_version.ruby_version,
+      # major/minor/patch pulled from the spec
+      "ruby_version_major" => ruby_version.major,
+      "ruby_version_minor" => ruby_version.minor,
+      "ruby_version_patch" => ruby_version.patch,
+      "ruby_version_origin" => ruby_version.default? ? "default" : "Gemfile.lock"
     )
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)

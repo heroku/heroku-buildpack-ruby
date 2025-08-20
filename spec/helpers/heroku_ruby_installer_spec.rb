@@ -37,12 +37,12 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
           expect(File.symlink?("#{dir}/bin/ruby.exe")).to be true
           expect(File).to exist("#{dir}/vendor/ruby/bin/ruby")
 
-          expect(report.data["ruby.version"]).to eq("3.1.7")
-          expect(report.data["ruby.engine"]).to eq(:ruby)
-          expect(report.data["ruby.engine.version"]).to eq(report.data["ruby.version"])
-          expect(report.data["ruby.major"]).to eq(3)
-          expect(report.data["ruby.minor"]).to eq(1)
-          expect(report.data["ruby.patch"]).to eq(7)
+          expect(report.data["ruby_version"]).to eq("ruby-3.1.7")
+          expect(report.data["ruby_version_engine"]).to eq(:ruby)
+          expect(report.data["ruby_version_engine_version"]).to eq(report.data["ruby_version"].split("-").last)
+          expect(report.data["ruby_version_major"]).to eq(3)
+          expect(report.data["ruby_version_minor"]).to eq(1)
+          expect(report.data["ruby_version_patch"]).to eq(7)
         end
       end
     end
@@ -62,12 +62,12 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
             "#{dir}/vendor/ruby"
           )
 
-          expect(report.data["ruby.version"]).to eq("3.1.4")
-          expect(report.data["ruby.engine"]).to eq(:jruby)
-          expect(report.data["ruby.engine.version"]).to eq("9.4.9.0")
-          expect(report.data["ruby.major"]).to eq(3)
-          expect(report.data["ruby.minor"]).to eq(1)
-          expect(report.data["ruby.patch"]).to eq(4)
+          expect(report.data["ruby_version"]).to eq("ruby-3.1.4-jruby-9.4.9.0")
+          expect(report.data["ruby_version_engine"]).to eq(:jruby)
+          expect(report.data["ruby_version_engine_version"]).to eq("9.4.9.0")
+          expect(report.data["ruby_version_major"]).to eq(3)
+          expect(report.data["ruby_version_minor"]).to eq(1)
+          expect(report.data["ruby_version_patch"]).to eq(4)
         end
       end
     end
