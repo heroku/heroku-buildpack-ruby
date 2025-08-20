@@ -27,7 +27,7 @@ class LanguagePack::Installers::HerokuRubyInstaller
       "ruby.major" => ruby_version.major,
       "ruby.minor" => ruby_version.minor,
       "ruby.patch" => ruby_version.patch,
-      "ruby.default" => ruby_version.default?,
+      "ruby.origin" => ruby_version.default? ? "default" : "Gemfile.lock"
     )
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)
