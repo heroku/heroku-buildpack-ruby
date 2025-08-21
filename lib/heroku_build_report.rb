@@ -1,4 +1,5 @@
 require 'yaml'
+require 'json'
 require 'pathname'
 
 # Observability reporting for builds
@@ -9,10 +10,10 @@ require 'pathname'
 #     "ruby_version" => "3.4.2"
 #   )
 module HerokuBuildReport
-  # Accumulates data in memory and writes it to the specified path in YAML format
+  # Accumulates data in memory and writes it to the specified path in JSON format
   #
   # Writes data to disk on every capture. Later `bin/report` emits the disk contents
-  class YamlReport
+  class JsonReport
     attr_reader :data
 
     def initialize(path: , io: $stdout)
@@ -24,9 +25,13 @@ module HerokuBuildReport
     end
 
     def safe_load(contents)
-      YAML.safe_load(contents) || {}
+      if !contents || contents.empty?
+        {}
+      else
+        JSON.parse(contents)
+      end
     rescue => e
-      @io.puts "Internal Warning: Expected build report to be YAML, but it is malformed: #{contents.inspect}"
+      @io.puts "Internal Warning: Expected build report to be JSON, but it is malformed: #{contents.inspect}"
       {}
     end
 
@@ -49,13 +54,13 @@ module HerokuBuildReport
         @data["#{key}"] = value
       end
 
-      @path.write(@data.to_yaml)
+      @path.write(@data.to_json)
     end
   end
 
   # Current load order of the various "language packs"
   def self.set_global(path: )
-    YamlReport.new(path: path).tap { |report|
+    JsonReport.new(path: path).tap { |report|
       # Silence warning about setting a constant
       begin
         old_verbose = $VERBOSE
@@ -69,7 +74,7 @@ module HerokuBuildReport
 
   # Stores data in memory only, does not persist to disk
   def self.dev_null
-    YamlReport.new(path: "/dev/null")
+    JsonReport.new(path: "/dev/null")
   end
 
   GLOBAL = self.dev_null # Changed via `set_global`
