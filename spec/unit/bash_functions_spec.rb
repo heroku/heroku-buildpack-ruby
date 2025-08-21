@@ -12,9 +12,10 @@ describe "Bash functions" do
         EOM
 
         expect(out).to eq(<<~EOM)
-          ---
-          report_file_path: '(unset)'
-          report_file_missing: true
+          {
+            "report_file_path": "(unset)",
+            "report_file_missing": true
+          }
         EOM
       end
 
@@ -27,9 +28,10 @@ describe "Bash functions" do
           EOM
 
           expect(out).to eq(<<~EOM)
-            ---
-            report_file_path: '#{file}'
-            report_file_missing: true
+            {
+              "report_file_path": "#{file}",
+              "report_file_missing": true
+            }
           EOM
         end
       end
@@ -45,10 +47,13 @@ describe "Bash functions" do
           metrics::print
         EOM
 
-        expect(out).to include("ruby_install_ms:")
-
-        ruby_install_s = YAML.safe_load(out).fetch("ruby_install_ms").to_f
-        expect(ruby_install_s).to be_between(0.1, 1)
+        begin
+          ruby_install_s = JSON.parse(out).fetch("ruby_install_ms").to_f
+          expect(ruby_install_s).to be_between(0.1, 1)
+        rescue
+          puts "Output: #{out}"
+          raise
+        end
       end
 
       it "kv_string" do
@@ -60,7 +65,11 @@ describe "Bash functions" do
           metrics::print
         EOM
 
-        expect(out).to eq("---\nruby_version: '3.3.0'\n")
+        expect(out).to eq(<<~EOM)
+          {
+            "ruby_version": "3.3.0"
+          }
+        EOM
       end
 
       it "kv_string" do
@@ -72,7 +81,11 @@ describe "Bash functions" do
           metrics::print
         EOM
 
-        expect(out).to eq("---\nruby_version: '3.3.0'\n")
+        expect(out).to eq(<<~EOM)
+          {
+            "ruby_version": "3.3.0"
+          }
+       EOM
       end
 
       it "kv_raw" do
@@ -84,7 +97,11 @@ describe "Bash functions" do
           metrics::print
         EOM
 
-        expect(out).to eq("---\nruby_minor: 3\n")
+        expect(out).to eq(<<~EOM)
+          {
+            "ruby_minor": 3
+          }
+        EOM
       end
     end
 
