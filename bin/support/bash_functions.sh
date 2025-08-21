@@ -178,24 +178,26 @@ function checks::ensure_supported_stack() {
 
 # Contains functions for storing metrics from the buildpack in bash.
 #
-# The format of the report file is YAML withline separated key-value pairs.
+# The format of the report file is JSON.
 #
 # Example:
-#   ---
-#   ruby_version: "3.3.3"
-#   ruby_install_duration: 1.234
+#   {
+#     "ruby_version": "3.3.3",
+#     "ruby_install_duration": 1.234
+#   }
 #
 # All keys get `ruby.` prepended to them in the backend automatically.
 
-set -euo pipefail
-
 # Variables shared by this whole module
+BUILD_DATA_FILE=""
+# Exported for use by Ruby code
 HEROKU_RUBY_BUILD_REPORT_FILE=""
 
 # Must be called before you can use any other methods
 metrics::init() {
 	local cache_dir="${1}"
-	HEROKU_RUBY_BUILD_REPORT_FILE="${cache_dir}/.heroku/ruby/build_report.yml"
+	BUILD_DATA_FILE="${cache_dir:?}/build-data/ruby.json"
+	HEROKU_RUBY_BUILD_REPORT_FILE="${BUILD_DATA_FILE}"
 
 	# Used later in the `HerokuBuildReport.set_global` call in `bin/support/ruby_compile`
 	export HEROKU_RUBY_BUILD_REPORT_FILE
@@ -203,26 +205,56 @@ metrics::init() {
 
 # This should be called after metrics::init in bin/compile
 metrics::clear() {
-	mkdir -p "$(dirname "${HEROKU_RUBY_BUILD_REPORT_FILE}")"
-	echo "---" > "${HEROKU_RUBY_BUILD_REPORT_FILE}"
+	mkdir -p "$(dirname "${BUILD_DATA_FILE}")"
+	echo "{}" >"${BUILD_DATA_FILE}"
 }
 
 # Adds a key-value pair to the report file without any attempt to quote or escape the value.
 metrics::kv_raw() {
 	local key="${1}"
 	local value="${2}"
-	if [[ -n "${value}" ]]; then
-		echo "${key}: ${value}" >> "${HEROKU_RUBY_BUILD_REPORT_FILE}"
-	fi
+	build_report::_set "${key}" "${value}" "false"
 }
+
 
 # Adds a key-value pair to the report file, quoting the value.
 metrics::kv_string() {
 	local key="${1}"
 	local value="${2}"
-	if [[ -n "${value}" ]]; then
-		metrics::kv_raw "$key" "$(metrics::quote_string "${value}")"
+	build_report::_set "${key}" "${value}" "true"
+}
+
+# Internal helper to write a key/value pair to the build data store. The buildpack shouldn't call this directly.
+# Takes a key, value, and a boolean flag indicating whether the value needs to be quoted.
+#
+# Usage:
+# ```
+# build_report::_set "foo_string" "quote me" "true"
+# build_report::_set "bar_number" "99" "false"
+# ```
+function build_report::_set() {
+	local key="${1}"
+	# Truncate the value to an arbitrary 200 characters since it will sometimes contain user-provided
+	# inputs which may be unbounded in size. Ideally individual call sites will perform more aggressive
+	# truncation themselves based on the expected value size, however this is here as a fallback.
+	# (Honeycomb supports string fields up to 64KB in size, however, it's not worth filling up the
+	# build data store or bloating the payload passed back to Vacuole/submitted to Honeycomb given the
+	# extra content in those cases is not normally useful.)
+	local value="${2:0:200}"
+	local needs_quoting="${3}"
+
+	if [[ "${needs_quoting}" == "true" ]]; then
+		# Values passed using `--arg` are treated as strings, and so have double quotes added and any JSON
+		# special characters (such as newlines, carriage returns, double quotes, backslashes) are escaped.
+		local jq_args=(--arg value "${value}")
+	else
+		# Values passed using `--argjson` are treated as raw JSON values, and so aren't escaped or quoted.
+		local jq_args=(--argjson value "${value}")
 	fi
+
+	local new_data_file_contents
+	new_data_file_contents="$(jq --arg key "${key}" "${jq_args[@]}" '. + { ($key): ($value) }' "${BUILD_DATA_FILE}")"
+	echo "${new_data_file_contents}" >"${BUILD_DATA_FILE}"
 }
 
 metrics::quote_string() {
@@ -268,22 +300,21 @@ metrics::start_timer() {
 #   # => ruby_install: 1.234
 metrics::kv_duration_since() {
 	local key="${1}"
-	local start="${2}"
-	local end="${3:-$(metrics::start_timer)}"
-	local time
-	time="$(echo "${start}" "${end}" | awk '{ printf "%.3f", ($2 - $1)/1000 }')"
-	metrics::kv_raw "$key" "${time}"
+	local start_time="${2}"
+	local end_time duration
+	end_time="$(metrics::nowms)"
+	duration="$(echo "${start_time}" "${end_time}" | awk '{ printf "%.3f", ($2 - $1)/1000 }')"
+
+	metrics::kv_raw "${key}" "${duration}"
 }
 
 # Does what it says on the tin.
 metrics::print() {
 	local report=${HEROKU_RUBY_BUILD_REPORT_FILE:-'(unset)'}
 	if [[ -f "${report}" ]]; then
-		cat "${report}"
+		jq --sort-keys '.' "${report}"
 	else
-		echo "---"
-		echo "report_file_path: $(metrics::quote_string "${report}")"
-		echo "report_file_missing: true"
+		echo "{}" | jq --arg report "${report}" '.report_file_path = $report | .report_file_missing = true'
 	fi
 }
 
