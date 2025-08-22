@@ -283,12 +283,14 @@ build_data::kv_duration_since() {
 
 # Does what it says on the tin.
 build_data::print() {
-	local report=${HEROKU_RUBY_BUILD_REPORT_FILE:-'(unset)'}
-	if [[ -f "${report}" ]]; then
-		jq --sort-keys '.' "${report}"
-	else
-		echo "{}" | jq --arg report "${report}" '.report_file_path = $report | .report_file_missing = true'
+	if [ "${HEROKU_RUBY_BUILD_REPORT_FILE}" != "${BUILD_DATA_FILE}" ]; then
+		echo "Error: HEROKU_RUBY_BUILD_REPORT_FILE does not match BUILD_DATA_FILE"
+		echo "HEROKU_RUBY_BUILD_REPORT_FILE: ${HEROKU_RUBY_BUILD_REPORT_FILE}"
+		echo "BUILD_DATA_FILE: ${BUILD_DATA_FILE}"
+		exit 1
 	fi
+
+	jq --sort-keys '.' "${BUILD_DATA_FILE}"
 }
 
 ## ==============================
