@@ -14,6 +14,7 @@ module HerokuBuildReport
   #
   # Writes data to disk on every capture. Later `bin/report` emits the disk contents
   class JsonReport
+    MALFORMED_JSON_KEY = "build_report_file_malformed"
     attr_reader :data
 
     def initialize(path: , io: $stdout)
@@ -22,6 +23,10 @@ module HerokuBuildReport
       @path.dirname.mkpath
       FileUtils.touch(@path)
       @data = safe_load(@path.read)
+
+      if @data[MALFORMED_JSON_KEY]
+        @path.write(@data.to_json)
+      end
     end
 
     def safe_load(contents)
@@ -32,7 +37,7 @@ module HerokuBuildReport
       end
     rescue => e
       @io.puts "Internal Warning: Expected build report to be JSON, but it is malformed: #{contents.inspect}"
-      {}
+      { MALFORMED_JSON_KEY => true }
     end
 
     def complex_object?(value)
