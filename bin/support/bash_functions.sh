@@ -189,9 +189,9 @@ function checks::ensure_supported_stack() {
 # All keys get `ruby.` prepended to them in the backend automatically.
 
 # Variables shared by this whole module
-BUILD_DATA_FILE=""
+BUILD_DATA_FILE="/dev/null"
 # Exported for use by Ruby code
-HEROKU_RUBY_BUILD_REPORT_FILE=""
+HEROKU_RUBY_BUILD_REPORT_FILE="/dev/null"
 
 # Must be called before you can use any other methods
 build_data::init() {
