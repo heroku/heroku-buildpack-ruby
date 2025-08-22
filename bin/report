@@ -30,5 +30,5 @@ BIN_DIR=$(cd "$(dirname "$0")" || exit; pwd) # absolute path
 # Initialize metrics for bin/report
 # shellcheck source=bin/support/bash_functions.sh
 source "$BIN_DIR/support/bash_functions.sh"
-metrics::init "${CACHE_DIR}"
-metrics::print
+build_data::init "${CACHE_DIR}"
+build_data::print

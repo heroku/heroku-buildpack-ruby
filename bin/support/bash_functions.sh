@@ -27,7 +27,7 @@ detect_needs_java()
   local skip_java_install=1
 
   if which_java; then
-    metrics::kv_raw "which_java" "true"
+    build_data::kv_raw "which_java" "true"
     return $skip_java_install
   fi
 
@@ -68,15 +68,15 @@ compile_buildpack_v2()
     if [[ "$url" =~ \.tgz$ ]] || [[ "$url" =~ \.tgz\? ]]; then
       mkdir -p "$dir"
       curl_retry_on_18 -s --fail --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" "$url" | tar xvz -C "$dir" >/dev/null 2>&1 || {
-        metrics::kv_string "failure_reason" "compile_buildpack_v2_download_fail"
-        metrics::kv_string "failure_detail" "url: $url"
+        build_data::kv_string "failure_reason" "compile_buildpack_v2_download_fail"
+        build_data::kv_string "failure_detail" "url: $url"
         exit 1
       }
     else
       git clone "$url" "$dir" >/dev/null 2>&1 || {
         echo "Failed to clone $url"
-        metrics::kv_string "failure_reason" "compile_buildpack_v2_download_fail"
-        metrics::kv_string "failure_detail" "url: $url"
+        build_data::kv_string "failure_reason" "compile_buildpack_v2_download_fail"
+        build_data::kv_string "failure_detail" "url: $url"
         exit 1
       }
     fi
@@ -85,8 +85,8 @@ compile_buildpack_v2()
     if [ "$branch" != "" ]; then
       git checkout "$branch" >/dev/null 2>&1 || {
         echo "Failed to checkout branch $branch"
-        metrics::kv_string "failure_reason" "compile_buildpack_v2_checkout_fail"
-        metrics::kv_string "failure_detail" "buildpack: $buildpack, branch: $branch"
+        build_data::kv_string "failure_reason" "compile_buildpack_v2_checkout_fail"
+        build_data::kv_string "failure_detail" "buildpack: $buildpack, branch: $branch"
         exit 1
       }
     fi
@@ -96,16 +96,16 @@ compile_buildpack_v2()
 
     framework=$("$dir"/bin/detect "$build_dir") || {
       echo "Couldn't detect any framework for this buildpack. Exiting."
-      metrics::kv_string "failure_reason" "compile_buildpack_v2_detect_fail"
-      metrics::kv_string "failure_detail" "buildpack: $buildpack"
+      build_data::kv_string "failure_reason" "compile_buildpack_v2_detect_fail"
+      build_data::kv_string "failure_detail" "buildpack: $buildpack"
 
       exit 1
     }
 
     echo "-----> Detected Framework: $framework"
     "$dir"/bin/compile "$build_dir" "$cache_dir" "$env_dir" || {
-      metrics::kv_string "failure_reason" "compile_buildpack_v2_compile_fail"
-      metrics::kv_string "failure_detail" "buildpack: $buildpack"
+      build_data::kv_string "failure_reason" "compile_buildpack_v2_compile_fail"
+      build_data::kv_string "failure_detail" "buildpack: $buildpack"
       exit 1
     }
 
@@ -119,8 +119,8 @@ compile_buildpack_v2()
 
     if [ -x "$dir/bin/release" ]; then
       "$dir"/bin/release "$build_dir" > "$1"/last_pack_release.out || {
-        metrics::kv_string "failure_reason" "compile_buildpack_v2_release_fail"
-        metrics::kv_string "failure_detail" "buildpack: $buildpack"
+        build_data::kv_string "failure_reason" "compile_buildpack_v2_release_fail"
+        build_data::kv_string "failure_detail" "buildpack: $buildpack"
         exit 1
       }
     fi
@@ -139,8 +139,8 @@ function checks::ensure_supported_stack() {
 			return 0
 			;;
 		heroku-18 | heroku-20)
-			metrics::kv_string "failure_reason" "stack_eol"
-			metrics::kv_string "failure_detail" "${stack} stack"
+			build_data::kv_string "failure_reason" "stack_eol"
+			build_data::kv_string "failure_detail" "${stack} stack"
 			# This error will only ever be seen on non-Heroku environments, since the
 			# Heroku build system rejects builds using EOL stacks.
 			cat <<-EOF
@@ -155,8 +155,8 @@ function checks::ensure_supported_stack() {
 			exit 1
 			;;
 		*)
-			metrics::kv_string "failure_reason" "stack_unknown"
-			metrics::kv_string "failure_detail" "${stack} stack"
+			build_data::kv_string "failure_reason" "stack_unknown"
+			build_data::kv_string "failure_detail" "${stack} stack"
 			cat <<-EOF
 				Error: The '${stack}' stack isn't recognised.
 
@@ -173,10 +173,10 @@ function checks::ensure_supported_stack() {
 }
 
 ## ==============================
-# Start of metrics section
+# Start of build_report section
 ## ==============================
 
-# Contains functions for storing metrics from the buildpack in bash.
+# Contains functions for storing build report from the buildpack in bash.
 #
 # The format of the report file is JSON.
 #
@@ -194,7 +194,7 @@ BUILD_DATA_FILE=""
 HEROKU_RUBY_BUILD_REPORT_FILE=""
 
 # Must be called before you can use any other methods
-metrics::init() {
+build_data::init() {
 	local cache_dir="${1}"
 	BUILD_DATA_FILE="${cache_dir}/build-data/ruby.json"
 	HEROKU_RUBY_BUILD_REPORT_FILE="${BUILD_DATA_FILE}"
@@ -203,20 +203,20 @@ metrics::init() {
 	export HEROKU_RUBY_BUILD_REPORT_FILE
 }
 
-# This should be called after metrics::init in bin/compile
-metrics::clear() {
+# This should be called after build_data::init in bin/compile
+build_data::clear() {
 	mkdir -p "$(dirname "${BUILD_DATA_FILE}")"
 	echo "{}" >"${BUILD_DATA_FILE}"
 }
 
 # Adds a key-value pair to the report file without any attempt to quote or escape the value.
-metrics::kv_raw() {
+build_data::kv_raw() {
 	local key="${1}"
 	local value="${2}"
 	build_report::_set "${key}" "${value}" "false"
 }
 # Adds a key-value pair to the report file, quoting the value.
-metrics::kv_string() {
+build_data::kv_string() {
 	local key="${1}"
 	local value="${2}"
 	build_report::_set "${key}" "${value}" "true"
@@ -255,14 +255,14 @@ function build_report::_set() {
 	echo "${new_data_file_contents}" >"${BUILD_DATA_FILE}"
 }
 
-metrics::quote_string() {
+build_data::quote_string() {
 	local value="${1}"
 	echo "'${value//\'/\'\'}'"
 }
 
 # Returns the current time since the UNIX Epoch, as a float with microseconds precision
-# E.g. metrics::current_unix_time_ms => 1755879324.771610 # 2025-08-22 11:15 UTC
-metrics::current_unix_realtime() {
+# E.g. build_data::current_unix_realtime => 1755879324.771610 # 2025-08-22 11:15 UTC
+build_data::current_unix_realtime() {
 	LC_ALL=C
 	echo "${EPOCHREALTIME}"
 }
@@ -270,24 +270,24 @@ metrics::current_unix_realtime() {
 # Adds a key=duration to the report file
 #
 # Example:
-#   start_time=$(metrics::current_unix_realtime)
+#   start_time=$(build_data::current_unix_realtime)
 #   sleep 1
-#   metrics::kv_duration_since "ruby_install" "${start_time}"
+#   build_data::kv_duration_since "ruby_install" "${start_time}"
 #
-#   metrics::print
+#   build_data::print
 #   # => ruby_install: 1.234
-metrics::kv_duration_since() {
+build_data::kv_duration_since() {
 	local key="${1}"
 	local start_time="${2}"
 	local end_time duration
-	end_time="$(metrics::current_unix_realtime)"
+	end_time="$(build_data::current_unix_realtime)"
 	duration="$(awk -v start="${start_time}" -v end="${end_time}" 'BEGIN { printf "%f", (end - start) }')"
 
-	metrics::kv_raw "${key}" "${duration}"
+	build_data::kv_raw "${key}" "${duration}"
 }
 
 # Does what it says on the tin.
-metrics::print() {
+build_data::print() {
 	local report=${HEROKU_RUBY_BUILD_REPORT_FILE:-'(unset)'}
 	if [[ -f "${report}" ]]; then
 		jq --sort-keys '.' "${report}"

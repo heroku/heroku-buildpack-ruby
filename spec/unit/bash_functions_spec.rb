@@ -21,7 +21,7 @@ describe "Bash functions" do
           file = Pathname(dir).join("does-not-exist").expand_path
           out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
             export HEROKU_RUBY_BUILD_REPORT_FILE="#{file}"
-            metrics::print
+            build_data::print
           EOM
 
           expect(out).to eq(<<~EOM)
@@ -35,13 +35,13 @@ describe "Bash functions" do
 
       it "kv_duration_since" do
         out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
-          metrics::init "$(mktemp -d)"
-          metrics::clear
+          build_data::init "$(mktemp -d)"
+          build_data::clear
 
-          timer=$(metrics::current_unix_realtime)
+          timer=$(build_data::current_unix_realtime)
           sleep 0.1
-          metrics::kv_duration_since "ruby_install_ms" "${timer}"
-          metrics::print
+          build_data::kv_duration_since "ruby_install_ms" "${timer}"
+          build_data::print
         EOM
 
         begin
@@ -55,11 +55,11 @@ describe "Bash functions" do
 
       it "kv_string" do
         out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
-          metrics::init "$(mktemp -d)"
-          metrics::clear
+          build_data::init "$(mktemp -d)"
+          build_data::clear
 
-          metrics::kv_string "ruby_version" "3.3.0"
-          metrics::print
+          build_data::kv_string "ruby_version" "3.3.0"
+          build_data::print
         EOM
 
         expect(out).to eq(<<~EOM)
@@ -71,11 +71,11 @@ describe "Bash functions" do
 
       it "kv_string" do
         out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
-          metrics::init "$(mktemp -d)"
-          metrics::clear
+          build_data::init "$(mktemp -d)"
+          build_data::clear
 
-          metrics::kv_string "ruby_version" "3.3.0"
-          metrics::print
+          build_data::kv_string "ruby_version" "3.3.0"
+          build_data::print
         EOM
 
         expect(out).to eq(<<~EOM)
@@ -87,11 +87,11 @@ describe "Bash functions" do
 
       it "kv_raw" do
         out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
-          metrics::init "$(mktemp -d)"
-          metrics::clear
+          build_data::init "$(mktemp -d)"
+          build_data::clear
 
-          metrics::kv_raw "ruby_minor" "3"
-          metrics::print
+          build_data::kv_raw "ruby_minor" "3"
+          build_data::print
         EOM
 
         expect(out).to eq(<<~EOM)
@@ -104,8 +104,8 @@ describe "Bash functions" do
 
     it "fails on old stacks" do
       out = exec_with_bash_functions(<<~EOM, raise_on_fail: false)
-        metrics::init "$(mktemp -d)"
-        metrics::clear
+        build_data::init "$(mktemp -d)"
+        build_data::clear
 
         checks::ensure_supported_stack "heroku-20"
       EOM
@@ -174,8 +174,8 @@ describe "Bash functions" do
         EOM
 
         out = exec_with_bash_functions <<~EOM
-          metrics::init "$(mktemp -d)"
-          metrics::clear
+          build_data::init "$(mktemp -d)"
+          build_data::clear
 
           which_java()
           {
