@@ -255,11 +255,6 @@ function build_report::_set() {
 	echo "${new_data_file_contents}" >"${BUILD_DATA_FILE}"
 }
 
-build_data::quote_string() {
-	local value="${1}"
-	echo "'${value//\'/\'\'}'"
-}
-
 # Returns the current time since the UNIX Epoch, as a float with microseconds precision
 # E.g. build_data::current_unix_realtime => 1755879324.771610 # 2025-08-22 11:15 UTC
 build_data::current_unix_realtime() {
