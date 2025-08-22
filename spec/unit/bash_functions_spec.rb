@@ -4,10 +4,7 @@ describe "Bash functions" do
     describe "metrics" do
       it "prints error when missing report env var" do
         out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
-          if [[ -z "${HEROKU_RUBY_BUILD_REPORT_FILE}" ]]; then
-            unset HEROKU_RUBY_BUILD_REPORT_FILE
-          fi
-
+          unset HEROKU_RUBY_BUILD_REPORT_FILE
           metrics::print
         EOM
 
