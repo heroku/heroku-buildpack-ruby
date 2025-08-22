@@ -176,7 +176,7 @@ function checks::ensure_supported_stack() {
 # Start of build_data section
 ## ==============================
 
-# Contains functions for storing build datafrom the buildpack in bash.
+# Contains functions for storing build data from the buildpack in bash.
 #
 # The format of the report file is JSON.
 #
@@ -194,6 +194,11 @@ BUILD_DATA_FILE="/dev/null"
 HEROKU_RUBY_BUILD_REPORT_FILE="/dev/null"
 
 # Must be called before you can use any other methods
+#
+# Usage:
+# ```
+# build_data::init "${CACHE_DIR}"
+# ```
 build_data::init() {
 	local cache_dir="${1}"
 	BUILD_DATA_FILE="${cache_dir}/build-data/ruby.json"
@@ -205,7 +210,7 @@ build_data::init() {
 
 # Clears any prior build data since it persists between builds
 #
-# Usage
+# Usage:
 # ```
 # build_data::init "${CACHE_DIR}"
 # build_data::clear
@@ -217,7 +222,7 @@ build_data::clear() {
 
 # Adds a key-value pair to the report file without any attempt to quote or escape the value.
 #
-# Usage
+# Usage:
 # ```
 # build_data::kv_raw "ruby_version_major" "3"
 # build_data::kv_raw "ruby_version_default" "true"
@@ -230,7 +235,7 @@ build_data::kv_raw() {
 
 # Adds a key-value pair to the report file, quoting the value.
 #
-# Usage
+# Usage:
 # ```
 # build_data::kv_string "ruby_version" "3.3.3"
 # ```
@@ -273,19 +278,19 @@ function build_report::_set() {
 	echo "${new_data_file_contents}" >"${BUILD_DATA_FILE}"
 }
 
-# Returns the current time since the UNIX Epoch, as a float with microseconds precision
+# Returns the current time since the UNIX Epoch, as a float with microseconds precision.
 #
-# Usage (2025-08-22 11:15 UTC)
+# Usage (2025-08-22 11:15 UTC):
 # ```
 # build_data::current_unix_realtime
-# => 1755879324.771610
+# # => 1755879324.771610
 # ```
 build_data::current_unix_realtime() {
 	LC_ALL=C
 	echo "${EPOCHREALTIME}"
 }
 
-# Adds a key=duration to the report file
+# Adds a key=duration to the report file.
 #
 # Usage:
 # ```
@@ -295,7 +300,7 @@ build_data::current_unix_realtime() {
 #
 # build_data::print_bin_report_json
 # # => { "ruby_install": 1.234 }
-# ````
+# ```
 build_data::kv_duration_since() {
 	local key="${1}"
 	local start_time="${2}"
@@ -306,7 +311,7 @@ build_data::kv_duration_since() {
 	build_data::kv_raw "${key}" "${duration}"
 }
 
-# Does what it says on the tin.
+# Prints the build data in JSON format.
 #
 # Usage:
 # ```
