@@ -7,7 +7,7 @@ describe "Bash functions" do
           file = Pathname(dir).join("does-not-exist").expand_path
           out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false, raise_on_fail: false)
             export BUILD_DATA_FILE="#{file}"
-            build_data::print
+            build_data::print_bin_report_json
           EOM
 
           expect($?.success?).to be_falsey, "Expected command failure but got unexpected success. Output:\n\n#{out}"
@@ -20,7 +20,7 @@ describe "Bash functions" do
           file = Pathname(dir).join("does-not-exist").expand_path
           out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false, raise_on_fail: false)
             export BUILD_DATA_FILE="#{file}"
-            build_data::print
+            build_data::print_bin_report_json
           EOM
 
           expect($?.success?).to be_falsey, "Expected command failure but got unexpected success. Output:\n\n#{out}"
@@ -36,7 +36,7 @@ describe "Bash functions" do
           timer=$(build_data::current_unix_realtime)
           sleep 0.1
           build_data::kv_duration_since "ruby_install_ms" "${timer}"
-          build_data::print
+          build_data::print_bin_report_json
         EOM
 
         begin
@@ -54,7 +54,7 @@ describe "Bash functions" do
           build_data::clear
 
           build_data::kv_string "ruby_version" "3.3.0"
-          build_data::print
+          build_data::print_bin_report_json
         EOM
 
         expect(out).to eq(<<~EOM)
@@ -70,7 +70,7 @@ describe "Bash functions" do
           build_data::clear
 
           build_data::kv_string "ruby_version" "3.3.0"
-          build_data::print
+          build_data::print_bin_report_json
         EOM
 
         expect(out).to eq(<<~EOM)
@@ -86,7 +86,7 @@ describe "Bash functions" do
           build_data::clear
 
           build_data::kv_raw "ruby_minor" "3"
-          build_data::print
+          build_data::print_bin_report_json
         EOM
 
         expect(out).to eq(<<~EOM)

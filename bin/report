@@ -32,4 +32,4 @@ BIN_DIR=$(cd "$(dirname "$0")" || exit; pwd) # absolute path
 # shellcheck source=bin/support/bash_functions.sh
 source "$BIN_DIR/support/bash_functions.sh"
 build_data::init "${CACHE_DIR}"
-build_data::print
+build_data::print_bin_report_json
