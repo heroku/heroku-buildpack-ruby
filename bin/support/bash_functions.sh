@@ -67,9 +67,10 @@ compile_buildpack_v2()
 
     if [[ "$url" =~ \.tgz$ ]] || [[ "$url" =~ \.tgz\? ]]; then
       mkdir -p "$dir"
-      if curl_retry_on_18 -s --fail --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" "$url" | tar xvz -C "$dir" >/dev/null 2>&1; then
+      if curl_retry_on_18 -s --fail --show-error --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" "$url" | tar xvz -C "$dir" >/dev/null 2>&1; then
         :
       else
+        echo "Failed to download $url"
         build_data::kv_string "failure_reason" "compile_buildpack_v2_download_fail"
         build_data::kv_string "failure_detail" "url: $url"
         exit 1
@@ -114,6 +115,7 @@ compile_buildpack_v2()
     if "$dir"/bin/compile "$build_dir" "$cache_dir" "$env_dir"; then
       :
     else
+      echo "Failed to compile with $buildpack"
       build_data::kv_string "failure_reason" "compile_buildpack_v2_compile_fail"
       build_data::kv_string "failure_detail" "buildpack: $buildpack"
       exit 1
@@ -131,6 +133,7 @@ compile_buildpack_v2()
       if "$dir"/bin/release "$build_dir" > "$1"/last_pack_release.out; then
         :
       else
+        echo "Failed bin/release with $buildpack"
         build_data::kv_string "failure_reason" "compile_buildpack_v2_release_fail"
         build_data::kv_string "failure_detail" "buildpack: $buildpack"
         exit 1
