@@ -7,14 +7,15 @@
 #
 # Metrics are collected from the part of the buildpack written in Ruby and the
 # part written in Bash (that is used to bootstrap Ruby). They both write to the
-# same YAML file on disk.
+# same JSON file on disk.
 #
-# Metadata must be emitted to stdout as valid YAML key-value pairs. Any fields that should always
-# be typed as a string must be explicitly quoted.
+# Metadata must be emitted to stdout as valid un-nested json (values must not be objects or arrays).
 #
 # Example valid stdout:
-#   ruby_version: 'X.Y.Z'
-#   ruby_install_duration: 1.234
+#   {
+#     "ruby_version": "X.Y.Z",
+#     "ruby_install_duration": 1.234
+#   }
 #
 # Failures in this script don't cause the overall build to fail (and won't appear in user
 # facing build logs) to avoid breaking builds unnecessarily / causing confusion. To debug
