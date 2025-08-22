@@ -27,7 +27,7 @@ detect_needs_java()
   local skip_java_install=1
 
   if which_java; then
-    build_data::kv_raw "which_java" "true"
+    build_data::kv_string "java_origin" "previously_installed"
     return $skip_java_install
   fi
 
