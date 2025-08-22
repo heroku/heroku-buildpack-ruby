@@ -173,10 +173,10 @@ function checks::ensure_supported_stack() {
 }
 
 ## ==============================
-# Start of build_report section
+# Start of build_data section
 ## ==============================
 
-# Contains functions for storing build report from the buildpack in bash.
+# Contains functions for storing build datafrom the buildpack in bash.
 #
 # The format of the report file is JSON.
 #
@@ -203,19 +203,37 @@ build_data::init() {
 	export HEROKU_RUBY_BUILD_REPORT_FILE
 }
 
-# This should be called after build_data::init in bin/compile
+# Clears any prior build data since it persists between builds
+#
+# Usage
+# ```
+# build_data::init "${CACHE_DIR}"
+# build_data::clear
+# ```
 build_data::clear() {
 	mkdir -p "$(dirname "${BUILD_DATA_FILE}")"
 	echo "{}" >"${BUILD_DATA_FILE}"
 }
 
 # Adds a key-value pair to the report file without any attempt to quote or escape the value.
+#
+# Usage
+# ```
+# build_data::kv_raw "ruby_version_major" "3"
+# build_data::kv_raw "ruby_version_default" "true"
+# ```
 build_data::kv_raw() {
 	local key="${1}"
 	local value="${2}"
 	build_report::_set "${key}" "${value}" "false"
 }
+
 # Adds a key-value pair to the report file, quoting the value.
+#
+# Usage
+# ```
+# build_data::kv_string "ruby_version" "3.3.3"
+# ```
 build_data::kv_string() {
 	local key="${1}"
 	local value="${2}"
@@ -256,7 +274,12 @@ function build_report::_set() {
 }
 
 # Returns the current time since the UNIX Epoch, as a float with microseconds precision
-# E.g. build_data::current_unix_realtime => 1755879324.771610 # 2025-08-22 11:15 UTC
+#
+# Usage (2025-08-22 11:15 UTC)
+# ```
+# build_data::current_unix_realtime
+# => 1755879324.771610
+# ```
 build_data::current_unix_realtime() {
 	LC_ALL=C
 	echo "${EPOCHREALTIME}"
@@ -264,13 +287,15 @@ build_data::current_unix_realtime() {
 
 # Adds a key=duration to the report file
 #
-# Example:
-#   start_time=$(build_data::current_unix_realtime)
-#   sleep 1
-#   build_data::kv_duration_since "ruby_install" "${start_time}"
+# Usage:
+# ```
+# start_time=$(build_data::current_unix_realtime)
+# sleep 1
+# build_data::kv_duration_since "ruby_install" "${start_time}"
 #
-#   build_data::print
-#   # => ruby_install: 1.234
+# build_data::print_bin_report_json
+# # => { "ruby_install": 1.234 }
+# ````
 build_data::kv_duration_since() {
 	local key="${1}"
 	local start_time="${2}"
@@ -282,7 +307,13 @@ build_data::kv_duration_since() {
 }
 
 # Does what it says on the tin.
-build_data::print() {
+#
+# Usage:
+# ```
+# build_data::print_bin_report_json
+# # => { "ruby_install": 1.234 }
+# ```
+build_data::print_bin_report_json() {
 	if [ "${HEROKU_RUBY_BUILD_REPORT_FILE}" != "${BUILD_DATA_FILE}" ]; then
 		echo "Error: HEROKU_RUBY_BUILD_REPORT_FILE does not match BUILD_DATA_FILE"
 		echo "HEROKU_RUBY_BUILD_REPORT_FILE: ${HEROKU_RUBY_BUILD_REPORT_FILE}"
@@ -294,5 +325,5 @@ build_data::print() {
 }
 
 ## ==============================
-# End of metrics section
+# End of build data section
 ## ==============================
