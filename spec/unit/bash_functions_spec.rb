@@ -2,6 +2,19 @@ require 'spec_helper'
 
 describe "Bash functions" do
     describe "metrics" do
+      it "does not error when collecting metrics and the target file is /dev/null" do
+        Dir.mktmpdir do |dir|
+          file = Pathname(dir).join("does-not-exist").expand_path
+          out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
+            export BUILD_DATA_FILE="/dev/null"
+            build_data::kv_string "ruby_version" "3.3.0"
+            build_data::kv_raw "ruby_major" "3"
+          EOM
+
+          expect(out.strip).to be_empty
+        end
+      end
+
       it "prints error when report env var is set to a non-existent file" do
         Dir.mktmpdir do |dir|
           file = Pathname(dir).join("does-not-exist").expand_path

@@ -9,11 +9,16 @@ BIN_DIR=$(cd "$(dirname "$0")" || exit; pwd) # absolute path
 # shellcheck source=bin/support/bash_functions.sh
 source "$BIN_DIR/support/bash_functions.sh"
 
+# The bin/report mechanism is not available in bin/test-compile or bin/test
+# https://github.com/heroku/heroku-buildpack-ruby/pull/1635/files#r2293558218
+#
+# Initializing here because data is collected inside of bash function calls
+# and those expect a file to be initialized. However, no additional data collection
+# should be added to this script.
+build_data::init "/dev/null"
+
 bootstrap_ruby_dir=$(mktemp -d)
-"$BIN_DIR"/support/download_ruby "$BIN_DIR" "$bootstrap_ruby_dir" || {
-  build_data::kv_string "failure_reason" "bootstrap_ruby_fail"
-  exit 1
-}
+"$BIN_DIR"/support/download_ruby "$BIN_DIR" "$bootstrap_ruby_dir"
 trap 'rm -rf "$bootstrap_ruby_dir"' EXIT
 
 export PATH="$bootstrap_ruby_dir/bin/:$PATH"
