@@ -67,47 +67,57 @@ compile_buildpack_v2()
 
     if [[ "$url" =~ \.tgz$ ]] || [[ "$url" =~ \.tgz\? ]]; then
       mkdir -p "$dir"
-      curl_retry_on_18 -s --fail --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" "$url" | tar xvz -C "$dir" >/dev/null 2>&1 || {
+      if curl_retry_on_18 -s --fail --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" "$url" | tar xvz -C "$dir" >/dev/null 2>&1; then
+        :
+      else
         build_data::kv_string "failure_reason" "compile_buildpack_v2_download_fail"
         build_data::kv_string "failure_detail" "url: $url"
         exit 1
-      }
+      fi
     else
-      git clone "$url" "$dir" >/dev/null 2>&1 || {
+      if git clone "$url" "$dir" >/dev/null 2>&1; then
+        :
+      else
         echo "Failed to clone $url"
         build_data::kv_string "failure_reason" "compile_buildpack_v2_download_fail"
         build_data::kv_string "failure_detail" "url: $url"
         exit 1
-      }
+      fi
     fi
     cd "$dir" || return
 
     if [ "$branch" != "" ]; then
-      git checkout "$branch" >/dev/null 2>&1 || {
+      if git checkout "$branch" >/dev/null 2>&1; then
+        :
+      else
         echo "Failed to checkout branch $branch"
         build_data::kv_string "failure_reason" "compile_buildpack_v2_checkout_fail"
         build_data::kv_string "failure_detail" "buildpack: $buildpack, branch: $branch"
         exit 1
-      }
+      fi
     fi
 
     # we'll get errors later if these are needed and don't exist
     chmod -f +x "$dir/bin/{detect,compile,release}" || true
 
-    framework=$("$dir"/bin/detect "$build_dir") || {
+    if framework=$("$dir"/bin/detect "$build_dir"); then
+      :
+    else
       echo "Couldn't detect any framework for this buildpack. Exiting."
       build_data::kv_string "failure_reason" "compile_buildpack_v2_detect_fail"
       build_data::kv_string "failure_detail" "buildpack: $buildpack"
 
       exit 1
-    }
+    fi
 
     echo "-----> Detected Framework: $framework"
-    "$dir"/bin/compile "$build_dir" "$cache_dir" "$env_dir" || {
+    if "$dir"/bin/compile "$build_dir" "$cache_dir" "$env_dir"; then
+      :
+    else
       build_data::kv_string "failure_reason" "compile_buildpack_v2_compile_fail"
       build_data::kv_string "failure_detail" "buildpack: $buildpack"
       exit 1
-    }
+    fi
 
     # check if the buildpack left behind an environment for subsequent ones
     if [ -e "$dir/export" ]; then
@@ -118,11 +128,13 @@ compile_buildpack_v2()
     fi
 
     if [ -x "$dir/bin/release" ]; then
-      "$dir"/bin/release "$build_dir" > "$1"/last_pack_release.out || {
+      if "$dir"/bin/release "$build_dir" > "$1"/last_pack_release.out; then
+        :
+      else
         build_data::kv_string "failure_reason" "compile_buildpack_v2_release_fail"
         build_data::kv_string "failure_detail" "buildpack: $buildpack"
         exit 1
-      }
+      fi
     fi
   fi
 }
