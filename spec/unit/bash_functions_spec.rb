@@ -19,6 +19,7 @@ describe "Bash functions" do
         Dir.mktmpdir do |dir|
           file = Pathname(dir).join("does-not-exist").expand_path
           out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false, raise_on_fail: false)
+            export HEROKU_RUBY_BUILD_REPORT_FILE="#{file}"
             export BUILD_DATA_FILE="#{file}"
             build_data::print_bin_report_json
           EOM
