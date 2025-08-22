@@ -196,7 +196,7 @@ HEROKU_RUBY_BUILD_REPORT_FILE=""
 # Must be called before you can use any other methods
 metrics::init() {
 	local cache_dir="${1}"
-	BUILD_DATA_FILE="${cache_dir:?}/build-data/ruby.json"
+	BUILD_DATA_FILE="${cache_dir}/build-data/ruby.json"
 	HEROKU_RUBY_BUILD_REPORT_FILE="${BUILD_DATA_FILE}"
 
 	# Used later in the `HerokuBuildReport.set_global` call in `bin/support/ruby_compile`
@@ -215,8 +215,6 @@ metrics::kv_raw() {
 	local value="${2}"
 	build_report::_set "${key}" "${value}" "false"
 }
-
-
 # Adds a key-value pair to the report file, quoting the value.
 metrics::kv_string() {
 	local key="${1}"
