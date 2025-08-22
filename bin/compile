@@ -19,10 +19,12 @@ build_data::clear
 checks::ensure_supported_stack "${STACK:?Required env var STACK is not set}"
 
 bootstrap_ruby_dir=$(mktemp -d)
-"$BIN_DIR"/support/download_ruby "$BIN_DIR" "$bootstrap_ruby_dir" || {
+if "$BIN_DIR"/support/download_ruby "$BIN_DIR" "$bootstrap_ruby_dir"; then
+  :
+else
   build_data::kv_string "failure_reason" "bootstrap_ruby_fail"
   exit 1
-}
+fi
 trap 'rm -rf "$bootstrap_ruby_dir"' EXIT
 
 export PATH="$bootstrap_ruby_dir/bin/:$PATH"
