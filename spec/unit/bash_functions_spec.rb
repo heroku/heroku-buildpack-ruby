@@ -2,34 +2,29 @@ require 'spec_helper'
 
 describe "Bash functions" do
     describe "metrics" do
-      it "prints error when missing report env var" do
-        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
-          unset HEROKU_RUBY_BUILD_REPORT_FILE
-          metrics::print
-        EOM
-
-        expect(out).to eq(<<~EOM)
-          {
-            "report_file_path": "(unset)",
-            "report_file_missing": true
-          }
-        EOM
-      end
-
       it "prints error when report env var is set to a non-existent file" do
         Dir.mktmpdir do |dir|
           file = Pathname(dir).join("does-not-exist").expand_path
-          out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
-            export HEROKU_RUBY_BUILD_REPORT_FILE="#{file}"
+          out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false, raise_on_fail: false)
+            export BUILD_DATA_FILE="#{file}"
             build_data::print
           EOM
 
-          expect(out).to eq(<<~EOM)
-            {
-              "report_file_path": "#{file}",
-              "report_file_missing": true
-            }
+          expect($?.success?).to be_falsey, "Expected command failure but got unexpected success. Output:\n\n#{out}"
+          expect(out).to include("No such file or directory")
+        end
+      end
+
+      it "detects env var mutation and raise an error" do
+        Dir.mktmpdir do |dir|
+          file = Pathname(dir).join("does-not-exist").expand_path
+          out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false, raise_on_fail: false)
+            export BUILD_DATA_FILE="#{file}"
+            build_data::print
           EOM
+
+          expect($?.success?).to be_falsey, "Expected command failure but got unexpected success. Output:\n\n#{out}"
+          expect(out).to include("Error: HEROKU_RUBY_BUILD_REPORT_FILE does not match BUILD_DATA_FILE")
         end
       end
 
