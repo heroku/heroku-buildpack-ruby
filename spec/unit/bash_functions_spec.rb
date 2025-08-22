@@ -38,7 +38,7 @@ describe "Bash functions" do
           metrics::init "$(mktemp -d)"
           metrics::clear
 
-          timer=$(metrics::start_timer)
+          timer=$(metrics::current_unix_realtime)
           sleep 0.1
           metrics::kv_duration_since "ruby_install_ms" "${timer}"
           metrics::print

@@ -260,37 +260,17 @@ metrics::quote_string() {
 	echo "'${value//\'/\'\'}'"
 }
 
-# Returns the current time, in milliseconds.
-# E.g. metrics::nowms => 1755207400269 # 2025-08-14 21:36 UTC
-metrics::nowms() {
-	# Try Linux format first (date +%s%3N)
-	local timestamp
-	timestamp=$(date +%s%3N 2>/dev/null)
-
-	# Check if it worked (should be numeric and longer than 10 digits)
-	if [[ "$timestamp" =~ ^[0-9]{13,}$ ]]; then
-		echo "$timestamp"
-		return 0
-	fi
-
-	# Fallback for BSD systems: use date +%s and add milliseconds
-	local seconds
-	seconds=$(date +%s)
-	local nanoseconds
-	nanoseconds=$(date +%N 2>/dev/null || echo "000000000")
-	# Convert nanoseconds to milliseconds (first 3 digits)
-	local milliseconds=${nanoseconds:0:3}
-	echo "${seconds}${milliseconds}"
-}
-
-metrics::start_timer() {
-	metrics::nowms
+# Returns the current time since the UNIX Epoch, as a float with microseconds precision
+# E.g. metrics::current_unix_time_ms => 1755879324.771610 # 2025-08-22 11:15 UTC
+metrics::current_unix_realtime() {
+	LC_ALL=C
+	echo "${EPOCHREALTIME}"
 }
 
 # Adds a key=duration to the report file
 #
 # Example:
-#   start_time=$(metrics::start_timer)
+#   start_time=$(metrics::current_unix_realtime)
 #   sleep 1
 #   metrics::kv_duration_since "ruby_install" "${start_time}"
 #
@@ -300,8 +280,8 @@ metrics::kv_duration_since() {
 	local key="${1}"
 	local start_time="${2}"
 	local end_time duration
-	end_time="$(metrics::nowms)"
-	duration="$(echo "${start_time}" "${end_time}" | awk '{ printf "%.3f", ($2 - $1)/1000 }')"
+	end_time="$(metrics::current_unix_realtime)"
+	duration="$(awk -v start="${start_time}" -v end="${end_time}" 'BEGIN { printf "%f", (end - start) }')"
 
 	metrics::kv_raw "${key}" "${duration}"
 }
