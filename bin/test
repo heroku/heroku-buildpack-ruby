@@ -24,4 +24,4 @@ trap 'rm -rf "$bootstrap_ruby_dir"' EXIT
 export PATH="$bootstrap_ruby_dir/bin/:$PATH"
 unset GEM_PATH
 
-"$bootstrap_ruby_dir"/bin/ruby "$BIN_DIR/support/ruby_test" "$@"
+"$bootstrap_ruby_dir"/bin/ruby "$BIN_DIR/support/ruby_test.rb" "$@"
