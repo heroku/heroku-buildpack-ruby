@@ -189,7 +189,7 @@ describe "Ruby apps" do
             expect(report_match).to be_truthy
             yaml = report_match[:yaml].gsub(/remote: /, "")
             report = YAML.load(yaml)
-            expect(report.fetch("ruby_version_engine_version")).to eq(expected)
+            expect(report.fetch("ruby_version_full")).to eq(expected)
           rescue Exception => e
             puts app.output
             puts yaml if yaml
