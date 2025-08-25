@@ -18,8 +18,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Run ShellCheck bin top level
         run: |
-            git ls-files --cached --others --exclude-standard 'bin/*' '*/bin/*' '*.sh' | \
-              grep -v 'ruby_' | \
+            git ls-files --cached --others --exclude-standard ':!:*.rb' 'bin/*' '*/bin/*' '*.sh' | \
               xargs shellcheck --check-sourced --color=always
 
   integration-test:
