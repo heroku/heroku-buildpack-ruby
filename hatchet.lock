@@ -44,6 +44,6 @@
 - - "./repos/ruby/empty-procfile"
   - 7cae0aae424c2028b81b5d37ee24d42db8e545b9
 - - "./repos/ruby/jruby-minimal"
-  - f79860bc2866449fe065484f1542aaadd3f7cfd2
+  - 3fa8a57f3dbb4ad6f1db411dca7cdc9b343955ad
 - - "./repos/ruby/ruby_version_does_not_exist"
   - 9b6ad8e3b4fa7850393a5f232bb40ff3cd414d8b

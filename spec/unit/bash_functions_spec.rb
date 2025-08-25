@@ -1,8 +1,122 @@
 require 'spec_helper'
 
 describe "Bash functions" do
+    describe "metrics" do
+      it "does not error when collecting metrics and the target file is not set" do
+        Dir.mktmpdir do |dir|
+          file = Pathname(dir).join("does-not-exist").expand_path
+          out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: true)
+            build_data::kv_string "ruby_version" "3.3.0"
+            build_data::kv_raw "ruby_major" "3"
+
+            build_data::print_bin_report_json
+          EOM
+
+          expect(out).to eq("")
+        end
+      end
+
+      it "prints error when report env var is set to a non-existent file" do
+        Dir.mktmpdir do |dir|
+          file = Pathname(dir).join("does-not-exist").expand_path
+          out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false, raise_on_fail: false)
+            export HEROKU_RUBY_BUILD_REPORT_FILE="#{file}"
+            export BUILD_DATA_FILE="#{file}"
+            build_data::print_bin_report_json
+          EOM
+
+          expect($?.success?).to be_falsey, "Expected command failure but got unexpected success. Output:\n\n#{out}"
+          expect(out).to include("No such file or directory")
+        end
+      end
+
+      it "detects env var mutation and raise an error" do
+        Dir.mktmpdir do |dir|
+          file = Pathname(dir).join("does-not-exist").expand_path
+          out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false, raise_on_fail: false)
+            export BUILD_DATA_FILE="#{file}"
+            build_data::print_bin_report_json
+          EOM
+
+          expect($?.success?).to be_falsey, "Expected command failure but got unexpected success. Output:\n\n#{out}"
+          expect(out).to include("Error: HEROKU_RUBY_BUILD_REPORT_FILE does not match BUILD_DATA_FILE")
+        end
+      end
+
+      it "kv_duration_since" do
+        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
+          build_data::init "$(mktemp -d)"
+          build_data::clear
+
+          timer=$(build_data::current_unix_realtime)
+          sleep 0.1
+          build_data::kv_duration_since "ruby_install_ms" "${timer}"
+          build_data::print_bin_report_json
+        EOM
+
+        begin
+          ruby_install_s = JSON.parse(out).fetch("ruby_install_ms").to_f
+          expect(ruby_install_s).to be_between(0.1, 1)
+        rescue
+          puts "Output: #{out}"
+          raise
+        end
+      end
+
+      it "kv_string" do
+        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
+          build_data::init "$(mktemp -d)"
+          build_data::clear
+
+          build_data::kv_string "ruby_version" "3.3.0"
+          build_data::print_bin_report_json
+        EOM
+
+        expect(out).to eq(<<~EOM)
+          {
+            "ruby_version": "3.3.0"
+          }
+        EOM
+      end
+
+      it "kv_string" do
+        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
+          build_data::init "$(mktemp -d)"
+          build_data::clear
+
+          build_data::kv_string "ruby_version" "3.3.0"
+          build_data::print_bin_report_json
+        EOM
+
+        expect(out).to eq(<<~EOM)
+          {
+            "ruby_version": "3.3.0"
+          }
+       EOM
+      end
+
+      it "kv_raw" do
+        out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: false)
+          build_data::init "$(mktemp -d)"
+          build_data::clear
+
+          build_data::kv_raw "ruby_minor" "3"
+          build_data::print_bin_report_json
+        EOM
+
+        expect(out).to eq(<<~EOM)
+          {
+            "ruby_minor": 3
+          }
+        EOM
+      end
+    end
+
     it "fails on old stacks" do
       out = exec_with_bash_functions(<<~EOM, raise_on_fail: false)
+        build_data::init "$(mktemp -d)"
+        build_data::clear
+
         checks::ensure_supported_stack "heroku-20"
       EOM
 
@@ -70,6 +184,9 @@ describe "Bash functions" do
         EOM
 
         out = exec_with_bash_functions <<~EOM
+          build_data::init "$(mktemp -d)"
+          build_data::clear
+
           which_java()
           {
             return 0
@@ -86,19 +203,18 @@ describe "Bash functions" do
       end
     end
 
-
   def bash_functions_file
     root_dir.join("bin", "support", "bash_functions.sh")
   end
 
-  def exec_with_bash_functions(code, stack: "heroku-24", raise_on_fail: true)
+  def exec_with_bash_file(file:, code:, stack: "heroku-24", raise_on_fail: true, strip_output: true)
     contents = <<~EOM
       #! /usr/bin/env bash
       set -eu
 
       STACK="#{stack}"
 
-      #{bash_functions_file.read}
+      #{file.read}
 
       #{code}
     EOM
@@ -112,7 +228,8 @@ describe "Bash functions" do
     success = false
     begin
       Timeout.timeout(60) do
-        out = `#{file.path} 2>&1`.strip
+        out = `#{file.path} 2>&1`
+        out = out.strip if strip_output
         success = $?.success?
       end
     rescue Timeout::Error
@@ -137,5 +254,14 @@ describe "Bash functions" do
     else
       out
     end
+  end
+
+  def exec_with_bash_functions(code, stack: "heroku-24", raise_on_fail: true)
+    exec_with_bash_file(
+      code: code,
+      file: bash_functions_file,
+      stack: stack,
+      raise_on_fail: raise_on_fail
+    )
   end
 end

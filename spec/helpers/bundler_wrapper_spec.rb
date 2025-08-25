@@ -117,7 +117,7 @@ describe "BundlerWrapper mutates rubyopt" do
         Bundler.with_unbundled_env do
           @bundler.install
 
-          expect(@bundler.ruby_version).to eq("ruby-2.3.1-p0-jruby-9.1.7.0")
+          expect(@bundler.ruby_version).to eq("ruby-3.4.2-p0-jruby-10.0.2.0")
         end
       end
     end

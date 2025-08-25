@@ -171,9 +171,14 @@ describe "Ruby apps" do
             EOF
           end
 
+          bash_functions_contents = Pathname(__dir__).join("..").join("..").join("bin").join("support").join("bash_functions.sh").read
+          bin.join("support").tap(&:mkpath).join("bash_functions.sh").write(<<~EOF)
+            #{bash_functions_contents}
+          EOF
+
           compile.write(<<~EOF)
             #!/usr/bin/env bash
-            REPORT_FILE="${CACHE_DIR}/.heroku/ruby/build_report.yml"
+
             echo "## PRINTING REPORT FILE ##"
             #{Pathname(__dir__).join("..").join("..").join("bin").join("report").read}
             echo "## REPORT FILE DONE ##"
