@@ -301,8 +301,11 @@ function build_report::_set() {
 # # => 1755879324.771610
 # ```
 build_data::current_unix_realtime() {
-	LC_ALL=C
-	echo "${EPOCHREALTIME}"
+	# We use a subshell with `LC_ALL=C` to ensure the output format isn't affected by system locale.
+	(
+		LC_ALL=C
+		echo "${EPOCHREALTIME}"
+	)
 }
 
 # Adds a key=duration to the report file.
