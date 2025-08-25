@@ -21,8 +21,8 @@ class LanguagePack::Installers::HerokuRubyInstaller
 
   def install(ruby_version, install_dir)
     @report.capture(
-      # i.e. `ruby-3.4.2-jruby-10.0.2.0` or `ruby-3.4.2`
-      "ruby_version" => ruby_version.version_for_download,
+      # i.e. `ruby-3.4.2-jruby-10.0.2.0` or `ruby-3.4.2` or `ruby-3.5.0.pre1`
+      "ruby_version_unique" => ruby_version.version_for_download,
       # i.e. `jruby` or `ruby`
       "ruby_version_engine" => ruby_version.engine,
       # i.e. 10.0.2.0 for Jruby, matches `ruby_version_spec` for MRI
