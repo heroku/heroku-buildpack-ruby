@@ -27,11 +27,9 @@ class LanguagePack::Installers::HerokuRubyInstaller
       "ruby_version_engine" => ruby_version.engine,
       # i.e. 10.0.2.0 for Jruby, matches `ruby_version_spec` for MRI
       "ruby_version_engine_version" => ruby_version.engine_version,
-      # i.e. `3.4.2` for both MRI and JRuby
-      "ruby_version_spec" => ruby_version.ruby_version,
       # major/minor/patch pulled from the `ruby_version_spec` (will not include engine version information)
-      "ruby_version_major_minor" => "#{ruby_version.major}.#{ruby_version.minor}" ,
-      "ruby_version_major_minor_patch" => "#{ruby_version.major}.#{ruby_version.minor}.#{ruby_version.patch}",
+      "ruby_version_spec_major_minor" => "#{ruby_version.major}.#{ruby_version.minor}" ,
+      "ruby_version_spec_major_minor_patch" => "#{ruby_version.major}.#{ruby_version.minor}.#{ruby_version.patch}",
       "ruby_version_origin" => ruby_version.default? ? "default" : "Gemfile.lock"
     )
     fetch_unpack(ruby_version, install_dir)

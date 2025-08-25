@@ -10,6 +10,10 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
     )
   end
 
+  def sort_hash(hash)
+    hash.sort_by { |k, _| k.to_s }.to_h
+  end
+
   def ruby_version
     LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-3.1.7")
   end
@@ -37,11 +41,16 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
           expect(File.symlink?("#{dir}/bin/ruby.exe")).to be true
           expect(File).to exist("#{dir}/vendor/ruby/bin/ruby")
 
-          expect(report.data["ruby_version_unique"]).to eq("ruby-3.1.7")
-          expect(report.data["ruby_version_engine"]).to eq(:ruby)
-          expect(report.data["ruby_version_engine_version"]).to eq("3.1.7")
-          expect(report.data["ruby_version_major_minor"]).to eq("3.1")
-          expect(report.data["ruby_version_major_minor_patch"]).to eq("3.1.7")
+          expected = {
+            "ruby_version_engine" => :ruby,
+            "ruby_version_engine_version" => "3.1.7",
+            "ruby_version_spec_major_minor" => "3.1",
+            "ruby_version_origin" => "Gemfile.lock",
+            "ruby_version_spec_major_minor_patch" => "3.1.7",
+            "ruby_version_unique" => "ruby-3.1.7"
+          }
+
+          expect(sort_hash(report.data)).to eq(sort_hash(expected))
         end
       end
     end
@@ -61,11 +70,16 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
             "#{dir}/vendor/ruby"
           )
 
-          expect(report.data["ruby_version_unique"]).to eq("ruby-3.1.4-jruby-9.4.9.0")
-          expect(report.data["ruby_version_engine"]).to eq(:jruby)
-          expect(report.data["ruby_version_engine_version"]).to eq("9.4.9.0")
-          expect(report.data["ruby_version_major_minor"]).to eq("3.1")
-          expect(report.data["ruby_version_major_minor_patch"]).to eq("3.1.4")
+          expected = {
+            "ruby_version_engine" => :jruby,
+            "ruby_version_engine_version" => "9.4.9.0",
+            "ruby_version_spec_major_minor" => "3.1",
+            "ruby_version_origin" => "Gemfile.lock",
+            "ruby_version_spec_major_minor_patch" => "3.1.4",
+            "ruby_version_unique" => "ruby-3.1.4-jruby-9.4.9.0"
+          }
+
+          expect(sort_hash(report.data)).to eq(sort_hash(expected))
         end
       end
     end
