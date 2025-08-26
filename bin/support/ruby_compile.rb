@@ -11,12 +11,8 @@ $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
 HerokuBuildReport.set_global(
-  # Coupled with `bin/report`
-  path: Pathname(ARGV[1])
-        .join(".heroku")
-        .join("ruby")
-        .join("build_report.yml")
-).tap(&:clear!)
+  path: Pathname(ENV.fetch("HEROKU_RUBY_BUILD_REPORT_FILE"))
+)
 
 begin
   app_path = Pathname(ARGV[0])

@@ -1,13 +1,35 @@
 #!/usr/bin/env bash
+# Usage: bin/report <build-dir> <cache-dir> <env-dir>
+
+# Produces a build report containing metadata about the build, that's consumed by the build system.
+# This script is run for both successful and failing builds, so it should not assume the build ran
+# to completion (e.g. Python or other tools may not even have been installed).
+#
+# Metrics are collected from the part of the buildpack written in Ruby and the
+# part written in Bash (that is used to bootstrap Ruby). They both write to the
+# same JSON file on disk.
+#
+# Metadata must be emitted to stdout as valid un-nested json (values must not be objects or arrays).
+#
+# Example valid stdout:
+#   {
+#     "ruby_version": "X.Y.Z",
+#     "ruby_install_duration": 1.234
+#   }
+#
+# Failures in this script don't cause the overall build to fail (and won't appear in user
+# facing build logs) to avoid breaking builds unnecessarily / causing confusion. To debug
+# issues check the internal build system logs for `buildpack.report.failed` events, or
+# when developing run `make run` in this repo locally, which runs `bin/report` too.
 
 set -euo pipefail
 
 CACHE_DIR="${2}"
-REPORT_FILE="${CACHE_DIR}/.heroku/ruby/build_report.yml"
+# The absolute path to the root of the buildpack.
+BIN_DIR=$(cd "$(dirname "$0")" || exit; pwd) # absolute path
 
-# Whilst the release file is always written by the buildpack, some apps use
-# third-party slug cleaner buildpacks to remove this and other files, so we
-# cannot assume it still exists by the time the release step runs.
-if [[ -f "${REPORT_FILE}" ]]; then
-  cat "${REPORT_FILE}"
-fi
+# Initialize metrics for bin/report
+# shellcheck source=bin/support/bash_functions.sh
+source "$BIN_DIR/support/bash_functions.sh"
+build_data::init "${CACHE_DIR}"
+build_data::print_bin_report_json

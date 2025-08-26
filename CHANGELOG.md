@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Add bash based failure metrics reporting for `bin/report`. This allows the buildpack to distinguish beteween types of failures that occur before Ruby code in the buildpack has executed (such as when bootstrapping). (https://github.com/heroku/heroku-buildpack-ruby/pull/1635)
 
 ## [v318] - 2025-08-11
 
