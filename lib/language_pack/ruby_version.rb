@@ -88,14 +88,26 @@ module LanguagePack
         @engine_version = engine_version
     end
 
+    # Also used as for metrics to track unique installs
     # i.e. `ruby-3.4.2`
     def version_for_download
       if @engine == :jruby
         "ruby-#{ruby_version}-jruby-#{engine_version}"
-      elsif @pre
-        "ruby-#{ruby_version}.#{@pre}"
       else
-        "ruby-#{ruby_version}"
+        "ruby-#{engine_version_full}"
+      end
+    end
+
+    # Full qualifier for the version including pre-release information
+    # i.e. `3.5.0.preview1` or `3.5.0` or `3.5.0.rc1` for ruby
+    # i.e. `9.4.9.0` for jruby
+    def engine_version_full
+      if @engine == :jruby
+        engine_version
+      elsif @pre
+        "#{engine_version}.#{@pre}"
+      else
+        "#{engine_version}"
       end
     end
 

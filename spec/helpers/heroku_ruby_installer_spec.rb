@@ -10,6 +10,10 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
     )
   end
 
+  def sort_hash(hash)
+    hash.sort_by { |k, _| k.to_s }.to_h
+  end
+
   def ruby_version
     LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-3.1.7")
   end
@@ -26,7 +30,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
     end
   end
 
-  describe "#install" do
+  describe "ruby installation" do
     it "should install ruby and setup binstubs" do
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
@@ -37,12 +41,41 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
           expect(File.symlink?("#{dir}/bin/ruby.exe")).to be true
           expect(File).to exist("#{dir}/vendor/ruby/bin/ruby")
 
-          expect(report.data["ruby.version"]).to eq("3.1.7")
-          expect(report.data["ruby.engine"]).to eq(:ruby)
-          expect(report.data["ruby.engine.version"]).to eq(report.data["ruby.version"])
-          expect(report.data["ruby.major"]).to eq(3)
-          expect(report.data["ruby.minor"]).to eq(1)
-          expect(report.data["ruby.patch"]).to eq(7)
+          expected = {
+            "ruby_version_engine" => :ruby,
+            "ruby_version_full" => "3.1.7",
+            "ruby_version_major_minor" => "3.1",
+            "ruby_version_origin" => "Gemfile.lock",
+            "ruby_version_unique" => "ruby-3.1.7"
+          }
+
+          expect(sort_hash(report.data)).to eq(sort_hash(expected))
+        end
+      end
+    end
+
+    it "should work with pre-release versions" do
+      Dir.mktmpdir do |dir|
+        Dir.chdir(dir) do
+          report = HerokuBuildReport.dev_null
+          installer(report: report).install(
+            LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-3.5.0.preview1"),
+            "#{dir}/vendor/ruby"
+          )
+
+          expect(File.symlink?("#{dir}/bin/ruby")).to be true
+          expect(File.symlink?("#{dir}/bin/ruby.exe")).to be true
+          expect(File).to exist("#{dir}/vendor/ruby/bin/ruby")
+
+          expected = {
+            "ruby_version_engine" => :ruby,
+            "ruby_version_major_minor" => "3.5",
+            "ruby_version_full" => "3.5.0.preview1",
+            "ruby_version_origin" => "Gemfile.lock",
+            "ruby_version_unique" => "ruby-3.5.0.preview1"
+          }
+
+          expect(sort_hash(report.data)).to eq(sort_hash(expected))
         end
       end
     end
@@ -62,12 +95,16 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
             "#{dir}/vendor/ruby"
           )
 
-          expect(report.data["ruby.version"]).to eq("3.1.4")
-          expect(report.data["ruby.engine"]).to eq(:jruby)
-          expect(report.data["ruby.engine.version"]).to eq("9.4.9.0")
-          expect(report.data["ruby.major"]).to eq(3)
-          expect(report.data["ruby.minor"]).to eq(1)
-          expect(report.data["ruby.patch"]).to eq(4)
+          expected = {
+            "ruby_version_engine" => :jruby,
+            "jruby_version_full" => "9.4.9.0",
+            "jruby_version_major_minor" => "9.4",
+            "jruby_version_ruby_version" => "3.1.4",
+            "ruby_version_origin" => "Gemfile.lock",
+            "ruby_version_unique" => "ruby-3.1.4-jruby-9.4.9.0"
+          }
+
+          expect(sort_hash(report.data)).to eq(sort_hash(expected))
         end
       end
     end

@@ -21,14 +21,36 @@ class LanguagePack::Installers::HerokuRubyInstaller
 
   def install(ruby_version, install_dir)
     @report.capture(
-      "ruby.version" => ruby_version.ruby_version,
-      "ruby.engine" => ruby_version.engine,
-      "ruby.engine.version" => ruby_version.engine_version,
-      "ruby.major" => ruby_version.major,
-      "ruby.minor" => ruby_version.minor,
-      "ruby.patch" => ruby_version.patch,
-      "ruby.default" => ruby_version.default?,
+      # i.e. `jruby` or `ruby`
+      "ruby_version_engine" => ruby_version.engine,
+      # i.e. `ruby-3.4.2-jruby-10.0.2.0` or `ruby-3.4.2` or `ruby-3.5.0.pre1`
+      "ruby_version_unique" => ruby_version.version_for_download,
+      # i.e. `default` or `Gemfile.lock`
+      "ruby_version_origin" => ruby_version.default? ? "default" : "Gemfile.lock",
     )
+
+    case ruby_version.engine
+    when :ruby
+      @report.capture(
+        "ruby_version_major_minor" => "#{ruby_version.major}.#{ruby_version.minor}",
+        "ruby_version_full" => ruby_version.engine_version_full
+      )
+    when :jruby
+      @report.capture(
+        # i.e. `3.4.2` the target spec ruby version
+        "jruby_version_ruby_version" => ruby_version.ruby_version,
+        # i.e. `10.0.2.0` the version of jruby
+        "jruby_version_full" => ruby_version.engine_version_full,
+        # i.e. `9.4` or `10.0`
+        "jruby_version_major_minor" => [
+          ruby_version.engine_version.split(".")[0],
+          ruby_version.engine_version.split(".")[1]
+        ].join(".")
+      )
+    else
+      raise "Internal error: Unknown engine: #{ruby_version.engine}"
+    end
+
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)
   end
