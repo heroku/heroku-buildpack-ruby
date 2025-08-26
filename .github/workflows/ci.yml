@@ -20,7 +20,7 @@ jobs:
         run: |
             # All bash files that don't end in '.rb'
             # https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
-            git ls-files -z --cached --others --exclude-standard  ':!:*.rb' 'bin/*' '*/bin/*' '*.sh' | \
+            git ls-files -z --cached --others --exclude-standard ':(exclude)*.rb' 'bin/*' '*/bin/*' '*.sh' | \
               xargs -0 shellcheck --check-sourced --color=always
 
   integration-test:
