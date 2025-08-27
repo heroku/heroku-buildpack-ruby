@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v319] - 2025-08-27
+
 - Add bash based failure metrics reporting for `bin/report`. This allows the buildpack to distinguish beteween types of failures that occur before Ruby code in the buildpack has executed (such as when bootstrapping). (https://github.com/heroku/heroku-buildpack-ruby/pull/1635)
 
 ## [v318] - 2025-08-11
@@ -1751,7 +1754,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v318...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v319...main
+[v319]: https://github.com/heroku/heroku-buildpack-ruby/compare/v318...v319
 [v318]: https://github.com/heroku/heroku-buildpack-ruby/compare/v317...v318
 [v317]: https://github.com/heroku/heroku-buildpack-ruby/compare/v316...v317
 [v316]: https://github.com/heroku/heroku-buildpack-ruby/compare/v315...v316
