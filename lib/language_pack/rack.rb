@@ -15,9 +15,10 @@ class LanguagePack::Rack < LanguagePack::Ruby
   end
 
   def default_config_vars
-    super.merge({
-      "RACK_ENV" => env("RACK_ENV") || "production"
-    })
+    out = super
+    out["RACK_ENV"] = env("RACK_ENV") || "production"
+    out["PUMA_PERSISTENT_TIMEOUT"] = env("PUMA_PERSISTENT_TIMEOUT") || "95"
+    out
   end
 
   def default_process_types
