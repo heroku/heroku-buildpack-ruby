@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Run ShellCheck bin top level
         run: |
             # All bash files that don't end in '.rb'
@@ -36,7 +36,7 @@ jobs:
         RSPEC_RETRY_RETRY_COUNT: 1
       steps:
         - name: Checkout
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
         - name: Install Ruby and dependencies
           uses: ruby/setup-ruby@v1
           with:
