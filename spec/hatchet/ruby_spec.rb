@@ -311,6 +311,7 @@ describe "Rack" do
     app.deploy do |app|
       environment_variables = app.run("env")
       expect(environment_variables).to match(custom_env)
+      expect(environment_variables).to match("PUMA_PERSISTENT_TIMEOUT")
     end
   end
 end
