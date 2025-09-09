@@ -305,11 +305,13 @@ end
 
 describe "Rack" do
   it "should not overwrite already set environment variables" do
-    custom_env = "FFFUUUUUUU"
+    custom_env = SecureRandom.hex(16)
     app = Hatchet::Runner.new("default_ruby", config: {"RACK_ENV" => custom_env})
 
     app.deploy do |app|
-      expect(app.run("env")).to match(custom_env)
+      environment_variables = app.run("env")
+      expect(environment_variables).to match(custom_env)
+      expect(environment_variables).to match("PUMA_PERSISTENT_TIMEOUT")
     end
   end
 end

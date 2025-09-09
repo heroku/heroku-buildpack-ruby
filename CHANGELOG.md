@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Set `export PUMA_PERSISTENT_TIMEOUT=95` to match recommended router 2.0 settings (https://github.com/heroku/heroku-buildpack-ruby/pull/1641)
 
 ## [v319] - 2025-08-27
 
