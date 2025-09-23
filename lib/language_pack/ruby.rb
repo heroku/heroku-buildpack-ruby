@@ -46,13 +46,13 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def default_config_vars
-    vars = {
-      "LANG" => env("LANG") || "en_US.UTF-8",
-    }
+    vars = {}
+    vars["LANG"] = env("LANG") || "en_US.UTF-8"
+    if ruby_version.jruby?
+      vars["JRUBY_OPTS"] = default_jruby_opts
+    end
 
-    ruby_version.jruby? ? vars.merge({
-      "JRUBY_OPTS" => default_jruby_opts
-    }) : vars
+    vars
   end
 
   def default_process_types
