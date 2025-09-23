@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Set `export PUMA_PERSISTENT_TIMEOUT=95` to match recommended router 2.0 settings for Rails applications (https://github.com/heroku/heroku-buildpack-ruby/pull/1645)
+- Warn when using Puma prior to 7.0.0 for Router 2.0 compatibility (https://github.com/heroku/heroku-buildpack-ruby/pull/1645)
+- Error when using Puma 7.0.0 to 7.0.2 (inclusive) to prevent runtime error with `PUMA_PERSISTENT_TIMEOUT` (https://github.com/heroku/heroku-buildpack-ruby/pull/1645)
 
 ## [v321] - 2025-09-16
 
@@ -10,7 +13,7 @@
 
 ## [v320] - 2025-09-09
 
-- Set `export PUMA_PERSISTENT_TIMEOUT=95` to match recommended router 2.0 settings (https://github.com/heroku/heroku-buildpack-ruby/pull/1641)
+- Set `export PUMA_PERSISTENT_TIMEOUT=95` to match recommended router 2.0 settings for Rack applications (https://github.com/heroku/heroku-buildpack-ruby/pull/1641)
 
 ## [v319] - 2025-08-27
 

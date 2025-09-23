@@ -15,6 +15,9 @@ describe "Heroku ruby getting started" do
       # https://github.com/heroku/heroku-buildpack-ruby/pull/1586/files#r2064284286
       expect(app.output).to_not include("cp --help")
       expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
+
+      environment_variables = app.run("env")
+      expect(environment_variables).to match("PUMA_PERSISTENT_TIMEOUT")
     end
   end
 

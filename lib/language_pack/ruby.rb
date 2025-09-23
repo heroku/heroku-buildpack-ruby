@@ -48,6 +48,8 @@ class LanguagePack::Ruby < LanguagePack::Base
   def default_config_vars
     vars = {}
     vars["LANG"] = env("LANG") || "en_US.UTF-8"
+    vars["PUMA_PERSISTENT_TIMEOUT"] = env("PUMA_PERSISTENT_TIMEOUT") || "95"
+
     if ruby_version.jruby?
       vars["JRUBY_OPTS"] = default_jruby_opts
     end
@@ -98,6 +100,21 @@ class LanguagePack::Ruby < LanguagePack::Base
       "gem.railties_version" => bundler.gem_version('railties'),
       "gem.rack_version" => bundler.gem_version('rack')
     )
+    if (puma_version = bundler.gem_version("puma"))
+      @report.capture(
+        "gem.puma_version" => puma_version
+      )
+
+      puma_warn_error = LanguagePack::Helpers::PumaWarnError.new(
+        puma_version: puma_version,
+        env: user_env_hash
+      )
+
+      error(puma_warn_error.error) if puma_warn_error.error
+      puma_warn_error.warnings.each do |warning|
+        warn(warning)
+      end
+    end
     config_detect
     best_practice_warnings
     warn_outdated_ruby

@@ -17,7 +17,6 @@ class LanguagePack::Rack < LanguagePack::Ruby
   def default_config_vars
     out = super
     out["RACK_ENV"] = env("RACK_ENV") || "production"
-    out["PUMA_PERSISTENT_TIMEOUT"] = env("PUMA_PERSISTENT_TIMEOUT") || "95"
     out
   end
 
