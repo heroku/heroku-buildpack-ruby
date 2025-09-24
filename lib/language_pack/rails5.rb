@@ -18,9 +18,9 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
   end
 
   def default_config_vars
-    super.merge({
-      "RAILS_LOG_TO_STDOUT" => "enabled"
-    })
+    out = super # Inherited from LanguagePack::Rails42
+    out["RAILS_LOG_TO_STDOUT"] = "enabled"
+    out
   end
 
   def install_plugins

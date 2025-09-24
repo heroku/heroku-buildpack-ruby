@@ -31,11 +31,11 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   end
 
   def default_config_vars
-    config_vars = super
+    out = super # Inherited from LanguagePack::Ruby
     default_env_vars.map do |key, value|
-      config_vars[key] = env(key) || value
+      out[key] = env(key) || value
     end
-    config_vars
+    out
   end
 
   def default_process_types

@@ -19,9 +19,9 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
   end
 
   def default_config_vars
-    super.merge({
-      "SECRET_KEY_BASE" => env("SECRET_KEY_BASE") || app_secret
-    })
+    out = super # Inherited from LanguagePack::Rails4
+    out["SECRET_KEY_BASE"] = env("SECRET_KEY_BASE") || app_secret
+    out
   end
 
   private

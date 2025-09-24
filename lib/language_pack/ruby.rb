@@ -46,15 +46,16 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def default_config_vars
-    vars = {}
-    vars["LANG"] = env("LANG") || "en_US.UTF-8"
-    vars["PUMA_PERSISTENT_TIMEOUT"] = env("PUMA_PERSISTENT_TIMEOUT") || "95"
+    # super is LanguagePack::Base and raises Unimplemented
+    out = {}
+    out["LANG"] = env("LANG") || "en_US.UTF-8"
+    out["PUMA_PERSISTENT_TIMEOUT"] = env("PUMA_PERSISTENT_TIMEOUT") || "95"
 
     if ruby_version.jruby?
-      vars["JRUBY_OPTS"] = default_jruby_opts
+      out["JRUBY_OPTS"] = default_jruby_opts
     end
 
-    vars
+    out
   end
 
   def default_process_types
