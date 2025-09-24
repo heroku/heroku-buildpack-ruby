@@ -18,6 +18,9 @@ describe "Heroku ruby getting started" do
 
       environment_variables = app.run("env")
       expect(environment_variables).to match("PUMA_PERSISTENT_TIMEOUT")
+
+      profile_d = app.run("cat .profile.d/ruby.sh")
+      expect(profile_d).to match("PUMA_PERSISTENT_TIMEOUT")
     end
   end
 
