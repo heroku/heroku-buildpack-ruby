@@ -418,6 +418,8 @@ private
     set_env_default "BUNDLE_WITHOUT", ENV["BUNDLE_WITHOUT"]
     set_env_default "BUNDLE_BIN", ENV["BUNDLE_BIN"]
     set_env_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"] if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
+
+    set_env_default "PUMA_PERSISTENT_TIMEOUT", default_config_vars.fetch("PUMA_PERSISTENT_TIMEOUT")
   end
 
   def warn_outdated_ruby
