@@ -30,7 +30,11 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   end
 
   def rake_env
-    default_env_vars.merge("RAILS_GROUPS" => "assets").merge(super)
+    {
+      "RAILS_ENV" => "production",
+      "RACK_ENV" => "production",
+      "RAILS_GROUPS" => "assets",
+    }.merge(super)
   end
 
   def compile

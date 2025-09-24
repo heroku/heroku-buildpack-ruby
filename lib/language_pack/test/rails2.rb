@@ -8,15 +8,11 @@ class LanguagePack::Rails2
     set_env_default "RAILS_ENV", "test"
   end
 
-  def default_env_vars
-    {
-      "RAILS_ENV" => "test",
-      "RACK_ENV"  => "test"
-    }
-  end
-
   def rake_env
-    super.merge(default_env_vars)
+    out = super
+    out["RAILS_ENV"] = "test"
+    out["RACK_ENV"] = "test"
+    out
   end
 
   def prepare_tests
