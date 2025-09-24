@@ -3,12 +3,12 @@
 require "spec_helper"
 
 describe LanguagePack::Helpers::PumaWarnError do
-  it "warns about Router 2.0 compatability" do
+  it "warns about Router 2.0 compatibility" do
     puma_warn_error = LanguagePack::Helpers::PumaWarnError.new(
       puma_version: Gem::Version.new("6.0.0"),
       env: {}
     )
-    expect(puma_warn_error.warnings.join).to include("Heroku recommends using Puma 7.0.3+ for compatability with Router 2.0")
+    expect(puma_warn_error.warnings.join).to include("Heroku recommends using Puma 7.0.3+ for compatibility with Router 2.0")
   end
 
   it "errors if incompatible version with persistent timeout env var" do
@@ -44,6 +44,6 @@ describe LanguagePack::Helpers::PumaWarnError do
       env: { "PUMA_PERSISTENT_TIMEOUT" => "95" }
     )
     expect(puma_warn_error.error).to be_nil
-    expect(puma_warn_error.warnings.join).to include("Heroku recommends using Puma 7.0.3+ for compatability with Router 2.0")
+    expect(puma_warn_error.warnings.join).to include("Heroku recommends using Puma 7.0.3+ for compatibility with Router 2.0")
   end
 end
