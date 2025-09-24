@@ -5,6 +5,7 @@
 - Set `export PUMA_PERSISTENT_TIMEOUT=95` to match recommended router 2.0 settings for Rails applications (https://github.com/heroku/heroku-buildpack-ruby/pull/1645)
 - Warn when using Puma prior to 7.0.0 for Router 2.0 compatibility (https://github.com/heroku/heroku-buildpack-ruby/pull/1645)
 - Error when using Puma 7.0.0 to 7.0.2 (inclusive) to prevent runtime error with `PUMA_PERSISTENT_TIMEOUT` (https://github.com/heroku/heroku-buildpack-ruby/pull/1645)
+- The `config_vars` field is no longer set in `bin/release`, this feature only affected the first deploy and is redundant with `.profile.d` usage that already exists. (https://github.com/heroku/heroku-buildpack-ruby/pull/1645)
 
 ## [v321] - 2025-09-16
 

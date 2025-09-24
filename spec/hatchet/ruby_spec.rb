@@ -307,10 +307,21 @@ describe "Rack" do
   it "should not overwrite already set environment variables" do
     custom_env = SecureRandom.hex(16)
     app = Hatchet::Runner.new("default_ruby", config: {"RACK_ENV" => custom_env})
+    app.before_deploy do
+      Pathname("Rakefile").write(<<~'EOF')
+        task "assets:precompile" do
+          puts "Build time RACK_ENV: #{ENV["RACK_ENV"]}"
+        end
+      EOF
+    end
 
     app.deploy do |app|
+      # Assert build time user provided value takes precedence over default
+      expect(app.output).to match("Build time RACK_ENV: #{custom_env}")
+
+      # Assert runtime/launch user provided value takes precedence over default
       environment_variables = app.run("env")
-      expect(environment_variables).to match(custom_env)
+      expect(environment_variables).to match("RACK_ENV=#{custom_env}")
       expect(environment_variables).to match("PUMA_PERSISTENT_TIMEOUT")
 
       profile_d = app.run("cat .profile.d/ruby.sh")

@@ -14,9 +14,15 @@ class LanguagePack::Rack < LanguagePack::Ruby
     "Ruby/Rack"
   end
 
+  # Environment variable defaults that are passet to ENV and `.profile.d`
+  #
+  # All values returned must be sourced from Heroku. User provided config vars
+  # are handled in the interfaces that consume this method's result.
+  #
+  # @return [Hash] the ENV var like result
   def default_config_vars
     out = super
-    out["RACK_ENV"] = env("RACK_ENV") || "production"
+    out["RACK_ENV"] = "production"
     out
   end
 
@@ -29,13 +35,5 @@ class LanguagePack::Rack < LanguagePack::Ruby
     super.merge({
       "web" => web_process
     })
-  end
-
-private
-
-  # sets up the profile.d script for this buildpack
-  def setup_profiled(**args)
-    super(**args)
-    set_env_default "RACK_ENV", "production"
   end
 end

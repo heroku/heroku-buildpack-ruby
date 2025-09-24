@@ -13,14 +13,15 @@ class LanguagePack::Rails41 < LanguagePack::Rails4
     return is_rails4
   end
 
-  def setup_profiled(**args)
-    super(**args)
-    set_env_default "SECRET_KEY_BASE", app_secret
-  end
-
+  # Environment variable defaults that are passet to ENV and `.profile.d`
+  #
+  # All values returned must be sourced from Heroku. User provided config vars
+  # are handled in the interfaces that consume this method's result.
+  #
+  # @return [Hash] the ENV var like result
   def default_config_vars
     out = super # Inherited from LanguagePack::Rails4
-    out["SECRET_KEY_BASE"] = env("SECRET_KEY_BASE") || app_secret
+    out["SECRET_KEY_BASE"] = app_secret
     out
   end
 

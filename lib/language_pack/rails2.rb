@@ -23,10 +23,16 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     "Ruby/Rails"
   end
 
+  # Environment variable defaults that are passet to ENV and `.profile.d`
+  #
+  # All values returned must be sourced from Heroku. User provided config vars
+  # are handled in the interfaces that consume this method's result.
+  #
+  # @return [Hash] the ENV var like result
   def default_config_vars
     out = super # Inherited from LanguagePack::Ruby
-    out["RAILS_ENV"] = env("RAILS_ENV") || "production"
-    out["RACK_ENV"] = env("RACK_ENV") || "production"
+    out["RAILS_ENV"] = "production"
+    out["RACK_ENV"] = "production"
     out
   end
 
@@ -67,12 +73,5 @@ private
     plugins = ["rails_log_stdout"].reject { |plugin| bundler.has_gem?(plugin) }
     topic "Rails plugin injection"
     LanguagePack::Helpers::PluginsInstaller.new(plugins).install
-  end
-
-  # sets up the profile.d script for this buildpack
-  def setup_profiled(**args)
-    super(**args)
-    set_env_default "RAILS_ENV", "production"
-    set_env_default "RACK_ENV", "production"
   end
 end

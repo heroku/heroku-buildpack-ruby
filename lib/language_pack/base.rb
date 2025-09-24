@@ -62,9 +62,12 @@ class LanguagePack::Base
     raise "must subclass"
   end
 
-  # config vars to be set on first push.
-  # @return [Hash] the result
-  # @not: this is only set the first time an app is pushed to.
+  # Environment variable defaults that are passet to ENV and `.profile.d`
+  #
+  # All values returned must be sourced from Heroku. User provided config vars
+  # are handled in the interfaces that consume this method's result.
+  #
+  # @return [Hash] the ENV var like result
   def default_config_vars
     raise "must subclass"
   end
@@ -96,7 +99,6 @@ class LanguagePack::Base
   def build_release
     release = {}
     release["addons"]                = default_addons
-    release["config_vars"]           = default_config_vars
     release["default_process_types"] = default_process_types
 
     release

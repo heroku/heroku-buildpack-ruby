@@ -45,6 +45,12 @@ class LanguagePack::Ruby < LanguagePack::Base
     add_dev_database_addon
   end
 
+  # Environment variable defaults that are passet to ENV and `.profile.d`
+  #
+  # All values returned must be sourced from Heroku. User provided config vars
+  # are handled in the interfaces that consume this method's result.
+  #
+  # @return [Hash] the ENV var like result
   def default_config_vars
     # super is LanguagePack::Base and raises Unimplemented
     out = {}
@@ -386,6 +392,10 @@ private
   def setup_profiled(ruby_layer_path: , gem_layer_path: )
     profiled_path = []
 
+    default_config_vars.each do |key, value|
+      set_env_default key, value
+    end
+
     # Rails has a binstub for yarn that doesn't work for all applications
     # we need to ensure that yarn comes before local bin dir for that case
     if yarn_preinstalled?
@@ -398,7 +408,6 @@ private
     profiled_path << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     profiled_path << "$PATH"
 
-    set_env_default  "LANG",     "en_US.UTF-8"
     set_env_override "GEM_PATH", "#{gem_layer_path}/#{slug_vendor_base}:$GEM_PATH"
     set_env_override "PATH",      profiled_path.join(":")
     set_env_override "DISABLE_SPRING", "1"
@@ -417,8 +426,6 @@ private
     set_env_default "BUNDLE_WITHOUT", ENV["BUNDLE_WITHOUT"]
     set_env_default "BUNDLE_BIN", ENV["BUNDLE_BIN"]
     set_env_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"] if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
-
-    set_env_default "PUMA_PERSISTENT_TIMEOUT", default_config_vars.fetch("PUMA_PERSISTENT_TIMEOUT")
   end
 
   def warn_outdated_ruby
