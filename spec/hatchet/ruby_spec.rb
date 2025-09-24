@@ -314,7 +314,24 @@ describe "Rack" do
       expect(environment_variables).to match("PUMA_PERSISTENT_TIMEOUT")
 
       profile_d = app.run("cat .profile.d/ruby.sh")
-      expect(profile_d).to match("PUMA_PERSISTENT_TIMEOUT")
+        .strip
+        .split("\n")
+        .sort
+        .join("\n")
+
+      expect(profile_d).to eq(<<~EOF.strip)
+       export BUNDLE_BIN=${BUNDLE_BIN:-vendor/bundle/bin}
+       export BUNDLE_DEPLOYMENT=${BUNDLE_DEPLOYMENT:-1}
+       export BUNDLE_PATH=${BUNDLE_PATH:-vendor/bundle}
+       export BUNDLE_WITHOUT=${BUNDLE_WITHOUT:-development:test}
+       export DISABLE_SPRING="1"
+       export GEM_PATH="$HOME/vendor/bundle/ruby/3.3.0:$GEM_PATH"
+       export LANG=${LANG:-en_US.UTF-8}
+       export MALLOC_ARENA_MAX=${MALLOC_ARENA_MAX:-2}
+       export PATH="$HOME/bin:$HOME/vendor/bundle/bin:$HOME/vendor/bundle/ruby/3.3.0/bin:$PATH"
+       export PUMA_PERSISTENT_TIMEOUT=${PUMA_PERSISTENT_TIMEOUT:-95}
+       export RACK_ENV=${RACK_ENV:-production}
+      EOF
     end
   end
 end
