@@ -384,7 +384,6 @@ private
     set_export_default "BUNDLE_PATH", ENV["BUNDLE_PATH"]
     set_export_default "BUNDLE_WITHOUT", ENV["BUNDLE_WITHOUT"]
     set_export_default "BUNDLE_BIN", ENV["BUNDLE_BIN"]
-    set_export_default "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE", ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"]
     set_export_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
     default_config_vars.each do |key, value|
       set_export_default key, value

@@ -443,7 +443,6 @@ describe "build time config var behavior" do
         expect(diff.added.join("\n")).to eq(<<~EOF.strip)
           BUNDLE_BIN=vendor/bundle/bin
           BUNDLE_DEPLOYMENT=1
-          BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE=
           BUNDLE_PATH=vendor/bundle
           BUNDLE_WITHOUT=development:test
           GEM_PATH=<build dir>/vendor/bundle/ruby/3.3.0:
