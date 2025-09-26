@@ -14,18 +14,6 @@ class LanguagePack::Rack < LanguagePack::Ruby
     "Ruby/Rack"
   end
 
-  # Environment variable defaults that are passet to ENV and `.profile.d`
-  #
-  # All values returned must be sourced from Heroku. User provided config vars
-  # are handled in the interfaces that consume this method's result.
-  #
-  # @return [Hash] the ENV var like result
-  def default_config_vars
-    out = super
-    out["RACK_ENV"] = "production"
-    out
-  end
-
   def default_process_types
     # let's special case thin here if we detect it
     web_process = bundler.has_gem?("thin") ?

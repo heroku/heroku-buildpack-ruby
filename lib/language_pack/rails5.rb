@@ -12,12 +12,6 @@ class LanguagePack::Rails5 < LanguagePack::Rails42
     return is_rails
   end
 
-  def default_config_vars
-    out = super # Inherited from LanguagePack::Rails42
-    out["RAILS_LOG_TO_STDOUT"] = "enabled"
-    out
-  end
-
   def install_plugins
     # do not install plugins, do not call super, do not warn
   end

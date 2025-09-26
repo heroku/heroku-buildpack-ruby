@@ -11,16 +11,4 @@ class LanguagePack::Rails42 < LanguagePack::Rails41
                   rails_version <  Gem::Version.new('5.0.0')
     return is_rails42
   end
-
-  # Environment variable defaults that are passet to ENV and `.profile.d`
-  #
-  # All values returned must be sourced from Heroku. User provided config vars
-  # are handled in the interfaces that consume this method's result.
-  #
-  # @return [Hash] the ENV var like result
-  def default_config_vars
-    out = super # Inherited from LanguagePack::Rails41
-    out["RAILS_SERVE_STATIC_FILES"] = "enabled"
-    out
-  end
 end
