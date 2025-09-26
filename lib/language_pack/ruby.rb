@@ -45,7 +45,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     add_dev_database_addon
   end
 
-  # Environment variable defaults that are passet to ENV and `.profile.d`
+  # Environment variable defaults that are passed to ENV, `export` (for future buildpacks), and `.profile.d` (for launch/runtime)
   #
   # All values returned must be sourced from Heroku. User provided config vars
   # are handled in the interfaces that consume this method's result.
@@ -386,6 +386,9 @@ private
     set_export_default "BUNDLE_BIN", ENV["BUNDLE_BIN"]
     set_export_default "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE", ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"]
     set_export_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
+    default_config_vars.each do |key, value|
+      set_export_default key, value
+    end
   end
 
   # sets up the profile.d script for this buildpack

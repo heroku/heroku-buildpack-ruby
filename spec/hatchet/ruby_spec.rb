@@ -447,6 +447,8 @@ describe "build time config var behavior" do
           BUNDLE_PATH=vendor/bundle
           BUNDLE_WITHOUT=development:test
           GEM_PATH=<build dir>/vendor/bundle/ruby/3.3.0:
+          PUMA_PERSISTENT_TIMEOUT=95
+          RACK_ENV=production
         EOF
 
         expect(diff.path_after).to include(diff.path_before)
