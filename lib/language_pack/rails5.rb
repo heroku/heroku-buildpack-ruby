@@ -1,8 +1,7 @@
 require 'securerandom'
 require "language_pack"
-require "language_pack/rails42"
 
-class LanguagePack::Rails5 < LanguagePack::Rails42
+class LanguagePack::Rails5 < LanguagePack::Rails4
   # @return [Boolean] true if it's a Rails 5.x app
   def self.use?
     rails_version = bundler.gem_version('railties')

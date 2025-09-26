@@ -22,7 +22,7 @@ module LanguagePack
 
   # detects which language pack to use
   def self.detect(app_path:, cache_path:, gemfile_lock: )
-    pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+    pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
       klass.use?
     end
 
@@ -59,8 +59,6 @@ require "language_pack/rack"
 require "language_pack/rails2"
 require "language_pack/rails3"
 require "language_pack/rails4"
-require "language_pack/rails41"
-require "language_pack/rails42"
 require "language_pack/rails5"
 require "language_pack/rails6"
 require "language_pack/rails7"
