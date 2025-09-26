@@ -62,16 +62,6 @@ class LanguagePack::Base
     raise "must subclass"
   end
 
-  # Environment variable defaults that are passet to ENV and `.profile.d`
-  #
-  # All values returned must be sourced from Heroku. User provided config vars
-  # are handled in the interfaces that consume this method's result.
-  #
-  # @return [Hash] the ENV var like result
-  def default_config_vars
-    raise "must subclass"
-  end
-
   # process types to provide for the app
   # Ex. for rails we provide a web process
   # @return [Hash] the result
