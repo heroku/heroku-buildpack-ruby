@@ -52,49 +52,23 @@ class LanguagePack::Ruby < LanguagePack::Base
   #
   # @return [Hash] the ENV var like result
   def default_config_vars
-    # super is LanguagePack::Base and raises Unimplemented
-    out = {}
-    out["LANG"] = "en_US.UTF-8"
-    out["PUMA_PERSISTENT_TIMEOUT"] = "95"
+    @app_secret ||= begin
+      if @metadata.exists?("secret_key_base")
+        @metadata.read("secret_key_base").strip
+      else
+        secret = SecureRandom.hex(64)
+        @metadata.write("secret_key_base", secret)
 
-    if ruby_version.jruby?
-      out["JRUBY_OPTS"] = default_jruby_opts
-    end
-
-    if bundler.has_gem?("rack")
-      out["RACK_ENV"] = "production"
-    end
-
-    rails_version = bundler.gem_version("railties")
-    if rails_version
-      out["RAILS_ENV"] = "production"
-    end
-
-    if rails_version&. >= Gem::Version.new("4.1.0.beta1")
-      key = "secret_key_base"
-
-      @app_secret ||= begin
-        if @metadata.exists?(key)
-          @metadata.read(key).strip
-        else
-          secret = SecureRandom.hex(64)
-          @metadata.write(key, secret)
-
-          secret
-        end
+        secret
       end
-      out["SECRET_KEY_BASE"] = @app_secret
     end
 
-    if rails_version&. >= Gem::Version.new("4.2.0")
-      out["RAILS_SERVE_STATIC_FILES"] = "enabled"
-    end
-
-    if rails_version&. >= Gem::Version.new("5.0.0")
-      out["RAILS_LOG_TO_STDOUT"] = "enabled"
-    end
-
-    out
+    LanguagePack::Helpers::DefaultEnvVars.call(
+      is_jruby: ruby_version.jruby?,
+      rack_version: bundler.gem_version("rack"),
+      rails_version: bundler.gem_version("railties"),
+      secret_key_base: @app_secret
+    )
   end
 
   def default_process_types
