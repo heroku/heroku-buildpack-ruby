@@ -56,10 +56,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       if @metadata.exists?("secret_key_base")
         @metadata.read("secret_key_base").strip
       else
-        secret = SecureRandom.hex(64)
-        @metadata.write("secret_key_base", secret)
-
-        secret
+        SecureRandom.hex(64).tap {|secret| @metadata.write("secret_key_base", secret) }
       end
     end
 
