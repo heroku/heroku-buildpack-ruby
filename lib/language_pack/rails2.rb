@@ -23,21 +23,6 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     "Ruby/Rails"
   end
 
-  def default_env_vars
-    {
-      "RAILS_ENV" => "production",
-      "RACK_ENV" => "production"
-    }
-  end
-
-  def default_config_vars
-    config_vars = super
-    default_env_vars.map do |key, value|
-      config_vars[key] = env(key) || value
-    end
-    config_vars
-  end
-
   def default_process_types
     web_process = bundler.has_gem?("thin") ?
       "bundle exec thin start -e $RAILS_ENV -p ${PORT:-5000}" :
@@ -75,13 +60,5 @@ private
     plugins = ["rails_log_stdout"].reject { |plugin| bundler.has_gem?(plugin) }
     topic "Rails plugin injection"
     LanguagePack::Helpers::PluginsInstaller.new(plugins).install
-  end
-
-  # sets up the profile.d script for this buildpack
-  def setup_profiled(**args)
-    super(**args)
-    default_env_vars.each do |key, value|
-      set_env_default key, value
-    end
   end
 end

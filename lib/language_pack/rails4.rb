@@ -11,7 +11,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
     rails_version = bundler.gem_version('railties')
     return false unless rails_version
     is_rails4 = rails_version >= Gem::Version.new('4.0.0.beta') &&
-                rails_version <  Gem::Version.new('4.1.0.beta1')
+                rails_version <  Gem::Version.new('5.x')
     return is_rails4
   end
 

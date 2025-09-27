@@ -13,7 +13,6 @@ ENV['RACK_ENV'] = 'test'
 
 DEFAULT_STACK = 'heroku-24'
 
-
 def hatchet_path(path = "")
   Pathname(__FILE__).join("../../repos").expand_path.join(path)
 end

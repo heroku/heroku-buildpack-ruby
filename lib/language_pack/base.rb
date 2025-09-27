@@ -62,13 +62,6 @@ class LanguagePack::Base
     raise "must subclass"
   end
 
-  # config vars to be set on first push.
-  # @return [Hash] the result
-  # @not: this is only set the first time an app is pushed to.
-  def default_config_vars
-    raise "must subclass"
-  end
-
   # process types to provide for the app
   # Ex. for rails we provide a web process
   # @return [Hash] the result
@@ -96,7 +89,6 @@ class LanguagePack::Base
   def build_release
     release = {}
     release["addons"]                = default_addons
-    release["config_vars"]           = default_config_vars
     release["default_process_types"] = default_process_types
 
     release
