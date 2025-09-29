@@ -1,5 +1,4 @@
 
-
 module LanguagePack::Helpers::DefaultEnvVars
   # Returns a hash of default environment variables for the given inputs
   #
