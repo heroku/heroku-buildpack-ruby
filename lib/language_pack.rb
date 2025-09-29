@@ -22,7 +22,7 @@ module LanguagePack
 
   # detects which language pack to use
   def self.detect(app_path:, cache_path:, gemfile_lock: )
-    pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails42, Rails41, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+    pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
       klass.use?
     end
 
@@ -48,7 +48,9 @@ require "language_pack/helpers/stale_file_cleaner"
 require "language_pack/helpers/bundle_list"
 require "language_pack/helpers/rake_runner"
 require "language_pack/helpers/rails_runner"
+require "language_pack/helpers/puma_warn_error"
 require "language_pack/helpers/bundler_wrapper"
+require "language_pack/helpers/default_env_vars"
 require "language_pack/helpers/outdated_ruby_version"
 require "language_pack/helpers/download_presence"
 require "language_pack/installers/heroku_ruby_installer"
@@ -58,8 +60,6 @@ require "language_pack/rack"
 require "language_pack/rails2"
 require "language_pack/rails3"
 require "language_pack/rails4"
-require "language_pack/rails41"
-require "language_pack/rails42"
 require "language_pack/rails5"
 require "language_pack/rails6"
 require "language_pack/rails7"

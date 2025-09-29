@@ -1,22 +1,19 @@
 # Opens up the class of the Rails2 language pack and
 # overwrites methods defined in `language_pack/test/ruby.rb`
 class LanguagePack::Rails2
-  # sets up the profile.d script for this buildpack
-  def setup_profiled(ruby_layer_path: , gem_layer_path: )
-    super
-    set_env_default "RACK_ENV",  "test"
-    set_env_default "RAILS_ENV", "test"
-  end
-
-  def default_env_vars
-    {
-      "RAILS_ENV" => "test",
-      "RACK_ENV"  => "test"
-    }
+  # Over-writes the original Rails2 method which sets these values to production
+  def default_config_vars
+    out = super # Inherited from LanguagePack::Ruby
+    out["RAILS_ENV"] = "test"
+    out["RACK_ENV"] = "test"
+    out
   end
 
   def rake_env
-    super.merge(default_env_vars)
+    out = super
+    out["RAILS_ENV"] = "test"
+    out["RACK_ENV"] = "test"
+    out
   end
 
   def prepare_tests

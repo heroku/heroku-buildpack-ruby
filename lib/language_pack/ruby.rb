@@ -45,14 +45,27 @@ class LanguagePack::Ruby < LanguagePack::Base
     add_dev_database_addon
   end
 
+  # Environment variable defaults that are passed to ENV, `export` (for future buildpacks), and `.profile.d` (for launch/runtime)
+  #
+  # All values returned must be sourced from Heroku. User provided config vars
+  # are handled in the interfaces that consume this method's result.
+  #
+  # @return [Hash] the ENV var like result
   def default_config_vars
-    vars = {
-      "LANG" => env("LANG") || "en_US.UTF-8",
-    }
+    @app_secret ||= begin
+      if @metadata.exists?("secret_key_base")
+        @metadata.read("secret_key_base").strip
+      else
+        SecureRandom.hex(64).tap {|secret| @metadata.write("secret_key_base", secret) }
+      end
+    end
 
-    ruby_version.jruby? ? vars.merge({
-      "JRUBY_OPTS" => default_jruby_opts
-    }) : vars
+    LanguagePack::Helpers::DefaultEnvVars.call(
+      is_jruby: ruby_version.jruby?,
+      rack_version: bundler.gem_version("rack"),
+      rails_version: bundler.gem_version("railties"),
+      secret_key_base: @app_secret
+    )
   end
 
   def default_process_types
@@ -98,6 +111,21 @@ class LanguagePack::Ruby < LanguagePack::Base
       "gem.railties_version" => bundler.gem_version('railties'),
       "gem.rack_version" => bundler.gem_version('rack')
     )
+    if (puma_version = bundler.gem_version("puma"))
+      @report.capture(
+        "gem.puma_version" => puma_version
+      )
+
+      puma_warn_error = LanguagePack::Helpers::PumaWarnError.new(
+        puma_version: puma_version,
+        env: user_env_hash
+      )
+
+      error(puma_warn_error.error) if puma_warn_error.error
+      puma_warn_error.warnings.each do |warning|
+        warn(warning)
+      end
+    end
     config_detect
     best_practice_warnings
     warn_outdated_ruby
@@ -305,8 +333,6 @@ private
     # can take advantage of all available memory on the build dynos.
     ENV["NODE_OPTIONS"] ||= "--max_old_space_size=2560"
 
-    # TODO when buildpack-env-args rolls out, we can get rid of
-    # ||= and the manual setting below
     default_config_vars.each do |key, value|
       ENV[key] ||= value
     end
@@ -362,13 +388,19 @@ private
     set_export_default "BUNDLE_PATH", ENV["BUNDLE_PATH"]
     set_export_default "BUNDLE_WITHOUT", ENV["BUNDLE_WITHOUT"]
     set_export_default "BUNDLE_BIN", ENV["BUNDLE_BIN"]
-    set_export_default "BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE", ENV["BUNDLE_GLOBAL_PATH_APPENDS_RUBY_SCOPE"]
     set_export_default "BUNDLE_DEPLOYMENT", ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
+    default_config_vars.each do |key, value|
+      set_export_default key, value
+    end
   end
 
   # sets up the profile.d script for this buildpack
   def setup_profiled(ruby_layer_path: , gem_layer_path: )
     profiled_path = []
+
+    default_config_vars.each do |key, value|
+      set_env_default key, value
+    end
 
     # Rails has a binstub for yarn that doesn't work for all applications
     # we need to ensure that yarn comes before local bin dir for that case
@@ -382,7 +414,6 @@ private
     profiled_path << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     profiled_path << "$PATH"
 
-    set_env_default  "LANG",     "en_US.UTF-8"
     set_env_override "GEM_PATH", "#{gem_layer_path}/#{slug_vendor_base}:$GEM_PATH"
     set_env_override "PATH",      profiled_path.join(":")
     set_env_override "DISABLE_SPRING", "1"
