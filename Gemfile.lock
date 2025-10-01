@@ -21,7 +21,7 @@ GEM
       rrrretry (~> 1)
       thor (~> 1)
       threaded (~> 0)
-    json (2.13.2)
+    json (2.15.0)
     logger (1.7.0)
     moneta (1.0.0)
     multi_json (1.17.0)
