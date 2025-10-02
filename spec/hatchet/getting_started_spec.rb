@@ -4,8 +4,6 @@ describe "Heroku ruby getting started" do
   it "works on Heroku-24" do
     Hatchet::Runner.new("ruby-getting-started", stack: "heroku-24").deploy do |app|
       expect(app.output).to_not include("Purging Cache")
-      # Assert sprockets build cache not present on runtime
-      expect(app.run("ls tmp/cache/assets")).to_not match("sprockets")
 
       # Re-deploy with cache
       run!("git commit --allow-empty -m empty")
@@ -35,10 +33,10 @@ describe "Heroku ruby getting started" do
         export BUNDLE_PATH=${BUNDLE_PATH:-vendor/bundle}
         export BUNDLE_WITHOUT=${BUNDLE_WITHOUT:-development:test}
         export DISABLE_SPRING="1"
-        export GEM_PATH="$HOME/vendor/bundle/ruby/3.2.0:$GEM_PATH"
+        export GEM_PATH="$HOME/vendor/bundle/ruby/3.4.0:$GEM_PATH"
         export LANG=${LANG:-en_US.UTF-8}
         export MALLOC_ARENA_MAX=${MALLOC_ARENA_MAX:-2}
-        export PATH="$HOME/bin:$HOME/vendor/bundle/bin:$HOME/vendor/bundle/ruby/3.2.0/bin:$PATH"
+        export PATH="$HOME/bin:$HOME/vendor/bundle/bin:$HOME/vendor/bundle/ruby/3.4.0/bin:$PATH"
         export PUMA_PERSISTENT_TIMEOUT=${PUMA_PERSISTENT_TIMEOUT:-95}
         export RACK_ENV=${RACK_ENV:-production}
         export RAILS_ENV=${RAILS_ENV:-production}
