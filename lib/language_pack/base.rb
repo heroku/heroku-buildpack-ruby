@@ -26,7 +26,8 @@ class LanguagePack::Base
     @app_path = app_path
     @stack         = ENV.fetch("STACK")
     @cache         = LanguagePack::Cache.new(cache_path)
-    @metadata      = LanguagePack::Metadata.new(@cache)
+    @metadata      = LanguagePack::Metadata.new(cache_path: cache_path)
+    @new_app       = @metadata.empty?
     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
     @arch = get_arch
@@ -45,6 +46,10 @@ class LanguagePack::Base
     end
 
     arch
+  end
+
+  def new_app?
+    @new_app
   end
 
   def self.===(app_path)
