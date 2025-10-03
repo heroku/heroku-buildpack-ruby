@@ -43,8 +43,9 @@ class LanguagePack::Helpers::BundlerWrapper
   BLESSED_BUNDLER_VERSIONS["2.6"] = "2.6.9"
   BLESSED_BUNDLER_VERSIONS["2.7"] = "2.7.2"
 
-  SMALLEST = BLESSED_BUNDLER_VERSIONS.sort.first.first
-  LARGEST = BLESSED_BUNDLER_VERSIONS.sort.last.first
+  SORTED_KEYS = BLESSED_BUNDLER_VERSIONS.keys.map { |k| Gem::Version.new(k) }.sort
+  SMALLEST = SORTED_KEYS.first.to_s
+  LARGEST = SORTED_KEYS.last.to_s
 
   DEFAULT_VERSION = BLESSED_BUNDLER_VERSIONS["2.3"]
 
