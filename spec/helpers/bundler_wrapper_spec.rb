@@ -17,8 +17,7 @@ describe "Bundler version detection" do
     wrapper_klass = LanguagePack::Helpers::BundlerWrapper
 
     version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.2.7")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.3")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.3"])
+    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::SMALLEST])
 
     version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.3.7")
     expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.3")).to be_truthy
@@ -37,8 +36,7 @@ describe "Bundler version detection" do
     expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.6"])
 
     version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.999.7")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.6")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.6"])
+    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::LARGEST])
 
     expect {
       wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   3.6.7")
