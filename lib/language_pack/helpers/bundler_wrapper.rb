@@ -42,16 +42,19 @@ class LanguagePack::Helpers::BundlerWrapper
   BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.23"
   BLESSED_BUNDLER_VERSIONS["2.6"] = "2.6.2"
 
+  SMALLEST = BLESSED_BUNDLER_VERSIONS.sort.first.first
+  LARGEST = BLESSED_BUNDLER_VERSIONS.sort.last.first
+
   DEFAULT_VERSION = BLESSED_BUNDLER_VERSIONS["2.3"]
 
   # Convert arbitrary `<Major>.<Minor>.x` versions
   BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
     case Gem::Version.new(key).segments.first
     when 2
-      if Gem::Version.new(key) > Gem::Version.new("2.6")
-        hash["2.6"]
-      elsif Gem::Version.new(key) < Gem::Version.new("2.3")
-        hash["2.3"]
+      if Gem::Version.new(key) > Gem::Version.new(LARGEST)
+        hash[LARGEST]
+      elsif Gem::Version.new(key) < Gem::Version.new(SMALLEST)
+        hash[SMALLEST]
       else
         raise UnsupportedBundlerVersion.new(hash, key)
       end
