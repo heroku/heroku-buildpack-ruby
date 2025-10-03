@@ -12,6 +12,12 @@ describe "Bundle platform conversion" do
   end
 end
 
+describe "Bundler version sorting" do
+  it "sorts the keys correctly" do
+    expect(LanguagePack::Helpers::BundlerWrapper::SORTED_KEYS).to eq(["2.3", "2.4", "2.5", "2.6", "2.7"])
+  end
+end
+
 describe "Bundler version detection" do
   it "supports minor versions" do
     wrapper_klass = LanguagePack::Helpers::BundlerWrapper
