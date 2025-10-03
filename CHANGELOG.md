@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Ruby apps using bundler 2.6.x will now receive bundler 2.6.9 (https://github.com/heroku/heroku-buildpack-ruby/pull/1651)
+- Ruby apps using bundler 2.7.x will now receive bundler 2.7.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/1651)
 - Internal refactor: Remove Cache class dependency from Metadata class (https://github.com/heroku/heroku-buildpack-ruby/pull/1649)
 - Improve message on `bin/detect` failure to include the list of files in the root directory (https://github.com/heroku/heroku-buildpack-ruby/pull/1647)
 
