@@ -4,10 +4,16 @@ describe "Heroku ruby getting started" do
   it "works on Heroku-24" do
     Hatchet::Runner.new("ruby-getting-started", stack: "heroku-24").deploy do |app|
       expect(app.output).to_not include("Purging Cache")
+      expect(app.output).to include("Fetching puma")
+
+      secret_key_base = app.run("echo $SECRET_KEY_BASE")
 
       # Re-deploy with cache
       run!("git commit --allow-empty -m empty")
       app.push!
+
+      # Assert used cached gems
+      expect(app.output).to_not include("Fetching puma")
 
       # Assert no warnings from `cp`
       # https://github.com/heroku/heroku-buildpack-ruby/pull/1586/files#r2064284286
@@ -16,6 +22,8 @@ describe "Heroku ruby getting started" do
 
       environment_variables = app.run("env")
       expect(environment_variables).to match("PUMA_PERSISTENT_TIMEOUT")
+      # Assert cached value persisted
+      expect(environment_variables).to match("SECRET_KEY_BASE=#{secret_key_base}")
 
       profile_d = app.run("cat .profile.d/ruby.sh")
         .strip
