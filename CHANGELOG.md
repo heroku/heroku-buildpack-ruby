@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v323] - 2025-10-08
+
+- Ruby 3.4.7 is now available
+
+
 ## [v322] - 2025-09-29
 
 - Set `export PUMA_PERSISTENT_TIMEOUT=95` to match recommended router 2.0 settings for Rails applications (https://github.com/heroku/heroku-buildpack-ruby/pull/1645)
@@ -1770,7 +1775,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v322...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v323...main
+[v323]: https://github.com/heroku/heroku-buildpack-ruby/compare/v322...v323
 [v322]: https://github.com/heroku/heroku-buildpack-ruby/compare/v321...v322
 [v321]: https://github.com/heroku/heroku-buildpack-ruby/compare/v320...v321
 [v320]: https://github.com/heroku/heroku-buildpack-ruby/compare/v319...v320
