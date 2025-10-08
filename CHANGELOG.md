@@ -2,8 +2,6 @@
 
 ## [Unreleased]
 
-- Internal refactor: Remove Cache class dependency from Metadata class (https://github.com/heroku/heroku-buildpack-ruby/pull/1649)
-- Improve message on `bin/detect` failure to include the list of files in the root directory (https://github.com/heroku/heroku-buildpack-ruby/pull/1647)
 
 ## [v322] - 2025-09-29
 
