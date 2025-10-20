@@ -201,21 +201,15 @@
 
 ## [v281] - 2024-11-07
 
-- Ruby 3.3.6 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1511)
-- Add detection support for Rails 8 (https://github.com/heroku/heroku-buildpack-ruby/pull/1498)
 - Support Node.js on ARM builds (https://github.com/heroku/heroku-buildpack-ruby/pull/1499)
-
-## [v280] - 2024-11-06
-
-- JRuby 9.4.9.0 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1506)
-
-## [v280] - 2024-11-01
-
+- Add detection support for Rails 8 (https://github.com/heroku/heroku-buildpack-ruby/pull/1498)
 - Ruby 3.2.6 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1504)
+- JRuby 9.4.9.0 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1506)
+- Ruby 3.3.6 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1511)
 
 ## [v280] - 2024-10-08
 
-- Ruby 3.4.0 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1496)
+- Ruby 3.4.0-preview2 is now available (https://github.com/heroku/heroku-buildpack-ruby/pull/1496)
 
 ## [v279] - 2024-09-04
 
