@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v326] - 2025-10-21
+
 - Ruby apps using bundler 2.6.x will now receive bundler 2.6.9 (https://github.com/heroku/heroku-buildpack-ruby/pull/1651)
 - Ruby apps using bundler 2.7.x will now receive bundler 2.7.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/1651)
 
@@ -1781,7 +1784,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v325...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v326...main
+[v326]: https://github.com/heroku/heroku-buildpack-ruby/compare/v325...v326
 [v325]: https://github.com/heroku/heroku-buildpack-ruby/compare/v324...v325
 [v324]: https://github.com/heroku/heroku-buildpack-ruby/compare/v323...v324
 [v323]: https://github.com/heroku/heroku-buildpack-ruby/compare/v322...v323
