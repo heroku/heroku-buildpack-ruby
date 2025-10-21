@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v325] - 2025-10-21
+
 - Internal refactor: Remove Cache class dependency from Metadata class (https://github.com/heroku/heroku-buildpack-ruby/pull/1649)
 - Improve message on `bin/detect` failure to include the list of files in the root directory (https://github.com/heroku/heroku-buildpack-ruby/pull/1647)
 
@@ -1776,7 +1779,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v324...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v325...main
+[v325]: https://github.com/heroku/heroku-buildpack-ruby/compare/v324...v325
 [v324]: https://github.com/heroku/heroku-buildpack-ruby/compare/v323...v324
 [v323]: https://github.com/heroku/heroku-buildpack-ruby/compare/v322...v323
 [v322]: https://github.com/heroku/heroku-buildpack-ruby/compare/v321...v322
