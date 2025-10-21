@@ -40,7 +40,12 @@ class LanguagePack::Helpers::BundlerWrapper
   BLESSED_BUNDLER_VERSIONS["2.3"] = "2.3.25"
   BLESSED_BUNDLER_VERSIONS["2.4"] = "2.4.22"
   BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.23"
-  BLESSED_BUNDLER_VERSIONS["2.6"] = "2.6.2"
+  BLESSED_BUNDLER_VERSIONS["2.6"] = "2.6.9"
+  BLESSED_BUNDLER_VERSIONS["2.7"] = "2.7.2"
+
+  SORTED_KEYS = BLESSED_BUNDLER_VERSIONS.keys.map { |k| Gem::Version.new(k) }.sort
+  SMALLEST = SORTED_KEYS.first.to_s
+  LARGEST = SORTED_KEYS.last.to_s
 
   DEFAULT_VERSION = BLESSED_BUNDLER_VERSIONS["2.3"]
 
@@ -48,10 +53,10 @@ class LanguagePack::Helpers::BundlerWrapper
   BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
     case Gem::Version.new(key).segments.first
     when 2
-      if Gem::Version.new(key) > Gem::Version.new("2.6")
-        hash["2.6"]
-      elsif Gem::Version.new(key) < Gem::Version.new("2.3")
-        hash["2.3"]
+      if Gem::Version.new(key) > Gem::Version.new(LARGEST)
+        hash[LARGEST]
+      elsif Gem::Version.new(key) < Gem::Version.new(SMALLEST)
+        hash[SMALLEST]
       else
         raise UnsupportedBundlerVersion.new(hash, key)
       end

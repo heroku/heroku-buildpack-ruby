@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Ruby apps using bundler 2.6.x will now receive bundler 2.6.9 (https://github.com/heroku/heroku-buildpack-ruby/pull/1651)
+- Ruby apps using bundler 2.7.x will now receive bundler 2.7.2 (https://github.com/heroku/heroku-buildpack-ruby/pull/1651)
 
 ## [v325] - 2025-10-21
 

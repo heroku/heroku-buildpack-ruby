@@ -306,13 +306,15 @@ end
 describe "Rack" do
   it "should not overwrite already set environment variables" do
     custom_env = SecureRandom.hex(16)
-    app = Hatchet::Runner.new("default_ruby", config: {"RACK_ENV" => custom_env})
+    app = Hatchet::Runner.new("default_ruby", config: {"RACK_ENV" => custom_env, "BUNDLE_SIMULATE_VERSION" => "4" })
     app.before_deploy do
       Pathname("Rakefile").write(<<~'EOF')
         task "assets:precompile" do
           puts "Build time RACK_ENV: #{ENV["RACK_ENV"]}"
         end
       EOF
+
+      set_bundler_version(version: "2.7.2")
     end
 
     app.deploy do |app|
