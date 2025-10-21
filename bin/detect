@@ -7,6 +7,33 @@ APP_DIR=$1
 if [ -f "$APP_DIR/Gemfile" ]; then
   echo "Ruby"
   exit 0
-else
-  exit 1
 fi
+
+output::error <<EOF
+Error: Your app is configured to use the Ruby buildpack,
+but we couldn't find any supported Ruby project files ('Gemfile.lock').
+
+A Ruby app on Heroku must have a 'Gemfile.lock' in the root directory of its source code.
+
+Currently the root directory of your app contains:
+
+$(ls -1A --indicator-style=slash "${BUILD_DIR}" || true)
+
+If your app already has a package manager file, check that it:
+
+1. Is in the top level directory (not a subdirectory).
+2. Has the correct spelling (the filenames are case-sensitive).
+3. Isn't listed in '.gitignore' or '.slugignore'.
+4. Has been added to the Git repository using 'git add --all'
+   and then committed using 'git commit'.
+
+Otherwise, add a package manager file to your app. If your app has
+no dependencies, then create an empty 'Gemfile', run 'bundle install' and
+commit the results to git.
+
+For help with using Ruby on Heroku, see:
+https://devcenter.heroku.com/articles/getting-started-with-ruby
+https://devcenter.heroku.com/articles/ruby-support
+EOF
+
+exit 1

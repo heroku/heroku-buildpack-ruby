@@ -192,7 +192,7 @@ private
 
   def default_malloc_arena_max?
     return true if @metadata.exists?("default_malloc_arena_max")
-    return @metadata.touch("default_malloc_arena_max") if new_app?
+    return @metadata.write("default_malloc_arena_max", "true") if new_app?
 
     return false
   end
@@ -611,10 +611,6 @@ private
     ERROR
 
     error message
-  end
-
-  def new_app?
-    @new_app ||= !app_path.join("vendor").join("heroku").exist?
   end
 
   # find the ruby install path for its binstubs during build
@@ -1086,7 +1082,6 @@ private
 
     full_ruby_version       = run_stdout(%q(ruby -v)).strip
     rubygems_version        = run_stdout(%q(gem -v)).strip
-    heroku_metadata         = "vendor/heroku"
     old_rubygems_version    = nil
     ruby_version_cache      = "ruby_version"
     buildpack_version_cache = "buildpack_version"
@@ -1119,13 +1114,11 @@ private
       purge_bundler_cache
     end
 
-    FileUtils.mkdir_p(heroku_metadata)
-    @metadata.write(ruby_version_cache, full_ruby_version, false)
-    @metadata.write(buildpack_version_cache, BUILDPACK_VERSION, false)
-    @metadata.write(bundler_version_cache, bundler.version, false)
-    @metadata.write(rubygems_version_cache, rubygems_version, false)
-    @metadata.write(stack_cache, @stack, false)
-    @metadata.save
+    @metadata.write(ruby_version_cache, full_ruby_version)
+    @metadata.write(buildpack_version_cache, BUILDPACK_VERSION)
+    @metadata.write(bundler_version_cache, bundler.version)
+    @metadata.write(rubygems_version_cache, rubygems_version)
+    @metadata.write(stack_cache, @stack)
   end
 
   def purge_bundler_cache(stack = nil)
