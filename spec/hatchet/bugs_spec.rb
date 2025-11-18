@@ -25,4 +25,16 @@ describe "Bugs" do
       end
     end
   end
+
+  it "detect fails when no Gemfile is present" do
+    Hatchet::Runner.new("default_ruby", allow_failure: true).tap do |app|
+      app.before_deploy do
+        FileUtils.rm("Gemfile")
+      end
+      app.deploy do |app|
+        expect(app.output).to include("A Ruby app on Heroku must have a 'Gemfile' and 'Gemfile.lock' in the root directory of its source code.")
+        expect(app).not_to be_deployed
+      end
+    end
+  end
 end

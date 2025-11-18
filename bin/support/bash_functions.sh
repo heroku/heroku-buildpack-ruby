@@ -2,6 +2,25 @@
 
 set -euo pipefail
 
+ANSI_RED=$'\e[1;31m'
+ANSI_RESET=$'\e[0m'
+
+# Output a styled multi-line error message to stderr.
+#
+# Usage:
+# ```
+# output::error <<-EOF
+# 	Error: The error summary.
+#
+# 	Detailed description.
+# EOF
+# ```
+function output::error() {
+	echo >&2
+	sed -e "s/^/${ANSI_RED} !     /" -e "s/$/${ANSI_RESET}/" >&2
+	echo >&2
+}
+
 curl_retry_on_18() {
   local ec=18;
   local attempts=0;
@@ -9,7 +28,7 @@ curl_retry_on_18() {
     curl "$@" # -C - would return code 33 if unsupported by server
     ec=$?
   done
-  return $ec
+  return "$ec"
 }
 
 which_java()
@@ -28,7 +47,7 @@ detect_needs_java()
 
   if which_java; then
     build_data::kv_string "java_origin" "previously_installed"
-    return $skip_java_install
+    return "$skip_java_install"
   fi
 
   grep "(jruby " "$gemfile_lock" --quiet &> /dev/null

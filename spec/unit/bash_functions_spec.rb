@@ -1,6 +1,28 @@
 require 'spec_helper'
 
 describe "Bash functions" do
+
+    describe "output::error" do
+      it "prints" do
+        Dir.mktmpdir do |dir|
+          file = Pathname(dir).join("does-not-exist").expand_path
+          out = exec_with_bash_file(code: <<~EOM, file: bash_functions_file, strip_output: true)
+            output::error <<EOF
+            Error: Header
+
+            Error summary.
+            EOF
+          EOM
+
+          expect(out.strip).to eq(<<~EOM.strip)
+            \e[1;31m !     Error: Header\e[0m
+            \e[1;31m !     \e[0m
+            \e[1;31m !     Error summary.\e[0m
+          EOM
+        end
+      end
+    end
+
     describe "metrics" do
       it "does not error when collecting metrics and the target file is not set" do
         Dir.mktmpdir do |dir|
