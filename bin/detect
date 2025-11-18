@@ -3,21 +3,25 @@
 set -euo pipefail
 
 APP_DIR=$1
+BIN_DIR=$(cd "$(dirname "$0")" || exit; pwd) # absolute path
 
 if [ -f "$APP_DIR/Gemfile" ]; then
   echo "Ruby"
   exit 0
 fi
 
+# shellcheck source=bin/support/bash_functions.sh
+source "$BIN_DIR/support/bash_functions.sh"
+
 output::error <<EOF
 Error: Your app is configured to use the Ruby buildpack,
-but we couldn't find any supported Ruby project files ('Gemfile.lock').
+but we couldn't find any supported Ruby project files ('Gemfile' and 'Gemfile.lock').
 
-A Ruby app on Heroku must have a 'Gemfile.lock' in the root directory of its source code.
+A Ruby app on Heroku must have a 'Gemfile' and 'Gemfile.lock' in the root directory of its source code.
 
 Currently the root directory of your app contains:
 
-$(ls -1A --indicator-style=slash "${BUILD_DIR}" || true)
+$(ls -1A --indicator-style=slash "${APP_DIR}" || true)
 
 If your app already has a package manager file, check that it:
 
