@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-ANSI_RED='\033[1;31m'
-ANSI_RESET='\033[0m'
+ANSI_RED=$'\e[1;31m'
+ANSI_RESET=$'\e[0m'
 
 # Output a styled multi-line error message to stderr.
 #
