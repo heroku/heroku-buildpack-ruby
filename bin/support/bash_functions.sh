@@ -17,7 +17,7 @@ ANSI_RESET=$'\e[0m'
 # ```
 function output::error() {
 	echo >&2
-	sed -e "s/^/${ANSI_RED} !     /" -e "s/$/${ANSI_RESET}/"
+	sed -e "s/^/${ANSI_RED} !     /" -e "s/$/${ANSI_RESET}/" >&2
 	echo >&2
 }
 
