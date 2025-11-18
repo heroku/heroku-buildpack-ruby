@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v329] - 2025-11-18
+
 - Fix "BUILD_DIR: unbound variable" error when deploying without a Gemfile with `heroku/ruby` buildpack [#1663](https://github.com/heroku/heroku-buildpack-ruby/pull/1663)
 
 ## [v328] - 2025-11-17
@@ -1795,7 +1798,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v328...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v329...main
+[v329]: https://github.com/heroku/heroku-buildpack-ruby/compare/v328...v329
 [v328]: https://github.com/heroku/heroku-buildpack-ruby/compare/v327...v328
 [v327]: https://github.com/heroku/heroku-buildpack-ruby/compare/v326...v327
 [v326]: https://github.com/heroku/heroku-buildpack-ruby/compare/v325...v326
