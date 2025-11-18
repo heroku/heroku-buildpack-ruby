@@ -31,7 +31,7 @@ curl_retry_on_18() {
     curl "$@" # -C - would return code 33 if unsupported by server
     ec=$?
   done
-  return $ec
+  return "$ec"
 }
 
 which_java()
@@ -50,7 +50,7 @@ detect_needs_java()
 
   if which_java; then
     build_data::kv_string "java_origin" "previously_installed"
-    return $skip_java_install
+    return "$skip_java_install"
   fi
 
   grep "(jruby " "$gemfile_lock" --quiet &> /dev/null
