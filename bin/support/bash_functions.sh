@@ -18,9 +18,7 @@ ANSI_RESET='\033[0m'
 function output::error() {
 	local line
 	echo >&2
-	while IFS= read -r line; do
-		echo -e "${ANSI_RED} !     ${line}${ANSI_RESET}" >&2
-	done
+	sed -e "s/^/${ANSI_RED} !     /" -e "s/$/${ANSI_RESET}/"
 	echo >&2
 }
 
