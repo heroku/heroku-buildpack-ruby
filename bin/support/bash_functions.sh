@@ -2,9 +2,7 @@
 
 set -euo pipefail
 
-ANSI_BLUE='\033[1;34m'
 ANSI_RED='\033[1;31m'
-ANSI_YELLOW='\033[1;33m'
 ANSI_RESET='\033[0m'
 
 # Output a styled multi-line error message to stderr.
