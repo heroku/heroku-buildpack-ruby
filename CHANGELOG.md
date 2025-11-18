@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix "BUILD_DIR: unbound variable" error when deploying without a Gemfile with `heroku/ruby` buildpack [#1663](https://github.com/heroku/heroku-buildpack-ruby/pull/1663)
 
 ## [v328] - 2025-11-17
 
