@@ -12,7 +12,6 @@
     "sharpstone/sqlite3_gemfile"
   ],
   "ruby": [
-    "sharpstone/ruby_version_does_not_exist",
     "sharpstone/jruby-minimal",
     "sharpstone/empty-procfile",
     "sharpstone/bad_ruby_version"

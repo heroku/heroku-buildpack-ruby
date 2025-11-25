@@ -69,12 +69,7 @@ describe "Ruby apps" do
     it "gives a helpful error" do
       Hatchet::Runner.new('default_ruby', allow_failure: true, stack: DEFAULT_STACK).tap do |app|
         app.before_deploy do
-          contents = Pathname("Gemfile.lock").read.concat(<<~EOF)
-
-            RUBY VERSION
-               ruby 2.9.0.lolp170
-          EOF
-          Pathname("Gemfile.lock").write(contents)
+          set_ruby_version(version: "2.9.0.lol")
         end
 
         app.deploy do |app|
