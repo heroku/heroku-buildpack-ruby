@@ -15,7 +15,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
   end
 
   def ruby_version
-    LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-3.1.7")
+    LanguagePack::RubyVersion.default(last_version: "3.1.7")
   end
 
   describe "#fetch_unpack" do
@@ -45,7 +45,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
             "ruby_version_engine" => :ruby,
             "ruby_version_full" => "3.1.7",
             "ruby_version_major_minor" => "3.1",
-            "ruby_version_origin" => "Gemfile.lock",
+            "ruby_version_origin" => "default",
             "ruby_version_unique" => "ruby-3.1.7"
           }
 
@@ -58,8 +58,12 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
           report = HerokuBuildReport.dev_null
+          gemfile_lock = LanguagePack::Helpers::GemfileLock.new(report: report, contents: <<~EOF)
+            RUBY VERSION
+               ruby 3.5.0.preview1
+          EOF
           installer(report: report).install(
-            LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-3.5.0.preview1"),
+            LanguagePack::RubyVersion.from_gemfile_lock(ruby: gemfile_lock.ruby),
             "#{dir}/vendor/ruby"
           )
 
@@ -84,6 +88,10 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
           report = HerokuBuildReport.dev_null
+          gemfile_lock = LanguagePack::Helpers::GemfileLock.new(report: report, contents: <<~EOF)
+            RUBY VERSION
+               ruby 3.1.4p001 (jruby 9.4.9.0)
+          EOF
 
           LanguagePack::Installers::HerokuRubyInstaller.new(
             multi_arch_stacks: ["heroku-24"],
@@ -91,7 +99,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
             arch: "arm64",
             report: report
           ).install(
-            LanguagePack::RubyVersion.bundle_platform_ruby(bundler_output: "ruby-3.1.4-p0-jruby-9.4.9.0"),
+            LanguagePack::RubyVersion.from_gemfile_lock(ruby: gemfile_lock.ruby),
             "#{dir}/vendor/ruby"
           )
 
