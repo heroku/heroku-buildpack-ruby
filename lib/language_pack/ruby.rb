@@ -245,12 +245,6 @@ private
     last_version_file = "buildpack_ruby_version"
     last_version      = nil
     last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
-
-    ruby_version = LanguagePack::RubyVersion.bundle_platform_ruby(
-      bundler_output: bundler.ruby_version,
-      last_version: last_version
-    )
-
     # New logic, running in parallel to old logic for reporting differences
     lockfile_ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
       ruby: @gemfile_lock.ruby,
@@ -266,15 +260,7 @@ private
       "gemfile_lock.ruby_version.default" => lockfile_ruby_version.default?,
     )
 
-    if lockfile_ruby_version.version_for_download != ruby_version.version_for_download
-      @report.capture(
-        "gemfile_lock.ruby_version.got" => lockfile_ruby_version.version_for_download,
-        "gemfile_lock.ruby_version.expected" => ruby_version.version_for_download,
-        "gemfile_lock.ruby_version.different_version" => true,
-      )
-    end
-
-    ruby_version
+    lockfile_ruby_version
   end
 
   def set_default_web_concurrency
