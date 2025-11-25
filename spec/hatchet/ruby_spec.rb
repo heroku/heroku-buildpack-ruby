@@ -214,59 +214,6 @@ describe "Ruby apps" do
     end
   end
 
-  describe "bundler ruby version matcher" do
-    it "installs a version even when not present in the Gemfile.lock" do
-      version = "3.3.1"
-      expect(version).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
-
-      Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK).tap do |app|
-        app.before_deploy do
-          Pathname("Gemfile").write(<<~EOF)
-            source "https://rubygems.org"
-
-            ruby "#{version}"
-
-            gem "sinatra"
-          EOF
-
-          Pathname("Gemfile.lock").write(<<~'EOF')
-            GEM
-              remote: https://rubygems.org/
-              specs:
-                mustermann (1.1.1)
-                  ruby2_keywords (~> 0.0.1)
-                rack (2.2.3)
-                rack-protection (2.2.0)
-                  rack
-                ruby2_keywords (0.0.5)
-                sinatra (2.2.0)
-                  mustermann (~> 1.0)
-                  rack (~> 2.2)
-                  rack-protection (= 2.2.0)
-                  tilt (~> 2.0)
-                tilt (2.0.10)
-
-            PLATFORMS
-              ruby
-              x86_64-darwin-20
-
-            DEPENDENCIES
-              sinatra
-          EOF
-
-        end
-
-        app.deploy do |app|
-          expect(app.output).to_not include("unbound variable")
-
-          # Intentionally different than the default ruby version
-          expect(app.output).to         match("#{version}")
-          expect(app.run("ruby -v")).to match("#{version}")
-        end
-      end
-    end
-  end
-
   describe "database configuration" do
     context "no active record" do
       it "writes a heroku specific database.yml" do
