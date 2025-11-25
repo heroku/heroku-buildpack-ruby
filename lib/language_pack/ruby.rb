@@ -91,6 +91,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
+    @ruby_version = get_ruby_version
     install_ruby(install_path: slug_vendor_ruby)
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
@@ -237,12 +238,15 @@ private
   # fetch the ruby version from bundler
   # @return [String, nil] returns the ruby version if detected or nil if none is detected
   def ruby_version
-    return @ruby_version if @ruby_version
+    @ruby_version or raise "Internal error: @ruby_version is not set. Call `get_ruby_version` and set @ruby_version"
+  end
+
+  def get_ruby_version
     last_version_file = "buildpack_ruby_version"
     last_version      = nil
     last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
 
-    @ruby_version = LanguagePack::RubyVersion.bundle_platform_ruby(
+    ruby_version = LanguagePack::RubyVersion.bundle_platform_ruby(
       bundler_output: bundler.ruby_version,
       last_version: last_version
     )
@@ -262,14 +266,15 @@ private
       "gemfile_lock.ruby_version.default" => lockfile_ruby_version.default?,
     )
 
-    if lockfile_ruby_version.version_for_download != @ruby_version.version_for_download
+    if lockfile_ruby_version.version_for_download != ruby_version.version_for_download
       @report.capture(
         "gemfile_lock.ruby_version.got" => lockfile_ruby_version.version_for_download,
-        "gemfile_lock.ruby_version.expected" => @ruby_version.version_for_download,
+        "gemfile_lock.ruby_version.expected" => ruby_version.version_for_download,
         "gemfile_lock.ruby_version.different_version" => true,
       )
     end
-    return @ruby_version
+
+    ruby_version
   end
 
   def set_default_web_concurrency
