@@ -67,8 +67,19 @@ describe "Ruby apps" do
 
   describe "bad ruby version" do
     it "gives a helpful error" do
-      Hatchet::Runner.new('ruby_version_does_not_exist', allow_failure: true, stack: DEFAULT_STACK).deploy do |app|
-        expect(app.output).to match("The Ruby version you are trying to install does not exist: ruby-2.9.0.lol")
+      Hatchet::Runner.new('default_ruby', allow_failure: true, stack: DEFAULT_STACK).tap do |app|
+        app.before_deploy do
+          contents = Pathname("Gemfile.lock").read.concat(<<~EOF)
+
+            RUBY VERSION
+               ruby 2.9.0.lolp170
+          EOF
+          Pathname("Gemfile.lock").write(contents)
+        end
+
+        app.deploy do |app|
+          expect(app.output).to match("The Ruby version you are trying to install does not exist: ruby-2.9.0.lol")
+        end
       end
     end
   end
