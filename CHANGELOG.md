@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Support `BUNDLED WITH` in `Gemfile.lock` with two spaces. This was [updated in bundler](https://github.com/ruby/rubygems/pull/9076). [#1667](https://github.com/heroku/heroku-buildpack-ruby/pull/1667)
+- Support `BUNDLED WITH` in `Gemfile.lock` with two spaces. This was [updated in bundler](https://github.com/ruby/rubygems/pull/9076). [#1668](https://github.com/heroku/heroku-buildpack-ruby/pull/1668)
 
 ## [v329] - 2025-11-18
 
