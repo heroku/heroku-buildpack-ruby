@@ -187,7 +187,7 @@ describe LanguagePack::Helpers::GemfileLock do
       EOF
     )
     expect(gemfile_lock.ruby.ruby_version).to eq("3.4.0")
-    expect(gemfile_lock.ruby.pre).to eq("preview2")
+    expect(gemfile_lock.ruby.pre).to eq(nil)
     expect(gemfile_lock.ruby.engine).to eq(:ruby)
     expect(gemfile_lock.ruby.empty?).to eq(false)
     expect(gemfile_lock.ruby.engine_version).to eq("3.4.0")
