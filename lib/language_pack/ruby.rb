@@ -89,7 +89,11 @@ class LanguagePack::Ruby < LanguagePack::Base
     remove_vendor_bundle
     warn_bundler_upgrade
     warn_bad_binstubs
-    @ruby_version = get_ruby_version
+    @ruby_version = self.class.get_ruby_version(
+      metadata: @metadata,
+      report: @report,
+      gemfile_lock: @gemfile_lock
+    )
     install_ruby(install_path: slug_vendor_ruby)
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
@@ -239,16 +243,16 @@ private
     @ruby_version or raise "Internal error: @ruby_version is not set. Call `get_ruby_version` and set @ruby_version"
   end
 
-  def get_ruby_version
+  def self.get_ruby_version(metadata: , gemfile_lock: , report: HerokuBuildReport::GLOBAL)
     last_version_file = "buildpack_ruby_version"
     last_version      = nil
-    last_version      = @metadata.read(last_version_file).strip if @metadata.exists?(last_version_file)
+    last_version      = metadata.read(last_version_file).strip if metadata.exists?(last_version_file)
     # New logic, running in parallel to old logic for reporting differences
     lockfile_ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
-      ruby: @gemfile_lock.ruby,
+      ruby: gemfile_lock.ruby,
       last_version: last_version
     )
-    @report.capture(
+    report.capture(
       "gemfile_lock.ruby_version.version" => lockfile_ruby_version.ruby_version,
       "gemfile_lock.ruby_version.engine" => lockfile_ruby_version.engine,
       "gemfile_lock.ruby_version.engine.version" => lockfile_ruby_version.engine_version,

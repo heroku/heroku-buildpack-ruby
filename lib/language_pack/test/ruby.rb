@@ -7,7 +7,11 @@ class LanguagePack::Ruby
   def compile
     remove_vendor_bundle
     warn_bad_binstubs
-    @ruby_version = get_ruby_version
+    @ruby_version = self.class.get_ruby_version(
+      metadata: @metadata,
+      report: @report,
+      gemfile_lock: @gemfile_lock
+    )
     install_ruby(install_path: slug_vendor_ruby)
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
