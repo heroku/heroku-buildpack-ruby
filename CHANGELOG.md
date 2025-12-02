@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v332] - 2025-12-02
+
 - Ruby version is now pulled directly from `Gemfile.lock`. Previously the version was indirectly pulled
   via shelling out to `bundle platform --ruby`, which requires that the version of Bundler must be resolved
   and installed first. This new logic allows us to install the requested Ruby version before installing
@@ -1810,7 +1813,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v331...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v332...main
+[v332]: https://github.com/heroku/heroku-buildpack-ruby/compare/v331...v332
 [v331]: https://github.com/heroku/heroku-buildpack-ruby/compare/v330...v331
 [v330]: https://github.com/heroku/heroku-buildpack-ruby/compare/v329...v330
 [v329]: https://github.com/heroku/heroku-buildpack-ruby/compare/v328...v329
