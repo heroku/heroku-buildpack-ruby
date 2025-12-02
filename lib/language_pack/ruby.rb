@@ -350,7 +350,7 @@ private
     paths << yarn_preinstall_bin_path if yarn_preinstalled?
     paths << "#{File.expand_path(".")}/bin"
 
-    paths << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
+    paths << "#{gem_layer_path}/#{"vendor/bundle/bin"}" # Binstubs from bundler, eg. vendor/bundle/bin
     paths << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     paths << ENV["PATH"]
 
@@ -363,7 +363,7 @@ private
       warn("Your BUNDLE_WITHOUT contains a space, we are converting it to a colon `:` BUNDLE_WITHOUT=#{ENV["BUNDLE_WITHOUT"]}", inline: true)
     end
     ENV["BUNDLE_PATH"] = bundle_path
-    ENV["BUNDLE_BIN"] = bundler_binstubs_path
+    ENV["BUNDLE_BIN"] = "vendor/bundle/bin"
     ENV["BUNDLE_DEPLOYMENT"] = "1"
   end
 
@@ -411,7 +411,7 @@ private
       profiled_path << "#{ruby_layer_path}/vendor/#{@yarn_installer.binary_path}"
     end
     profiled_path << "$HOME/bin" # /app in production
-    profiled_path << "#{gem_layer_path}/#{bundler_binstubs_path}" # Binstubs from bundler, eg. vendor/bundle/bin
+    profiled_path << "#{gem_layer_path}/#{"vendor/bundle/bin"}" # Binstubs from bundler, eg. vendor/bundle/bin
     profiled_path << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     profiled_path << "$PATH"
 
@@ -684,10 +684,6 @@ private
       WARNING
       vendor_bundle.rmtree
     end
-  end
-
-  def bundler_binstubs_path
-    "vendor/bundle/bin"
   end
 
   def bundler_path
