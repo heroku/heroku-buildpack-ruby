@@ -339,7 +339,7 @@ private
     end
 
     paths = []
-    gem_path = "#{gem_layer_path}/#{slug_vendor_base}"
+    gem_path = "#{gem_layer_path}/#{self.class.slug_vendor_base}"
     ENV["GEM_PATH"] = gem_path
     ENV["GEM_HOME"] = gem_path
 
@@ -351,7 +351,7 @@ private
     paths << "#{File.expand_path(".")}/bin"
 
     paths << "#{gem_layer_path}/vendor/bundle/bin" # Binstubs from bundler, eg. vendor/bundle/bin
-    paths << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+    paths << "#{gem_layer_path}/#{self.class.slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     paths << ENV["PATH"]
 
     ENV["PATH"] = paths.join(":")
