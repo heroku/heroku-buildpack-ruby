@@ -105,7 +105,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
       gem_layer_path: File.expand_path("."),
-      bundle_path: "vendor/bundle",
       bundle_default_without: "development:test"
     )
     allow_git do
@@ -318,7 +317,7 @@ private
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(ruby_layer_path:, gem_layer_path:, bundle_path:, bundle_default_without:)
+  def setup_language_pack_environment(ruby_layer_path:, gem_layer_path:, bundle_default_without:)
     if ruby_version.jruby?
       ENV["PATH"] += ":bin"
       ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
@@ -362,7 +361,7 @@ private
 
       warn("Your BUNDLE_WITHOUT contains a space, we are converting it to a colon `:` BUNDLE_WITHOUT=#{ENV["BUNDLE_WITHOUT"]}", inline: true)
     end
-    ENV["BUNDLE_PATH"] = bundle_path
+    ENV["BUNDLE_PATH"] = "vendor/bundle"
     ENV["BUNDLE_BIN"] = "vendor/bundle/bin"
     ENV["BUNDLE_DEPLOYMENT"] = "1"
   end

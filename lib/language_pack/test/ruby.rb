@@ -24,7 +24,6 @@ class LanguagePack::Ruby
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
       gem_layer_path: File.expand_path("."),
-      bundle_path: "vendor/bundle",
       bundle_default_without: "development"
     )
     setup_export
