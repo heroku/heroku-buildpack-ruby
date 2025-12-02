@@ -323,7 +323,8 @@ private
       ENV["PATH"] += ":bin"
       ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
     end
-    setup_ruby_install_env(ruby_layer_path)
+    # Ruby binstub path
+    ENV["PATH"] = [File.expand_path("#{ruby_layer_path}/#{slug_vendor_ruby}/bin"), ENV["PATH"]].join(":")
 
     # By default Node can address 1.5GB of memory, a limitation it inherits from
     # the underlying v8 engine. This can occasionally cause issues during frontend
@@ -611,22 +612,6 @@ private
     ERROR
 
     io.error message
-  end
-
-  # find the ruby install path for its binstubs during build
-  # @return [String] resulting path or empty string if ruby is not vendored
-  def ruby_install_binstub_path(ruby_layer_path = ".")
-    @ruby_install_binstub_path ||=
-      if ruby_version
-        "#{ruby_layer_path}/#{slug_vendor_ruby}/bin"
-      else
-        ""
-      end
-  end
-
-  # setup the environment so we can use the vendored ruby
-  def setup_ruby_install_env(ruby_layer_path = ".")
-    ENV["PATH"] = "#{File.expand_path(ruby_install_binstub_path(ruby_layer_path))}:#{ENV["PATH"]}"
   end
 
   # installs vendored gems into the slug
