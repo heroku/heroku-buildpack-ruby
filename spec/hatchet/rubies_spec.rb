@@ -59,7 +59,8 @@ describe "Upgrading ruby apps" do
       expect(app.run("env | grep DISABLE_SPRING")).to match("DISABLE_SPRING=1")
 
       # Deploy again
-      run!(%Q{echo "ruby '#{version}'" >> Gemfile})
+      set_ruby_version(version: version)
+
       run!("git add -A; git commit -m update-ruby")
       app.push!
       expect(app.output).to match(version)

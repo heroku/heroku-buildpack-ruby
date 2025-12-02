@@ -17,12 +17,6 @@ require 'language_pack/fetcher'
 #   bundler.gem_version("railties") => "5.2.2"
 #   bundler.clean
 #
-# Also used to determine the version of Ruby that a project is using
-# based on `bundle platform --ruby`
-#
-#   bundler.ruby_version # => "ruby-2.5.1"
-#   bundler.clean
-#
 # IMPORTANT: Calling `BundlerWrapper#install` on this class mutates the environment variable
 # ENV['BUNDLE_GEMFILE']. If you're calling in a test context (or anything outside)
 # of an isolated dyno, you must call `BundlerWrapper#clean`. To reset the environment
@@ -189,46 +183,6 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def dir_name
     @dir_name
-  end
-
-  def ruby_version
-    env = { "PATH"     => "#{bundler_path}/bin:#{ENV['PATH']}",
-            "RUBYLIB"  => File.join(bundler_path, "gems", dir_name, "lib"),
-            "GEM_PATH" => "#{bundler_path}:#{ENV["GEM_PATH"]}",
-            "BUNDLE_DISABLE_VERSION_CHECK" => "true"
-          }
-    command = "bundle platform --ruby"
-
-    # Silently check for ruby version
-    output  = run_stdout(command, user_env: true, env: env).strip.lines.last
-
-    # If there's a gem in the Gemfile (i.e. syntax error) emit error
-    raise GemfileParseError.new(run("bundle check", user_env: true, env: env)) unless $?.success?
-
-    ruby_version = self.class.platform_to_version(output)
-    if ruby_version.nil? || ruby_version.empty?
-      warn(<<~WARNING, inline: true)
-        No ruby version specified in the Gemfile.lock
-
-        We could not determine the version of Ruby from your Gemfile.lock.
-
-          $ bundle platform --ruby
-          #{output}
-
-          $ bundle -v
-          #{run("bundle -v", user_env: true, env: env)}
-
-        Ensure the above command outputs the version of Ruby you expect. If you have a ruby version specified in your Gemfile, you can update the Gemfile.lock by running the following command:
-
-          $ bundle update --ruby
-
-        Make sure you commit the results to git before attempting to deploy again:
-
-          $ git add Gemfile.lock
-          $ git commit -m "update ruby version"
-      WARNING
-    end
-    ruby_version
   end
 
   def self.platform_to_version(bundle_platform_output)

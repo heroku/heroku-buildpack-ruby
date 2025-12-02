@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Ruby version is now pulled directly from `Gemfile.lock`. Previously the version was indirectly pulled
+  via shelling out to `bundle platform --ruby`, which requires that the version of Bundler must be resolved
+  and installed first. This new logic allows us to install the requested Ruby version before installing
+  bundler. (https://github.com/heroku/heroku-buildpack-ruby/pull/1665)
 
 ## [v331] - 2025-12-02
 

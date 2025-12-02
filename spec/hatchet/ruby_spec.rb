@@ -67,8 +67,14 @@ describe "Ruby apps" do
 
   describe "bad ruby version" do
     it "gives a helpful error" do
-      Hatchet::Runner.new('ruby_version_does_not_exist', allow_failure: true, stack: DEFAULT_STACK).deploy do |app|
-        expect(app.output).to match("The Ruby version you are trying to install does not exist: ruby-2.9.0.lol")
+      Hatchet::Runner.new('default_ruby', allow_failure: true, stack: DEFAULT_STACK).tap do |app|
+        app.before_deploy do
+          set_ruby_version(version: "2.9.0.lol")
+        end
+
+        app.deploy do |app|
+          expect(app.output).to match("The Ruby version you are trying to install does not exist: ruby-2.9.0.lol")
+        end
       end
     end
   end
@@ -203,59 +209,6 @@ describe "Ruby apps" do
           end
 
           expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
-        end
-      end
-    end
-  end
-
-  describe "bundler ruby version matcher" do
-    it "installs a version even when not present in the Gemfile.lock" do
-      version = "3.3.1"
-      expect(version).to_not eq(LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER)
-
-      Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK).tap do |app|
-        app.before_deploy do
-          Pathname("Gemfile").write(<<~EOF)
-            source "https://rubygems.org"
-
-            ruby "#{version}"
-
-            gem "sinatra"
-          EOF
-
-          Pathname("Gemfile.lock").write(<<~'EOF')
-            GEM
-              remote: https://rubygems.org/
-              specs:
-                mustermann (1.1.1)
-                  ruby2_keywords (~> 0.0.1)
-                rack (2.2.3)
-                rack-protection (2.2.0)
-                  rack
-                ruby2_keywords (0.0.5)
-                sinatra (2.2.0)
-                  mustermann (~> 1.0)
-                  rack (~> 2.2)
-                  rack-protection (= 2.2.0)
-                  tilt (~> 2.0)
-                tilt (2.0.10)
-
-            PLATFORMS
-              ruby
-              x86_64-darwin-20
-
-            DEPENDENCIES
-              sinatra
-          EOF
-
-        end
-
-        app.deploy do |app|
-          expect(app.output).to_not include("unbound variable")
-
-          # Intentionally different than the default ruby version
-          expect(app.output).to         match("#{version}")
-          expect(app.run("ruby -v")).to match("#{version}")
         end
       end
     end

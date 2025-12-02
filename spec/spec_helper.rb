@@ -52,7 +52,20 @@ def fixture_path(path)
 end
 
 def set_lts_ruby_version
-  Pathname("Gemfile").write("ruby '3.3.6'", mode: "a")
+  set_ruby_version(version: "3.3.6")
+end
+
+def set_ruby_version(version: )
+  # Last ruby declaration in the gemfile wins
+  Pathname("Gemfile").write("\nruby '#{version}'", mode: "a")
+
+  # Update the Gemfile.lock to match
+  contents = Pathname("Gemfile.lock").read.concat(<<~EOF)
+
+    RUBY VERSION
+       ruby #{version}p170
+  EOF
+  Pathname("Gemfile.lock").write(contents)
 end
 
 def set_bundler_version(version: )

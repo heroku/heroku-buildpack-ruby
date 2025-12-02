@@ -127,17 +127,4 @@ describe "BundlerWrapper mutates rubyopt" do
       expect(tmp_gemfile_lock_path.read).to_not match("BUNDLED")
     end
   end
-
-  describe "when executing bundler" do
-    it "handles JRuby pre gemfiles" do
-      Hatchet::App.new("jruby-minimal").in_directory_fork do |dir|
-        require "bundler"
-        Bundler.with_unbundled_env do
-          @bundler.install
-
-          expect(@bundler.ruby_version).to eq("ruby-3.4.2-p0-jruby-10.0.2.0")
-        end
-      end
-    end
-  end
 end
