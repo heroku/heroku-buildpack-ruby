@@ -5,8 +5,9 @@
 # methods or over writing methods defined here.
 class LanguagePack::Ruby
   def compile
-    remove_vendor_bundle
-    warn_bad_binstubs
+    self.class.remove_vendor_bundle(app_path: self.app_path)
+    self.class.warn_bundler_upgrade(metadata: @metadata, bundler_version: bundler.version)
+    self.class.warn_bad_binstubs(app_path: self.app_path, warn_object: self)
     @ruby_version = self.class.get_ruby_version(
       metadata: @metadata,
       report: @report,

@@ -86,9 +86,9 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def compile
-    remove_vendor_bundle
-    warn_bundler_upgrade
-    warn_bad_binstubs
+    self.class.remove_vendor_bundle(app_path: self.app_path)
+    self.class.warn_bundler_upgrade(metadata: @metadata, bundler_version: bundler.version)
+    self.class.warn_bad_binstubs(app_path: self.app_path, warn_object: self)
     @ruby_version = self.class.get_ruby_version(
       metadata: @metadata,
       report: @report,
@@ -185,10 +185,10 @@ private
   #
   # Since `ruby2.5` is not a valid binary name
   #
-  def warn_bad_binstubs
+  def self.warn_bad_binstubs(app_path: , warn_object: )
     check = LanguagePack::Helpers::BinstubCheck.new(
-      warn_object: self,
-      app_root_dir: self.app_path,
+      warn_object: warn_object,
+      app_root_dir: app_path,
     )
     check.call
   end
@@ -200,12 +200,12 @@ private
     return false
   end
 
-  def warn_bundler_upgrade
-    old_bundler_version  = @metadata.read("bundler_version").strip if @metadata.exists?("bundler_version")
+  def self.warn_bundler_upgrade(metadata: , bundler_version: )
+    old_bundler_version  = metadata.read("bundler_version").strip if metadata.exists?("bundler_version")
 
-    if old_bundler_version && old_bundler_version != bundler.version
+    if old_bundler_version && old_bundler_version != bundler_version
       warn(<<~WARNING, inline: true)
-        Your app was upgraded to bundler #{ bundler.version }.
+        Your app was upgraded to bundler #{ bundler_version }.
         Previously you had a successful deploy with bundler #{ old_bundler_version }.
 
         If you see problems related to the bundler version please refer to:
@@ -681,8 +681,8 @@ private
   # in case there are native ext.
   # users should be using `bundle pack` instead.
   # https://github.com/heroku/heroku-buildpack-ruby/issues/21
-  def remove_vendor_bundle
-    vendor_bundle = self.app_path.join("vendor").join("bundle")
+  def self.remove_vendor_bundle(app_path: )
+    vendor_bundle = app_path.join("vendor").join("bundle")
     if vendor_bundle.exist?
       warn(<<~WARNING)
         Removing `vendor/bundle`.
