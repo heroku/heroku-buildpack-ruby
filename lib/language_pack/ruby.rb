@@ -94,7 +94,14 @@ class LanguagePack::Ruby < LanguagePack::Base
       report: @report,
       gemfile_lock: @gemfile_lock
     )
-    install_ruby(install_path: slug_vendor_ruby)
+    self.class.install_ruby(
+      install_path: slug_vendor_ruby,
+      ruby_version: @ruby_version,
+      stack: @stack,
+      arch: @arch,
+      metadata: @metadata,
+      io: self
+    )
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
       gem_layer_path: File.expand_path("."),
@@ -522,20 +529,20 @@ private
 
   # install the vendored ruby
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
-  def install_ruby(install_path: )
+  def self.install_ruby(install_path: , ruby_version: , stack:, arch: , metadata:, io: )
     # Could do a compare operation to avoid re-downloading ruby
     return false unless ruby_version
 
     installer = LanguagePack::Installers::HerokuRubyInstaller.new(
       multi_arch_stacks: MULTI_ARCH_STACKS,
-      stack: @stack,
-      arch: @arch
+      stack: stack,
+      arch: arch
     )
 
     @ruby_download_check = LanguagePack::Helpers::DownloadPresence.new(
       multi_arch_stacks: MULTI_ARCH_STACKS,
       file_name: ruby_version.file_name,
-      arch: @arch
+      arch: arch
     )
     @ruby_download_check.call
 
@@ -547,9 +554,9 @@ private
     )
     @outdated_version_check.call
 
-    @metadata.write("buildpack_ruby_version", ruby_version.version_for_download)
+    metadata.write("buildpack_ruby_version", ruby_version.version_for_download)
 
-    topic "Using Ruby version: #{ruby_version.version_for_download}"
+    io.topic "Using Ruby version: #{ruby_version.version_for_download}"
     if ruby_version.default?
       warn(<<~WARNING)
         You have not declared a Ruby version in your Gemfile.
@@ -563,7 +570,7 @@ private
         For more information see:
           https://devcenter.heroku.com/articles/ruby-versions
       WARNING
-  end
+    end
 
     true
   rescue LanguagePack::Fetcher::FetchError
@@ -603,7 +610,7 @@ private
         https://devcenter.heroku.com/articles/ruby-versions
     ERROR
 
-    error message
+    io.error message
   end
 
   # find the ruby install path for its binstubs during build

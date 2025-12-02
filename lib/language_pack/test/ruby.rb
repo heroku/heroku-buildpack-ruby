@@ -13,7 +13,14 @@ class LanguagePack::Ruby
       report: @report,
       gemfile_lock: @gemfile_lock
     )
-    install_ruby(install_path: slug_vendor_ruby)
+    self.class.install_ruby(
+      install_path: slug_vendor_ruby,
+      ruby_version: @ruby_version,
+      stack: @stack,
+      arch: @arch,
+      metadata: @metadata,
+      io: self
+    )
     setup_language_pack_environment(
       ruby_layer_path: File.expand_path("."),
       gem_layer_path: File.expand_path("."),
