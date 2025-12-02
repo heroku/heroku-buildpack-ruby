@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v330] - 2025-12-02
+
 - Support `BUNDLED WITH` in `Gemfile.lock` with two spaces. This was [updated in bundler](https://github.com/ruby/rubygems/pull/9076). [#1668](https://github.com/heroku/heroku-buildpack-ruby/pull/1668)
 
 ## [v329] - 2025-11-18
@@ -1799,7 +1802,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v329...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v330...main
+[v330]: https://github.com/heroku/heroku-buildpack-ruby/compare/v329...v330
 [v329]: https://github.com/heroku/heroku-buildpack-ruby/compare/v328...v329
 [v328]: https://github.com/heroku/heroku-buildpack-ruby/compare/v327...v328
 [v327]: https://github.com/heroku/heroku-buildpack-ruby/compare/v326...v327
