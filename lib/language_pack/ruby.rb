@@ -103,8 +103,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       io: self
     )
     setup_language_pack_environment(
-      ruby_layer_path: File.expand_path("."),
-      gem_layer_path: File.expand_path("."),
+      app_path: app_path.expand_path,
       bundle_default_without: "development:test"
     )
     allow_git do
@@ -317,13 +316,13 @@ private
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(ruby_layer_path:, gem_layer_path:, bundle_default_without:)
+  def setup_language_pack_environment(app_path:, bundle_default_without:)
     if ruby_version.jruby?
       ENV["PATH"] += ":bin"
       ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
     end
     # Ruby binstub path
-    ENV["PATH"] = [File.expand_path("#{ruby_layer_path}/#{slug_vendor_ruby}/bin"), ENV["PATH"]].join(":")
+    ENV["PATH"] = [app_path.join(slug_vendor_ruby).join("bin"), ENV["PATH"]].join(":")
 
     # By default Node can address 1.5GB of memory, a limitation it inherits from
     # the underlying v8 engine. This can occasionally cause issues during frontend
@@ -338,19 +337,17 @@ private
     end
 
     paths = []
-    gem_path = "#{gem_layer_path}/#{slug_vendor_base}"
-    ENV["GEM_PATH"] = gem_path
-    ENV["GEM_HOME"] = gem_path
+    ENV["GEM_PATH"] = app_path.join(slug_vendor_base)
+    ENV["GEM_HOME"] = ENV["GEM_PATH"]
 
     ENV["DISABLE_SPRING"] = "1"
 
     # Rails has a binstub for yarn that doesn't work for all applications
     # we need to ensure that yarn comes before local bin dir for that case
     paths << yarn_preinstall_bin_path if yarn_preinstalled?
-    paths << "#{File.expand_path(".")}/bin"
-
-    paths << "#{gem_layer_path}/#{"vendor/bundle/bin"}" # Binstubs from bundler, eg. vendor/bundle/bin
-    paths << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+    paths << app_path.join("bin")
+    paths << app_path.join("vendor/bundle/bin") # Binstubs from bundler, eg. vendor/bundle/bin
+    paths << app_path.join(slug_vendor_base).join("bin")  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     paths << ENV["PATH"]
 
     ENV["PATH"] = paths.join(":")
