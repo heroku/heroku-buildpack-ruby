@@ -113,6 +113,12 @@ class LanguagePack::Ruby < LanguagePack::Base
       load_bundler_cache
       build_bundler
       post_bundler
+
+      # Rails has a binstub for yarn that doesn't work for all applications
+      # we need to ensure that yarn comes before local bin dir for that case for `rake assets:precompile`
+      if yarn_preinstalled?
+        ENV["PATH"] = "#{yarn_preinstall_bin_path}:#{ENV["PATH"]}"
+      end
       create_database_yml
       install_binaries
       run_assets_precompile_rake_task
@@ -344,11 +350,6 @@ private
     ENV["GEM_HOME"] = gem_path
 
     ENV["DISABLE_SPRING"] = "1"
-
-    # Rails has a binstub for yarn that doesn't work for all applications
-    # we need to ensure that yarn comes before local bin dir for that case
-    paths << yarn_preinstall_bin_path if yarn_preinstalled?
-    paths << "#{File.expand_path(".")}/bin"
 
     paths << "#{gem_layer_path}/vendor/bundle/bin" # Binstubs from bundler, eg. vendor/bundle/bin
     paths << "#{gem_layer_path}/#{self.class.slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
