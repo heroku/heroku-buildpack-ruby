@@ -40,7 +40,7 @@ module LanguagePack
           :engine_version
 
         def initialize(contents: , report: HerokuBuildReport::GLOBAL)
-          if match = contents.match(/^RUBY VERSION(\r?\n)   ruby (?<version>\d+\.\d+\.\d+)((\-|\.)(?<pre>\S*))?/m)
+          if match = contents.match(/^RUBY VERSION(\r?\n) {2,3}ruby (?<version>\d+\.\d+\.\d+)((\-|\.)(?<pre>\S*))?/m)
             @pre = match[:pre]
             @empty = false
             @ruby_version = match[:version]
@@ -56,7 +56,7 @@ module LanguagePack
             @ruby_version = nil
           end
 
-          if jruby = contents.to_s.match(/^RUBY VERSION(\r?\n)   ruby [^\(]*\(jruby (?<version>(\d+|\.)+)\)/m)
+          if jruby = contents.to_s.match(/^RUBY VERSION(\r?\n) {2,3}ruby [^\(]*\(jruby (?<version>(\d+|\.)+)\)/m)
             @engine = :jruby
             @engine_version = jruby[:version]
           else
@@ -75,7 +75,7 @@ module LanguagePack
         attr_reader :version
 
         def initialize(contents: , report: HerokuBuildReport::GLOBAL)
-          if match = contents.match(/^BUNDLED WITH(\r?\n)   (?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m)
+          if match = contents.match(/^BUNDLED WITH(\r?\n) {2,3}(?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m)
             @empty = false
             @version = match[:version]
           else

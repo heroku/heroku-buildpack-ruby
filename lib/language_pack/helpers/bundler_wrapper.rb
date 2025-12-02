@@ -76,7 +76,7 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n)   (?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m
+  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n) {2,3}(?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m
 
   class GemfileParseError < BuildpackError
     def initialize(error)
@@ -239,7 +239,7 @@ class LanguagePack::Helpers::BundlerWrapper
     topic("Removing BUNDLED WITH version in the Gemfile.lock")
     contents = File.read(@gemfile_lock_path, mode: "rt")
     File.open(@gemfile_lock_path, "w") do |f|
-      f.write contents.sub(/^BUNDLED WITH$(\r?\n)   (?<major>\d+)\.\d+\.\d+/m, '')
+      f.write contents.sub(/^BUNDLED WITH$(\r?\n) {2,3}(?<major>\d+)\.\d+\.\d+/m, '')
     end
   end
 
