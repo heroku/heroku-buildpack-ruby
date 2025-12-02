@@ -995,13 +995,17 @@ private
     !node_js_preinstalled?
   end
 
-  # Example: tmp/build_8523f77fb96a956101d00988dfeed9d4/.heroku/yarn/bin/ (without the `yarn` at the end)
   def yarn_preinstall_bin_path
+    self.class.yarn_preinstall_bin_path
+  end
+
+  # Example: tmp/build_8523f77fb96a956101d00988dfeed9d4/.heroku/yarn/bin/ (without the `yarn` at the end)
+  def self.yarn_preinstall_bin_path
     (yarn_preinstall_binary_path || "").chomp("/yarn")
   end
 
   # Example `tmp/build_8523f77fb96a956101d00988dfeed9d4/.heroku/yarn/bin/yarn`
-  def yarn_preinstall_binary_path
+  def self.yarn_preinstall_binary_path
     return @yarn_preinstall_binary_path if defined?(@yarn_preinstall_binary_path)
 
     path = run("which yarn").strip
@@ -1013,11 +1017,11 @@ private
   end
 
   def yarn_preinstalled?
-    yarn_preinstall_binary_path
+    self.class.yarn_preinstalled?
   end
 
-  def yarn_not_preinstalled?
-    !yarn_preinstalled?
+  def self.yarn_preinstalled?
+    self.yarn_preinstall_binary_path
   end
 
   def run_assets_precompile_rake_task
