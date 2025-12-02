@@ -42,21 +42,29 @@ class LanguagePack::Helpers::BundlerWrapper
   BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.23"
   BLESSED_BUNDLER_VERSIONS["2.6"] = "2.6.9"
   BLESSED_BUNDLER_VERSIONS["2.7"] = "2.7.2"
+  BLESSED_BUNDLER_VERSIONS["4.0"] = "4.0.0.beta2"
 
   SORTED_KEYS = BLESSED_BUNDLER_VERSIONS.keys.map { |k| Gem::Version.new(k) }.sort
-  SMALLEST = SORTED_KEYS.first.to_s
-  LARGEST = SORTED_KEYS.last.to_s
+  BUNDLER_2_SORTED_KEYS = SORTED_KEYS.select { |k| k.segments.first == 2 }
+  BUNDLER_2_SMALLEST = BUNDLER_2_SORTED_KEYS.first.to_s
+  BUNDLER_2_LARGEST = BUNDLER_2_SORTED_KEYS.last.to_s
+
+  BUNDLER_4_SORTED_KEYS = SORTED_KEYS.select { |k| k.segments.first == 4 }
+  BUNDLER_4_SMALLEST = BUNDLER_4_SORTED_KEYS.first.to_s
+  BUNDLER_4_LARGEST = BUNDLER_4_SORTED_KEYS.last.to_s
 
   DEFAULT_VERSION = BLESSED_BUNDLER_VERSIONS["2.3"]
 
   # Convert arbitrary `<Major>.<Minor>.x` versions
   BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
     case Gem::Version.new(key).segments.first
+    when 4
+      hash[BUNDLER_4_LARGEST]
     when 2
-      if Gem::Version.new(key) > Gem::Version.new(LARGEST)
-        hash[LARGEST]
-      elsif Gem::Version.new(key) < Gem::Version.new(SMALLEST)
-        hash[SMALLEST]
+      if Gem::Version.new(key) > Gem::Version.new(BUNDLER_2_LARGEST)
+        hash[BUNDLER_2_LARGEST]
+      elsif Gem::Version.new(key) < Gem::Version.new(BUNDLER_2_SMALLEST)
+        hash[BUNDLER_2_SMALLEST]
       else
         raise UnsupportedBundlerVersion.new(hash, key)
       end

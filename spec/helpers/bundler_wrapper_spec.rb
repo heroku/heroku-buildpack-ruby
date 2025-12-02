@@ -14,7 +14,8 @@ end
 
 describe "Bundler version sorting" do
   it "sorts the keys correctly" do
-    expect(LanguagePack::Helpers::BundlerWrapper::SORTED_KEYS).to eq(["2.3", "2.4", "2.5", "2.6", "2.7"])
+    expect(LanguagePack::Helpers::BundlerWrapper::SORTED_KEYS)
+      .to eq(["2.3", "2.4", "2.5", "2.6", "2.7", "4.0"])
   end
 end
 
@@ -23,7 +24,7 @@ describe "Bundler version detection" do
     wrapper_klass = LanguagePack::Helpers::BundlerWrapper
 
     version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.2.7")
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::SMALLEST])
+    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_2_SMALLEST])
 
     version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.3.7")
     expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.3")).to be_truthy
@@ -46,7 +47,16 @@ describe "Bundler version detection" do
     expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.6"])
 
     version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.999.7")
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::LARGEST])
+    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_2_LARGEST])
+
+    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   4.0.0")
+    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_4_SMALLEST])
+
+    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   4.0.0.beta2")
+    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_4_SMALLEST])
+
+    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   4.999999.0")
+    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_4_LARGEST])
 
     expect {
       wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   3.6.7")
