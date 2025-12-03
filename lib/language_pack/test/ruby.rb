@@ -21,7 +21,7 @@ class LanguagePack::Ruby
       metadata: @metadata,
       io: self
     )
-    setup_language_pack_environment(
+    self.class.setup_language_pack_environment(
       app_path: self.app_path.expand_path,
       ruby_version: @ruby_version,
       user_env_hash: self.user_env_hash,

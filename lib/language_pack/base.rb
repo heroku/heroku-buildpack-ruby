@@ -119,9 +119,6 @@ class LanguagePack::Base
 
 private ##################################
 
-  # sets up the environment variables for the build process
-  def setup_language_pack_environment
-  end
 
   def add_to_profiled(string, filename: "ruby.sh", mode: "a")
     profiled_path = "#{app_path}/.profile.d/"

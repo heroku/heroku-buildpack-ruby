@@ -102,7 +102,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       metadata: @metadata,
       io: self
     )
-    setup_language_pack_environment(
+    self.class.setup_language_pack_environment(
       app_path: app_path.expand_path,
       user_env_hash: self.user_env_hash,
       ruby_version: @ruby_version,
@@ -320,7 +320,7 @@ private
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version:, ruby_install_path: , default_config_vars: , user_env_hash: )
+  def self.setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version:, ruby_install_path: , default_config_vars: , user_env_hash: )
     if ruby_version.jruby?
       ENV["PATH"] += ":bin"
       ENV["JRUBY_OPTS"] = ENV["JRUBY_BUILD_OPTS"] ||
