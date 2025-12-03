@@ -32,7 +32,14 @@ class LanguagePack::Ruby
     setup_export
     allow_git do
       self.class.install_bundler_in_app(slug_vendor_base)
-      load_bundler_cache
+      load_bundler_cache(
+        cache: @cache,
+        metadata: @metadata,
+        stack: @stack,
+        bundler_cache: @bundler_cache,
+        bundler_version: bundler.version,
+        io: self
+      )
       build_bundler
       post_bundler
       create_database_yml

@@ -112,8 +112,17 @@ class LanguagePack::Ruby < LanguagePack::Base
     )
     allow_git do
       self.class.install_bundler_in_app(slug_vendor_base)
-      load_bundler_cache
+      load_bundler_cache(
+        cache: @cache,
+        metadata: @metadata,
+        stack: @stack,
+        bundler_cache: @bundler_cache,
+        bundler_version: bundler.version,
+        io: self
+      )
       build_bundler
+      # bundle_list is called in build_bundler
+
       post_bundler
       create_database_yml
       install_binaries
@@ -1000,7 +1009,7 @@ private
     "vendor/bundle"
   end
 
-  def load_bundler_cache
+  def load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, io: )
     cache.load "vendor"
 
     full_ruby_version       = run_stdout(%q(ruby -v)).strip
@@ -1015,33 +1024,33 @@ private
     # bundle clean does not remove binstubs
     FileUtils.rm_rf("vendor/bundler/bin")
 
-    old_rubygems_version = @metadata.read(ruby_version_cache).strip if @metadata.exists?(ruby_version_cache)
-    old_stack = @metadata.read(stack_cache).strip if @metadata.exists?(stack_cache)
+    old_rubygems_version = metadata.read(ruby_version_cache).strip if metadata.exists?(ruby_version_cache)
+    old_stack = metadata.read(stack_cache).strip if metadata.exists?(stack_cache)
 
-    stack_change  = old_stack != @stack
+    stack_change  = old_stack != stack
     convert_stack = @bundler_cache.old?
-    @bundler_cache.convert_stack(stack_change) if convert_stack
+    bundler_cache.convert_stack(stack_change) if convert_stack
     if !new_app? && stack_change
-      puts "Purging Cache. Changing stack from #{old_stack} to #{@stack}"
+      io.puts "Purging Cache. Changing stack from #{old_stack} to #{stack}"
       purge_bundler_cache(old_stack)
     elsif !new_app? && !convert_stack
-      @bundler_cache.load
+      bundler_cache.load
     end
 
-    if (@bundler_cache.exists? || @bundler_cache.old?) &&
-        @metadata.exists?(ruby_version_cache) &&
-        full_ruby_version != @metadata.read(ruby_version_cache).strip
-      puts "Ruby version change detected. Clearing bundler cache."
-      puts "Old: #{@metadata.read(ruby_version_cache).strip}"
-      puts "New: #{full_ruby_version}"
+    if (bundler_cache.exists? || bundler_cache.old?) &&
+        metadata.exists?(ruby_version_cache) &&
+        full_ruby_version != metadata.read(ruby_version_cache).strip
+      io.puts "Ruby version change detected. Clearing bundler cache."
+      io.puts "Old: #{metadata.read(ruby_version_cache).strip}"
+      io.puts "New: #{full_ruby_version}"
       purge_bundler_cache
     end
 
-    @metadata.write(ruby_version_cache, full_ruby_version)
-    @metadata.write(buildpack_version_cache, BUILDPACK_VERSION)
-    @metadata.write(bundler_version_cache, bundler.version)
-    @metadata.write(rubygems_version_cache, rubygems_version)
-    @metadata.write(stack_cache, @stack)
+    metadata.write(ruby_version_cache, full_ruby_version)
+    metadata.write(buildpack_version_cache, BUILDPACK_VERSION)
+    metadata.write(bundler_version_cache, bundler_version)
+    metadata.write(rubygems_version_cache, rubygems_version)
+    metadata.write(stack_cache, stack)
   end
 
   def purge_bundler_cache(stack = nil)
