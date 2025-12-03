@@ -25,7 +25,8 @@ class LanguagePack::Ruby
       app_path: self.app_path.expand_path,
       ruby_version: @ruby_version,
       ruby_install_path: slug_vendor_ruby,
-      bundle_default_without: "development"
+      bundle_default_without: "development",
+      default_config_vars: self.default_config_vars
     )
     setup_export
     allow_git do

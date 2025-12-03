@@ -106,7 +106,8 @@ class LanguagePack::Ruby < LanguagePack::Base
       app_path: app_path.expand_path,
       ruby_version: @ruby_version,
       ruby_install_path: slug_vendor_ruby,
-      bundle_default_without: "development:test"
+      bundle_default_without: "development:test",
+      default_config_vars: self.default_config_vars
     )
     allow_git do
       install_bundler_in_app(slug_vendor_base)
@@ -318,7 +319,7 @@ private
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version:, ruby_install_path: )
+  def setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version:, ruby_install_path: , default_config_vars: )
     if ruby_version.jruby?
       ENV["PATH"] += ":bin"
       ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
