@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v333] - 2025-12-03
+
 - Ruby apps using bundler 4.0.x will now receive bundler 4.0.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/1677)
 
 ## [v332] - 2025-12-02
@@ -1814,7 +1817,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v332...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v333...main
+[v333]: https://github.com/heroku/heroku-buildpack-ruby/compare/v332...v333
 [v332]: https://github.com/heroku/heroku-buildpack-ruby/compare/v331...v332
 [v331]: https://github.com/heroku/heroku-buildpack-ruby/compare/v330...v331
 [v330]: https://github.com/heroku/heroku-buildpack-ruby/compare/v329...v330
