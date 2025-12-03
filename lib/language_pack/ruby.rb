@@ -337,7 +337,7 @@ private
     end
 
     paths = []
-    ENV["GEM_PATH"] = app_path.join(slug_vendor_base)
+    ENV["GEM_PATH"] = app_path.join(slug_vendor_base).to_s
     ENV["GEM_HOME"] = ENV["GEM_PATH"]
 
     ENV["DISABLE_SPRING"] = "1"
@@ -345,9 +345,9 @@ private
     # Rails has a binstub for yarn that doesn't work for all applications
     # we need to ensure that yarn comes before local bin dir for that case
     paths << yarn_preinstall_bin_path if yarn_preinstalled?
-    paths << app_path.join("bin")
-    paths << app_path.join("vendor/bundle/bin") # Binstubs from bundler, eg. vendor/bundle/bin
-    paths << app_path.join(slug_vendor_base).join("bin")  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+    paths << app_path.join("bin").to_s
+    paths << app_path.join("vendor/bundle/bin").to_s # Binstubs from bundler, eg. vendor/bundle/bin
+    paths << app_path.join(slug_vendor_base).join("bin").to_s  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     paths << ENV["PATH"]
 
     ENV["PATH"] = paths.join(":")
