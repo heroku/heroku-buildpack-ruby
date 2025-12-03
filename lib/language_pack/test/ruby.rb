@@ -32,7 +32,8 @@ class LanguagePack::Ruby
     setup_export
     allow_git do
       self.class.install_bundler_in_app(slug_vendor_base)
-      load_bundler_cache(
+      self.class.load_bundler_cache(
+        new_app: new_app?,
         cache: @cache,
         metadata: @metadata,
         stack: @stack,

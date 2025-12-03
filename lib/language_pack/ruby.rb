@@ -112,7 +112,8 @@ class LanguagePack::Ruby < LanguagePack::Base
     )
     allow_git do
       self.class.install_bundler_in_app(slug_vendor_base)
-      load_bundler_cache(
+      self.class.load_bundler_cache(
+        new_app: new_app?,
         cache: @cache,
         metadata: @metadata,
         stack: @stack,
@@ -1009,7 +1010,7 @@ private
     "vendor/bundle"
   end
 
-  def load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, io: )
+  def self.load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, io: , new_app:)
     cache.load "vendor"
 
     full_ruby_version       = `ruby -v 2>/dev/null`.strip
@@ -1030,10 +1031,10 @@ private
     stack_change  = old_stack != stack
     convert_stack = bundler_cache.old?
     bundler_cache.convert_stack(stack_change) if convert_stack
-    if !new_app? && stack_change
+    if !new_app && stack_change
       io.puts "Purging Cache. Changing stack from #{old_stack} to #{stack}"
-      purge_bundler_cache(old_stack)
-    elsif !new_app? && !convert_stack
+      purge_bundler_cache(bundler_cache: bundler_cache, stack: old_stack)
+    elsif !new_app && !convert_stack
       bundler_cache.load
     end
 
@@ -1043,7 +1044,7 @@ private
       io.puts "Ruby version change detected. Clearing bundler cache."
       io.puts "Old: #{metadata.read(ruby_version_cache).strip}"
       io.puts "New: #{full_ruby_version}"
-      purge_bundler_cache
+      purge_bundler_cache(bundler_cache: bundler_cache, stack: nil)
     end
 
     metadata.write(ruby_version_cache, full_ruby_version)
@@ -1053,10 +1054,10 @@ private
     metadata.write(stack_cache, stack)
   end
 
-  def purge_bundler_cache(stack = nil)
-    @bundler_cache.clear(stack)
+  def self.purge_bundler_cache(bundler_cache: , stack:  nil)
+    bundler_cache.clear(stack)
     # need to reinstall language pack gems
-    self.class.install_bundler_in_app(slug_vendor_base)
+    install_bundler_in_app(slug_vendor_base)
   end
 
   # writes ERB based database.yml for Rails. The database.yml uses the DATABASE_URL from the environment during runtime.
