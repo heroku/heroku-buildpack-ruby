@@ -121,7 +121,11 @@ class LanguagePack::Ruby < LanguagePack::Base
         bundler_version: bundler.version,
         io: self
       )
-      build_bundler(app_path: self.app_path, io: self)
+      build_bundler(
+        app_path: self.app_path,
+        io: self,
+        bundler_cache: @bundler_cache,
+      )
       # bundle_list is called in build_bundler
 
       post_bundler
@@ -705,7 +709,7 @@ private
   end
 
   # runs bundler to install the dependencies
-  def build_bundler(app_path: , io:)
+  def build_bundler(app_path: , io:, bundler_cache: )
     if app_path.join(".bundle/config").exist?
       warn(<<~WARNING, inline: true)
         You have the `.bundle/config` file checked into your repository
@@ -749,7 +753,7 @@ private
       io.puts "Bundle completed (#{"%.2f" % bundle_time}s)"
       io.puts "Cleaning up the bundler cache."
       pipe("bundle clean", out: "2> /dev/null", user_env: true, env: env_vars)
-      @bundler_cache.store
+      bundler_cache.store
 
       # Keep gem cache out of the slug
       FileUtils.rm_rf("#{slug_vendor_base}/cache")
