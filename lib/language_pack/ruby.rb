@@ -738,10 +738,8 @@ private
     pwd = Dir.pwd
     bundler_path = "#{pwd}/#{slug_vendor_base}/gems/#{bundler.dir_name}/lib"
 
-    # we need to set BUNDLE_CONFIG and BUNDLE_GEMFILE for
-    # codon since it uses bundler.
-    env_vars["BUNDLE_GEMFILE"] = "#{pwd}/Gemfile"
-    env_vars["BUNDLE_CONFIG"] = "#{pwd}/.bundle/config"
+    env_vars["BUNDLE_GEMFILE"] = app_path.join("Gemfile").to_s
+    env_vars["BUNDLE_CONFIG"] = app_path.join("/.bundle/config").to_s
     env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
     env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
 
