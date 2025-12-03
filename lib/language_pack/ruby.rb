@@ -758,6 +758,7 @@ private
       FileUtils.rm_rf("#{slug_vendor_base}/cache")
 
       bundle_list(
+        io: io,
         stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
       )
     else
