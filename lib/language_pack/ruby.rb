@@ -105,6 +105,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     setup_language_pack_environment(
       app_path: app_path.expand_path,
       ruby_version: @ruby_version,
+      ruby_install_path: slug_vendor_ruby,
       bundle_default_without: "development:test"
     )
     allow_git do
@@ -317,13 +318,13 @@ private
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version: )
+  def setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version:, ruby_install_path: )
     if ruby_version.jruby?
       ENV["PATH"] += ":bin"
       ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
     end
     # Ruby binstub path
-    ENV["PATH"] = [app_path.join(slug_vendor_ruby).join("bin"), ENV["PATH"]].join(":")
+    ENV["PATH"] = [app_path.join(ruby_install_path).join("bin"), ENV["PATH"]].join(":")
 
     # By default Node can address 1.5GB of memory, a limitation it inherits from
     # the underlying v8 engine. This can occasionally cause issues during frontend

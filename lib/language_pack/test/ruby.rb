@@ -24,6 +24,7 @@ class LanguagePack::Ruby
     setup_language_pack_environment(
       app_path: self.app_path.expand_path,
       ruby_version: @ruby_version,
+      ruby_install_path: slug_vendor_ruby,
       bundle_default_without: "development"
     )
     setup_export
