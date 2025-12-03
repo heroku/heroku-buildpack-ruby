@@ -36,7 +36,7 @@ class LanguagePack::Helpers::BundlerWrapper
   BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.23"
   BLESSED_BUNDLER_VERSIONS["2.6"] = "2.6.9"
   BLESSED_BUNDLER_VERSIONS["2.7"] = "2.7.2"
-  BLESSED_BUNDLER_VERSIONS["4.0"] = "4.0.0.beta2"
+  BLESSED_BUNDLER_VERSIONS["4.0"] = "4.0.0"
 
   SORTED_KEYS = BLESSED_BUNDLER_VERSIONS.keys.map { |k| Gem::Version.new(k) }.sort
   BUNDLER_2_SORTED_KEYS = SORTED_KEYS.select { |k| k.segments.first == 2 }
