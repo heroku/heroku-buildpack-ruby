@@ -41,7 +41,10 @@ class LanguagePack::Ruby
         bundler_version: bundler.version,
         io: self
       )
-      build_bundler
+      build_bundler(
+        app_path: self.app_path,
+        io: self
+      )
       post_bundler
       create_database_yml
       install_binaries

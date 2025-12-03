@@ -121,7 +121,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         bundler_version: bundler.version,
         io: self
       )
-      build_bundler
+      build_bundler(app_path: self.app_path, io: self)
       # bundle_list is called in build_bundler
 
       post_bundler
@@ -173,8 +173,9 @@ class LanguagePack::Ruby < LanguagePack::Base
   # Checks if the information from `bundle list` matches information collected from bundler internals
   # if not, emits the difference. The goal is to eventually replace requiring bundler internals with
   # information retrieved from `bundle list`.
-  private def bundle_list(stream_to_user: )
+  private def bundle_list(stream_to_user: , io:)
     bundle_list = LanguagePack::Helpers::BundleList::HumanCommand.new(
+      io: io,
       stream_to_user: stream_to_user
     ).call
     differences = bundler.specs.filter_map do |(name, spec)|
@@ -704,8 +705,8 @@ private
   end
 
   # runs bundler to install the dependencies
-  def build_bundler
-    if File.exist?("#{Dir.pwd}/.bundle/config")
+  def build_bundler(app_path: , io:)
+    if app_path.join(".bundle/config").exist?
       warn(<<~WARNING, inline: true)
         You have the `.bundle/config` file checked into your repository
           It contains local state like the location of the installed bundle
@@ -724,7 +725,7 @@ private
     bundle_command << "BUNDLE_DEPLOYMENT=#{ENV["BUNDLE_DEPLOYMENT"]} " if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
     bundle_command << "bundle install -j4"
 
-    topic("Installing dependencies using bundler #{bundler.version}")
+    io.topic("Installing dependencies using bundler #{bundler.version}")
 
     bundler_output = String.new("")
     bundle_time = nil
@@ -739,14 +740,14 @@ private
     env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
     env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
 
-    puts "Running: #{bundle_command}"
+    io.puts "Running: #{bundle_command}"
     bundle_time = Benchmark.realtime do
       bundler_output << pipe("#{bundle_command} --no-clean", out: "2>&1", env: env_vars, user_env: true)
     end
 
     if $?.success?
-      puts "Bundle completed (#{"%.2f" % bundle_time}s)"
-      puts "Cleaning up the bundler cache."
+      io.puts "Bundle completed (#{"%.2f" % bundle_time}s)"
+      io.puts "Cleaning up the bundler cache."
       pipe("bundle clean", out: "2> /dev/null", user_env: true, env: env_vars)
       @bundler_cache.store
 
@@ -758,7 +759,7 @@ private
       )
     else
       error_message = "Failed to install gems via Bundler."
-      puts "Bundler Output: #{bundler_output}"
+      io.puts "Bundler Output: #{bundler_output}"
       if bundler_output.match(/An error occurred while installing sqlite3/)
         error_message += <<~ERROR
 
@@ -784,7 +785,7 @@ private
         ERROR
       end
 
-      error error_message
+      io.error error_message
     end
   end
 
