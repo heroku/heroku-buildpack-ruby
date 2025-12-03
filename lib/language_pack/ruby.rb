@@ -121,13 +121,12 @@ class LanguagePack::Ruby < LanguagePack::Base
         bundler_version: bundler.version,
         io: self
       )
-      build_bundler(
+      self.class.build_bundler(
         app_path: self.app_path,
         io: self,
         bundler_cache: @bundler_cache,
         bundler_version: bundler.version,
       )
-      # bundle_list is called in build_bundler
 
       post_bundler
       create_database_yml
@@ -178,7 +177,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   # Checks if the information from `bundle list` matches information collected from bundler internals
   # if not, emits the difference. The goal is to eventually replace requiring bundler internals with
   # information retrieved from `bundle list`.
-  private def bundle_list(stream_to_user: , io:)
+  def self.bundle_list(stream_to_user: , io:, report: HerokuBuildReport::GLOBAL)
     bundle_list = LanguagePack::Helpers::BundleList::HumanCommand.new(
       io: io,
       stream_to_user: stream_to_user
@@ -192,7 +191,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     end
 
     if !differences.empty?
-      @report.capture(
+      report.capture(
         "bundle_list.differences" => differences.join(", "),
       )
     end
@@ -710,7 +709,7 @@ private
   end
 
   # runs bundler to install the dependencies
-  def build_bundler(app_path: , io:, bundler_cache: , bundler_version: )
+  def self.build_bundler(app_path: , io:, bundler_cache: , bundler_version: )
     if app_path.join(".bundle/config").exist?
       warn(<<~WARNING, inline: true)
         You have the `.bundle/config` file checked into your repository

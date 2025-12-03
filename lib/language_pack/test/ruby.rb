@@ -41,7 +41,7 @@ class LanguagePack::Ruby
         bundler_version: bundler.version,
         io: self
       )
-      build_bundler(
+      self.class.build_bundler(
         app_path: self.app_path,
         io: self,
         bundler_cache: @bundler_cache,
