@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Ruby apps using bundler 4.0.x will now receive bundler 4.0.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/1677)
 
 ## [v332] - 2025-12-02
 
