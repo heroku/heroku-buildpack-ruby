@@ -104,6 +104,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     )
     setup_language_pack_environment(
       app_path: app_path.expand_path,
+      user_env_hash: self.user_env_hash,
       ruby_version: @ruby_version,
       ruby_install_path: slug_vendor_ruby,
       bundle_default_without: "development:test",
@@ -319,10 +320,13 @@ private
   end
 
   # sets up the environment variables for the build process
-  def setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version:, ruby_install_path: , default_config_vars: )
+  def setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version:, ruby_install_path: , default_config_vars: , user_env_hash: )
     if ruby_version.jruby?
       ENV["PATH"] += ":bin"
-      ENV["JRUBY_OPTS"] = env('JRUBY_BUILD_OPTS') || env('JRUBY_OPTS')
+      ENV["JRUBY_OPTS"] = ENV["JRUBY_BUILD_OPTS"] ||
+        user_env_hash["JRUBY_BUILD_OPTS"] ||
+        ENV["JRUBY_OPTS"] ||
+        user_env_hash["JRUBY_OPTS"]
     end
     # Ruby binstub path
     ENV["PATH"] = [app_path.join(ruby_install_path).join("bin"), ENV["PATH"]].join(":")
@@ -355,7 +359,7 @@ private
 
     ENV["PATH"] = paths.join(":")
 
-    ENV["BUNDLE_WITHOUT"] = env("BUNDLE_WITHOUT") || bundle_default_without
+    ENV["BUNDLE_WITHOUT"] ||= user_env_hash["BUNDLE_WITHOUT"] || bundle_default_without
     if ENV["BUNDLE_WITHOUT"].include?(' ')
       ENV["BUNDLE_WITHOUT"] = ENV["BUNDLE_WITHOUT"].tr(' ', ':')
 
