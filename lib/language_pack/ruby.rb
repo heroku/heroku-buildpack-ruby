@@ -735,8 +735,6 @@ private
     bundler_output = String.new("")
     bundle_time = nil
     env_vars = {}
-    pwd = Dir.pwd
-    bundler_path = "#{pwd}/#{slug_vendor_base}/gems/#{bundler.dir_name}/lib"
 
     env_vars["BUNDLE_GEMFILE"] = app_path.join("Gemfile").to_s
     env_vars["BUNDLE_CONFIG"] = app_path.join("/.bundle/config").to_s
