@@ -106,14 +106,6 @@ module LanguagePack
       %x{ #{command_options_to_string(command, options)} }
     end
 
-    # run a shell command and pipe stderr to /dev/null
-    # @param [String] command to be run
-    # @return [String] output of stdout
-    def run_stdout(command, options = {})
-      options[:out] ||= '2>/dev/null'
-      run(command, options)
-    end
-
     def command_options_to_string(command, options)
       options[:env] ||= {}
       options[:out] ||= "2>&1"

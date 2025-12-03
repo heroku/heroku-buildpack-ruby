@@ -1012,8 +1012,8 @@ private
   def load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, io: )
     cache.load "vendor"
 
-    full_ruby_version       = run_stdout(%q(ruby -v)).strip
-    rubygems_version        = run_stdout(%q(gem -v)).strip
+    full_ruby_version       = `ruby -v 2>/dev/null`.strip
+    rubygems_version        = `gem -v 2>/dev/null`.strip
     old_rubygems_version    = nil
     ruby_version_cache      = "ruby_version"
     buildpack_version_cache = "buildpack_version"
