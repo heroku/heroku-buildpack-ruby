@@ -125,6 +125,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         app_path: self.app_path,
         io: self,
         bundler_cache: @bundler_cache,
+        bundler_version: bundler.version,
       )
       # bundle_list is called in build_bundler
 
@@ -709,7 +710,7 @@ private
   end
 
   # runs bundler to install the dependencies
-  def build_bundler(app_path: , io:, bundler_cache: )
+  def build_bundler(app_path: , io:, bundler_cache: , bundler_version: )
     if app_path.join(".bundle/config").exist?
       warn(<<~WARNING, inline: true)
         You have the `.bundle/config` file checked into your repository
@@ -729,7 +730,7 @@ private
     bundle_command << "BUNDLE_DEPLOYMENT=#{ENV["BUNDLE_DEPLOYMENT"]} " if ENV["BUNDLE_DEPLOYMENT"] # Unset on windows since we delete the Gemfile.lock
     bundle_command << "bundle install -j4"
 
-    io.topic("Installing dependencies using bundler #{bundler.version}")
+    io.topic("Installing dependencies using bundler #{bundler_version}")
 
     bundler_output = String.new("")
     bundle_time = nil

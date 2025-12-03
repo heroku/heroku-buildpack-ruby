@@ -45,6 +45,7 @@ class LanguagePack::Ruby
         app_path: self.app_path,
         io: self,
         bundler_cache: @bundler_cache,
+        bundler_version: bundler.version,
       )
       post_bundler
       create_database_yml
