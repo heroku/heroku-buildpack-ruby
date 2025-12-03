@@ -178,25 +178,10 @@ class LanguagePack::Ruby < LanguagePack::Base
   # if not, emits the difference. The goal is to eventually replace requiring bundler internals with
   # information retrieved from `bundle list`.
   def self.bundle_list(stream_to_user: , io:, report: HerokuBuildReport::GLOBAL)
-    bundle_list = LanguagePack::Helpers::BundleList::HumanCommand.new(
+    LanguagePack::Helpers::BundleList::HumanCommand.new(
       io: io,
       stream_to_user: stream_to_user
     ).call
-    differences = bundler.specs.filter_map do |(name, spec)|
-      expected = Gem::Version.new(spec.version)
-      actual = bundle_list.gem_version(name)
-      if expected != actual
-        "#{name}: (`#{expected}` `#{actual}`)"
-      end
-    end
-
-    if !differences.empty?
-      report.capture(
-        "bundle_list.differences" => differences.join(", "),
-      )
-    end
-
-    bundle_list
   end
 
 private
