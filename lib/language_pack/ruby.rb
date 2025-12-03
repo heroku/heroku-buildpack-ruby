@@ -111,7 +111,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       default_config_vars: self.default_config_vars
     )
     allow_git do
-      install_bundler_in_app(slug_vendor_base)
+      self.class.install_bundler_in_app(slug_vendor_base)
       load_bundler_cache
       build_bundler
       post_bundler
@@ -618,7 +618,7 @@ private
   end
 
   # installs vendored gems into the slug
-  def install_bundler_in_app(bundler_dir)
+  def self.install_bundler_in_app(bundler_dir)
     FileUtils.mkdir_p(bundler_dir)
     Dir.chdir(bundler_dir) do |dir|
       `cp -R #{bundler.bundler_path}/. .`
@@ -1112,6 +1112,6 @@ private
   def purge_bundler_cache(stack = nil)
     @bundler_cache.clear(stack)
     # need to reinstall language pack gems
-    install_bundler_in_app(slug_vendor_base)
+    self.class.install_bundler_in_app(slug_vendor_base)
   end
 end
