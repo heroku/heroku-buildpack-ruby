@@ -1028,7 +1028,7 @@ private
     old_stack = metadata.read(stack_cache).strip if metadata.exists?(stack_cache)
 
     stack_change  = old_stack != stack
-    convert_stack = @bundler_cache.old?
+    convert_stack = bundler_cache.old?
     bundler_cache.convert_stack(stack_change) if convert_stack
     if !new_app? && stack_change
       io.puts "Purging Cache. Changing stack from #{old_stack} to #{stack}"
