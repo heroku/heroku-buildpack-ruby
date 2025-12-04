@@ -1026,7 +1026,7 @@ private
 
     metadata.write(ruby_version_cache, full_ruby_version)
     metadata.write("buildpack_version", BUILDPACK_VERSION)
-    metadata.write(bundler_version_cache, bundler_version)
+    metadata.write("bundler_version", bundler_version)
     metadata.write("rubygems_version", `gem -v 2>/dev/null`.strip)
     metadata.write(stack_cache, stack)
   end
