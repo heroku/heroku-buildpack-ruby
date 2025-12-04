@@ -998,8 +998,6 @@ private
 
     full_ruby_version       = `ruby -v 2>/dev/null`.strip
     ruby_version_cache      = "ruby_version"
-    buildpack_version_cache = "buildpack_version"
-    bundler_version_cache   = "bundler_version"
     stack_cache             = "stack"
 
     # bundle clean does not remove binstubs
@@ -1027,7 +1025,7 @@ private
     end
 
     metadata.write(ruby_version_cache, full_ruby_version)
-    metadata.write(buildpack_version_cache, BUILDPACK_VERSION)
+    metadata.write("buildpack_version", BUILDPACK_VERSION)
     metadata.write(bundler_version_cache, bundler_version)
     metadata.write("rubygems_version", `gem -v 2>/dev/null`.strip)
     metadata.write(stack_cache, stack)
