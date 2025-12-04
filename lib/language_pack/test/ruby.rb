@@ -28,7 +28,6 @@ class LanguagePack::Ruby
       bundle_default_without: "development",
       default_config_vars: self.default_config_vars
     )
-    setup_export
     allow_git do
       self.class.install_bundler_in_app(slug_vendor_base)
       self.class.load_bundler_cache(
@@ -54,6 +53,7 @@ class LanguagePack::Ruby
       prepare_tests
     end
     setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
+    setup_export
     super
   end
 
