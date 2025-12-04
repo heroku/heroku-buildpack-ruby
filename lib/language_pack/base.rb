@@ -84,10 +84,6 @@ class LanguagePack::Base
       puts warning
       Kernel.puts ""
     end
-    if deprecations.any?
-      topic "DEPRECATIONS:"
-      puts @deprecations.join("\n")
-    end
     Kernel.puts ""
   end
 

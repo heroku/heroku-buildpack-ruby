@@ -14,14 +14,9 @@ module LanguagePack
   module ShellHelpers
     @@user_env_hash = {}
     @@warnings      = []
-    @@deprecations  = []
 
     def warnings
       @@warnings
-    end
-
-    def deprecations
-      @@deprecations
     end
 
     def self.user_env_hash
