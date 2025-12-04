@@ -45,7 +45,7 @@ module LanguagePack::Helpers
         output = if stream_to_user
           pipe(command, user_env: true, output_object: io)
         else
-          io.run(command, user_env: true)
+          run(command, user_env: true)
         end
 
         if $?.success?
