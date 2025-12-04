@@ -997,7 +997,6 @@ private
     cache.load "vendor"
 
     full_ruby_version       = `ruby -v 2>/dev/null`.strip
-    old_rubygems_version    = nil
     ruby_version_cache      = "ruby_version"
     buildpack_version_cache = "buildpack_version"
     bundler_version_cache   = "bundler_version"
@@ -1006,7 +1005,6 @@ private
     # bundle clean does not remove binstubs
     FileUtils.rm_rf("vendor/bundler/bin")
 
-    old_rubygems_version = metadata.read(ruby_version_cache).strip if metadata.exists?(ruby_version_cache)
     old_stack = metadata.read(stack_cache).strip if metadata.exists?(stack_cache)
 
     stack_change  = old_stack != stack
