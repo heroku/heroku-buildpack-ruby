@@ -106,7 +106,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.setup_language_pack_environment(
       app_path: app_path.expand_path,
       user_env_hash: self.user_env_hash,
-      ruby_version: @ruby_version,
       bundle_default_without: "development:test",
       default_config_vars: self.default_config_vars
     )
@@ -315,7 +314,7 @@ private
   end
 
   # sets up the environment variables for the build process
-  def self.setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version:, default_config_vars:, user_env_hash: )
+  def self.setup_language_pack_environment(app_path:, bundle_default_without:, default_config_vars:, user_env_hash: )
     # By default Node can address 1.5GB of memory, a limitation it inherits from
     # the underlying v8 engine. This can occasionally cause issues during frontend
     # builds where memory use can exceed this threshold.
