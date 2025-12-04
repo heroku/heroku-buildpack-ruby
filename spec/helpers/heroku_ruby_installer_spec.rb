@@ -126,7 +126,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
 
           expect(sort_hash(report.data)).to eq(sort_hash(expected))
 
-          expect(env).to eq({ "JRUBY_OPTS" => nil, "PATH" => "#{dir.join("vendor/ruby/bin")}:priorpath:bin" })
+          expect(env).to eq({ "JRUBY_OPTS" => nil, "PATH" => "#{dir.join("vendor/ruby/bin")}:priorpath" })
         end
       end
     end

@@ -57,7 +57,6 @@ class LanguagePack::Installers::HerokuRubyInstaller
     setup_binstubs(install_dir)
 
     if ruby_version.jruby?
-      environment["PATH"] = environment["PATH"]&.+ ":bin"
       environment["JRUBY_OPTS"] = environment["JRUBY_BUILD_OPTS"] ||
         user_env_hash["JRUBY_BUILD_OPTS"] ||
         environment["JRUBY_OPTS"] ||
