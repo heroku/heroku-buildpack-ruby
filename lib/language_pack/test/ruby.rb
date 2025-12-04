@@ -7,7 +7,7 @@ class LanguagePack::Ruby
   def compile
     self.class.remove_vendor_bundle(app_path: self.app_path)
     self.class.warn_bundler_upgrade(metadata: @metadata, bundler_version: bundler.version)
-    self.class.warn_bad_binstubs(app_path: self.app_path, warn_object: self)
+    self.class.warn_bad_binstubs(app_path: self.app_path, warn_object: @warn_io)
     @ruby_version = self.class.get_ruby_version(
       metadata: @metadata,
       report: @report,
@@ -19,7 +19,7 @@ class LanguagePack::Ruby
       stack: @stack,
       arch: @arch,
       metadata: @metadata,
-      io: self
+      io: @warn_io
     )
     self.class.setup_language_pack_environment(
       app_path: self.app_path.expand_path,
@@ -39,14 +39,16 @@ class LanguagePack::Ruby
         stack: @stack,
         bundler_cache: @bundler_cache,
         bundler_version: bundler.version,
-        io: self
+        io: @warn_io
       )
       self.class.build_bundler(
         app_path: self.app_path,
-        io: self,
+        io: @warn_io,
         bundler_cache: @bundler_cache,
         bundler_version: bundler.version,
       )
+
+      @warn_io.warnings.each { |warning| self.warnings << warning }
       post_bundler
       create_database_yml
       install_binaries

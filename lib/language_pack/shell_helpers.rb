@@ -209,52 +209,65 @@ module LanguagePack
       output
     end
 
-    # display a topic message
-    # (denoted by ----->)
-    # @param [String] topic message to be displayed
-    def topic(message)
-      Kernel.puts "-----> #{message}"
-      $stdout.flush
-    end
+    module BuildOutput
+      # display a topic message
+      # (denoted by ----->)
+      # @param [String] topic message to be displayed
+      def topic(message)
+        Kernel.puts "-----> #{message}"
+        $stdout.flush
+      end
 
-    # display a message in line
-    # (indented by 6 spaces)
-    # @param [String] message to be displayed
-    def puts(message)
-      message.to_s.each_line do |line|
-        if line.end_with?("\n".freeze)
-          print "       #{line}"
-        else
-          print "       #{line}\n"
+      # display a message in line
+      # (indented by 6 spaces)
+      # @param [String] message to be displayed
+      def puts(message)
+        message.to_s.each_line do |line|
+          if line.end_with?("\n".freeze)
+            print "       #{line}"
+          else
+            print "       #{line}\n"
+          end
         end
+
+        $stdout.flush
+      rescue ArgumentError, Encoding::CompatibilityError => e
+        error_message = e.message
+        raise e if error_message !~ /invalid byte sequence/
+
+        error_message << "\n       Invalid string: #{message}"
+        raise e, error_message
       end
 
-      $stdout.flush
-    rescue ArgumentError, Encoding::CompatibilityError => e
-      error_message = e.message
-      raise e if error_message !~ /invalid byte sequence/
-
-      error_message << "\n       Invalid string: #{message}"
-      raise e, error_message
-    end
-
-    def warn(message, options = {})
-      if options.key?(:inline) ? options[:inline] : false
-        Kernel.puts ""
-        Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m" # Bold yellow
-        Kernel.puts ""
-        puts message
-        Kernel.puts ""
+      def error(message)
+        raise BuildpackError, message
       end
-      warnings << message
-    end
 
-    def error(message)
-      raise BuildpackError, message
+      # Requires a self#warnings method that returns an array
+      def warn(message, options = {})
+        if options.key?(:inline) ? options[:inline] : false
+          Kernel.puts ""
+          Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m" # Bold yellow
+          Kernel.puts ""
+          puts message
+          Kernel.puts ""
+        end
+        warnings << message
+      end
     end
+    include BuildOutput
 
-    def deprecate(message)
-      deprecations << message
+    # Prints output and stores warnings
+    class WarnIO
+      include BuildOutput
+
+      def initialize
+        @warnings = []
+      end
+
+      def warnings
+        @warnings
+      end
     end
 
     def noshellescape(string)
