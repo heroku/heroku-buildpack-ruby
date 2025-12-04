@@ -996,14 +996,14 @@ private
   def self.load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, io: , new_app:)
     cache.load "vendor"
 
-    full_ruby_version       = `ruby -v 2>/dev/null`.strip
-    ruby_version_cache      = "ruby_version"
-    stack_cache             = "stack"
+    full_ruby_version = `ruby -v 2>/dev/null`.strip
+    ruby_version_cache = "ruby_version"
+    stack_cache = "stack"
 
     # bundle clean does not remove binstubs
     FileUtils.rm_rf("vendor/bundler/bin")
 
-    old_stack = metadata.read(stack_cache).strip if metadata.exists?(stack_cache)
+    old_stack = metadata.try_read(stack_cache)
 
     stack_change  = old_stack != stack
     convert_stack = bundler_cache.old?
