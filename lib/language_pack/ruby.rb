@@ -253,13 +253,9 @@ private
   end
 
   def self.get_ruby_version(metadata: , gemfile_lock: , report: HerokuBuildReport::GLOBAL)
-    last_version_file = "buildpack_ruby_version"
-    last_version      = nil
-    last_version      = metadata.read(last_version_file).strip if metadata.exists?(last_version_file)
-    # New logic, running in parallel to old logic for reporting differences
     lockfile_ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
       ruby: gemfile_lock.ruby,
-      last_version: last_version
+      last_version: metadata.try_read("buildpack_ruby_version")
     )
     report.capture(
       "gemfile_lock.ruby_version.version" => lockfile_ruby_version.ruby_version,
