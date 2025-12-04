@@ -86,45 +86,78 @@ class LanguagePack::Ruby < LanguagePack::Base
     end
   end
 
+  def self.install_ruby_bundle_install(
+      app_path:,
+      metadata:,
+      bundler_version:,
+      warn_io:,
+      ruby_version:,
+      stack:,
+      arch:,
+      user_env_hash:,
+      default_config_vars:,
+      new_app:,
+      cache:,
+      bundler_cache:,
+      bundle_default_without:
+    )
+    remove_vendor_bundle(app_path: app_path)
+    warn_bundler_upgrade(metadata: metadata, bundler_version: bundler_version)
+    warn_bad_binstubs(app_path: app_path, warn_object: warn_io)
+    install_ruby(
+      app_path: app_path,
+      ruby_version: ruby_version,
+      stack: stack,
+      arch: arch,
+      metadata: metadata,
+      io: warn_io
+    )
+    setup_language_pack_environment(
+      app_path: app_path.expand_path,
+      user_env_hash: user_env_hash,
+      bundle_default_without: bundle_default_without,
+      default_config_vars: default_config_vars
+    )
+    install_bundler_in_app(slug_vendor_base)
+    load_bundler_cache(
+      new_app: new_app,
+      cache: cache,
+      metadata: metadata,
+      stack: stack,
+      bundler_cache: bundler_cache,
+      bundler_version: bundler_version,
+      io: warn_io
+    )
+    build_bundler(
+      app_path: app_path,
+      io: warn_io,
+      bundler_cache: bundler_cache,
+      bundler_version: bundler_version,
+    )
+  end
+
   def compile
-    self.class.remove_vendor_bundle(app_path: self.app_path)
-    self.class.warn_bundler_upgrade(metadata: @metadata, bundler_version: bundler.version)
-    self.class.warn_bad_binstubs(app_path: self.app_path, warn_object: @warn_io)
     @ruby_version = self.class.get_ruby_version(
       metadata: @metadata,
       report: @report,
       gemfile_lock: @gemfile_lock
     )
-    self.class.install_ruby(
-      app_path: self.app_path,
+    self.class.install_ruby_bundle_install(
+      app_path: app_path,
+      metadata: @metadata,
+      bundler_version: bundler.version,
+      warn_io: @warn_io,
       ruby_version: @ruby_version,
       stack: @stack,
       arch: @arch,
-      metadata: @metadata,
-      io: @warn_io
-    )
-    self.class.setup_language_pack_environment(
-      app_path: app_path.expand_path,
-      user_env_hash: self.user_env_hash,
-      bundle_default_without: "development:test",
-      default_config_vars: self.default_config_vars
-    )
-    self.class.install_bundler_in_app(slug_vendor_base)
-    self.class.load_bundler_cache(
+      user_env_hash: user_env_hash,
+      default_config_vars: default_config_vars,
       new_app: new_app?,
       cache: @cache,
-      metadata: @metadata,
-      stack: @stack,
       bundler_cache: @bundler_cache,
-      bundler_version: bundler.version,
-      io: @warn_io
+      bundle_default_without: "development:test",
     )
-    self.class.build_bundler(
-      app_path: self.app_path,
-      io: @warn_io,
-      bundler_cache: @bundler_cache,
-      bundler_version: bundler.version,
-    )
+
     @warn_io.warnings.each { |warning| self.warnings << warning }
 
     post_bundler
