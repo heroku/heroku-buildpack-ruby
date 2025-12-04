@@ -7,10 +7,11 @@ class LanguagePack::Installers::HerokuRubyInstaller
   BASE_URL = LanguagePack::Base::VENDOR_URL
 
   include LanguagePack::ShellHelpers
-  attr_reader :fetcher
+  attr_reader :fetcher, :environment
 
-  def initialize(stack: , multi_arch_stacks: , arch: , app_path: , report: HerokuBuildReport::GLOBAL)
+  def initialize(stack: , multi_arch_stacks: , arch: , app_path: , env: , report: HerokuBuildReport::GLOBAL)
     @report = report
+    @environment = env
     @app_path = Pathname.new(app_path).expand_path
     if multi_arch_stacks.include?(stack)
       @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
@@ -20,6 +21,7 @@ class LanguagePack::Installers::HerokuRubyInstaller
   end
 
   def install(ruby_version, install_dir)
+    install_dir = Pathname.new(install_dir).expand_path
     @report.capture(
       # i.e. `jruby` or `ruby`
       "ruby_version_engine" => ruby_version.engine,
@@ -53,6 +55,16 @@ class LanguagePack::Installers::HerokuRubyInstaller
 
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)
+
+    if ruby_version.jruby?
+      environment["PATH"] = environment["PATH"]&.+ ":bin"
+      environment["JRUBY_OPTS"] = environment["JRUBY_BUILD_OPTS"] ||
+        user_env_hash["JRUBY_BUILD_OPTS"] ||
+        environment["JRUBY_OPTS"] ||
+        user_env_hash["JRUBY_OPTS"]
+    end
+    # Ruby binstub path
+    environment["PATH"] = [install_dir.join("bin"), environment["PATH"]].compact.join(":")
   end
 
   def fetch_unpack(ruby_version, install_dir)

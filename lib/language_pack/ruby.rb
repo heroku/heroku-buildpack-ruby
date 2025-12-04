@@ -316,17 +316,6 @@ private
 
   # sets up the environment variables for the build process
   def self.setup_language_pack_environment(app_path:, bundle_default_without:, ruby_version:, default_config_vars:, user_env_hash: )
-    ruby_install_path = install_ruby_path(app_path: app_path, ruby_version: ruby_version)
-    if ruby_version.jruby?
-      ENV["PATH"] += ":bin"
-      ENV["JRUBY_OPTS"] = ENV["JRUBY_BUILD_OPTS"] ||
-        user_env_hash["JRUBY_BUILD_OPTS"] ||
-        ENV["JRUBY_OPTS"] ||
-        user_env_hash["JRUBY_OPTS"]
-    end
-    # Ruby binstub path
-    ENV["PATH"] = [ruby_install_path.join("bin"), ENV["PATH"]].join(":")
-
     # By default Node can address 1.5GB of memory, a limitation it inherits from
     # the underlying v8 engine. This can occasionally cause issues during frontend
     # builds where memory use can exceed this threshold.
@@ -537,7 +526,8 @@ private
       multi_arch_stacks: MULTI_ARCH_STACKS,
       stack: stack,
       arch: arch,
-      app_path: app_path
+      app_path: app_path,
+      env: ENV
     )
 
     @ruby_download_check = LanguagePack::Helpers::DownloadPresence.new(
