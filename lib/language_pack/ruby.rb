@@ -109,30 +109,28 @@ class LanguagePack::Ruby < LanguagePack::Base
       bundle_default_without: "development:test",
       default_config_vars: self.default_config_vars
     )
-    allow_git do
-      self.class.install_bundler_in_app(slug_vendor_base)
-      self.class.load_bundler_cache(
-        new_app: new_app?,
-        cache: @cache,
-        metadata: @metadata,
-        stack: @stack,
-        bundler_cache: @bundler_cache,
-        bundler_version: bundler.version,
-        io: @warn_io
-      )
-      self.class.build_bundler(
-        app_path: self.app_path,
-        io: @warn_io,
-        bundler_cache: @bundler_cache,
-        bundler_version: bundler.version,
-      )
-      @warn_io.warnings.each { |warning| self.warnings << warning }
+    self.class.install_bundler_in_app(slug_vendor_base)
+    self.class.load_bundler_cache(
+      new_app: new_app?,
+      cache: @cache,
+      metadata: @metadata,
+      stack: @stack,
+      bundler_cache: @bundler_cache,
+      bundler_version: bundler.version,
+      io: @warn_io
+    )
+    self.class.build_bundler(
+      app_path: self.app_path,
+      io: @warn_io,
+      bundler_cache: @bundler_cache,
+      bundler_version: bundler.version,
+    )
+    @warn_io.warnings.each { |warning| self.warnings << warning }
 
-      post_bundler
-      create_database_yml
-      install_binaries
-      run_assets_precompile_rake_task
-    end
+    post_bundler
+    create_database_yml
+    install_binaries
+    run_assets_precompile_rake_task
     @report.capture(
       "gem.railties_version" => bundler.gem_version('railties'),
       "gem.rack_version" => bundler.gem_version('rack')
@@ -789,14 +787,6 @@ private
 
   def database_url
     env("DATABASE_URL") if env("DATABASE_URL")
-  end
-
-  # executes the block with GIT_DIR environment variable removed since it can mess with the current working directory git thinks it's in
-  # @param [block] block to be executed in the GIT_DIR free context
-  def allow_git(&blk)
-    git_dir = ENV.delete("GIT_DIR") # can mess with bundler
-    blk.call
-    ENV["GIT_DIR"] = git_dir
   end
 
   # decides if we need to enable the dev database addon

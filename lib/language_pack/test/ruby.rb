@@ -27,30 +27,28 @@ class LanguagePack::Ruby
       bundle_default_without: "development",
       default_config_vars: self.default_config_vars
     )
-    allow_git do
-      self.class.install_bundler_in_app(slug_vendor_base)
-      self.class.load_bundler_cache(
-        new_app: new_app?,
-        cache: @cache,
-        metadata: @metadata,
-        stack: @stack,
-        bundler_cache: @bundler_cache,
-        bundler_version: bundler.version,
-        io: @warn_io
-      )
-      self.class.build_bundler(
-        app_path: self.app_path,
-        io: @warn_io,
-        bundler_cache: @bundler_cache,
-        bundler_version: bundler.version,
-      )
+    self.class.install_bundler_in_app(slug_vendor_base)
+    self.class.load_bundler_cache(
+      new_app: new_app?,
+      cache: @cache,
+      metadata: @metadata,
+      stack: @stack,
+      bundler_cache: @bundler_cache,
+      bundler_version: bundler.version,
+      io: @warn_io
+    )
+    self.class.build_bundler(
+      app_path: self.app_path,
+      io: @warn_io,
+      bundler_cache: @bundler_cache,
+      bundler_version: bundler.version,
+    )
 
-      @warn_io.warnings.each { |warning| self.warnings << warning }
-      post_bundler
-      create_database_yml
-      install_binaries
-      prepare_tests
-    end
+    @warn_io.warnings.each { |warning| self.warnings << warning }
+    post_bundler
+    create_database_yml
+    install_binaries
+    prepare_tests
     setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
     setup_export
     super
