@@ -14,7 +14,7 @@ class LanguagePack::Ruby
       gemfile_lock: @gemfile_lock
     )
     self.class.install_ruby(
-      install_path: slug_vendor_ruby,
+      app_path: self.app_path,
       ruby_version: @ruby_version,
       stack: @stack,
       arch: @arch,
@@ -25,7 +25,7 @@ class LanguagePack::Ruby
       app_path: self.app_path.expand_path,
       ruby_version: @ruby_version,
       user_env_hash: self.user_env_hash,
-      ruby_install_path: slug_vendor_ruby,
+      ruby_install_path: self.class.install_ruby_path(app_path: self.app_path, ruby_version: @ruby_version),
       bundle_default_without: "development",
       default_config_vars: self.default_config_vars
     )

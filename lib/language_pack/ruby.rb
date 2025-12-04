@@ -96,7 +96,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       gemfile_lock: @gemfile_lock
     )
     self.class.install_ruby(
-      install_path: slug_vendor_ruby,
+      app_path: self.app_path,
       ruby_version: @ruby_version,
       stack: @stack,
       arch: @arch,
@@ -107,7 +107,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       app_path: app_path.expand_path,
       user_env_hash: self.user_env_hash,
       ruby_version: @ruby_version,
-      ruby_install_path: slug_vendor_ruby,
+      ruby_install_path: self.class.install_ruby_path(app_path: self.app_path, ruby_version: @ruby_version),
       bundle_default_without: "development:test",
       default_config_vars: self.default_config_vars
     )
@@ -242,10 +242,8 @@ private
     @slug_vendor_base ||= self.class.slug_vendor_base
   end
 
-  # the relative path to the vendored ruby directory
-  # @return [String] resulting path
-  def slug_vendor_ruby
-    "vendor/#{ruby_version.version_for_download}"
+  def self.install_ruby_path(app_path: , ruby_version: )
+    app_path.join("vendor").join(ruby_version.version_for_download)
   end
 
   # fetch the ruby version from bundler
@@ -327,7 +325,7 @@ private
         user_env_hash["JRUBY_OPTS"]
     end
     # Ruby binstub path
-    ENV["PATH"] = [app_path.join(ruby_install_path).join("bin"), ENV["PATH"]].join(":")
+    ENV["PATH"] = [ruby_install_path.join("bin"), ENV["PATH"]].join(":")
 
     # By default Node can address 1.5GB of memory, a limitation it inherits from
     # the underlying v8 engine. This can occasionally cause issues during frontend
@@ -531,7 +529,7 @@ private
 
   # install the vendored ruby
   # @return [Boolean] true if it installs the vendored ruby and false otherwise
-  def self.install_ruby(install_path: , ruby_version: , stack:, arch: , metadata:, io: )
+  def self.install_ruby(app_path: , ruby_version: , stack:, arch: , metadata:, io: )
     # Could do a compare operation to avoid re-downloading ruby
     return false unless ruby_version
 
@@ -548,7 +546,7 @@ private
     )
     @ruby_download_check.call
 
-    installer.install(ruby_version, install_path)
+    installer.install(ruby_version, install_ruby_path(app_path: app_path, ruby_version: ruby_version))
 
     @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
