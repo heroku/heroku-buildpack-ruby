@@ -812,10 +812,6 @@ private
   def add_dev_database_addon
     return [] if env("HEROKU_SKIP_DATABASE_PROVISION")
 
-    pg_adapters.any? {|a| bundler.has_gem?(a) } ? ['heroku-postgresql'] : []
-  end
-
-  def pg_adapters
     [
       "pg",
       "activerecord-jdbcpostgresql-adapter",
@@ -824,7 +820,7 @@ private
       "jruby-pg",
       "rjack-jdbc-postgres",
       "tgbyte-activerecord-jdbcpostgresql-adapter"
-    ]
+    ].any? {|a| bundler.has_gem?(a) } ? ['heroku-postgresql'] : []
   end
 
   # decides if we need to install the node.js binary
