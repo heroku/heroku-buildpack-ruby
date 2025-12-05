@@ -120,7 +120,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       bundle_default_without: bundle_default_without,
       default_config_vars: default_config_vars
     )
-    install_bundler_in_app(slug_vendor_base)
+    install_bundler_in_app(ruby_version.bundler_directory)
     load_bundler_cache(
       new_app: new_app,
       cache: cache,
