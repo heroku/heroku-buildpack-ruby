@@ -266,22 +266,6 @@ private
     end
   end
 
-  # For example "vendor/bundle/ruby/2.6.0"
-  def self.slug_vendor_base
-    @slug_vendor_base ||= begin
-      command = %q(ruby -e "require 'rbconfig';puts \"vendor/bundle/#{RUBY_ENGINE}/#{RbConfig::CONFIG['ruby_version']}\"")
-      out = run_no_pipe(command, user_env: true).strip
-      error "Problem detecting bundler vendor directory: #{out}" unless $?.success?
-      out
-    end
-  end
-
-  # the relative path to the bundler directory of gems
-  # @return [String] resulting path
-  def slug_vendor_base
-    @slug_vendor_base ||= self.class.slug_vendor_base
-  end
-
   def self.install_ruby_path(app_path: , ruby_version: )
     app_path.join("vendor").join(ruby_version.version_for_download)
   end
@@ -1001,10 +985,6 @@ private
     end
 
     error msg
-  end
-
-  def bundler_cache
-    "vendor/bundle"
   end
 
   def self.load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, io: , new_app:, ruby_version: )
