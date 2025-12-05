@@ -717,10 +717,6 @@ private
     end
   end
 
-  def bundler_path
-    @bundler_path ||= "#{slug_vendor_base}/gems/#{bundler.dir_name}"
-  end
-
   # runs bundler to install the dependencies
   def self.build_bundler(app_path: , io:, bundler_cache: , bundler_version: , bundler_output: , ruby_version: )
     if app_path.join(".bundle/config").exist?
