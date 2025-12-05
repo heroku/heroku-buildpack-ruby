@@ -115,6 +115,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     )
     setup_language_pack_environment(
       app_path: app_path.expand_path,
+      ruby_version: ruby_version,
       user_env_hash: user_env_hash,
       bundle_default_without: bundle_default_without,
       default_config_vars: default_config_vars
@@ -353,7 +354,7 @@ private
   end
 
   # sets up the environment variables for the build process
-  def self.setup_language_pack_environment(app_path:, bundle_default_without:, default_config_vars:, user_env_hash: )
+  def self.setup_language_pack_environment(app_path:, ruby_version:, bundle_default_without:, default_config_vars:, user_env_hash: )
     # By default Node can address 1.5GB of memory, a limitation it inherits from
     # the underlying v8 engine. This can occasionally cause issues during frontend
     # builds where memory use can exceed this threshold.
@@ -367,7 +368,7 @@ private
     end
 
     paths = []
-    ENV["GEM_PATH"] = app_path.join(slug_vendor_base).to_s
+    ENV["GEM_PATH"] = app_path.join(ruby_version.bundler_directory).to_s
     ENV["GEM_HOME"] = ENV["GEM_PATH"]
 
     ENV["DISABLE_SPRING"] = "1"
