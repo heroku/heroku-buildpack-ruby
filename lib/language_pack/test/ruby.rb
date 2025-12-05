@@ -33,7 +33,7 @@ class LanguagePack::Ruby
         stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
     )
     @warn_io.warnings.each { |warning| self.warnings << warning }
-    post_bundler
+    post_bundler(ruby_version: @ruby_version, app_path: app_path)
     create_database_yml
     install_binaries
     prepare_tests

@@ -132,6 +132,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       io: warn_io
     )
     build_bundler(
+      ruby_version: ruby_version,
       app_path: app_path,
       io: warn_io,
       bundler_cache: bundler_cache,
@@ -170,7 +171,7 @@ class LanguagePack::Ruby < LanguagePack::Base
 
     @warn_io.warnings.each { |warning| self.warnings << warning }
 
-    post_bundler
+    post_bundler(ruby_version: @ruby_version, app_path: app_path)
     create_database_yml
     install_binaries
     run_assets_precompile_rake_task
@@ -721,7 +722,7 @@ private
   end
 
   # runs bundler to install the dependencies
-  def self.build_bundler(app_path: , io:, bundler_cache: , bundler_version: , bundler_output: )
+  def self.build_bundler(app_path: , io:, bundler_cache: , bundler_version: , bundler_output: , ruby_version: )
     if app_path.join(".bundle/config").exist?
       warn(<<~WARNING, inline: true)
         You have the `.bundle/config` file checked into your repository
@@ -763,7 +764,7 @@ private
       bundler_cache.store
 
       # Keep gem cache out of the slug
-      FileUtils.rm_rf("#{slug_vendor_base}/cache")
+      app_path.join(ruby_version.bundler_directory).join("cache").rmtree
     else
       error_message = "Failed to install gems via Bundler."
       io.puts "Bundler Output: #{bundler_output}"
@@ -796,8 +797,8 @@ private
     end
   end
 
-  def post_bundler
-    Dir[File.join(slug_vendor_base, "**", ".git")].each do |dir|
+  def post_bundler(ruby_version: , app_path: )
+    Dir[app_path.join(ruby_version.bundler_directory, "**", ".git")].each do |dir|
       FileUtils.rm_rf(dir)
     end
     bundler.clean
