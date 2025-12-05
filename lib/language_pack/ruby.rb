@@ -99,7 +99,8 @@ class LanguagePack::Ruby < LanguagePack::Base
       new_app:,
       cache:,
       bundler_cache:,
-      bundle_default_without:
+      bundle_default_without:,
+      bundler_output:
     )
     remove_vendor_bundle(app_path: app_path)
     warn_bundler_upgrade(metadata: metadata, bundler_version: bundler_version)
@@ -133,6 +134,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       io: warn_io,
       bundler_cache: bundler_cache,
       bundler_version: bundler_version,
+      bundler_output: bundler_output,
     )
   end
 
@@ -142,6 +144,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       report: @report,
       gemfile_lock: @gemfile_lock
     )
+    bundler_output = String.new
     self.class.install_ruby_bundle_install(
       app_path: app_path,
       metadata: @metadata,
@@ -156,6 +159,11 @@ class LanguagePack::Ruby < LanguagePack::Base
       cache: @cache,
       bundler_cache: @bundler_cache,
       bundle_default_without: "development:test",
+      bundler_output: bundler_output,
+    )
+    @gems = self.class.bundle_list(
+        io: @warn_io,
+        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
     )
 
     @warn_io.warnings.each { |warning| self.warnings << warning }
@@ -711,7 +719,7 @@ private
   end
 
   # runs bundler to install the dependencies
-  def self.build_bundler(app_path: , io:, bundler_cache: , bundler_version: )
+  def self.build_bundler(app_path: , io:, bundler_cache: , bundler_version: , bundler_output: )
     if app_path.join(".bundle/config").exist?
       warn(<<~WARNING, inline: true)
         You have the `.bundle/config` file checked into your repository
@@ -733,7 +741,6 @@ private
 
     io.topic("Installing dependencies using bundler #{bundler_version}")
 
-    bundler_output = String.new("")
     bundle_time = nil
     env_vars = {}
 
@@ -755,11 +762,6 @@ private
 
       # Keep gem cache out of the slug
       FileUtils.rm_rf("#{slug_vendor_base}/cache")
-
-      bundle_list(
-        io: io,
-        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
-      )
     else
       error_message = "Failed to install gems via Bundler."
       io.puts "Bundler Output: #{bundler_output}"

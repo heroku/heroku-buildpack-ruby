@@ -10,6 +10,7 @@ class LanguagePack::Ruby
       report: @report,
       gemfile_lock: @gemfile_lock
     )
+    bundler_output = String.new
     self.class.install_ruby_bundle_install(
       app_path: app_path,
       metadata: @metadata,
@@ -24,8 +25,13 @@ class LanguagePack::Ruby
       cache: @cache,
       bundler_cache: @bundler_cache,
       bundle_default_without: "development",
+      bundler_output: bundler_output,
     )
 
+    @gems = self.class.bundle_list(
+        io: @warn_io,
+        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
+    )
     @warn_io.warnings.each { |warning| self.warnings << warning }
     post_bundler
     create_database_yml
