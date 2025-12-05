@@ -440,8 +440,8 @@ private
       profiled_path << "#{ruby_layer_path}/vendor/#{@yarn_installer.binary_path}"
     end
     profiled_path << "$HOME/bin" # /app in production
-    profiled_path << "#{gem_layer_path}/#{"vendor/bundle/bin"}" # Binstubs from bundler, eg. vendor/bundle/bin
-    profiled_path << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+    profiled_path << Pathname(gem_layer_path).join("vendor/bundle/bin") # Binstubs from bundler, eg. vendor/bundle/bin
+    profiled_path << Pathname(gem_layer_path).join(ruby_version.bundler_directory, "bin") # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     profiled_path << "$PATH"
 
     set_env_override "GEM_PATH", [Pathname(gem_layer_path).join(ruby_version.bundler_directory), "$GEM_PATH"].join(":")
