@@ -122,6 +122,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     )
     install_bundler_in_app(ruby_version.bundler_directory)
     load_bundler_cache(
+      ruby_version: ruby_version,
       new_app: new_app,
       cache: cache,
       metadata: metadata,
@@ -1009,7 +1010,7 @@ private
     "vendor/bundle"
   end
 
-  def self.load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, io: , new_app:)
+  def self.load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, io: , new_app:, ruby_version: )
     cache.load "vendor"
 
     full_ruby_version = `ruby -v 2>/dev/null`.strip
@@ -1026,7 +1027,7 @@ private
     bundler_cache.convert_stack(stack_change) if convert_stack
     if !new_app && stack_change
       io.puts "Purging Cache. Changing stack from #{old_stack} to #{stack}"
-      purge_bundler_cache(bundler_cache: bundler_cache, stack: old_stack)
+      purge_bundler_cache(bundler_cache: bundler_cache, stack: old_stack, ruby_version: ruby_version)
     elsif !new_app && !convert_stack
       bundler_cache.load
     end
@@ -1037,7 +1038,7 @@ private
       io.puts "Ruby version change detected. Clearing bundler cache."
       io.puts "Old: #{metadata.read(ruby_version_cache).strip}"
       io.puts "New: #{full_ruby_version}"
-      purge_bundler_cache(bundler_cache: bundler_cache, stack: nil)
+      purge_bundler_cache(bundler_cache: bundler_cache, stack: nil, ruby_version: ruby_version)
     end
 
     metadata.write(ruby_version_cache, full_ruby_version)
@@ -1047,10 +1048,10 @@ private
     metadata.write(stack_cache, stack)
   end
 
-  def self.purge_bundler_cache(bundler_cache: , stack:  nil)
+  def self.purge_bundler_cache(bundler_cache: , stack:  nil, ruby_version: )
     bundler_cache.clear(stack)
     # need to reinstall language pack gems
-    install_bundler_in_app(slug_vendor_base)
+    install_bundler_in_app(ruby_version.bundler_directory)
   end
 
   # writes ERB based database.yml for Rails. The database.yml uses the DATABASE_URL from the environment during runtime.
