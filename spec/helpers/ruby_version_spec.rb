@@ -11,6 +11,7 @@ describe "RubyVersion" do
     expect(ruby_version.next_logical_version).to eq("ruby-2.5.1")
     expect(ruby_version.next_logical_version(2)).to eq("ruby-2.5.2")
     expect(ruby_version.next_logical_version(20)).to eq("ruby-2.5.20")
+    expect(ruby_version.bundler_directory).to eq("vendor/bundle/ruby/2.5.0")
 
     # Minor version
     expect(ruby_version.next_minor_version).to eq("ruby-2.6.0")
@@ -31,11 +32,13 @@ describe "RubyVersion" do
       )
       version = LanguagePack::RubyVersion::DEFAULT_VERSION
       version_number = LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER
+      major, minor, patch = version_number.split(".")
       expect(ruby_version.version_for_download).to eq(version)
       expect(ruby_version.engine_version).to eq(version_number)
       expect(ruby_version.to_gemfile).to eq("ruby '#{version_number}'")
       expect(ruby_version.engine).to eq(:ruby)
       expect(ruby_version.default?).to eq(true)
+      expect(ruby_version.bundler_directory).to eq("vendor/bundle/ruby/#{major}.#{minor}.0")
     end
   end
 
@@ -150,6 +153,7 @@ describe "RubyVersion" do
       expect(ruby_version.version_for_download).to eq(version)
       expect(ruby_version.engine_version).to eq(version_number)
       expect(ruby_version.engine).to eq(:ruby)
+      expect(ruby_version.bundler_directory).to eq("vendor/bundle/ruby/3.2.0")
     end
   end
 
@@ -184,6 +188,7 @@ describe "RubyVersion" do
       expect(ruby_version.version_for_download).to eq("ruby-#{version_number}-#{engine}-#{engine_version}")
       expect(ruby_version.engine_version).to eq(engine_version)
       expect(ruby_version.engine).to eq(engine)
+      expect(ruby_version.bundler_directory).to eq("vendor/bundle/jruby/2.6.0")
     end
   end
 end

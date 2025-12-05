@@ -5,27 +5,43 @@
 # methods or over writing methods defined here.
 class LanguagePack::Ruby
   def compile
-    remove_vendor_bundle
-    warn_bad_binstubs
-    @ruby_version = get_ruby_version
-    install_ruby(install_path: slug_vendor_ruby)
-    setup_language_pack_environment(
-      ruby_layer_path: File.expand_path("."),
-      gem_layer_path: File.expand_path("."),
-      bundle_path: "vendor/bundle",
-      bundle_default_without: "development"
+    @ruby_version = self.class.get_ruby_version(
+      metadata: @metadata,
+      report: @report,
+      gemfile_lock: @gemfile_lock
     )
-    setup_export
-    allow_git do
-      install_bundler_in_app(slug_vendor_base)
-      load_bundler_cache
-      build_bundler
-      post_bundler
-      create_database_yml
-      install_binaries
-      prepare_tests
-    end
-    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
+    bundler_output = String.new
+    self.class.install_ruby_bundle_install(
+      app_path: app_path,
+      metadata: @metadata,
+      bundler_version: bundler.version,
+      warn_io: @warn_io,
+      ruby_version: @ruby_version,
+      stack: @stack,
+      arch: @arch,
+      user_env_hash: user_env_hash,
+      default_config_vars: default_config_vars,
+      new_app: new_app?,
+      cache: @cache,
+      bundler_cache: @bundler_cache,
+      bundle_default_without: "development",
+      bundler_output: bundler_output,
+    )
+    @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
+      current_ruby_version: ruby_version,
+      fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(multi_arch_stacks: MULTI_ARCH_STACKS, stack: stack, arch: @arch),
+    ).call
+    @gems = self.class.bundle_list(
+        io: @warn_io,
+        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
+    )
+    @warn_io.warnings.each { |warning| self.warnings << warning }
+    post_bundler(ruby_version: @ruby_version, app_path: app_path)
+    create_database_yml
+    install_binaries
+    prepare_tests
+    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version) # $HOME is set to /app at run time
+    setup_export(app_path: app_path, ruby_version: @ruby_version)
     super
   end
 
