@@ -13,10 +13,14 @@ class LanguagePack::Installers::HerokuRubyInstaller
     @report = report
     @environment = env
     @app_path = Pathname.new(app_path).expand_path
+    @fetcher = self.class.fetcher(multi_arch_stacks: multi_arch_stacks, stack: stack, arch: arch)
+  end
+
+  def self.fetcher(multi_arch_stacks: , stack: , arch: )
     if multi_arch_stacks.include?(stack)
-      @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
+      LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
     else
-      @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack)
+      LanguagePack::Fetcher.new(BASE_URL, stack: stack)
     end
   end
 

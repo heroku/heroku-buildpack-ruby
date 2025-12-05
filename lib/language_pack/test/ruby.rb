@@ -27,7 +27,10 @@ class LanguagePack::Ruby
       bundle_default_without: "development",
       bundler_output: bundler_output,
     )
-
+    @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
+      current_ruby_version: ruby_version,
+      fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(multi_arch_stacks: MULTI_ARCH_STACKS, stack: stack, arch: @arch),
+    ).call
     @gems = self.class.bundle_list(
         io: @warn_io,
         stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
