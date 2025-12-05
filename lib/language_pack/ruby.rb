@@ -195,8 +195,8 @@ class LanguagePack::Ruby < LanguagePack::Base
     config_detect
     best_practice_warnings
     warn_outdated_ruby
-    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME") # $HOME is set to /app at run time
-    setup_export
+    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version) # $HOME is set to /app at run time
+    setup_export(app_path: app_path, ruby_version: @ruby_version)
     cleanup
     super
   rescue => e
@@ -378,7 +378,7 @@ private
     paths << yarn_preinstall_bin_path if yarn_preinstalled?
     paths << app_path.join("bin").to_s
     paths << app_path.join("vendor/bundle/bin").to_s # Binstubs from bundler, eg. vendor/bundle/bin
-    paths << app_path.join(slug_vendor_base).join("bin").to_s  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
+    paths << app_path.join(ruby_version.bundler_directory).join("bin").to_s  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     paths << ENV["PATH"]
 
     ENV["PATH"] = paths.join(":")
@@ -396,7 +396,7 @@ private
 
   # Sets up the environment variables for subsequent processes run by
   # muiltibuildpack. We can't use profile.d because $HOME isn't set up
-  def setup_export
+  def setup_export(app_path: , ruby_version: )
     paths = ENV["PATH"].split(":").map do |path|
       /^\/.*/ !~ path ? "#{app_path}/#{path}" : path
     end.join(":")
@@ -404,7 +404,7 @@ private
     # TODO ensure path exported is correct
     set_export_path "PATH", paths
 
-    gem_path = "#{app_path}/#{slug_vendor_base}"
+    gem_path = app_path.join(ruby_version.bundler_directory)
     set_export_path "GEM_PATH", gem_path
     set_export_default "LANG", "en_US.UTF-8"
 
@@ -423,7 +423,7 @@ private
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled(ruby_layer_path: , gem_layer_path: )
+  def setup_profiled(ruby_layer_path: , gem_layer_path:, ruby_version: )
     profiled_path = []
 
     default_config_vars.each do |key, value|
@@ -442,7 +442,7 @@ private
     profiled_path << "#{gem_layer_path}/#{slug_vendor_base}/bin"  # Binstubs from rubygems, eg. vendor/bundle/ruby/2.6.0/bin
     profiled_path << "$PATH"
 
-    set_env_override "GEM_PATH", "#{gem_layer_path}/#{slug_vendor_base}:$GEM_PATH"
+    set_env_override "GEM_PATH", [Pathname(gem_layer_path).join(ruby_version.bundler_directory), "$GEM_PATH"].join(":")
     set_env_override "PATH",      profiled_path.join(":")
     set_env_override "DISABLE_SPRING", "1"
 
