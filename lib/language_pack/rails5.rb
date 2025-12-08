@@ -3,7 +3,7 @@ require "language_pack"
 
 class LanguagePack::Rails5 < LanguagePack::Rails4
   # @return [Boolean] true if it's a Rails 5.x app
-  def self.use?
+  def self.use?(bundler:)
     rails_version = bundler.gem_version('railties')
     return false unless rails_version
     is_rails = rails_version >= Gem::Version.new('5.x') &&

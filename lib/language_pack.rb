@@ -22,8 +22,10 @@ module LanguagePack
 
   # detects which language pack to use
   def self.detect(app_path:, cache_path:, gemfile_lock: )
+    bundler = ::LanguagePack::Ruby.bundler
+
     pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
-      klass.use?
+      klass.use?(bundler: bundler)
     end
 
     if pack_klass
