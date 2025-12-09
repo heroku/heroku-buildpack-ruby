@@ -21,16 +21,22 @@ module LanguagePack
   end
 
   def self.call(app_path:, cache_path:, gemfile_lock: )
+    ruby_version = ::LanguagePack::Ruby.get_ruby_version(
+      metadata: metadata,
+      report: HerokuBuildReport::GLOBAL,
+      gemfile_lock: gemfile_lock
+    )
+
     if pack = LanguagePack.detect(
         app_path: app_path,
         cache_path: cache_path,
+        ruby_version: ruby_version,
         gemfile_lock: gemfile_lock
       )
       pack.topic("Compiling #{pack.name}")
       pack.compile
     end
   end
-
 
   # detects which language pack to use
   def self.detect(app_path:, cache_path:, gemfile_lock: )
@@ -44,6 +50,7 @@ module LanguagePack
       pack_klass.new(
         app_path: app_path,
         cache_path: cache_path,
+        ruby_version: ruby_version,
         gemfile_lock: gemfile_lock
       )
     else

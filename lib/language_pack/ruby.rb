@@ -30,8 +30,8 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.bundler
   end
 
-  def initialize(app_path: , cache_path: , gemfile_lock:)
-    super(app_path: app_path, cache_path: cache_path, gemfile_lock: gemfile_lock)
+  def initialize(app_path: , cache_path: , gemfile_lock:, ruby_version:)
+    super(app_path: app_path, cache_path: cache_path, gemfile_lock: gemfile_lock, ruby_version: ruby_version)
     @warn_io = WarnIO.new
     @gemfile_lock = gemfile_lock
     @node_installer = LanguagePack::Helpers::NodeInstaller.new(arch: @arch)
@@ -142,11 +142,6 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def compile
-    @ruby_version = self.class.get_ruby_version(
-      metadata: @metadata,
-      report: @report,
-      gemfile_lock: @gemfile_lock
-    )
     bundler_output = String.new
     self.class.install_ruby_bundle_install(
       app_path: app_path,

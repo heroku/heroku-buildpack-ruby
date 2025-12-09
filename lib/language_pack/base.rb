@@ -22,8 +22,9 @@ class LanguagePack::Base
 
   attr_reader :app_path, :cache, :stack
 
-  def initialize(app_path: , cache_path: , gemfile_lock: )
+  def initialize(app_path: , cache_path: , gemfile_lock: , ruby_version: )
     @app_path = app_path
+    @ruby_version = ruby_version
     @stack         = ENV.fetch("STACK")
     @cache         = LanguagePack::Cache.new(cache_path)
     @metadata      = LanguagePack::Metadata.new(cache_path: cache_path)
