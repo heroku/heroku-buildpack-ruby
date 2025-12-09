@@ -44,18 +44,22 @@ class LanguagePack::Ruby < LanguagePack::Base
     add_dev_database_addon
   end
 
+  def default_config_vars
+    self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler)
+  end
+
   # Environment variable defaults that are passed to ENV, `export` (for future buildpacks), and `.profile.d` (for launch/runtime)
   #
   # All values returned must be sourced from Heroku. User provided config vars
   # are handled in the interfaces that consume this method's result.
   #
   # @return [Hash] the ENV var like result
-  def default_config_vars
+  def self.default_config_vars(metadata:, ruby_version:, bundler: )
     @app_secret ||= begin
-      if @metadata.exists?("secret_key_base")
-        @metadata.read("secret_key_base").strip
+      if metadata.exists?("secret_key_base")
+        metadata.read("secret_key_base").strip
       else
-        SecureRandom.hex(64).tap {|secret| @metadata.write("secret_key_base", secret) }
+        SecureRandom.hex(64).tap {|secret| metadata.write("secret_key_base", secret) }
       end
     end
 
