@@ -5,36 +5,10 @@
 # methods or over writing methods defined here.
 class LanguagePack::Ruby
   def compile
-    @ruby_version = self.class.get_ruby_version(
-      metadata: @metadata,
-      report: @report,
-      gemfile_lock: @gemfile_lock
-    )
-    bundler_output = String.new
-    self.class.install_ruby_bundle_install(
-      app_path: app_path,
-      metadata: @metadata,
-      bundler_version: bundler.version,
-      warn_io: @warn_io,
-      ruby_version: @ruby_version,
-      stack: @stack,
-      arch: @arch,
-      user_env_hash: user_env_hash,
-      default_config_vars: default_config_vars,
-      new_app: new_app?,
-      cache: @cache,
-      bundler_cache: @bundler_cache,
-      bundle_default_without: "development",
-      bundler_output: bundler_output,
-    )
     @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
       fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(multi_arch_stacks: MULTI_ARCH_STACKS, stack: stack, arch: @arch),
     ).call
-    @gems = self.class.bundle_list(
-        io: @warn_io,
-        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
-    )
     @warn_io.warnings.each { |warning| self.warnings << warning }
     post_bundler(ruby_version: @ruby_version, app_path: app_path)
     create_database_yml

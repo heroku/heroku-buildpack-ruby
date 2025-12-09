@@ -144,31 +144,10 @@ class LanguagePack::Ruby < LanguagePack::Base
   end
 
   def compile
-    bundler_output = String.new
-    self.class.install_ruby_bundle_install(
-      app_path: app_path,
-      metadata: @metadata,
-      bundler_version: bundler.version,
-      warn_io: @warn_io,
-      ruby_version: @ruby_version,
-      stack: @stack,
-      arch: @arch,
-      user_env_hash: user_env_hash,
-      default_config_vars: default_config_vars,
-      new_app: new_app?,
-      cache: @cache,
-      bundler_cache: @bundler_cache,
-      bundle_default_without: "development:test",
-      bundler_output: bundler_output,
-    )
     @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
       fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(multi_arch_stacks: MULTI_ARCH_STACKS, stack: stack, arch: @arch),
     ).call
-    @gems = self.class.bundle_list(
-        io: @warn_io,
-        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
-    )
 
     @warn_io.warnings.each { |warning| self.warnings << warning }
 
@@ -920,7 +899,7 @@ private
   end
 
   def yarn_preinstall_bin_path
-    self.class.yarn_preinstall_bin_path
+    LanguagePack::Ruby.yarn_preinstall_bin_path
   end
 
   # Example: tmp/build_8523f77fb96a956101d00988dfeed9d4/.heroku/yarn/bin/ (without the `yarn` at the end)
@@ -941,7 +920,7 @@ private
   end
 
   def yarn_preinstalled?
-    self.class.yarn_preinstalled?
+    LanguagePack::Ruby.yarn_preinstalled?
   end
 
   def self.yarn_preinstalled?

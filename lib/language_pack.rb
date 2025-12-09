@@ -20,17 +20,40 @@ module LanguagePack
     end
   end
 
-  def self.call(app_path:, cache_path:, gemfile_lock: )
+  def self.call(app_path:, cache_path:, gemfile_lock: , bundle_default_without: )
     arch = LanguagePack::Base.get_arch
     metadata = LanguagePack::Metadata.new(cache_path: cache_path)
+    cache = LanguagePack::Cache.new(cache_path)
     warn_io = LanguagePack::ShellHelpers::WarnIO.new
     new_app = metadata.empty?
+    bundler_output = String.new # buffer
 
     bundler = ::LanguagePack::Ruby.bundler
     ruby_version = ::LanguagePack::Ruby.get_ruby_version(
       report: HerokuBuildReport::GLOBAL,
       metadata: metadata,
       gemfile_lock: gemfile_lock
+    )
+
+    ::LanguagePack::Ruby.install_ruby_bundle_install(
+      app_path: app_path,
+      metadata: metadata,
+      bundler_version: bundler.version,
+      warn_io: warn_io,
+      ruby_version: ruby_version,
+      stack: ENV.fetch("STACK"),
+      arch: arch,
+      user_env_hash: LanguagePack::ShellHelpers.user_env_hash,
+      default_config_vars: ::LanguagePack::Ruby.default_config_vars(metadata: metadata, ruby_version: ruby_version, bundler: bundler),
+      new_app: new_app,
+      cache: cache,
+      bundler_cache: LanguagePack::BundlerCache.new(cache, ENV.fetch("STACK")),
+      bundle_default_without: bundle_default_without,
+      bundler_output: bundler_output,
+    )
+    gems = ::LanguagePack::Ruby.bundle_list(
+        io: warn_io,
+        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
     )
 
     if pack = LanguagePack.detect(

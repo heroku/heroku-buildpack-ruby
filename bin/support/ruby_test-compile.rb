@@ -28,7 +28,8 @@ begin
   LanguagePack.call(
     app_path: app_path,
     cache_path: cache_path,
-    gemfile_lock: gemfile_lock
+    gemfile_lock: gemfile_lock,
+    bundle_default_without: "development",
   )
 rescue Exception => e
   LanguagePack::ShellHelpers.display_error_and_exit(e)
