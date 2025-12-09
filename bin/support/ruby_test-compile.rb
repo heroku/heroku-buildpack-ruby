@@ -24,6 +24,7 @@ begin
   gemfile_lock = LanguagePack.gemfile_lock(app_path: app_path)
   Dir.chdir(app_path)
 
+  LanguagePack::ShellHelpers.initialize_env(ARGV[2])
   LanguagePack.call(
     app_path: app_path,
     cache_path: cache_path,
