@@ -21,14 +21,11 @@ begin
   Dir.chdir(app_path)
 
   LanguagePack::ShellHelpers.initialize_env(ARGV[2])
-  if pack = LanguagePack.detect(
+  LanguagePack.call(
     app_path: app_path,
     cache_path: cache_path,
     gemfile_lock: gemfile_lock
   )
-    pack.topic("Compiling #{pack.name}")
-    pack.compile
-  end
 rescue Exception => e
   LanguagePack::ShellHelpers.display_error_and_exit(e)
 end

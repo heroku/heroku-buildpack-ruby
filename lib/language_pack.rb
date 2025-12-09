@@ -20,6 +20,18 @@ module LanguagePack
     end
   end
 
+  def self.call(app_path:, cache_path:, gemfile_lock: )
+    if pack = LanguagePack.detect(
+        app_path: app_path,
+        cache_path: cache_path,
+        gemfile_lock: gemfile_lock
+      )
+      pack.topic("Compiling #{pack.name}")
+      pack.compile
+    end
+  end
+
+
   # detects which language pack to use
   def self.detect(app_path:, cache_path:, gemfile_lock: )
     bundler = ::LanguagePack::Ruby.bundler
