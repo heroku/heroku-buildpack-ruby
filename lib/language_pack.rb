@@ -22,6 +22,7 @@ module LanguagePack
 
   def self.call(app_path:, cache_path:, gemfile_lock: )
     metadata = LanguagePack::Metadata.new(cache_path: cache_path)
+    new_app = metadata.empty?
     ruby_version = ::LanguagePack::Ruby.get_ruby_version(
       metadata: metadata,
       report: HerokuBuildReport::GLOBAL,
@@ -30,10 +31,11 @@ module LanguagePack
     warn_io = LanguagePack::ShellHelpers::WarnIO.new
 
     if pack = LanguagePack.detect(
+        new_app: new_app,
+        warn_io: warn_io,
         app_path: app_path,
         cache_path: cache_path,
         ruby_version: ruby_version,
-        warn_io: warn_io,
         gemfile_lock: gemfile_lock
       )
       pack.topic("Compiling #{pack.name}")
@@ -42,7 +44,7 @@ module LanguagePack
   end
 
   # detects which language pack to use
-  def self.detect(app_path:, cache_path:, gemfile_lock:, ruby_version:, warn_io: )
+  def self.detect(app_path:, cache_path:, gemfile_lock:, new_app:, ruby_version:, warn_io: )
     bundler = ::LanguagePack::Ruby.bundler
 
     pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
@@ -51,11 +53,12 @@ module LanguagePack
 
     if pack_klass
       pack_klass.new(
+        new_app: new_app,
+        warn_io: warn_io,
         app_path: app_path,
         cache_path: cache_path,
+        gemfile_lock: gemfile_lock,
         ruby_version: ruby_version,
-        warn_io: warn_io,
-        gemfile_lock: gemfile_lock
       )
     else
       nil
