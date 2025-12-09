@@ -22,8 +22,9 @@ class LanguagePack::Base
 
   attr_reader :app_path, :cache, :stack
 
-  def initialize(app_path: , cache_path: , gemfile_lock: , new_app: , ruby_version: , warn_io: )
+  def initialize(app_path: , arch: , cache_path: , gemfile_lock: , new_app: , ruby_version: , warn_io: )
     @app_path = app_path
+    @arch = arch
     @gemfile_lock = gemfile_lock
     @new_app = new_app
     @ruby_version = ruby_version
@@ -33,11 +34,10 @@ class LanguagePack::Base
     @metadata      = LanguagePack::Metadata.new(cache_path: cache_path)
     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
-    @arch = get_arch
     @report = HerokuBuildReport::GLOBAL
   end
 
-  def get_arch
+  def self.get_arch
     command = "dpkg --print-architecture"
     arch = run!(command, silent: true).strip
 

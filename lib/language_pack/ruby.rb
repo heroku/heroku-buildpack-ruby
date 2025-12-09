@@ -30,8 +30,8 @@ class LanguagePack::Ruby < LanguagePack::Base
     self.class.bundler
   end
 
-  def initialize(app_path: , cache_path: , gemfile_lock:, new_app:, ruby_version:, warn_io:)
-    super(app_path: app_path, cache_path: cache_path, gemfile_lock: gemfile_lock, new_app: new_app, ruby_version: ruby_version, warn_io: warn_io)
+  def initialize(arch: , app_path: , cache_path: , gemfile_lock:, new_app:, ruby_version:, warn_io:)
+    super(arch: arch, app_path: app_path, cache_path: cache_path, gemfile_lock: gemfile_lock, new_app: new_app, ruby_version: ruby_version, warn_io: warn_io)
     @node_installer = LanguagePack::Helpers::NodeInstaller.new(arch: @arch)
     @yarn_installer = LanguagePack::Helpers::YarnInstaller.new
   end
