@@ -23,13 +23,13 @@ module LanguagePack
   def self.call(app_path:, cache_path:, gemfile_lock: )
     arch = LanguagePack::Base.get_arch
     metadata = LanguagePack::Metadata.new(cache_path: cache_path)
+    warn_io = LanguagePack::ShellHelpers::WarnIO.new
     new_app = metadata.empty?
     ruby_version = ::LanguagePack::Ruby.get_ruby_version(
-      metadata: metadata,
       report: HerokuBuildReport::GLOBAL,
+      metadata: metadata,
       gemfile_lock: gemfile_lock
     )
-    warn_io = LanguagePack::ShellHelpers::WarnIO.new
 
     if pack = LanguagePack.detect(
         arch: arch,
