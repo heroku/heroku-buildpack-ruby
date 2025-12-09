@@ -14,8 +14,8 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     return is_rails2
   end
 
-  def initialize(app_path: , cache_path: , gemfile_lock:, ruby_version:, warn_io:)
-    super(app_path: app_path, cache_path: cache_path, gemfile_lock: gemfile_lock, ruby_version: ruby_version, warn_io: warn_io)
+  def initialize(arch: , app_path: , cache_path: , gemfile_lock:, new_app:, ruby_version:, warn_io:)
+    super(arch: arch, app_path: app_path, cache_path: cache_path, gemfile_lock: gemfile_lock, new_app: new_app, ruby_version: ruby_version, warn_io: warn_io)
     @rails_runner = LanguagePack::Helpers::RailsRunner.new
   end
 
