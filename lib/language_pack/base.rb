@@ -24,6 +24,7 @@ class LanguagePack::Base
 
   def initialize(app_path: , cache_path: , gemfile_lock: , ruby_version: , warn_io: )
     @app_path = app_path
+    @gemfile_lock = gemfile_lock
     @ruby_version = ruby_version
     @warn_io = warn_io
     @stack         = ENV.fetch("STACK")

@@ -21,6 +21,7 @@ module LanguagePack
   end
 
   def self.call(app_path:, cache_path:, gemfile_lock: )
+    metadata = LanguagePack::Metadata.new(cache_path: cache_path)
     ruby_version = ::LanguagePack::Ruby.get_ruby_version(
       metadata: metadata,
       report: HerokuBuildReport::GLOBAL,
