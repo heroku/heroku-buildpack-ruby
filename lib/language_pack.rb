@@ -26,11 +26,13 @@ module LanguagePack
       report: HerokuBuildReport::GLOBAL,
       gemfile_lock: gemfile_lock
     )
+    warn_io = LanguagePack::ShellHelpers::WarnIO.new
 
     if pack = LanguagePack.detect(
         app_path: app_path,
         cache_path: cache_path,
         ruby_version: ruby_version,
+        warn_io: warn_io,
         gemfile_lock: gemfile_lock
       )
       pack.topic("Compiling #{pack.name}")
@@ -39,7 +41,7 @@ module LanguagePack
   end
 
   # detects which language pack to use
-  def self.detect(app_path:, cache_path:, gemfile_lock: )
+  def self.detect(app_path:, cache_path:, gemfile_lock:, ruby_version:, warn_io: )
     bundler = ::LanguagePack::Ruby.bundler
 
     pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
@@ -51,6 +53,7 @@ module LanguagePack
         app_path: app_path,
         cache_path: cache_path,
         ruby_version: ruby_version,
+        warn_io: warn_io,
         gemfile_lock: gemfile_lock
       )
     else
