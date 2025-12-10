@@ -14,8 +14,9 @@ class LanguagePack::Ruby
     create_database_yml
     install_binaries
     prepare_tests
-    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version) # $HOME is set to /app at run time
-    setup_export(app_path: app_path, ruby_version: @ruby_version)
+    default_config_vars = self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler)
+    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version, default_config_vars: default_config_vars) # $HOME is set to /app at run time
+    setup_export(app_path: app_path, ruby_version: @ruby_version, default_config_vars: default_config_vars)
     super
   end
 

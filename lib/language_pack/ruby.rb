@@ -44,10 +44,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     add_dev_database_addon
   end
 
-  def default_config_vars
-    self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler)
-  end
-
   # Environment variable defaults that are passed to ENV, `export` (for future buildpacks), and `.profile.d` (for launch/runtime)
   #
   # All values returned must be sourced from Heroku. User provided config vars
@@ -177,8 +173,9 @@ class LanguagePack::Ruby < LanguagePack::Base
     config_detect
     best_practice_warnings
     warn_outdated_ruby
-    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version) # $HOME is set to /app at run time
-    setup_export(app_path: app_path, ruby_version: @ruby_version)
+    default_config_vars = self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler)
+    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version, default_config_vars: default_config_vars) # $HOME is set to /app at run time
+    setup_export(app_path: app_path, ruby_version: @ruby_version, default_config_vars: default_config_vars)
     cleanup
     super
   rescue => e
@@ -362,7 +359,7 @@ private
 
   # Sets up the environment variables for subsequent processes run by
   # muiltibuildpack. We can't use profile.d because $HOME isn't set up
-  def setup_export(app_path: , ruby_version: )
+  def setup_export(app_path: , ruby_version: , default_config_vars: )
     paths = ENV["PATH"].split(":").map do |path|
       /^\/.*/ !~ path ? "#{app_path}/#{path}" : path
     end.join(":")
@@ -389,7 +386,7 @@ private
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled(ruby_layer_path: , gem_layer_path:, ruby_version: )
+  def setup_profiled(ruby_layer_path: , gem_layer_path:, ruby_version: , default_config_vars: )
     profiled_path = []
 
     default_config_vars.each do |key, value|
