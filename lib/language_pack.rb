@@ -35,22 +35,50 @@ module LanguagePack
       gemfile_lock: gemfile_lock
     )
 
-    ::LanguagePack::Ruby.install_ruby_bundle_install(
+    stack = ENV.fetch("STACK")
+    bundler_version = bundler.version
+    user_env_hash = LanguagePack::ShellHelpers.user_env_hash
+    default_config_vars = ::LanguagePack::Ruby.default_config_vars(metadata: metadata, ruby_version: ruby_version, bundler: bundler)
+    bundler_cache = LanguagePack::BundlerCache.new(cache, stack)
+
+    ::LanguagePack::Ruby.remove_vendor_bundle(app_path: app_path)
+    ::LanguagePack::Ruby.warn_bundler_upgrade(metadata: metadata, bundler_version: bundler_version)
+    ::LanguagePack::Ruby.warn_bad_binstubs(app_path: app_path, warn_object: warn_io)
+    ::LanguagePack::Ruby.install_ruby(
       app_path: app_path,
-      metadata: metadata,
-      bundler_version: bundler.version,
-      warn_io: warn_io,
       ruby_version: ruby_version,
-      stack: ENV.fetch("STACK"),
+      stack: stack,
       arch: arch,
-      user_env_hash: LanguagePack::ShellHelpers.user_env_hash,
-      default_config_vars: ::LanguagePack::Ruby.default_config_vars(metadata: metadata, ruby_version: ruby_version, bundler: bundler),
+      metadata: metadata,
+      io: warn_io
+    )
+    ::LanguagePack::Ruby.setup_language_pack_environment(
+      app_path: app_path.expand_path,
+      ruby_version: ruby_version,
+      user_env_hash: user_env_hash,
+      bundle_default_without: bundle_default_without,
+      default_config_vars: default_config_vars
+    )
+    ::LanguagePack::Ruby.install_bundler_in_app(ruby_version.bundler_directory)
+    ::LanguagePack::Ruby.load_bundler_cache(
+      ruby_version: ruby_version,
       new_app: new_app,
       cache: cache,
-      bundler_cache: LanguagePack::BundlerCache.new(cache, ENV.fetch("STACK")),
-      bundle_default_without: bundle_default_without,
+      metadata: metadata,
+      stack: stack,
+      bundler_cache: bundler_cache,
+      bundler_version: bundler_version,
+      io: warn_io
+    )
+    ::LanguagePack::Ruby.build_bundler(
+      ruby_version: ruby_version,
+      app_path: app_path,
+      io: warn_io,
+      bundler_cache: bundler_cache,
+      bundler_version: bundler_version,
       bundler_output: bundler_output,
     )
+
     gems = ::LanguagePack::Ruby.bundle_list(
         io: warn_io,
         stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)

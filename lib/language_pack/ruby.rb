@@ -80,61 +80,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     end
   end
 
-  def self.install_ruby_bundle_install(
-      app_path:,
-      metadata:,
-      bundler_version:,
-      warn_io:,
-      ruby_version:,
-      stack:,
-      arch:,
-      user_env_hash:,
-      default_config_vars:,
-      new_app:,
-      cache:,
-      bundler_cache:,
-      bundle_default_without:,
-      bundler_output:
-    )
-    remove_vendor_bundle(app_path: app_path)
-    warn_bundler_upgrade(metadata: metadata, bundler_version: bundler_version)
-    warn_bad_binstubs(app_path: app_path, warn_object: warn_io)
-    install_ruby(
-      app_path: app_path,
-      ruby_version: ruby_version,
-      stack: stack,
-      arch: arch,
-      metadata: metadata,
-      io: warn_io
-    )
-    setup_language_pack_environment(
-      app_path: app_path.expand_path,
-      ruby_version: ruby_version,
-      user_env_hash: user_env_hash,
-      bundle_default_without: bundle_default_without,
-      default_config_vars: default_config_vars
-    )
-    install_bundler_in_app(ruby_version.bundler_directory)
-    load_bundler_cache(
-      ruby_version: ruby_version,
-      new_app: new_app,
-      cache: cache,
-      metadata: metadata,
-      stack: stack,
-      bundler_cache: bundler_cache,
-      bundler_version: bundler_version,
-      io: warn_io
-    )
-    build_bundler(
-      ruby_version: ruby_version,
-      app_path: app_path,
-      io: warn_io,
-      bundler_cache: bundler_cache,
-      bundler_version: bundler_version,
-      bundler_output: bundler_output,
-    )
-  end
-
   def compile
     @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
