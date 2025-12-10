@@ -22,10 +22,6 @@ class LanguagePack::Ruby < LanguagePack::Base
     File.exist?("Gemfile")
   end
 
-  def self.bundler
-    @@bundler ||= LanguagePack::Helpers::BundlerWrapper.new.install
-  end
-
   def initialize(arch: , app_path: , bundler: , cache_path: , gemfile_lock:, new_app:, ruby_version:, warn_io:)
     super(arch: arch, app_path: app_path, bundler: bundler, cache_path: cache_path, gemfile_lock: gemfile_lock, new_app: new_app, ruby_version: ruby_version, warn_io: warn_io)
     @node_installer = LanguagePack::Helpers::NodeInstaller.new(arch: @arch)
@@ -542,10 +538,10 @@ private
   end
 
   # installs vendored gems into the slug
-  def self.install_bundler_in_app(bundler_dir)
-    FileUtils.mkdir_p(bundler_dir)
-    Dir.chdir(bundler_dir) do |dir|
-      `cp -R #{bundler.bundler_path}/. .`
+  def self.install_bundler_in_app(bundler_src_dir:, app_bundler_dir:)
+    FileUtils.mkdir_p(app_bundler_dir)
+    Dir.chdir(app_bundler_dir) do |dir|
+      `cp -R #{bundler_src_dir}/. .`
     end
   end
 
@@ -895,7 +891,7 @@ private
     error msg
   end
 
-  def self.load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, io: , new_app:, ruby_version: )
+  def self.load_bundler_cache(cache: , metadata: , stack:, bundler_cache: , bundler_version:, bundler:, io: , new_app:, ruby_version: )
     cache.load "vendor"
 
     full_ruby_version = `ruby -v 2>/dev/null`.strip
@@ -912,7 +908,7 @@ private
     bundler_cache.convert_stack(stack_change) if convert_stack
     if !new_app && stack_change
       io.puts "Purging Cache. Changing stack from #{old_stack} to #{stack}"
-      purge_bundler_cache(bundler_cache: bundler_cache, stack: old_stack, ruby_version: ruby_version)
+      purge_bundler_cache(bundler_cache: bundler_cache, stack: old_stack, ruby_version: ruby_version, bundler: bundler)
     elsif !new_app && !convert_stack
       bundler_cache.load
     end
@@ -923,7 +919,7 @@ private
       io.puts "Ruby version change detected. Clearing bundler cache."
       io.puts "Old: #{metadata.read(ruby_version_cache).strip}"
       io.puts "New: #{full_ruby_version}"
-      purge_bundler_cache(bundler_cache: bundler_cache, stack: nil, ruby_version: ruby_version)
+      purge_bundler_cache(bundler_cache: bundler_cache, stack: nil, ruby_version: ruby_version, bundler: bundler)
     end
 
     metadata.write(ruby_version_cache, full_ruby_version)
@@ -933,10 +929,10 @@ private
     metadata.write(stack_cache, stack)
   end
 
-  def self.purge_bundler_cache(bundler_cache: , stack:  nil, ruby_version: )
+  def self.purge_bundler_cache(bundler_cache: , stack:  nil, ruby_version: , bundler:)
     bundler_cache.clear(stack)
     # need to reinstall language pack gems
-    install_bundler_in_app(ruby_version.bundler_directory)
+    install_bundler_in_app(bundler_src_dir: bundler.bundler_path, app_bundler_dir: ruby_version.bundler_directory)
   end
 
   # writes ERB based database.yml for Rails. The database.yml uses the DATABASE_URL from the environment during runtime.
