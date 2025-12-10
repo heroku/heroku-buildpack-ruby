@@ -80,6 +80,7 @@ module LanguagePack
     if pack_klass
       pack_klass.new(
         arch: arch,
+        bundler: bundler,
         new_app: new_app,
         warn_io: warn_io,
         app_path: app_path,
