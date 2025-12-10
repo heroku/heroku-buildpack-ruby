@@ -22,9 +22,14 @@ module LanguagePack
 
   def self.call(app_path:, cache_path:, gemfile_lock: , bundle_default_without: )
     arch = LanguagePack::Base.get_arch
-    metadata = LanguagePack::Metadata.new(cache_path: cache_path)
+    stack = ENV.fetch("STACK")
     cache = LanguagePack::Cache.new(cache_path)
     warn_io = LanguagePack::ShellHelpers::WarnIO.new
+    user_env_hash = LanguagePack::ShellHelpers.user_env_hash
+    bundler_cache = LanguagePack::BundlerCache.new(cache, stack)
+    bundler_version = LanguagePack::Helpers::BundlerWrapper.detect_bundler_version(contents: gemfile_lock.contents)
+
+    metadata = LanguagePack::Metadata.new(cache_path: cache_path)
     new_app = metadata.empty?
 
     ruby_version = ::LanguagePack::Ruby.get_ruby_version(
@@ -32,11 +37,6 @@ module LanguagePack
       metadata: metadata,
       gemfile_lock: gemfile_lock
     )
-
-    stack = ENV.fetch("STACK")
-    bundler_version = LanguagePack::Helpers::BundlerWrapper.detect_bundler_version(contents: gemfile_lock.contents)
-    user_env_hash = LanguagePack::ShellHelpers.user_env_hash
-    bundler_cache = LanguagePack::BundlerCache.new(cache, stack)
 
     ::LanguagePack::Ruby.remove_vendor_bundle(app_path: app_path)
     ::LanguagePack::Ruby.warn_bundler_upgrade(metadata: metadata, bundler_version: bundler_version)
