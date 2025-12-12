@@ -5,21 +5,27 @@ module LanguagePack::Installers; end
 
 class LanguagePack::Installers::HerokuRubyInstaller
   BASE_URL = LanguagePack::Base::VENDOR_URL
-  BIN_DIR = Pathname("bin")
 
   include LanguagePack::ShellHelpers
-  attr_reader :fetcher
+  attr_reader :fetcher, :environment
 
-  def initialize(stack: , multi_arch_stacks: , arch: , report: HerokuBuildReport::GLOBAL)
+  def initialize(stack: , multi_arch_stacks: , arch: , app_path: , env: , report: HerokuBuildReport::GLOBAL)
     @report = report
+    @environment = env
+    @app_path = Pathname.new(app_path).expand_path
+    @fetcher = self.class.fetcher(multi_arch_stacks: multi_arch_stacks, stack: stack, arch: arch)
+  end
+
+  def self.fetcher(multi_arch_stacks: , stack: , arch: )
     if multi_arch_stacks.include?(stack)
-      @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
+      LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
     else
-      @fetcher = LanguagePack::Fetcher.new(BASE_URL, stack: stack)
+      LanguagePack::Fetcher.new(BASE_URL, stack: stack)
     end
   end
 
   def install(ruby_version, install_dir)
+    install_dir = Pathname.new(install_dir).expand_path
     @report.capture(
       # i.e. `jruby` or `ruby`
       "ruby_version_engine" => ruby_version.engine,
@@ -53,6 +59,15 @@ class LanguagePack::Installers::HerokuRubyInstaller
 
     fetch_unpack(ruby_version, install_dir)
     setup_binstubs(install_dir)
+
+    if ruby_version.jruby?
+      environment["JRUBY_OPTS"] = environment["JRUBY_BUILD_OPTS"] ||
+        user_env_hash["JRUBY_BUILD_OPTS"] ||
+        environment["JRUBY_OPTS"] ||
+        user_env_hash["JRUBY_OPTS"]
+    end
+    # Ruby binstub path
+    environment["PATH"] = [install_dir.join("bin"), environment["PATH"]].compact.join(":")
   end
 
   def fetch_unpack(ruby_version, install_dir)
@@ -63,10 +78,10 @@ class LanguagePack::Installers::HerokuRubyInstaller
   end
 
   private def setup_binstubs(install_dir)
-    BIN_DIR.mkpath
+    bin_dir = @app_path.join("bin")
+    bin_dir.mkpath
     run("ln -s ruby #{install_dir}/bin/ruby.exe")
 
-    install_pathname = Pathname.new(install_dir)
     Dir["#{install_dir}/bin/*"].each do |vendor_bin|
       # for Ruby 2.6.0+ don't symlink the Bundler bin so our shim works
       next if vendor_bin.include?("bundle")
@@ -81,11 +96,13 @@ class LanguagePack::Installers::HerokuRubyInstaller
       # Discussion: https://github.com/heroku/heroku-buildpack-ruby/issues/1025#issuecomment-653102430
       next if vendor_bin.include?("rake")
 
-      if install_pathname.absolute?
-        run("ln -s #{vendor_bin} #{BIN_DIR}")
-      else
-        run("ln -s ../#{vendor_bin} #{BIN_DIR}")
-      end
+      # Calculate relative path from bin_dir to vendor_bin so symlinks work
+      # at runtime when the app moves from /tmp/build_xxx to /app
+      vendor_bin_path = Pathname.new(vendor_bin).expand_path
+      relative_path = vendor_bin_path.relative_path_from(bin_dir)
+      bin_name = File.basename(vendor_bin)
+
+      run("ln -s #{relative_path} #{bin_dir.join(bin_name)}")
     end
   end
 end
