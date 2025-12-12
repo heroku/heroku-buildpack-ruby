@@ -29,6 +29,21 @@ class LanguagePack::Ruby
     super
   end
 
+  # Over-writes the original method which sets these values to production
+  alias_method :original_default_config_vars, :default_config_vars
+  def default_config_vars
+    out = original_default_config_vars
+    out["RACK_ENV"] = "test"
+    out
+  end
+
+  alias_method :original_rake_env, :rake_env
+  def rake_env
+    out = original_rake_env
+    out["RACK_ENV"] = "test"
+    out
+  end
+
   def db_prepare_test_rake_tasks
     ["db:schema:load", "db:migrate"].map {|name| rake.task(name) }
   end
