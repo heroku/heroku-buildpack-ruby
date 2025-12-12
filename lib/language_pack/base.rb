@@ -20,21 +20,26 @@ class LanguagePack::Base
   MULTI_ARCH_STACKS    = ["heroku-24"]
   KNOWN_ARCHITECTURES  = ["amd64", "arm64"]
 
-  attr_reader :app_path, :cache, :stack
+  attr_reader :app_path, :bundler, :cache, :environment_name, :stack
 
-  def initialize(app_path: , cache_path: , gemfile_lock: )
+  def initialize(app_path: , arch: , bundler: , cache_path: , environment_name: , gemfile_lock: , new_app: , ruby_version: , warn_io: )
     @app_path = app_path
+    @arch = arch
+    @bundler = bundler
+    @environment_name = environment_name
+    @gemfile_lock = gemfile_lock
+    @new_app = new_app
+    @ruby_version = ruby_version
+    @warn_io = warn_io
     @stack         = ENV.fetch("STACK")
     @cache         = LanguagePack::Cache.new(cache_path)
     @metadata      = LanguagePack::Metadata.new(cache_path: cache_path)
-    @new_app       = @metadata.empty?
     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
     @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
-    @arch = get_arch
     @report = HerokuBuildReport::GLOBAL
   end
 
-  def get_arch
+  def self.get_arch
     command = "dpkg --print-architecture"
     arch = run!(command, silent: true).strip
 
@@ -84,10 +89,6 @@ class LanguagePack::Base
       puts warning
       Kernel.puts ""
     end
-    if deprecations.any?
-      topic "DEPRECATIONS:"
-      puts @deprecations.join("\n")
-    end
     Kernel.puts ""
   end
 
@@ -119,9 +120,6 @@ class LanguagePack::Base
 
 private ##################################
 
-  # sets up the environment variables for the build process
-  def setup_language_pack_environment
-  end
 
   def add_to_profiled(string, filename: "ruby.sh", mode: "a")
     profiled_path = "#{app_path}/.profile.d/"

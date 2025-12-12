@@ -1,19 +1,6 @@
 # Opens up the class of the Rails2 language pack and
 # overwrites methods defined in `language_pack/test/ruby.rb`
 class LanguagePack::Rails2
-  # Over-writes the original Rails2 method which sets these values to production
-  def default_config_vars
-    out = super # Inherited from LanguagePack::Ruby
-    out["RAILS_ENV"] = "test"
-    out
-  end
-
-  def rake_env
-    out = super
-    out["RAILS_ENV"] = "test"
-    out
-  end
-
   def prepare_tests
     # need to clear db:create before db:schema:load_if_ruby gets called by super
     topic "Clearing #{db_test_tasks_to_clear.join(" ")} rake tasks"
