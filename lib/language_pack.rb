@@ -20,104 +20,17 @@ module LanguagePack
     end
   end
 
-  def self.call(app_path:, cache_path:, gemfile_lock: , bundle_default_without: )
-    arch = LanguagePack::Base.get_arch
-    stack = ENV.fetch("STACK")
-    cache = LanguagePack::Cache.new(cache_path)
-    warn_io = LanguagePack::ShellHelpers::WarnIO.new
-    user_env_hash = LanguagePack::ShellHelpers.user_env_hash
-    bundler_cache = LanguagePack::BundlerCache.new(cache, stack)
-    bundler_version = LanguagePack::Helpers::BundlerWrapper.detect_bundler_version(contents: gemfile_lock.contents)
-
-    metadata = LanguagePack::Metadata.new(cache_path: cache_path)
-    new_app = metadata.empty?
-
-    ruby_version = Ruby.get_ruby_version(
-      report: HerokuBuildReport::GLOBAL,
-      metadata: metadata,
-      gemfile_lock: gemfile_lock
-    )
-
-    Ruby.remove_vendor_bundle(app_path: app_path)
-    Ruby.warn_bundler_upgrade(metadata: metadata, bundler_version: bundler_version)
-    Ruby.warn_bad_binstubs(app_path: app_path, warn_object: warn_io)
-    Ruby.install_ruby(
-      app_path: app_path,
-      ruby_version: ruby_version,
-      stack: stack,
-      arch: arch,
-      metadata: metadata,
-      io: warn_io
-    )
-
-    bundler = Helpers::BundlerWrapper.new.install
-    default_config_vars = Ruby.default_config_vars(metadata: metadata, ruby_version: ruby_version, bundler: bundler)
-    Ruby.setup_language_pack_environment(
-      app_path: app_path.expand_path,
-      ruby_version: ruby_version,
-      user_env_hash: user_env_hash,
-      bundle_default_without: bundle_default_without,
-      default_config_vars: default_config_vars
-    )
-    Ruby.install_bundler_in_app(bundler_src_dir: bundler.bundler_path, app_bundler_dir: ruby_version.bundler_directory)
-    Ruby.load_bundler_cache(
-      ruby_version: ruby_version,
-      new_app: new_app,
-      cache: cache,
-      metadata: metadata,
-      stack: stack,
-      bundler_cache: bundler_cache,
-      bundler_version: bundler_version,
-      bundler: bundler,
-      io: warn_io
-    )
-
-    bundler_output = String.new # buffer
-    Ruby.build_bundler(
-      ruby_version: ruby_version,
-      app_path: app_path,
-      io: warn_io,
-      bundler_cache: bundler_cache,
-      bundler_version: bundler_version,
-      bundler_output: bundler_output,
-    )
-
-    gems = Ruby.bundle_list(
-        io: warn_io,
-        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
-    )
-
-    if pack = LanguagePack.detect(
-        arch: arch,
-        new_app: new_app,
-        warn_io: warn_io,
-        bundler: bundler,
-        app_path: app_path,
-        cache_path: cache_path,
-        ruby_version: ruby_version,
-        gemfile_lock: gemfile_lock
-      )
-      pack.topic("Compiling #{pack.name}")
-      pack.compile
-    end
-  end
-
   # detects which language pack to use
-  def self.detect(arch:, app_path:, cache_path:, gemfile_lock:, new_app:, ruby_version:, warn_io: , bundler:)
+  def self.detect(app_path:, cache_path:, gemfile_lock: )
     pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
-      klass.use?(bundler: bundler)
+      klass.use?
     end
 
     if pack_klass
       pack_klass.new(
-        arch: arch,
-        bundler: bundler,
-        new_app: new_app,
-        warn_io: warn_io,
         app_path: app_path,
         cache_path: cache_path,
-        gemfile_lock: gemfile_lock,
-        ruby_version: ruby_version,
+        gemfile_lock: gemfile_lock
       )
     else
       nil

@@ -5,7 +5,7 @@ require "language_pack/rails2"
 class LanguagePack::Rails3 < LanguagePack::Rails2
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
-  def self.use?(bundler:)
+  def self.use?
     rails_version = bundler.gem_version('railties')
     return false unless rails_version
     is_rails3 = rails_version >= Gem::Version.new('3.0.0') &&

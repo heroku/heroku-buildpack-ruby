@@ -19,14 +19,6 @@ class LanguagePack::Metadata
     @dir.children.empty?
   end
 
-  def try_read(key)
-    if exists?(key)
-      read(key)
-    else
-      nil
-    end
-  end
-
   def read(key)
     @dir.join(key).read&.strip
   end
