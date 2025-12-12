@@ -14,25 +14,10 @@ class LanguagePack::Ruby
     create_database_yml
     install_binaries
     prepare_tests
-    default_config_vars = self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler)
+    default_config_vars = self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler, environment_name: environment_name)
     setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version, default_config_vars: default_config_vars) # $HOME is set to /app at run time
     setup_export(app_path: app_path, ruby_version: @ruby_version, default_config_vars: default_config_vars)
     super
-  end
-
-  # Over-writes the original method which sets these values to production
-  alias_method :original_default_config_vars, :default_config_vars
-  def default_config_vars
-    out = original_default_config_vars
-    out["RACK_ENV"] = "test"
-    out
-  end
-
-  alias_method :original_rake_env, :rake_env
-  def rake_env
-    out = original_rake_env
-    out["RACK_ENV"] = "test"
-    out
   end
 
   def db_prepare_test_rake_tasks

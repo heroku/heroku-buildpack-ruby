@@ -22,8 +22,8 @@ class LanguagePack::Ruby < LanguagePack::Base
     File.exist?("Gemfile")
   end
 
-  def initialize(arch: , app_path: , bundler: , cache_path: , gemfile_lock:, new_app:, ruby_version:, warn_io:)
-    super(arch: arch, app_path: app_path, bundler: bundler, cache_path: cache_path, gemfile_lock: gemfile_lock, new_app: new_app, ruby_version: ruby_version, warn_io: warn_io)
+  def initialize(...)
+    super(...)
     @node_installer = LanguagePack::Helpers::NodeInstaller.new(arch: @arch)
     @yarn_installer = LanguagePack::Helpers::YarnInstaller.new
   end
@@ -41,8 +41,9 @@ class LanguagePack::Ruby < LanguagePack::Base
   # All values returned must be sourced from Heroku. User provided config vars
   # are handled in the interfaces that consume this method's result.
   #
+  # @param environment_name [String] the environment name to use for RACK_ENV/RAILS_ENV
   # @return [Hash] the ENV var like result
-  def self.default_config_vars(metadata:, ruby_version:, bundler: )
+  def self.default_config_vars(metadata:, ruby_version:, bundler:, environment_name:)
     @app_secret ||= begin
       if metadata.exists?("secret_key_base")
         metadata.read("secret_key_base").strip
@@ -55,7 +56,8 @@ class LanguagePack::Ruby < LanguagePack::Base
       is_jruby: ruby_version.jruby?,
       rack_version: bundler.gem_version("rack"),
       rails_version: bundler.gem_version("railties"),
-      secret_key_base: @app_secret
+      secret_key_base: @app_secret,
+      environment_name: environment_name
     )
   end
 
@@ -110,7 +112,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     config_detect
     best_practice_warnings
     warn_outdated_ruby
-    default_config_vars = self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler)
+    default_config_vars = self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler, environment_name: environment_name)
     setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version, default_config_vars: default_config_vars) # $HOME is set to /app at run time
     setup_export(app_path: app_path, ruby_version: @ruby_version, default_config_vars: default_config_vars)
     cleanup

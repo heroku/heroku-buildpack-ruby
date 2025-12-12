@@ -31,8 +31,8 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
 
   def rake_env
     {
-      "RAILS_ENV" => "production",
-      "RACK_ENV" => "production",
+      "RAILS_ENV" => @environment_name,
+      "RACK_ENV" => @environment_name,
       "RAILS_GROUPS" => "assets",
     }.merge(super)
   end

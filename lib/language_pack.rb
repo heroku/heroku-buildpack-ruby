@@ -20,7 +20,7 @@ module LanguagePack
     end
   end
 
-  def self.call(app_path:, cache_path:, gemfile_lock: , bundle_default_without: )
+  def self.call(app_path:, cache_path:, gemfile_lock:, bundle_default_without:, environment_name: "production")
     arch = LanguagePack::Base.get_arch
     stack = ENV.fetch("STACK")
     cache = LanguagePack::Cache.new(cache_path)
@@ -51,7 +51,7 @@ module LanguagePack
     )
 
     bundler = Helpers::BundlerWrapper.new.install
-    default_config_vars = Ruby.default_config_vars(metadata: metadata, ruby_version: ruby_version, bundler: bundler)
+    default_config_vars = Ruby.default_config_vars(metadata: metadata, ruby_version: ruby_version, bundler: bundler, environment_name: environment_name)
     Ruby.setup_language_pack_environment(
       app_path: app_path.expand_path,
       ruby_version: ruby_version,
@@ -95,7 +95,8 @@ module LanguagePack
         app_path: app_path,
         cache_path: cache_path,
         ruby_version: ruby_version,
-        gemfile_lock: gemfile_lock
+        gemfile_lock: gemfile_lock,
+        environment_name: environment_name
       )
       pack.topic("Compiling #{pack.name}")
       pack.compile
@@ -103,7 +104,7 @@ module LanguagePack
   end
 
   # detects which language pack to use
-  def self.detect(arch:, app_path:, cache_path:, gemfile_lock:, new_app:, ruby_version:, warn_io: , bundler:)
+  def self.detect(arch:, app_path:, cache_path:, environment_name:, gemfile_lock:, new_app:, ruby_version:, warn_io:, bundler:)
     pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
       klass.use?(bundler: bundler)
     end
@@ -116,6 +117,7 @@ module LanguagePack
         warn_io: warn_io,
         app_path: app_path,
         cache_path: cache_path,
+        environment_name: environment_name,
         gemfile_lock: gemfile_lock,
         ruby_version: ruby_version,
       )
