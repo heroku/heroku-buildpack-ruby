@@ -303,57 +303,6 @@ describe "Rack" do
 end
 
 describe "build time config var behavior" do
-  class EnvDiff
-    attr_reader :added, :modified, :path_before, :path_after
-
-    def initialize(output)
-      build_dir = output.match(/BUILD_DIR: (.+)/)&.[](1)&.strip
-      if build_dir
-        output.gsub!(build_dir, '<build dir>')
-      else
-        raise "BUILD_DIR not found in output:\n#{output}"
-      end
-
-      env_sections = extract_env_sections(output)
-      raise "Too many print markers in output found:\n#{output}" if env_sections.size > 2
-
-      before_hash = env_sections[0] or raise "Did not find any print markers in output:\n#{output}"
-      after_hash = env_sections[1] or raise "Did not find second set of print markers in output:\n#{output}"
-
-      @path_before = before_hash["PATH"]
-      @path_after = after_hash["PATH"]
-
-      non_path_before = before_hash.except("PATH")
-      non_path_after = after_hash.except("PATH")
-
-      @added = (non_path_after.keys - non_path_before.keys).sort.map { |k| "#{k}=#{non_path_after[k]}" }
-    end
-
-    private def extract_env_sections(output, start_marker: "## PRINTING ENV ##", end_marker: "## PRINTING ENV DONE ##")
-      sections = []
-      in_section = false
-      current_env = {}
-
-      output.each_line do |line|
-        clean = line.gsub(/^\s*remote:\s*/, '').strip
-        case clean
-        when start_marker
-          in_section = true
-          current_env = {}
-        when end_marker
-          sections << current_env
-          in_section = false
-        else
-          if in_section && clean.include?('=')
-            key, value = clean.split('=', 2)
-            current_env[key] = value
-          end
-        end
-      end
-      sections
-    end
-  end
-
   it "works" do
     # Print out the `env` of the build process before and after the Ruby buildpack and diff the results
     buildpacks = [
@@ -406,7 +355,14 @@ describe "build time config var behavior" do
         EOF
 
         expect(diff.path_after).to include(diff.path_before)
-        expect(diff.path_after).to include("<build dir>/bin:<build dir>/vendor/bundle/bin:<build dir>/vendor/bundle/ruby/3.3.0/bin:<build dir>/vendor/ruby-3.3.9/bin")
+        expect(diff.path_after).to include(
+          [
+            "<build dir>/bin",
+            "<build dir>/vendor/bundle/bin",
+            "<build dir>/vendor/bundle/ruby/3.3.0/bin",
+            "<build dir>/vendor/ruby-3.3.9/bin"
+          ].join(":")
+        )
       end
     end
   end
@@ -423,6 +379,76 @@ describe "WEB_CONCURRENCY.sh" do
       expect(app.run("cat .profile.d/WEB_CONCURRENCY.sh").strip).to be_empty
       expect(app.run("echo $WEB_CONCURRENCY").strip).to be_empty
       expect(app.run("echo $WEB_CONCURRENCY", :heroku => {:env => "WEB_CONCURRENCY=0"}).strip).to eq("0")
+    end
+  end
+end
+
+describe "CI build time config var behavior" do
+  it "sets RACK_ENV to test in CI" do
+    app_json_content = <<~EOF
+      {
+        "environments": {
+          "test": {
+            "scripts": {
+              "test": "echo '## PRINTING ENV ##' && env | sort && echo '## PRINTING ENV DONE ##'"
+            }
+          }
+        }
+      }
+    EOF
+
+    # First, capture env BEFORE the Ruby buildpack runs using an inline buildpack
+    before_output = nil
+    Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK, buildpacks: ["https://github.com/heroku/heroku-buildpack-inline.git"]).tap do |app|
+      app.before_deploy do
+        bin = Pathname("bin").tap(&:mkpath)
+        %w[detect compile release].each do |name|
+          path = bin.join(name)
+          FileUtils.touch(path)
+          FileUtils.chmod("+x", path)
+          path.write("#!/usr/bin/env bash\nexit 0\n")
+        end
+
+        Pathname("app.json").write(app_json_content)
+      end
+
+      app.run_ci do |test_run|
+        before_output = test_run.output
+      end
+    end
+
+    # Then, capture env AFTER the Ruby buildpack runs
+    Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK).tap do |app|
+      app.before_deploy do
+        Pathname("app.json").write(app_json_content)
+      end
+
+      app.run_ci do |test_run|
+        combined_output = before_output + "\n" + test_run.output
+        diff = EnvDiff.new(combined_output, build_dir_pattern: nil)
+
+        expect(diff.added.join("\n")).to eq(<<~EOF.strip)
+          BUNDLE_BIN=vendor/bundle/bin
+          BUNDLE_DEPLOYMENT=1
+          BUNDLE_PATH=vendor/bundle
+          BUNDLE_WITHOUT=development
+          DISABLE_SPRING=1
+          GEM_PATH=/app/vendor/bundle/ruby/3.3.0:
+          LANG=en_US.UTF-8
+          MALLOC_ARENA_MAX=2
+          PUMA_PERSISTENT_TIMEOUT=95
+          RACK_ENV=test
+        EOF
+
+        expect(diff.path_after).to include(diff.path_before)
+        expect(diff.path_after).to include(
+          [
+            "/app/bin",
+            "/app/vendor/bundle/bin",
+            "/app/vendor/bundle/ruby/3.3.0/bin"
+          ].join(":")
+        )
+      end
     end
   end
 end

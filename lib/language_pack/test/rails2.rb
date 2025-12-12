@@ -5,14 +5,12 @@ class LanguagePack::Rails2
   def default_config_vars
     out = super # Inherited from LanguagePack::Ruby
     out["RAILS_ENV"] = "test"
-    out["RACK_ENV"] = "test"
     out
   end
 
   def rake_env
     out = super
     out["RAILS_ENV"] = "test"
-    out["RACK_ENV"] = "test"
     out
   end
 
