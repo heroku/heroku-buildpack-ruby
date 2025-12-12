@@ -141,7 +141,7 @@ class LanguagePack::Helpers::BundlerWrapper
     )
     @dir_name = "bundler-#{@version}"
 
-    @bundler_path         = bundler_path
+    @bundler_path = Pathname(bundler_path)
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
   end
 
@@ -193,7 +193,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   private
   def fetch_bundler
-    return true if Dir.exist?(bundler_path)
+    return true if Dir.exist?(bundler_path.join("gems", dir_name))
 
     topic("Installing bundler #{@version}")
     bundler_version_escape_valve!

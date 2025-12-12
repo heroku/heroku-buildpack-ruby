@@ -8,8 +8,10 @@ describe "Heroku ruby getting started" do
 
       secret_key_base = app.run("echo $SECRET_KEY_BASE")
 
+      set_bundler_version(version: "2.6.9")
+
       # Re-deploy with cache
-      run!("git commit --allow-empty -m empty")
+      run!("git add .; git commit -m 'Change bundler version'")
       app.push!
 
       # Assert used cached gems
