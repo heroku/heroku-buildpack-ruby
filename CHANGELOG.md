@@ -2,15 +2,13 @@
 
 ## [Unreleased]
 
-## [v334] - 2025-12-11
-
 - Ruby is now installed before bundler. Previously, Bundler was used to detect the Ruby version by calling
  `bundle platform --ruby`. Now that the Ruby version is detected directly from the  `Gemfile.lock`, the
  order of installation can be changed such that Ruby is installed before Bundler.
 
  This change should be a refactor (no observed change in build behavior), but involved substantial
- internal changes. If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v332`
- but not with this version, please open a support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1676)
+ internal changes. If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v335`
+ but not with this version, please open a support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1684)
 
 ## [v337] - 2025-12-18
 
@@ -28,7 +26,7 @@
 
 ## [v334] - 2025-12-12
 
-- Rolled back
+- Rolled back due to https://github.com/heroku/heroku-buildpack-ruby/issues/1681
 
 ## [v333] - 2025-12-03
 
