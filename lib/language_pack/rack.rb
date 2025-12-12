@@ -6,7 +6,7 @@ class LanguagePack::Rack < LanguagePack::Ruby
 
   # detects if this is a valid Rack app by seeing if "config.ru" exists
   # @return [Boolean] true if it's a Rack app
-  def self.use?
+  def self.use?(bundler:)
     bundler.gem_version('rack')
   end
 
