@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'language_pack/fetcher'
-
 # This class is responsible for installing and maintaining a
 # reference to bundler. It contains access to bundler internals
 # that are used to introspect a project such as detecting presence
@@ -115,7 +113,6 @@ class LanguagePack::Helpers::BundlerWrapper
     )
     @report               = report
     @bundler_tmp          = Pathname.new(Dir.mktmpdir)
-    @fetcher              = LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
     @gemfile_path         = gemfile_path
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
 
@@ -144,7 +141,6 @@ class LanguagePack::Helpers::BundlerWrapper
     @dir_name = "bundler-#{@version}"
 
     @bundler_path         = bundler_path || @bundler_tmp.join(@dir_name)
-    @bundler_tar          = "bundler/#{@dir_name}.tgz"
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
     @path                 = Pathname.new("#{@bundler_path}/gems/#{@dir_name}/lib")
   end
@@ -221,10 +217,7 @@ class LanguagePack::Helpers::BundlerWrapper
     # - extensions
     # - doc
     FileUtils.mkdir_p(bundler_path)
-    Dir.chdir(bundler_path) do
-      @fetcher.fetch_untar(@bundler_tar)
-    end
-    Dir["bin/*"].each {|path| `chmod 755 #{path}` }
+    run!("GEM_HOME=#{bundler_path} gem install bundler --version #{@version} --no-document --env-shebang")
   end
 
   def parse_gemfile_lock
