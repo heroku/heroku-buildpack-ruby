@@ -355,7 +355,14 @@ describe "build time config var behavior" do
         EOF
 
         expect(diff.path_after).to include(diff.path_before)
-        expect(diff.path_after).to include("<build dir>/bin:<build dir>/vendor/bundle/bin:<build dir>/vendor/bundle/ruby/3.3.0/bin:<build dir>/vendor/ruby-3.3.9/bin")
+        expect(diff.path_after).to include(
+          [
+            "<build dir>/bin",
+            "<build dir>/vendor/bundle/bin",
+            "<build dir>/vendor/bundle/ruby/3.3.0/bin",
+            "<build dir>/vendor/ruby-3.3.9/bin"
+          ].join(":")
+        )
       end
     end
   end
