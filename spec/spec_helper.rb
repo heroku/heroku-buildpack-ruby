@@ -116,3 +116,68 @@ end
 def root_dir
   Pathname(__dir__).join("..")
 end
+
+# Helper class for capturing and comparing environment variables in test output
+# Used by both deploy tests and CI tests
+class EnvDiff
+  attr_reader :added, :modified, :path_before, :path_after, :env_hash
+
+  def initialize(output, build_dir_pattern: /BUILD_DIR: (.+)/)
+    if build_dir_pattern
+      build_dir = output.match(build_dir_pattern)&.[](1)&.strip
+      if build_dir
+        output = output.gsub(build_dir, '<build dir>')
+      else
+        raise "build_dir_pattern #{build_dir_pattern.inspect} not found in output:\n#{output}"
+      end
+    end
+
+    env_sections = extract_env_sections(output)
+
+    if env_sections.size == 1
+      # Single section mode (e.g., CI tests)
+      @env_hash = env_sections[0]
+    elsif env_sections.size == 2
+      # Diff mode (before/after comparison)
+      before_hash = env_sections[0]
+      after_hash = env_sections[1]
+
+      @path_before = before_hash["PATH"]
+      @path_after = after_hash["PATH"]
+
+      non_path_before = before_hash.except("PATH")
+      non_path_after = after_hash.except("PATH")
+
+      @added = (non_path_after.keys - non_path_before.keys).sort.map { |k| "#{k}=#{non_path_after[k]}" }
+      @env_hash = after_hash
+    elsif env_sections.size > 2
+      raise "Too many print markers in output found:\n#{output}"
+    else
+      raise "Did not find any print markers in output:\n#{output}"
+    end
+  end
+
+  private def extract_env_sections(output, start_marker: "## PRINTING ENV ##", end_marker: "## PRINTING ENV DONE ##")
+    sections = []
+    in_section = false
+    current_env = {}
+
+    output.each_line do |line|
+      clean = line.gsub(/^\s*remote:\s*/, '').strip
+      case clean
+      when start_marker
+        in_section = true
+        current_env = {}
+      when end_marker
+        sections << current_env
+        in_section = false
+      else
+        if in_section && clean.include?('=')
+          key, value = clean.split('=', 2)
+          current_env[key] = value
+        end
+      end
+    end
+    sections
+  end
+end

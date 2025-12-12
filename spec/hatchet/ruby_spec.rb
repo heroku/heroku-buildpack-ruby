@@ -303,57 +303,6 @@ describe "Rack" do
 end
 
 describe "build time config var behavior" do
-  class EnvDiff
-    attr_reader :added, :modified, :path_before, :path_after
-
-    def initialize(output)
-      build_dir = output.match(/BUILD_DIR: (.+)/)&.[](1)&.strip
-      if build_dir
-        output.gsub!(build_dir, '<build dir>')
-      else
-        raise "BUILD_DIR not found in output:\n#{output}"
-      end
-
-      env_sections = extract_env_sections(output)
-      raise "Too many print markers in output found:\n#{output}" if env_sections.size > 2
-
-      before_hash = env_sections[0] or raise "Did not find any print markers in output:\n#{output}"
-      after_hash = env_sections[1] or raise "Did not find second set of print markers in output:\n#{output}"
-
-      @path_before = before_hash["PATH"]
-      @path_after = after_hash["PATH"]
-
-      non_path_before = before_hash.except("PATH")
-      non_path_after = after_hash.except("PATH")
-
-      @added = (non_path_after.keys - non_path_before.keys).sort.map { |k| "#{k}=#{non_path_after[k]}" }
-    end
-
-    private def extract_env_sections(output, start_marker: "## PRINTING ENV ##", end_marker: "## PRINTING ENV DONE ##")
-      sections = []
-      in_section = false
-      current_env = {}
-
-      output.each_line do |line|
-        clean = line.gsub(/^\s*remote:\s*/, '').strip
-        case clean
-        when start_marker
-          in_section = true
-          current_env = {}
-        when end_marker
-          sections << current_env
-          in_section = false
-        else
-          if in_section && clean.include?('=')
-            key, value = clean.split('=', 2)
-            current_env[key] = value
-          end
-        end
-      end
-      sections
-    end
-  end
-
   it "works" do
     # Print out the `env` of the build process before and after the Ruby buildpack and diff the results
     buildpacks = [
