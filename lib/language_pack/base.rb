@@ -20,12 +20,13 @@ class LanguagePack::Base
   MULTI_ARCH_STACKS    = ["heroku-24"]
   KNOWN_ARCHITECTURES  = ["amd64", "arm64"]
 
-  attr_reader :app_path, :bundler, :cache, :stack
+  attr_reader :app_path, :bundler, :cache, :environment_name, :stack
 
-  def initialize(app_path: , arch: , bundler: , cache_path: , gemfile_lock: , new_app: , ruby_version: , warn_io: )
+  def initialize(app_path: , arch: , bundler: , cache_path: , environment_name: , gemfile_lock: , new_app: , ruby_version: , warn_io: )
     @app_path = app_path
     @arch = arch
     @bundler = bundler
+    @environment_name = environment_name
     @gemfile_lock = gemfile_lock
     @new_app = new_app
     @ruby_version = ruby_version
