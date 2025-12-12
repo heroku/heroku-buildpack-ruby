@@ -8,13 +8,17 @@ describe "Heroku ruby getting started" do
 
       secret_key_base = app.run("echo $SECRET_KEY_BASE")
 
+      set_bundler_version(version: "2.6.9")
+
       # Re-deploy with cache
-      run!("git commit --allow-empty -m empty")
+      run!("git add .; git commit -m 'Change bundler version'")
       app.push!
 
       # Assert used cached gems
       expect(app.output).to_not include("Fetching puma")
       expect(app.output).to include("Gems included by the bundle") # bundle list output
+      expect(app.output).to match("Removing bundler")
+      expect(app.output).to match("Installing bundler 2.6.9") # Change bundler version
 
       # Assert no warnings from `cp`
       # https://github.com/heroku/heroku-buildpack-ruby/pull/1586/files#r2064284286

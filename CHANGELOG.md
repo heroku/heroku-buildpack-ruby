@@ -3,17 +3,21 @@
 ## [Unreleased]
 
 - Ruby CI applications not using Rails now have `RACK_ENV=test` set (https://github.com/heroku/heroku-buildpack-ruby/pull/1683)
+- Bundler version is now installed via running `gem install bundler` previously it was pre-built
+  and downloaded directly from S3.
+
+ This change should be a refactor (no observed change in build behavior). If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v334` but not with this version, please open a
+ support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1680)
+
+## [v334] - 2025-12-11
+
 - Ruby is now installed before bundler. Previously, Bundler was used to detect the Ruby version by calling
  `bundle platform --ruby`. Now that the Ruby version is detected directly from the  `Gemfile.lock`, the
  order of installation can be changed such that Ruby is installed before Bundler.
 
  This change should be a refactor (no observed change in build behavior), but involved substantial
- internal changes. If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v332`
- but not with this version, please open a support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1684)
-
-## [v334] - 2025-12-12
-
-- Rolled back
+ internal changes. If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v333`
+ but not with this version, please open a support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1676)
 
 ## [v333] - 2025-12-03
 
