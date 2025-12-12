@@ -10,7 +10,7 @@ describe "Fetches" do
           lockfile.write("BUNDLED WITH\n   #{version}")
 
           fetcher = LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL)
-          fetcher.fetch_untar("bundler/#{LanguagePack::Helpers::BundlerWrapper.new.dir_name}.tgz")
+          fetcher.fetch_untar("bundler/#{LanguagePack::Helpers::BundlerWrapper.new(bundler_path: Dir.mktmpdir).dir_name}.tgz")
 
           expect(run!("ls bin")).to match("bundle")
         end
