@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "json"
+
 # This class is responsible for installing and maintaining a
 # reference to bundler. It contains access to bundler internals
 # that are used to introspect a project such as detecting presence
@@ -142,15 +144,11 @@ class LanguagePack::Helpers::BundlerWrapper
 
     @bundler_path         = bundler_path || @bundler_tmp.join(@dir_name)
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
-    @path                 = Pathname.new("#{@bundler_path}/gems/#{@dir_name}/lib")
   end
 
   def install
     ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
-
     fetch_bundler
-    $LOAD_PATH << @path
-    require "bundler"
     self
   end
 
@@ -164,13 +162,11 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def gem_version(name)
-    if spec = specs[name]
-      spec.version
-    end
+    specs[name]
   end
 
   def specs
-    @specs ||= lockfile_parser.specs.each_with_object({}) {|spec, hash| hash[spec.name] = spec }
+    @specs ||= specs_from_lockfile
   end
 
   def version
@@ -187,10 +183,6 @@ class LanguagePack::Helpers::BundlerWrapper
     else
       bundle_platform_output.strip.sub('(', '').sub(')', '').sub(/(p-?\d+)/, ' \1').split.join('-')
     end
-  end
-
-  def lockfile_parser
-    @lockfile_parser ||= parse_gemfile_lock
   end
 
   def bundler_version_escape_valve!
@@ -220,8 +212,20 @@ class LanguagePack::Helpers::BundlerWrapper
     run!("GEM_HOME=#{bundler_path} gem install bundler --version #{@version} --no-document --env-shebang")
   end
 
-  def parse_gemfile_lock
-    gemfile_contents = File.read(@gemfile_lock_path)
-    Bundler::LockfileParser.new(gemfile_contents)
+  # Runs a Ruby subprocess to parse the Gemfile.lock and return specs as a hash.
+  def specs_from_lockfile
+    ruby_code = <<~RUBY
+      require "json"
+      require "bundler"
+
+      path = ARGV[0] or raise "First argument must be the path to the Gemfile.lock"
+      specs = Bundler::LockfileParser.new(File.read(path))
+        .specs
+        .each_with_object({}) {|spec, hash| hash[spec.name.to_s] = spec.version.to_s }
+      puts specs.to_json
+    RUBY
+
+    output = run!("ruby -e #{ruby_code.shellescape} #{@gemfile_lock_path.to_s.shellescape}", out: "2>/dev/null")
+    JSON.parse(output).transform_values { |version| Gem::Version.new(version) }
   end
 end
