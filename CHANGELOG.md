@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Bundler version is now installed via running `gem install bundler` previously it was pre-built
+  and downloaded directly from S3.
+
+ This change should be a refactor (no observed change in build behavior). If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v334` but not with this version, please open a
+ support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1680)
 
 ## [v339] - 2026-01-05
 
