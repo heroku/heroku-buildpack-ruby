@@ -3,16 +3,6 @@
 ## [Unreleased]
 
 
-## [v334] - 2025-12-11
-
-- Ruby is now installed before bundler. Previously, Bundler was used to detect the Ruby version by calling
- `bundle platform --ruby`. Now that the Ruby version is detected directly from the  `Gemfile.lock`, the
- order of installation can be changed such that Ruby is installed before Bundler.
-
- This change should be a refactor (no observed change in build behavior), but involved substantial
- internal changes. If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v332`
- but not with this version, please open a support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1676)
-
 ## [v333] - 2025-12-03
 
 - Ruby apps using bundler 4.0.x will now receive bundler 4.0.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/1677)
@@ -1827,8 +1817,7 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v334...main
-[v334]: https://github.com/heroku/heroku-buildpack-ruby/compare/v333...v334
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v333...main
 [v333]: https://github.com/heroku/heroku-buildpack-ruby/compare/v332...v333
 [v332]: https://github.com/heroku/heroku-buildpack-ruby/compare/v331...v332
 [v331]: https://github.com/heroku/heroku-buildpack-ruby/compare/v330...v331

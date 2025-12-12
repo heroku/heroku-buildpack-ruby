@@ -14,7 +14,6 @@ describe "Heroku ruby getting started" do
 
       # Assert used cached gems
       expect(app.output).to_not include("Fetching puma")
-      expect(app.output).to include("Gems included by the bundle") # bundle list output
 
       # Assert no warnings from `cp`
       # https://github.com/heroku/heroku-buildpack-ruby/pull/1586/files#r2064284286

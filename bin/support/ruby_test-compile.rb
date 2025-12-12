@@ -24,13 +24,15 @@ begin
   gemfile_lock = LanguagePack.gemfile_lock(app_path: app_path)
   Dir.chdir(app_path)
 
-  LanguagePack::ShellHelpers.initialize_env(ARGV[2])
-  LanguagePack.call(
-    app_path: app_path,
-    cache_path: cache_path,
-    gemfile_lock: gemfile_lock,
-    bundle_default_without: "development",
-  )
+  if pack = LanguagePack.detect(
+      app_path: app_path,
+      cache_path: cache_path,
+      gemfile_lock: gemfile_lock
+    )
+    LanguagePack::ShellHelpers.initialize_env(ARGV[2])
+    pack.topic("Setting up Test for #{pack.name}")
+    pack.compile
+  end
 rescue Exception => e
   LanguagePack::ShellHelpers.display_error_and_exit(e)
 end

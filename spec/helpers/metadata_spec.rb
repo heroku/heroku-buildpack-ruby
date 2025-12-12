@@ -6,11 +6,9 @@ describe "Metadata" do
       metadata = LanguagePack::Metadata.new(cache_path: dir)
       expect(metadata.empty?).to be_truthy
 
-      expect(metadata.try_read("test")).to be_nil
       expect(metadata.exists?("test")).to be_falsey
       metadata.write("test", "test")
 
-      expect(metadata.try_read("test")).to eq("test")
       expect(metadata.exists?("test")).to be_truthy
       expect(metadata.read("test")).to eq("test")
       expect(metadata.empty?).to be_falsey
