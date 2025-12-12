@@ -7,7 +7,8 @@ describe LanguagePack::Helpers::DefaultEnvVars do
       is_jruby: nil,
       rack_version: nil,
       rails_version: nil,
-      secret_key_base: nil
+      secret_key_base: nil,
+      environment_name: "production"
     )
 
     expect(env).to eq({
@@ -21,7 +22,8 @@ describe LanguagePack::Helpers::DefaultEnvVars do
       is_jruby: true,
       rack_version: nil,
       rails_version: nil,
-      secret_key_base: nil
+      secret_key_base: nil,
+      environment_name: "production"
     )
 
     expect(env).to eq({
@@ -36,7 +38,8 @@ describe LanguagePack::Helpers::DefaultEnvVars do
       is_jruby: false,
       rack_version: Gem::Version.new("2.0.0"),
       rails_version: nil,
-      secret_key_base: nil
+      secret_key_base: nil,
+      environment_name: "production"
     )
 
     expect(env).to eq({
@@ -63,7 +66,8 @@ describe LanguagePack::Helpers::DefaultEnvVars do
       is_jruby: false,
       rack_version: Gem::Version.new("2.0.0"),
       rails_version: Gem::Version.new("4.1.0.beta1"),
-      secret_key_base: "secret_key_base"
+      secret_key_base: "secret_key_base",
+      environment_name: "production"
     )
 
     expect(env).to eq({
@@ -80,7 +84,8 @@ describe LanguagePack::Helpers::DefaultEnvVars do
       is_jruby: false,
       rack_version: Gem::Version.new("2.0.0"),
       rails_version: Gem::Version.new("4.2.0"),
-      secret_key_base: "secret_key_base"
+      secret_key_base: "secret_key_base",
+      environment_name: "production"
     )
 
     expect(env).to eq({
@@ -98,7 +103,8 @@ describe LanguagePack::Helpers::DefaultEnvVars do
       is_jruby: false,
       rack_version: Gem::Version.new("2.0.0"),
       rails_version: Gem::Version.new("5.0.0"),
-      secret_key_base: "secret_key_base"
+      secret_key_base: "secret_key_base",
+      environment_name: "production"
     )
 
     expect(env).to eq({
@@ -112,13 +118,34 @@ describe LanguagePack::Helpers::DefaultEnvVars do
     })
   end
 
+  it "uses environment_name for RACK_ENV and RAILS_ENV" do
+    env = LanguagePack::Helpers::DefaultEnvVars.call(
+      is_jruby: false,
+      rack_version: Gem::Version.new("2.0.0"),
+      rails_version: Gem::Version.new("5.0.0"),
+      secret_key_base: "secret_key_base",
+      environment_name: "test"
+    )
+
+    expect(env).to eq({
+      "LANG" => "en_US.UTF-8",
+      "PUMA_PERSISTENT_TIMEOUT" => "95",
+      "RACK_ENV" => "test",
+      "RAILS_ENV" => "test",
+      "SECRET_KEY_BASE" => "secret_key_base",
+      "RAILS_SERVE_STATIC_FILES" => "enabled",
+      "RAILS_LOG_TO_STDOUT" => "enabled"
+    })
+  end
+
   it "raises an error if secret_key_base is not provided and rails 4.1+" do
     expect {
       LanguagePack::Helpers::DefaultEnvVars.call(
         is_jruby: false,
         rack_version: Gem::Version.new("2.0.0"),
         rails_version: Gem::Version.new("4.1.0"),
-        secret_key_base: nil
+        secret_key_base: nil,
+        environment_name: "production"
       )
     }.to raise_error(ArgumentError)
   end
