@@ -9,7 +9,7 @@ require "json"
 #
 # Example:
 #
-#   bundler = LanguagePack::Helpers::BundlerWrapper.new
+#   bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: "vendor/bundle/ruby/3.2.0")
 #   bundler.install
 #   bundler.version                 => "1.15.2"
 #   bundler.dir_name                => "bundler-1.15.2"
@@ -22,7 +22,7 @@ require "json"
 # of an isolated dyno, you must call `BundlerWrapper#clean`. To reset the environment
 # variable:
 #
-#   bundler = LanguagePack::Helpers::BundlerWrapper.new
+#   bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: "vendor/bundle/ruby/3.2.0")
 #   bundler.install
 #   bundler.clean # <========== IMPORTANT =============
 #
@@ -109,12 +109,11 @@ class LanguagePack::Helpers::BundlerWrapper
   attr_reader :bundler_path
 
   def initialize(
-      bundler_path: nil,
+      bundler_path:,
       gemfile_path: Pathname.new("./Gemfile"),
       report: HerokuBuildReport::GLOBAL
     )
     @report               = report
-    @bundler_tmp          = Pathname.new(Dir.mktmpdir)
     @gemfile_path         = gemfile_path
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
 
@@ -142,7 +141,7 @@ class LanguagePack::Helpers::BundlerWrapper
     )
     @dir_name = "bundler-#{@version}"
 
-    @bundler_path         = bundler_path || @bundler_tmp.join(@dir_name)
+    @bundler_path         = bundler_path
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
   end
 
@@ -154,7 +153,6 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def clean
     ENV['BUNDLE_GEMFILE'] = @orig_bundle_gemfile
-    @bundler_tmp.rmtree if @bundler_tmp.directory?
   end
 
   def has_gem?(name)

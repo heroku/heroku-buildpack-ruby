@@ -539,13 +539,6 @@ private
     io.error message
   end
 
-  # installs vendored gems into the slug
-  def self.install_bundler_in_app(bundler_src_dir:, app_bundler_dir:)
-    FileUtils.mkdir_p(app_bundler_dir)
-    Dir.chdir(app_bundler_dir) do |dir|
-      `cp -R #{bundler_src_dir}/. .`
-    end
-  end
 
   # default set of binaries to install
   # @return [Array] resulting list
@@ -910,7 +903,7 @@ private
     bundler_cache.convert_stack(stack_change) if convert_stack
     if !new_app && stack_change
       io.puts "Purging Cache. Changing stack from #{old_stack} to #{stack}"
-      purge_bundler_cache(bundler_cache: bundler_cache, stack: old_stack, ruby_version: ruby_version, bundler: bundler)
+      purge_bundler_cache(bundler_cache: bundler_cache, stack: old_stack, bundler: bundler)
     elsif !new_app && !convert_stack
       bundler_cache.load
     end
@@ -921,7 +914,7 @@ private
       io.puts "Ruby version change detected. Clearing bundler cache."
       io.puts "Old: #{metadata.read(ruby_version_cache).strip}"
       io.puts "New: #{full_ruby_version}"
-      purge_bundler_cache(bundler_cache: bundler_cache, stack: nil, ruby_version: ruby_version, bundler: bundler)
+      purge_bundler_cache(bundler_cache: bundler_cache, stack: nil, bundler: bundler)
     end
 
     metadata.write(ruby_version_cache, full_ruby_version)
@@ -931,10 +924,9 @@ private
     metadata.write(stack_cache, stack)
   end
 
-  def self.purge_bundler_cache(bundler_cache: , stack:  nil, ruby_version: , bundler:)
+  def self.purge_bundler_cache(bundler_cache: , stack:  nil, bundler:)
     bundler_cache.clear(stack)
-    # need to reinstall language pack gems
-    install_bundler_in_app(bundler_src_dir: bundler.bundler_path, app_bundler_dir: ruby_version.bundler_directory)
+    bundler.install
   end
 
   # writes ERB based database.yml for Rails. The database.yml uses the DATABASE_URL from the environment during runtime.
