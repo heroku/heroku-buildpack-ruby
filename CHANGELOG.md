@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Ruby CI applications not using Rails now have `RACK_ENV=test` set (https://github.com/heroku/heroku-buildpack-ruby/pull/1683)
+
+## [v334] - 2025-12-12
+
+- Rolled back
 
 ## [v333] - 2025-12-03
 
