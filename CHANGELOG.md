@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v335] - 2025-12-15
+
 - Ruby CI applications not using Rails now have `RACK_ENV=test` set (https://github.com/heroku/heroku-buildpack-ruby/pull/1683)
 
 ## [v334] - 2025-12-12
@@ -1822,7 +1825,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v333...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v335...main
+[v335]: https://github.com/heroku/heroku-buildpack-ruby/compare/v334...v335
 [v333]: https://github.com/heroku/heroku-buildpack-ruby/compare/v332...v333
 [v332]: https://github.com/heroku/heroku-buildpack-ruby/compare/v331...v332
 [v331]: https://github.com/heroku/heroku-buildpack-ruby/compare/v330...v331
