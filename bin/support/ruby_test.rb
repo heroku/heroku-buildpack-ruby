@@ -39,6 +39,16 @@ Dir.chdir(app_path)
 # otherwise we end up using the buildpack's version of Ruby
 #
 # This is needed here because BundleList shells out to the user's ruby binary
+
+puts "ls -laR: #{`ls -laR`}"
+puts "ENV: #{ENV.inspect}"
+puts "LanguagePack::ShellHelpers.user_env_hash: #{LanguagePack::ShellHelpers.user_env_hash.inspect}"
+puts ".bundle/config: #{File.read(".bundle/config")}"
+puts "pwd: #{`pwd`}"
+puts "which ruby: #{`which ruby`}"
+puts "which bundle: #{`which bundle`}"
+puts "cat which bundle: #{`cat $(which bundle)`}"
+
 LanguagePack::ShellHelpers.user_env_hash["PATH"] = "#{app_path.join("bin")}:#{ENV["PATH"]}"
 gems_list = LanguagePack::Helpers::BundleList::HumanCommand.new(
   stream_to_user: false,
