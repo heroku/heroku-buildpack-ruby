@@ -141,4 +141,94 @@ describe "CI" do
       end
     end
   end
+
+  it "works" do
+    Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK).tap do |app|
+      app.before_deploy do
+        Pathname("Gemfile").write(<<~EOF)
+          source 'http://rubygems.org'
+          ruby '3.1.3'
+          gem 'sinatra'
+          gem 'puma'
+          gem 'rack'
+          gem 'rake'
+          gem 'rackup'
+
+          group :test do
+            gem 'rack-test'
+            gem 'test-unit'
+          end
+        EOF
+
+
+        Pathname("Gemfile.lock").write(<<~EOF)
+          GEM
+            remote: http://rubygems.org/
+            specs:
+              base64 (0.3.0)
+              logger (1.7.0)
+              mustermann (3.0.4)
+                ruby2_keywords (~> 0.0.1)
+              nio4r (2.7.4)
+              power_assert (3.0.1)
+              puma (7.1.0)
+                nio4r (~> 2.0)
+              rack (3.2.4)
+              rack-protection (4.2.1)
+                base64 (>= 0.1.0)
+                logger (>= 1.6.0)
+                rack (>= 3.0.0, < 4)
+              rack-session (2.1.1)
+                base64 (>= 0.1.0)
+                rack (>= 3.0.0)
+              rack-test (2.2.0)
+                rack (>= 1.3)
+              rackup (2.3.1)
+                rack (>= 3)
+              rake (13.3.1)
+              ruby2_keywords (0.0.5)
+              sinatra (4.2.1)
+                logger (>= 1.6.0)
+                mustermann (~> 3.0)
+                rack (>= 3.0.0, < 4)
+                rack-protection (= 4.2.1)
+                rack-session (>= 2.0.0, < 3)
+                tilt (~> 2.0)
+              test-unit (3.7.3)
+                power_assert
+              tilt (2.6.1)
+
+          PLATFORMS
+            ruby
+
+          DEPENDENCIES
+            puma
+            rack
+            rack-test
+            rackup
+            rake
+            sinatra
+            test-unit
+
+          RUBY VERSION
+             ruby 3.1.3p185
+
+          BUNDLED WITH
+             2.3.26
+
+        EOF
+
+        Pathname("Rakefile").write(<<~EOF)
+          require 'bundler/setup'
+          require 'rake/testtask'
+
+          Rake::TestTask.new
+        EOF
+      end
+
+      app.run_ci do |test_run|
+        expect(test_run.output).to match("Fetching rake")
+      end
+    end
+  end
 end
