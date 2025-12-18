@@ -20,12 +20,15 @@ def execute_test(command)
   exit $?.exitstatus
 end
 
-def execute_command(command)
+def execute_command(command, print_command: false)
   # Normally the `pipe` command will indent output so that it
   # matches the build output, however in a test TAP depends on
   # having no whitespace before output. To avoid adding whitespace
   # for the original Kernel.puts to be used by passing in the
   # Kernel object.
+  if print_command
+    puts "Running: #{command}"
+  end
   pipe(command, :user_env => true, :output_object => Kernel)
 end
 
@@ -58,6 +61,16 @@ user_env_hash["GEM_PATH"] = LanguagePack::Ruby.slug_vendor_base
 # - Sets BUNDLE_GEMFILE
 # - Loads bundler's internal Gemfile.lock parser so we can use `bundler.has_gem?`
 bundler.install
+
+puts "DEBUGGING"
+execute_command("echo $PATH", print_command: true)
+execute_command("which -a rake", print_command: true)
+execute_command("ruby -v", print_command: true)
+execute_command("which -a ruby", print_command: true)
+execute_command("ruby -e 'puts Gem.path'", print_command: true)
+execute_command("gem env", print_command: true)
+
+raise "lol"
 
 execute_test(
   if bundler.has_gem?("rspec-core")
