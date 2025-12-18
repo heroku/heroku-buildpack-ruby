@@ -181,3 +181,23 @@ class EnvDiff
     sections
   end
 end
+
+private def extract_remote_lines(output, start_marker: , end_marker: )
+  lines = []
+  in_section = false
+
+  output.each_line do |line|
+    clean = line.gsub(/^\s*remote:\s*/, '').strip
+    case clean
+    when start_marker
+      in_section = true
+    when end_marker
+      in_section = false
+    else
+      if in_section
+        lines << clean
+      end
+    end
+  end
+  lines
+end

@@ -80,7 +80,7 @@ describe "CI" do
         "environments": {
           "test": {
             "scripts": {
-              "test": "echo '## PRINTING ENV ##' && env | sort && echo '## PRINTING ENV DONE ##'"
+              "test": "echo '## PRINTING ENV ##' && env | sort && echo '## PRINTING ENV DONE ##'; echo '## PRINTING BIN ## ' && ls -1 ./bin | sort && echo '## PRINTING BIN DONE ##'"
             }
           }
         }
@@ -138,6 +138,11 @@ describe "CI" do
             "/app/vendor/bundle/ruby/3.3.0/bin"
           ].join(":")
         )
+
+        expect(extract_remote_lines(test_run.output, start_marker: "## PRINTING BIN ##", end_marker: "## PRINTING BIN DONE ##"))
+          .to eq([
+            "erb", "gem", "irb", "racc", "rbs", "rdbg", "rdoc", "ri", "ruby", "ruby.exe", "syntax_suggest", "typeprof"
+          ].sort)
       end
     end
   end
@@ -159,7 +164,6 @@ describe "CI" do
             gem 'test-unit'
           end
         EOF
-
 
         Pathname("Gemfile.lock").write(<<~EOF)
           GEM
