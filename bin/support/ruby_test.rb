@@ -34,12 +34,6 @@ app_path, env_dir, _ = ARGV.map { |arg| Pathname(arg).expand_path }
 LanguagePack::ShellHelpers.initialize_env(env_dir)
 Dir.chdir(app_path)
 
-# The `ruby_test-compile` program installs a version of Ruby for the
-# user's application. It needs the propper `PATH`, where ever Ruby is installed
-# otherwise we end up using the buildpack's version of Ruby
-#
-# This is needed here because BundleList shells out to the user's ruby binary
-LanguagePack::ShellHelpers.user_env_hash["PATH"] = "#{app_path.join("bin")}:#{ENV["PATH"]}"
 gems_list = LanguagePack::Helpers::BundleList::HumanCommand.new(
   stream_to_user: false,
 ).call
