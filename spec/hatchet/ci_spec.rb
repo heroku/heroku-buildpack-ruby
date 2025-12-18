@@ -73,4 +73,166 @@ describe "CI" do
       expect(test_run.output).to_not match(fetching_rake)
     end
   end
+
+  it "CI build time config var behavior" do
+    app_json_content = <<~EOF
+      {
+        "environments": {
+          "test": {
+            "scripts": {
+              "test": "echo '## PRINTING ENV ##' && env | sort && echo '## PRINTING ENV DONE ##'; echo '## PRINTING BIN ## ' && ls -1 ./bin | sort && echo '## PRINTING BIN DONE ##'"
+            }
+          }
+        }
+      }
+    EOF
+
+    # First, capture env BEFORE the Ruby buildpack runs using an inline buildpack
+    before_output = nil
+    Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK, buildpacks: ["https://github.com/heroku/heroku-buildpack-inline.git"]).tap do |app|
+      app.before_deploy do
+        bin = Pathname("bin").tap(&:mkpath)
+        %w[detect compile release].each do |name|
+          path = bin.join(name)
+          FileUtils.touch(path)
+          FileUtils.chmod("+x", path)
+          path.write("#!/usr/bin/env bash\nexit 0\n")
+        end
+
+        Pathname("app.json").write(app_json_content)
+      end
+
+      app.run_ci do |test_run|
+        before_output = test_run.output
+      end
+    end
+
+    # Then, capture env AFTER the Ruby buildpack runs
+    Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK).tap do |app|
+      app.before_deploy do
+        Pathname("app.json").write(app_json_content)
+      end
+
+      app.run_ci do |test_run|
+        combined_output = before_output + "\n" + test_run.output
+        diff = EnvDiff.new(combined_output, build_dir_pattern: nil)
+
+        expect(diff.added.join("\n")).to eq(<<~EOF.strip)
+          BUNDLE_BIN=vendor/bundle/bin
+          BUNDLE_DEPLOYMENT=1
+          BUNDLE_PATH=vendor/bundle
+          BUNDLE_WITHOUT=development
+          DISABLE_SPRING=1
+          GEM_PATH=/app/vendor/bundle/ruby/3.3.0:
+          LANG=en_US.UTF-8
+          MALLOC_ARENA_MAX=2
+          PUMA_PERSISTENT_TIMEOUT=95
+          RACK_ENV=test
+        EOF
+
+        expect(diff.path_after).to include(diff.path_before)
+        expect(diff.path_after).to include(
+          [
+            "/app/bin",
+            "/app/vendor/bundle/bin",
+            "/app/vendor/bundle/ruby/3.3.0/bin"
+          ].join(":")
+        )
+
+        expect(extract_remote_lines(test_run.output, start_marker: "## PRINTING BIN ##", end_marker: "## PRINTING BIN DONE ##"))
+          .to eq([
+            "erb", "gem", "irb", "racc", "rbs", "rdbg", "rdoc", "ri", "ruby", "ruby.exe", "syntax_suggest", "typeprof"
+          ].sort)
+      end
+    end
+  end
+
+  it "works" do
+    Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK).tap do |app|
+      app.before_deploy do
+        Pathname("Gemfile").write(<<~EOF)
+          source 'http://rubygems.org'
+          ruby '3.1.3'
+          gem 'sinatra'
+          gem 'puma'
+          gem 'rack'
+          gem 'rake'
+          gem 'rackup'
+
+          group :test do
+            gem 'rack-test'
+            gem 'test-unit'
+          end
+        EOF
+
+        Pathname("Gemfile.lock").write(<<~EOF)
+          GEM
+            remote: http://rubygems.org/
+            specs:
+              base64 (0.3.0)
+              logger (1.7.0)
+              mustermann (3.0.4)
+                ruby2_keywords (~> 0.0.1)
+              nio4r (2.7.4)
+              power_assert (3.0.1)
+              puma (7.1.0)
+                nio4r (~> 2.0)
+              rack (3.2.4)
+              rack-protection (4.2.1)
+                base64 (>= 0.1.0)
+                logger (>= 1.6.0)
+                rack (>= 3.0.0, < 4)
+              rack-session (2.1.1)
+                base64 (>= 0.1.0)
+                rack (>= 3.0.0)
+              rack-test (2.2.0)
+                rack (>= 1.3)
+              rackup (2.3.1)
+                rack (>= 3)
+              rake (13.3.1)
+              ruby2_keywords (0.0.5)
+              sinatra (4.2.1)
+                logger (>= 1.6.0)
+                mustermann (~> 3.0)
+                rack (>= 3.0.0, < 4)
+                rack-protection (= 4.2.1)
+                rack-session (>= 2.0.0, < 3)
+                tilt (~> 2.0)
+              test-unit (3.7.3)
+                power_assert
+              tilt (2.6.1)
+
+          PLATFORMS
+            ruby
+
+          DEPENDENCIES
+            puma
+            rack
+            rack-test
+            rackup
+            rake
+            sinatra
+            test-unit
+
+          RUBY VERSION
+             ruby 3.1.3p185
+
+          BUNDLED WITH
+             2.3.26
+
+        EOF
+
+        Pathname("Rakefile").write(<<~EOF)
+          require 'bundler/setup'
+          require 'rake/testtask'
+
+          Rake::TestTask.new
+        EOF
+      end
+
+      app.run_ci do |test_run|
+        expect(test_run.output).to match("Fetching rake")
+      end
+    end
+  end
 end
