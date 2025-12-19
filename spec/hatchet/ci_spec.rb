@@ -75,17 +75,7 @@ describe "CI" do
   end
 
   it "CI build time config var behavior" do
-    app_json_content = <<~EOF
-      {
-        "environments": {
-          "test": {
-            "scripts": {
-              "test": "echo '## PRINTING ENV ##' && env | sort && echo '## PRINTING ENV DONE ##'; echo '## PRINTING BIN ## ' && ls -1 ./bin | sort && echo '## PRINTING BIN DONE ##'"
-            }
-          }
-        }
-      }
-    EOF
+    script = "echo '## PRINTING ENV ##' && env | sort && echo '## PRINTING ENV DONE ##'; echo '## PRINTING BIN ## ' && ls -1 ./bin | sort && echo '## PRINTING BIN DONE ##'"
 
     # First, capture env BEFORE the Ruby buildpack runs using an inline buildpack
     before_output = nil
@@ -99,7 +89,17 @@ describe "CI" do
           path.write("#!/usr/bin/env bash\nexit 0\n")
         end
 
-        Pathname("app.json").write(app_json_content)
+        Pathname("app.json").write(<<~EOF)
+          {
+            "environments": {
+              "test": {
+                "scripts": {
+                  "test": "#{script}"
+                }
+              }
+            }
+          }
+        EOF
       end
 
       app.run_ci do |test_run|
@@ -107,10 +107,26 @@ describe "CI" do
       end
     end
 
-    # Then, capture env AFTER the Ruby buildpack runs
+    # Test `bin/test` auto executing code, which is a slightly different path than if they define a test task in the `app.json`
     Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK).tap do |app|
       app.before_deploy do
-        Pathname("app.json").write(app_json_content)
+        bin_rake = Pathname("bin").tap(&:mkpath).join("rake")
+        bin_rake.write(<<~EOF)
+          #!/usr/bin/env bash
+
+          # Only print markers when running the test task, not for other rake invocations
+          # like `rake -v` which the buildpack uses to detect rake tasks
+          if [[ "$1" == "test" ]]; then
+            #{script}
+          else
+            # Remove this script's directory from PATH to find the real rake
+            SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+            PATH="${PATH//$SCRIPT_DIR:/}" exec rake "$@"
+          fi
+        EOF
+        FileUtils.chmod("+x", bin_rake)
+
+        Pathname("Rakefile").write("") # triggers `rake test`
       end
 
       app.run_ci do |test_run|
@@ -131,7 +147,7 @@ describe "CI" do
         EOF
 
         expect(diff.path_after).to include(diff.path_before)
-        expect(diff.path_after).to include(
+        expect(diff.path_after).to start_with(
           [
             "/app/bin",
             "/app/vendor/bundle/bin",
@@ -141,6 +157,7 @@ describe "CI" do
 
         expect(extract_remote_lines(test_run.output, start_marker: "## PRINTING BIN ##", end_marker: "## PRINTING BIN DONE ##"))
           .to eq([
+            "rake", # `bin/rake` is explicitly added in this test
             "erb", "gem", "irb", "racc", "rbs", "rdbg", "rdoc", "ri", "ruby", "ruby.exe", "syntax_suggest", "typeprof"
           ].sort)
       end
