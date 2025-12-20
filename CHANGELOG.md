@@ -3,12 +3,17 @@
 ## [Unreleased]
 
 - Ruby is now installed before bundler. Previously, Bundler was used to detect the Ruby version by calling
- `bundle platform --ruby`. Now that the Ruby version is detected directly from the  `Gemfile.lock`, the
- order of installation can be changed such that Ruby is installed before Bundler.
+  `bundle platform --ruby`. Now that the Ruby version is detected directly from the  `Gemfile.lock`, the
+  order of installation can be changed such that Ruby is installed before Bundler.
 
- This change should be a refactor (no observed change in build behavior), but involved substantial
- internal changes. If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v335`
- but not with this version, please open a support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1684)
+  This change should be a refactor (no observed change in build behavior), but involved substantial
+  internal changes. If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v335`
+  but not with this version, please open a support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1684)
+- The `PATH` order on Heroku CI relying on `bin/test` interface has changed for applications using the `heroku/ruby`
+  buildpack. It now starts with: `/app/bin:/app/vendor/bundle/bin:/app/vendor/bundle/ruby/3.3.0/bin` which matches
+  the behavior of regular `git push heroku` and customers who specify tests via `app.json`.
+  (https://github.com/heroku/heroku-buildpack-ruby/pull/1684)
+
 
 ## [v337] - 2025-12-18
 
