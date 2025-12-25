@@ -6,7 +6,7 @@ require "language_pack/rack"
 class LanguagePack::Rails2 < LanguagePack::Ruby
   # detects if this is a valid Rails 2 app
   # @return [Boolean] true if it's a Rails 2 app
-  def self.use?
+  def self.use?(bundler:)
     rails_version = bundler.gem_version('rails')
     return false unless rails_version
     is_rails2 = rails_version >= Gem::Version.new('2.0.0') &&
@@ -14,8 +14,8 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     return is_rails2
   end
 
-  def initialize(app_path: , cache_path: , gemfile_lock:)
-    super(app_path: app_path, cache_path: cache_path, gemfile_lock: gemfile_lock)
+  def initialize(...)
+    super(...)
     @rails_runner = LanguagePack::Helpers::RailsRunner.new
   end
 

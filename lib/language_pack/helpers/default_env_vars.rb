@@ -13,8 +13,9 @@ module LanguagePack::Helpers::DefaultEnvVars
   # @param rack_version [Gem::Version] the version of the rack gem
   # @param rails_version [Gem::Version] the version of the rails gem
   # @param secret_key_base [String] the secret key base for the app
+  # @param environment_name [String] the environment name to use for RACK_ENV/RAILS_ENV
   # @return [Hash] a hash of default environment variables
-  def self.call(is_jruby:, rack_version: , rails_version:, secret_key_base:)
+  def self.call(is_jruby:, rack_version: , rails_version:, secret_key_base:, environment_name:)
     out = {}
     out["LANG"] = "en_US.UTF-8"
     out["PUMA_PERSISTENT_TIMEOUT"] = "95"
@@ -24,11 +25,11 @@ module LanguagePack::Helpers::DefaultEnvVars
     end
 
     if rack_version
-      out["RACK_ENV"] = "production"
+      out["RACK_ENV"] = environment_name
     end
 
     if rails_version
-      out["RAILS_ENV"] = "production"
+      out["RAILS_ENV"] = environment_name
     end
 
     if rails_version&. >= Gem::Version.new("4.1.0.beta1")

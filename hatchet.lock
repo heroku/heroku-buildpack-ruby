@@ -8,7 +8,7 @@
 - - "./repos/ci/heroku-ci-json-example"
   - 728cc99c8e80290cc07441d61a8bcd4596e696fb
 - - "./repos/ci/ruby_no_rails_test"
-  - c5925ab061f65433ec5dcbc890975f580e74c5ce
+  - 8f6b08138db00ef7f3b5a21b1eb42611b83e363b
 - - "./repos/heroku/ruby-getting-started"
   - main
 - - "./repos/node/minimal_webpacker"

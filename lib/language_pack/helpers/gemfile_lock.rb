@@ -17,11 +17,12 @@ module LanguagePack
     #   expect(gemfile_lock.bundler.version).to eq("2.3.4")
     #   expect(gemfile_lock.ruby.ruby_version).to eq("3.3.5")
     class GemfileLock
-      attr_reader :ruby, :bundler
+      attr_reader :ruby, :bundler, :contents
 
       def initialize(contents: , report: HerokuBuildReport::GLOBAL)
         @ruby = RubyVersionParse.new(contents: contents, report: report)
         @bundler = BundlerVersionParse.new(contents: contents, report: report)
+        @contents = contents
       end
 
       # Holds information about the RUBY VERSION of the parsed Gemfile.lock
