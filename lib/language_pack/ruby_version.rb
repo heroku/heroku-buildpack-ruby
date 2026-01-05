@@ -94,6 +94,22 @@ module LanguagePack
       end
     end
 
+    # Ruby versioned bundler directory
+    #
+    # When installing gems via `BUNDLE_DEPLOYMENT=1 bundle install`, they're installed into a versioned directory based on the ruby version.
+    #
+    # This becomes the location of GEM_PATH on disk https://www.schneems.com/2014/04/15/gem-path.html.
+    # - Executables are at bundler_directory.join("bin")
+    # - Gems are at bundler_directory.join("gems")
+    #
+    # For example:
+    #
+    # - Ruby 3.4.7 would be "vendor/bundle/ruby/3.4.0"
+    # - JRuby 9.4.14.0 would be "vendor/bundle/jruby/3.1.0" (As it implements Ruby 3.1.7 spec)
+    def bundler_directory
+      "vendor/bundle/#{engine}/#{major}.#{minor}.0"
+    end
+
     def file_name
       "#{version_for_download}.tgz"
     end

@@ -41,7 +41,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
 
   # Enqueues checks in the background
   def call
-    return unless can_check?
+    return self unless can_check?
     raise "Cannot `call()` twice" unless @minor_version_threads.empty?
 
     check_minor_versions

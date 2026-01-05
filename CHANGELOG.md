@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+- Ruby is now installed before bundler. Previously, Bundler was used to detect the Ruby version by calling
+  `bundle platform --ruby`. Now that the Ruby version is detected directly from the  `Gemfile.lock`, the
+  order of installation can be changed such that Ruby is installed before Bundler.
+
+  This change should be a refactor (no observed change in build behavior), but involved substantial
+  internal changes. If your app can build with `https://github.com/heroku/heroku-buildpack-ruby#v335`
+  but not with this version, please open a support ticket https://help.heroku.com/. (https://github.com/heroku/heroku-buildpack-ruby/pull/1684)
+- The `PATH` order on Heroku CI relying on `bin/test` interface has changed for applications using the `heroku/ruby`
+  buildpack. It now starts with: `/app/bin:/app/vendor/bundle/bin:/app/vendor/bundle/ruby/3.3.0/bin` which matches
+  the behavior of regular `git push heroku` and customers who specify tests via `app.json`.
+  (https://github.com/heroku/heroku-buildpack-ruby/pull/1684)
+
 
 ## [v338] - 2025-12-25
 
@@ -24,7 +36,7 @@
 
 ## [v334] - 2025-12-12
 
-- Rolled back
+- Rolled back due to https://github.com/heroku/heroku-buildpack-ruby/issues/1681
 
 ## [v333] - 2025-12-03
 
@@ -1845,6 +1857,7 @@ Bugfixes:
 [v337]: https://github.com/heroku/heroku-buildpack-ruby/compare/v336...v337
 [v336]: https://github.com/heroku/heroku-buildpack-ruby/compare/v335...v336
 [v335]: https://github.com/heroku/heroku-buildpack-ruby/compare/v334...v335
+[v334]: https://github.com/heroku/heroku-buildpack-ruby/compare/v333...v334
 [v333]: https://github.com/heroku/heroku-buildpack-ruby/compare/v332...v333
 [v332]: https://github.com/heroku/heroku-buildpack-ruby/compare/v331...v332
 [v331]: https://github.com/heroku/heroku-buildpack-ruby/compare/v330...v331
