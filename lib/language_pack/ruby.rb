@@ -539,13 +539,6 @@ private
     io.error message
   end
 
-  # installs vendored gems into the slug
-  def self.install_bundler_in_app(bundler_src_dir:, app_bundler_dir:)
-    FileUtils.mkdir_p(app_bundler_dir)
-    Dir.chdir(app_bundler_dir) do |dir|
-      `cp -R #{bundler_src_dir}/. .`
-    end
-  end
 
   # default set of binaries to install
   # @return [Array] resulting list
@@ -933,8 +926,13 @@ private
 
   def self.purge_bundler_cache(bundler_cache: , stack:  nil, ruby_version: , bundler:)
     bundler_cache.clear(stack)
-    # need to reinstall language pack gems
-    install_bundler_in_app(bundler_src_dir: bundler.bundler_path, app_bundler_dir: ruby_version.bundler_directory)
+    # need to reinstall bundler
+    bundler.install
+  end
+
+  def purge_bundler_cache(stack = nil)
+    @bundler_cache.clear(stack)
+    bundler.install
   end
 
   # writes ERB based database.yml for Rails. The database.yml uses the DATABASE_URL from the environment during runtime.

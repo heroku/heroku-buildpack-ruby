@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'language_pack/fetcher'
+require "json"
 
 # This class is responsible for installing and maintaining a
 # reference to bundler. It contains access to bundler internals
@@ -9,7 +9,7 @@ require 'language_pack/fetcher'
 #
 # Example:
 #
-#   bundler = LanguagePack::Helpers::BundlerWrapper.new
+#   bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: "vendor/bundle/ruby/3.2.0")
 #   bundler.install
 #   bundler.version                 => "1.15.2"
 #   bundler.dir_name                => "bundler-1.15.2"
@@ -22,7 +22,7 @@ require 'language_pack/fetcher'
 # of an isolated dyno, you must call `BundlerWrapper#clean`. To reset the environment
 # variable:
 #
-#   bundler = LanguagePack::Helpers::BundlerWrapper.new
+#   bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: "vendor/bundle/ruby/3.2.0")
 #   bundler.install
 #   bundler.clean # <========== IMPORTANT =============
 #
@@ -109,13 +109,11 @@ class LanguagePack::Helpers::BundlerWrapper
   attr_reader :bundler_path
 
   def initialize(
-      bundler_path: nil,
+      bundler_path:,
       gemfile_path: Pathname.new("./Gemfile"),
       report: HerokuBuildReport::GLOBAL
     )
     @report               = report
-    @bundler_tmp          = Pathname.new(Dir.mktmpdir)
-    @fetcher              = LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL) # coupling
     @gemfile_path         = gemfile_path
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
 
@@ -143,24 +141,18 @@ class LanguagePack::Helpers::BundlerWrapper
     )
     @dir_name = "bundler-#{@version}"
 
-    @bundler_path         = bundler_path || @bundler_tmp.join(@dir_name)
-    @bundler_tar          = "bundler/#{@dir_name}.tgz"
+    @bundler_path = Pathname(bundler_path)
     @orig_bundle_gemfile  = ENV['BUNDLE_GEMFILE']
-    @path                 = Pathname.new("#{@bundler_path}/gems/#{@dir_name}/lib")
   end
 
   def install
     ENV['BUNDLE_GEMFILE'] = @gemfile_path.to_s
-
     fetch_bundler
-    $LOAD_PATH << @path
-    require "bundler"
     self
   end
 
   def clean
     ENV['BUNDLE_GEMFILE'] = @orig_bundle_gemfile
-    @bundler_tmp.rmtree if @bundler_tmp.directory?
   end
 
   def has_gem?(name)
@@ -168,13 +160,11 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   def gem_version(name)
-    if spec = specs[name]
-      spec.version
-    end
+    specs[name]
   end
 
   def specs
-    @specs ||= lockfile_parser.specs.each_with_object({}) {|spec, hash| hash[spec.name] = spec }
+    @specs ||= specs_from_lockfile
   end
 
   def version
@@ -193,10 +183,6 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  def lockfile_parser
-    @lockfile_parser ||= parse_gemfile_lock
-  end
-
   def bundler_version_escape_valve!
     topic("Removing BUNDLED WITH version in the Gemfile.lock")
     contents = File.read(@gemfile_lock_path, mode: "rt")
@@ -207,7 +193,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   private
   def fetch_bundler
-    return true if Dir.exist?(bundler_path)
+    return true if Dir.exist?(bundler_path.join("gems", dir_name))
 
     topic("Installing bundler #{@version}")
     bundler_version_escape_valve!
@@ -221,14 +207,11 @@ class LanguagePack::Helpers::BundlerWrapper
     # - extensions
     # - doc
     FileUtils.mkdir_p(bundler_path)
-    Dir.chdir(bundler_path) do
-      @fetcher.fetch_untar(@bundler_tar)
-    end
-    Dir["bin/*"].each {|path| `chmod 755 #{path}` }
+    run!("GEM_HOME=#{bundler_path} gem install bundler --version #{@version} --no-document --env-shebang")
   end
 
-  def parse_gemfile_lock
-    gemfile_contents = File.read(@gemfile_lock_path)
-    Bundler::LockfileParser.new(gemfile_contents)
+  # Runs a Ruby subprocess to parse the Gemfile.lock and return specs as a hash.
+  def specs_from_lockfile
+    LanguagePack::Helpers::LockfileShellParser.call(lockfile_path: @gemfile_lock_path)
   end
 end

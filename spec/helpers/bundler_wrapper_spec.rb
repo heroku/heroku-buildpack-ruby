@@ -72,6 +72,7 @@ describe "Multiple platform detection" do
       report = HerokuBuildReport.dev_null
 
       bundler = LanguagePack::Helpers::BundlerWrapper.new(
+        bundler_path: Dir.mktmpdir,
         gemfile_path: gemfile,
         report: report
       )
@@ -96,7 +97,7 @@ describe "BundlerWrapper mutates rubyopt" do
       ENV['RUBYOPT'] = ENV['RUBYOPT'].sub('-rbundler/setup', '')
     end
 
-    @bundler = LanguagePack::Helpers::BundlerWrapper.new
+    @bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: Dir.mktmpdir)
   end
 
   after(:each) do
@@ -117,7 +118,7 @@ describe "BundlerWrapper mutates rubyopt" do
 
       expect(tmp_gemfile_lock_path.read).to match("BUNDLED")
 
-      wrapper = LanguagePack::Helpers::BundlerWrapper.new(gemfile_path: tmp_gemfile_path )
+      wrapper = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: Dir.mktmpdir, gemfile_path: tmp_gemfile_path)
 
       expect(wrapper.version).to eq(LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS["2"])
 
