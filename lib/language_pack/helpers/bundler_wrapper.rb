@@ -212,18 +212,6 @@ class LanguagePack::Helpers::BundlerWrapper
 
   # Runs a Ruby subprocess to parse the Gemfile.lock and return specs as a hash.
   def specs_from_lockfile
-    ruby_code = <<~RUBY
-      require "json"
-      require "bundler"
-
-      path = ARGV[0] or raise "First argument must be the path to the Gemfile.lock"
-      specs = Bundler::LockfileParser.new(File.read(path))
-        .specs
-        .each_with_object({}) {|spec, hash| hash[spec.name.to_s] = spec.version.to_s }
-      puts specs.to_json
-    RUBY
-
-    output = run!("ruby -e #{ruby_code.shellescape} #{@gemfile_lock_path.to_s.shellescape}", out: "2>/dev/null")
-    JSON.parse(output).transform_values { |version| Gem::Version.new(version) }
+    LanguagePack::Helpers::LockfileShellParser.call(lockfile_path: @gemfile_lock_path)
   end
 end
