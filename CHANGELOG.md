@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v340] - 2026-01-06
+
 - Bundler version is now installed via running `gem install bundler` previously it was pre-built
   and downloaded directly from S3.
 
@@ -1860,7 +1863,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v339...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v340...main
+[v340]: https://github.com/heroku/heroku-buildpack-ruby/compare/v339...v340
 [v339]: https://github.com/heroku/heroku-buildpack-ruby/compare/v338...v339
 [v338]: https://github.com/heroku/heroku-buildpack-ruby/compare/v337...v338
 [v337]: https://github.com/heroku/heroku-buildpack-ruby/compare/v336...v337
