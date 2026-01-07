@@ -27,7 +27,10 @@ module LanguagePack
     warn_io = LanguagePack::ShellHelpers::WarnIO.new
     user_env_hash = LanguagePack::ShellHelpers.user_env_hash
     bundler_cache = LanguagePack::BundlerCache.new(cache, stack)
-    bundler_version = LanguagePack::Helpers::BundlerWrapper.detect_bundler_version(contents: gemfile_lock.contents)
+    bundler_version = LanguagePack::Helpers::BundlerWrapper.resolve_bundler_version(
+      warn_io: warn_io,
+      gemfile_lock: gemfile_lock,
+    )
 
     metadata = LanguagePack::Metadata.new(cache_path: cache_path)
     new_app = metadata.empty?

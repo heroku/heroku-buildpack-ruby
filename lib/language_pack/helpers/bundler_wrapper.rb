@@ -74,12 +74,7 @@ class LanguagePack::Helpers::BundlerWrapper
     @report.capture(
       "ruby.dot_ruby_version" => dot_ruby_version_file.exist? ? dot_ruby_version_file.read&.strip : nil
     )
-    if bundler_version
-      @version = bundler_version
-    else
-      # TODO warn that there's not bundler version in the Gemfile.lock
-      @version = DEFAULT_VERSION
-    end
+    @version = bundler_version
     parts = @version.split(".")
     @report.capture(
       "bundler.version_installed" => @version,
@@ -161,5 +156,36 @@ class LanguagePack::Helpers::BundlerWrapper
   # Runs a Ruby subprocess to parse the Gemfile.lock and return specs as a hash.
   def specs_from_lockfile
     LanguagePack::Helpers::LockfileShellParser.call(lockfile_path: @gemfile_lock_path)
+  end
+
+  def self.resolve_bundler_version(gemfile_lock:, warn_io: )
+    version = gemfile_lock.bundler.version
+    if version
+      version
+    else
+      warn_io.warn(<<~WARNING)
+        Using default bundler version `#{DEFAULT_VERSION}`
+
+        The Ruby buildpack uses the `BUNDLED WITH` value in your `Gemfile.lock` to determine the version
+        of bundler to install. Your `Gemfile.lock` does not contain this section, so a default version
+        of bundler will be installed instead.
+
+        Heroku recommends that you have both a `RUBY VERSION` and `BUNDLED WITH` version listed in your `Gemfile.lock`.
+        You can add it to your project by running:
+
+        ```
+        $ bundle update --bundler
+        ```
+
+        Commit the results to git before redeploying:
+
+        ```
+        $ git add Gemfile.lock
+        $ git commit -m "Add BUNDLED WITH version"
+        ```
+      WARNING
+
+      DEFAULT_VERSION
+    end
   end
 end
