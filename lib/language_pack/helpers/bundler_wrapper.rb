@@ -118,8 +118,7 @@ class LanguagePack::Helpers::BundlerWrapper
     @dir_name
   end
 
-  private
-  def fetch_bundler
+  private def fetch_bundler
     return true if Dir.exist?(bundler_path.join("gems", dir_name))
 
     topic("Installing bundler #{@version}")
@@ -137,7 +136,7 @@ class LanguagePack::Helpers::BundlerWrapper
   end
 
   # Runs a Ruby subprocess to parse the Gemfile.lock and return specs as a hash.
-  def specs_from_lockfile
+  private def specs_from_lockfile
     LanguagePack::Helpers::LockfileShellParser.call(lockfile_path: @gemfile_lock_path)
   end
 
