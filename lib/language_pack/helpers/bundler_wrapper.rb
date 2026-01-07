@@ -32,32 +32,6 @@ class LanguagePack::Helpers::BundlerWrapper
   # Heroku-22's oldest Ruby version is 3.1
   DEFAULT_VERSION = "2.3.25"
 
-  class GemfileParseError < BuildpackError
-    def initialize(error)
-      msg = String.new("There was an error parsing your Gemfile, we cannot continue\n")
-      msg << error
-      super msg
-    end
-  end
-
-  class UnsupportedBundlerVersion < BuildpackError
-    def initialize(version_hash, major_minor)
-      msg = String.new("Your Gemfile.lock indicates you need bundler `#{major_minor}.x`\n")
-      msg << "which is not currently supported. You can deploy with bundler version:\n"
-      version_hash.keys.each do |v|
-        msg << "  - `#{v}.x`\n"
-      end
-      msg << "\nTo use another version of bundler, update your `Gemfile.lock` to point\n"
-      msg << "to a supported version. For example:\n"
-      msg << "\n"
-      msg << "```\n"
-      msg << "BUNDLED WITH\n"
-      msg << "   #{DEFAULT_VERSION}\n"
-      msg << "```\n"
-      super msg
-    end
-  end
-
   attr_reader :bundler_path
 
   def initialize(
