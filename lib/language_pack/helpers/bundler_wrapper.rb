@@ -29,56 +29,8 @@ require "json"
 class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
-  BLESSED_BUNDLER_VERSIONS = {}
   # Heroku-22's oldest Ruby version is 3.1
-  BLESSED_BUNDLER_VERSIONS["2.3"] = "2.3.25"
-  BLESSED_BUNDLER_VERSIONS["2.4"] = "2.4.22"
-  BLESSED_BUNDLER_VERSIONS["2.5"] = "2.5.23"
-  BLESSED_BUNDLER_VERSIONS["2.6"] = "2.6.9"
-  BLESSED_BUNDLER_VERSIONS["2.7"] = "2.7.2"
-  BLESSED_BUNDLER_VERSIONS["4.0"] = "4.0.0"
-
-  SORTED_KEYS = BLESSED_BUNDLER_VERSIONS.keys.map { |k| Gem::Version.new(k) }.sort
-  BUNDLER_2_SORTED_KEYS = SORTED_KEYS.select { |k| k.segments.first == 2 }
-  BUNDLER_2_SMALLEST = BUNDLER_2_SORTED_KEYS.first.to_s
-  BUNDLER_2_LARGEST = BUNDLER_2_SORTED_KEYS.last.to_s
-
-  BUNDLER_4_SORTED_KEYS = SORTED_KEYS.select { |k| k.segments.first == 4 }
-  BUNDLER_4_SMALLEST = BUNDLER_4_SORTED_KEYS.first.to_s
-  BUNDLER_4_LARGEST = BUNDLER_4_SORTED_KEYS.last.to_s
-
-  DEFAULT_VERSION = BLESSED_BUNDLER_VERSIONS["2.3"]
-
-  # Convert arbitrary `<Major>.<Minor>.x` versions
-  BLESSED_BUNDLER_VERSIONS.default_proc = Proc.new do |hash, key|
-    case Gem::Version.new(key).segments.first
-    when 4
-      hash[BUNDLER_4_LARGEST]
-    when 2
-      if Gem::Version.new(key) > Gem::Version.new(BUNDLER_2_LARGEST)
-        hash[BUNDLER_2_LARGEST]
-      elsif Gem::Version.new(key) < Gem::Version.new(BUNDLER_2_SMALLEST)
-        hash[BUNDLER_2_SMALLEST]
-      else
-        raise UnsupportedBundlerVersion.new(hash, key)
-      end
-    else
-      raise UnsupportedBundlerVersion.new(hash, key)
-    end
-  end
-
-  def self.detect_bundler_version(contents: , bundled_with: contents.match(BUNDLED_WITH_REGEX))
-    if bundled_with
-      major = bundled_with[:major]
-      minor = bundled_with[:minor]
-      version = BLESSED_BUNDLER_VERSIONS["#{major}.#{minor}"]
-      version
-    else
-      DEFAULT_VERSION
-    end
-  end
-
-  BUNDLED_WITH_REGEX = /^BUNDLED WITH$(\r?\n) {2,3}(?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m
+  DEFAULT_VERSION = "2.3.25"
 
   class GemfileParseError < BuildpackError
     def initialize(error)
@@ -118,21 +70,16 @@ class LanguagePack::Helpers::BundlerWrapper
     @gemfile_path         = gemfile_path
     @gemfile_lock_path    = Pathname.new("#{@gemfile_path}.lock")
 
-    contents = @gemfile_lock_path.read(mode: "rt")
-    bundled_with = contents.match(BUNDLED_WITH_REGEX)
     dot_ruby_version_file = @gemfile_lock_path.join("..").join(".ruby-version")
     @report.capture(
-      "bundler.bundled_with" => bundled_with&.[]("version") || "empty",
-      # We use this bundler class to detect the Requested ruby version from the Gemfile.lock
-      # Rails 8 stopped generating `RUBY VERSION` in the Gemfile.lock and started generating
-      # a `.ruby-version` file. This will observe the formats to help guide implementation
-      # decisions
       "ruby.dot_ruby_version" => dot_ruby_version_file.exist? ? dot_ruby_version_file.read&.strip : nil
     )
-    @version = self.class.detect_bundler_version(
-      contents: contents,
-      bundled_with: bundled_with
-    )
+    if bundler_version
+      @version = bundler_version
+    else
+      # TODO warn that there's not bundler version in the Gemfile.lock
+      @version = DEFAULT_VERSION
+    end
     parts = @version.split(".")
     @report.capture(
       "bundler.version_installed" => @version,

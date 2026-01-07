@@ -12,63 +12,10 @@ describe "Bundle platform conversion" do
   end
 end
 
-describe "Bundler version sorting" do
-  it "sorts the keys correctly" do
-    expect(LanguagePack::Helpers::BundlerWrapper::SORTED_KEYS)
-      .to eq(["2.3", "2.4", "2.5", "2.6", "2.7", "4.0"])
-  end
-end
-
-describe "Bundler version detection" do
-  it "supports minor versions" do
-    wrapper_klass = LanguagePack::Helpers::BundlerWrapper
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.2.7")
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_2_SMALLEST])
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.3.7")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.3")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.3"])
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.4.7")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.4")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.4"])
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.5.7")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.5")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.5"])
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.6.7")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.6")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.6"])
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n  2.6.7")
-    expect(wrapper_klass::BLESSED_BUNDLER_VERSIONS.key?("2.6")).to be_truthy
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS["2.6"])
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   2.999.7")
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_2_LARGEST])
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   4.0.0")
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_4_SMALLEST])
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   4.0.0.beta2")
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_4_SMALLEST])
-
-    version = wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   4.999999.0")
-    expect(version).to eq(wrapper_klass::BLESSED_BUNDLER_VERSIONS[wrapper_klass::BUNDLER_4_LARGEST])
-
-    expect {
-      wrapper_klass.detect_bundler_version(contents: "BUNDLED WITH\n   3.6.7")
-    }.to raise_error(wrapper_klass::UnsupportedBundlerVersion)
-  end
-end
-
 describe "Multiple platform detection" do
   it "reports true on bundler 2.2+" do
     Dir.mktmpdir do |dir|
       gemfile = Pathname(dir).join("Gemfile")
-      lockfile = Pathname(dir).join("Gemfile.lock").tap {|p| p.write("BUNDLED WITH\n   2.5.7") }
       report = HerokuBuildReport.dev_null
 
       LanguagePack::Helpers::BundlerWrapper.new(
@@ -80,11 +27,10 @@ describe "Multiple platform detection" do
       expect(report.data).to eq(
         {
           "ruby.dot_ruby_version" => nil,
-          "bundler.bundled_with" => "2.5.7",
           "bundler.major" => "2",
           "bundler.minor" => "5",
-          "bundler.patch" => "23",
-          "bundler.version_installed" => "2.5.23",
+          "bundler.patch" => "7",
+          "bundler.version_installed" => "2.5.7",
         }
       )
     end
@@ -109,8 +55,6 @@ describe "BundlerWrapper mutates rubyopt" do
         bundler_version: gemfile_lock.bundler.version,
         gemfile_path: tmp_gemfile_path
       )
-
-      expect(wrapper.version).to eq(LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS["2"])
 
       def wrapper.topic(*args); end # Silence output in tests
       wrapper.bundler_version_escape_valve!
