@@ -71,8 +71,9 @@ describe "Multiple platform detection" do
       lockfile = Pathname(dir).join("Gemfile.lock").tap {|p| p.write("BUNDLED WITH\n   2.5.7") }
       report = HerokuBuildReport.dev_null
 
-      bundler = LanguagePack::Helpers::BundlerWrapper.new(
+      LanguagePack::Helpers::BundlerWrapper.new(
         bundler_path: Dir.mktmpdir,
+        bundler_version: "2.5.7",
         gemfile_path: gemfile,
         report: report
       )
@@ -91,22 +92,6 @@ describe "Multiple platform detection" do
 end
 
 describe "BundlerWrapper mutates rubyopt" do
-  before(:each) do
-    if ENV['RUBYOPT']
-      @original_rubyopt = ENV['RUBYOPT']
-      ENV['RUBYOPT'] = ENV['RUBYOPT'].sub('-rbundler/setup', '')
-    end
-
-    @bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: Dir.mktmpdir)
-  end
-
-  after(:each) do
-    if ENV['RUBYOPT']
-      ENV['RUBYOPT'] = @original_rubyopt
-    end
-
-    @bundler.clean
-  end
 
   it "handles windows BUNDLED WITH" do
     Dir.mktmpdir do |dir|
@@ -118,7 +103,12 @@ describe "BundlerWrapper mutates rubyopt" do
 
       expect(tmp_gemfile_lock_path.read).to match("BUNDLED")
 
-      wrapper = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: Dir.mktmpdir, gemfile_path: tmp_gemfile_path)
+      gemfile_lock = LanguagePack::Helpers::GemfileLock.new(contents: tmp_gemfile_lock_path.read)
+      wrapper = LanguagePack::Helpers::BundlerWrapper.new(
+        bundler_path: Dir.mktmpdir,
+        bundler_version: gemfile_lock.bundler.version,
+        gemfile_path: tmp_gemfile_path
+      )
 
       expect(wrapper.version).to eq(LanguagePack::Helpers::BundlerWrapper::BLESSED_BUNDLER_VERSIONS["2"])
 

@@ -9,10 +9,10 @@ require "json"
 #
 # Example:
 #
-#   bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: "vendor/bundle/ruby/3.2.0")
+#   bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: "vendor/bundle/ruby/3.2.0", bundler_version: "2.5.7")
 #   bundler.install
-#   bundler.version                 => "1.15.2"
-#   bundler.dir_name                => "bundler-1.15.2"
+#   bundler.version                 => "2.5.23"
+#   bundler.dir_name                => "bundler-2.5.23"
 #   bundler.has_gem?("railties")    => true
 #   bundler.gem_version("railties") => "5.2.2"
 #   bundler.clean
@@ -22,7 +22,7 @@ require "json"
 # of an isolated dyno, you must call `BundlerWrapper#clean`. To reset the environment
 # variable:
 #
-#   bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: "vendor/bundle/ruby/3.2.0")
+#   bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: "vendor/bundle/ruby/3.2.0", bundler_version: "2.5.7")
 #   bundler.install
 #   bundler.clean # <========== IMPORTANT =============
 #
@@ -110,6 +110,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
   def initialize(
       bundler_path:,
+      bundler_version:,
       gemfile_path: Pathname.new("./Gemfile"),
       report: HerokuBuildReport::GLOBAL
     )

@@ -50,7 +50,7 @@ module LanguagePack
       io: warn_io
     )
 
-    bundler = Helpers::BundlerWrapper.new(bundler_path: ruby_version.bundler_directory).install
+    bundler = Helpers::BundlerWrapper.new(bundler_path: ruby_version.bundler_directory, bundler_version: bundler_version).install
     default_config_vars = Ruby.default_config_vars(metadata: metadata, ruby_version: ruby_version, bundler: bundler, environment_name: environment_name)
     Ruby.setup_language_pack_environment(
       app_path: app_path.expand_path,
