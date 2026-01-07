@@ -37,8 +37,7 @@ describe "Multiple platform detection" do
   end
 end
 
-describe "BundlerWrapper mutates rubyopt" do
-
+describe "BundlerWrapper" do
   it "handles windows BUNDLED WITH" do
     Dir.mktmpdir do |dir|
       tmp_dir = Pathname(dir)
@@ -56,10 +55,7 @@ describe "BundlerWrapper mutates rubyopt" do
         gemfile_path: tmp_gemfile_path
       )
 
-      def wrapper.topic(*args); end # Silence output in tests
-      wrapper.bundler_version_escape_valve!
-
-      expect(tmp_gemfile_lock_path.read).to_not match("BUNDLED")
+      expect(wrapper.version).to eq("2.0.2")
     end
   end
 end

@@ -126,20 +126,11 @@ class LanguagePack::Helpers::BundlerWrapper
     end
   end
 
-  def bundler_version_escape_valve!
-    topic("Removing BUNDLED WITH version in the Gemfile.lock")
-    contents = File.read(@gemfile_lock_path, mode: "rt")
-    File.open(@gemfile_lock_path, "w") do |f|
-      f.write contents.sub(/^BUNDLED WITH$(\r?\n) {2,3}(?<major>\d+)\.\d+\.\d+/m, '')
-    end
-  end
-
   private
   def fetch_bundler
     return true if Dir.exist?(bundler_path.join("gems", dir_name))
 
     topic("Installing bundler #{@version}")
-    bundler_version_escape_valve!
 
     # Install directory structure (as of Bundler 2.1.4):
     # - cache
