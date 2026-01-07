@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "json"
+require "tempfile"
+require "open3"
 
 module LanguagePack
   module Helpers
@@ -22,14 +24,11 @@ module LanguagePack
     #   specs["rake"] # => #<Gem::Version "13.2.1">
     #
     module LockfileShellParser
-      extend LanguagePack::ShellHelpers
-
       RUBY_PARSER_CODE = <<~RUBY
         require "json"
         require "bundler"
 
-        path = ARGV[0] or raise "First argument must be the path to the Gemfile.lock"
-        specs = Bundler::LockfileParser.new(File.read(path))
+        specs = Bundler::LockfileParser.new(STDIN.read)
           .specs
           .each_with_object({}) {|spec, hash| hash[spec.name.to_s] = spec.version.to_s }
         puts specs.to_json
@@ -47,8 +46,32 @@ module LanguagePack
       #   specs["nokogiri"] # => #<Gem::Version "1.15.0">
       #
       def self.call(lockfile_path:)
-        output = run!("ruby -e #{RUBY_PARSER_CODE.shellescape} #{lockfile_path.to_s.shellescape}", out: "2>/dev/null")
-        JSON.parse(output).transform_values { |version| Gem::Version.new(version) }
+        lockfile_path = Pathname(lockfile_path)
+        Tempfile.create(['lockfile_parser', '.rb']) do |tempfile|
+          tempfile.write(RUBY_PARSER_CODE)
+          tempfile.flush
+
+          stdout, stderr, status = Open3.capture3("ruby", tempfile.path, stdin_data: lockfile_path.read(mode: "rt"))
+          if status.success?
+            JSON.parse(stdout).transform_values { |version| Gem::Version.new(version) }
+          else
+            raise <<~ERROR
+              Cannot parse `Gemfile.lock` file at path `#{lockfile_path}`
+
+              The Ruby buildpack runs a Ruby script that uses Bundler::LockfileParser to parse the lockfile of your application.
+              This information is needed to set environment variables based on requested gems such as `RAILS_ENV`
+              before gems are installed via `bundle install`.
+
+              This script failed to parse `#{lockfile_path}` and the buildpack cannot continue.
+
+              Debugging information:
+
+              status: #{status}
+              stdout: #{stdout}
+              stderr: #{stderr}
+            ERROR
+          end
+        end
       end
     end
   end
