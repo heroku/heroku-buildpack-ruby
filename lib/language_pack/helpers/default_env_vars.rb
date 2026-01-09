@@ -32,7 +32,7 @@ module LanguagePack::Helpers::DefaultEnvVars
     end
 
     if rails_version&.>= Gem::Version.new("4.1.0.beta1")
-      if secret_key_base = secret_key_base&.to_s
+      if (secret_key_base = secret_key_base&.to_s)
         out["SECRET_KEY_BASE"] = secret_key_base
       else
         raise ArgumentError, "secret_key_base is required for rails 4.1+. Provided: #{secret_key_base.inspect}"
