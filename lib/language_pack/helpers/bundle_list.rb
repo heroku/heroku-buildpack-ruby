@@ -77,7 +77,7 @@ module LanguagePack::Helpers
     end
 
     def gem_version(name)
-      if version = @gems[name]
+      if (version = @gems[name])
         Gem::Version.new(version)
       end
     end
