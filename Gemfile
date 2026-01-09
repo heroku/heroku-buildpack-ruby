@@ -11,8 +11,8 @@ group :development, :test do
   gem "excon"
   gem "rake"
   gem "parallel_split_test"
-  gem 'rspec-retry'
-  gem 'json'
-  gem 'redis'
-  gem 'standard'
+  gem "rspec-retry"
+  gem "json"
+  gem "redis"
+  gem "standard"
 end
