@@ -36,7 +36,7 @@ module LanguagePack
     end
 
     def self.initialize_env(path)
-      env_dir = Pathname.new("#{path}")
+      env_dir = Pathname.new(path.to_s)
       if env_dir.exist? && env_dir.directory?
         env_dir.each_child do |file|
           key = file.basename.to_s

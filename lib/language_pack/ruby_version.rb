@@ -15,14 +15,6 @@ module LanguagePack
     BOOTSTRAP_VERSION_NUMBER = "3.3.9".freeze
     DEFAULT_VERSION_NUMBER = "3.3.9".freeze
     DEFAULT_VERSION = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
-    RUBY_VERSION_REGEX = %r{
-        (?<ruby_version>\d+\.\d+\.\d+){0}
-        (?<patchlevel>p-?\d+){0}
-        (?<engine>\w+){0}
-        (?<engine_version>.+){0}
-
-        ruby-\g<ruby_version>(-\g<patchlevel>)?(\.(?<pre>\S*))?(-\g<engine>-\g<engine_version>)?
-      }x
 
     # String formatted `<major>.<minor>.<patch>` for Ruby and JRuby
     attr_reader :ruby_version,
@@ -90,7 +82,7 @@ module LanguagePack
       elsif @pre
         "#{engine_version}.#{@pre}"
       else
-        "#{engine_version}"
+        engine_version.to_s
       end
     end
 
