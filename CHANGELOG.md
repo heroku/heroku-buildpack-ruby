@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v342] - 2026-01-09
+
 - Update bundler version warning output (https://github.com/heroku/heroku-buildpack-ruby/pull/1697)
 
 ## [v341] - 2026-01-09
@@ -1874,7 +1877,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v341...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v342...main
+[v342]: https://github.com/heroku/heroku-buildpack-ruby/compare/v341...v342
 [v341]: https://github.com/heroku/heroku-buildpack-ruby/compare/v340...v341
 [v340]: https://github.com/heroku/heroku-buildpack-ruby/compare/v339...v340
 [v339]: https://github.com/heroku/heroku-buildpack-ruby/compare/v338...v339
