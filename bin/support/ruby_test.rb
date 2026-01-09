@@ -12,7 +12,7 @@ require "language_pack/shell_helpers"
 require "language_pack/test"
 require "language_pack/ruby"
 
-include LanguagePack::ShellHelpers
+include LanguagePack::ShellHelpers # standard:disable Style/MixinUsage
 
 def execute_test(command)
   topic("Running test: #{command}")
