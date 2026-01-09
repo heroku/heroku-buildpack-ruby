@@ -23,7 +23,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
   end
 
   it "handles arm 💪 architecture on heroku-24" do
-    ruby_version = LanguagePack::RubyVersion::default(last_version: "3.1.0")
+    ruby_version = LanguagePack::RubyVersion.default(last_version: "3.1.0")
     fetcher = LanguagePack::Fetcher.new(
       LanguagePack::Base::VENDOR_URL,
       stack: "heroku-24",
@@ -39,7 +39,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
   end
 
   it "finds the latest version on a stack" do
-    ruby_version = LanguagePack::RubyVersion::default(last_version: "2.2.5")
+    ruby_version = LanguagePack::RubyVersion.default(last_version: "2.2.5")
     outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
       fetcher: fetcher
@@ -52,7 +52,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
   end
 
   it "detects returns original ruby version when using the latest" do
-    ruby_version = LanguagePack::RubyVersion::default(last_version: "2.2.10")
+    ruby_version = LanguagePack::RubyVersion.default(last_version: "2.2.10")
     outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
       fetcher: fetcher
@@ -64,8 +64,8 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
   end
 
   it "recommends a non EOL version of Ruby" do
-    ruby_version_one = LanguagePack::RubyVersion::default(last_version: "2.1.10")
-    ruby_version_two = LanguagePack::RubyVersion::default(last_version: "2.2.10")
+    ruby_version_one = LanguagePack::RubyVersion.default(last_version: "2.1.10")
+    ruby_version_two = LanguagePack::RubyVersion.default(last_version: "2.2.10")
 
     outdated_one = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version_one,
@@ -87,14 +87,14 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
 
     suggested_one = outdated_one.suggest_ruby_eol_version
     expect(suggested_one).to eq(outdated_two.suggest_ruby_eol_version)
-    expect(suggested_one.chars.last).to eq("x") # i.e. 2.5.x
+    expect(suggested_one[-1]).to eq("x") # i.e. 2.5.x
 
     actual = Gem::Version.new(suggested_one)
     expect(actual).to be > Gem::Version.new("2.4.x")
   end
 
   it "does not recommend EOL for recent ruby version" do
-    ruby_version = LanguagePack::RubyVersion::default(last_version: "2.2.10")
+    ruby_version = LanguagePack::RubyVersion.default(last_version: "2.2.10")
 
     outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
@@ -104,7 +104,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     outdated.call
 
     good_version = outdated.suggest_ruby_eol_version.sub("x", "0")
-    ruby_version = LanguagePack::RubyVersion::default(last_version: "#{good_version}")
+    ruby_version = LanguagePack::RubyVersion.default(last_version: "#{good_version}")
 
     outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
@@ -117,10 +117,12 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
   end
 
   it "can call eol? on the latest Ruby version" do
-    ruby_version = LanguagePack::RubyVersion::default(last_version: "2.6.0")
+    ruby_version = LanguagePack::RubyVersion.default(last_version: "2.6.0")
 
     new_fetcher = fetcher.dup
-    def new_fetcher.exists?(value); false; end
+    def new_fetcher.exists?(value)
+      false
+    end
 
     outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,

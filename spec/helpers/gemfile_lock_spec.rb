@@ -20,7 +20,7 @@ describe LanguagePack::Helpers::GemfileLock do
 
   it "records invalid parsing" do
     report = HerokuBuildReport.dev_null
-    gemfile_lock = LanguagePack::Helpers::GemfileLock.new(
+    LanguagePack::Helpers::GemfileLock.new(
       report: report,
       contents: <<~EOF
         RUBY VERSION

@@ -5,8 +5,8 @@
 #
 require "fileutils"
 require "tmpdir"
-require 'hatchet/tasks'
-require_relative 'lib/rake/deploy_check'
+require "hatchet/tasks"
+require_relative "lib/rake/deploy_check"
 
 namespace :buildpack do
   desc "prepares the next version of the buildpack for release"
@@ -44,13 +44,13 @@ namespace :buildpack do
 end
 
 begin
-  require 'rspec/core/rake_task'
+  require "rspec/core/rake_task"
 
   desc "Run specs"
   RSpec::Core::RakeTask.new(:spec) do |t|
-    t.rspec_opts = %w(-fd --color)
-    #t.ruby_opts  = %w(-w)
+    t.rspec_opts = %w[-fd --color]
+    # t.ruby_opts  = %w(-w)
   end
-  task :default => :spec
-rescue LoadError => e
+  task default: :spec
+rescue LoadError
 end

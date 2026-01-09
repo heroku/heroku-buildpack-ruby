@@ -1,5 +1,4 @@
-
-require 'spec_helper'
+require "spec_helper"
 
 describe "Bundle list" do
   it "parses bundle list output" do

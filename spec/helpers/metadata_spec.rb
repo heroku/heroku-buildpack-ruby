@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Metadata" do
   it "can read and write to the metadata" do
