@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Multiple platform detection" do
   it "reports true on bundler 2.2+" do
@@ -18,7 +18,7 @@ describe "Multiple platform detection" do
           "bundler.major" => "2",
           "bundler.minor" => "5",
           "bundler.patch" => "7",
-          "bundler.version_installed" => "2.5.7",
+          "bundler.version_installed" => "2.5.7"
         }
       )
     end

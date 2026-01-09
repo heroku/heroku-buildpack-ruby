@@ -1,18 +1,18 @@
-require_relative "../spec_helper.rb"
+require_relative "../spec_helper"
 
 describe LanguagePack::Helpers::BinstubCheck do
   def get_ruby_path!
     out = `which ruby`.strip
     raise "command `which ruby` failed with output: #{out}" unless $?.success?
 
-    return Pathname.new(out)
+    Pathname.new(out)
   end
 
   def get_ruby_bin_dir!
     ruby_bin_dir = get_ruby_path!.join("..")
     raise "#{ruby_bin_dir} is not a directory" unless File.directory?(ruby_bin_dir)
 
-    return ruby_bin_dir
+    ruby_bin_dir
   end
 
   it "handles empty binstubs" do
@@ -76,8 +76,13 @@ describe LanguagePack::Helpers::BinstubCheck do
       bin_dir.join("good_binstub_example_two").write("#!/usr/bin/env ruby")
 
       warn_obj = Object.new
-      def warn_obj.warn(*args, **kwargs); @msg = args.first; end
-      def warn_obj.msg; @msg; end
+      def warn_obj.warn(*args, **kwargs)
+        @msg = args.first
+      end
+
+      def warn_obj.msg
+        @msg
+      end
 
       check = LanguagePack::Helpers::BinstubCheck.new(app_root_dir: dir, warn_object: warn_obj)
       check.call

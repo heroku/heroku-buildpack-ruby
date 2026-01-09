@@ -30,7 +30,7 @@ begin
     cache_path: cache_path,
     gemfile_lock: gemfile_lock,
     bundle_default_without: "development",
-    environment_name: "test",
+    environment_name: "test"
   )
 rescue Exception => e
   LanguagePack::ShellHelpers.display_error_and_exit(e)

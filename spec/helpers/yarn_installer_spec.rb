@@ -1,8 +1,7 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe LanguagePack::Helpers::YarnInstaller do
   describe "#install" do
-
     it "should extract the yarn package" do
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do

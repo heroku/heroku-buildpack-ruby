@@ -1,7 +1,7 @@
 require "pathname"
-require 'benchmark'
+require "benchmark"
 
-require 'language_pack/shell_helpers'
+require "language_pack/shell_helpers"
 require "language_pack/helpers/gemfile_lock"
 
 # General Language Pack module
@@ -9,7 +9,7 @@ module LanguagePack
   module Helpers
   end
 
-  def self.gemfile_lock(app_path: )
+  def self.gemfile_lock(app_path:)
     path = app_path.join("Gemfile.lock")
     if path.exist?
       LanguagePack::Helpers::GemfileLock.new(
@@ -29,7 +29,7 @@ module LanguagePack
     bundler_cache = LanguagePack::BundlerCache.new(cache, stack)
     bundler_version = LanguagePack::Helpers::BundlerWrapper.resolve_bundler_version(
       warn_io: warn_io,
-      gemfile_lock: gemfile_lock,
+      gemfile_lock: gemfile_lock
     )
 
     metadata = LanguagePack::Metadata.new(cache_path: cache_path)
@@ -74,32 +74,32 @@ module LanguagePack
       io: warn_io
     )
 
-    bundler_output = String.new # buffer
+    bundler_output = "" # buffer
     Ruby.build_bundler(
       ruby_version: ruby_version,
       app_path: app_path,
       io: warn_io,
       bundler_cache: bundler_cache,
       bundler_version: bundler_version,
-      bundler_output: bundler_output,
+      bundler_output: bundler_output
     )
 
-    gems = Ruby.bundle_list(
-        io: warn_io,
-        stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
+    Ruby.bundle_list(
+      io: warn_io,
+      stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
     )
 
     if pack = LanguagePack.detect(
-        arch: arch,
-        new_app: new_app,
-        warn_io: warn_io,
-        bundler: bundler,
-        app_path: app_path,
-        cache_path: cache_path,
-        ruby_version: ruby_version,
-        gemfile_lock: gemfile_lock,
-        environment_name: environment_name
-      )
+      arch: arch,
+      new_app: new_app,
+      warn_io: warn_io,
+      bundler: bundler,
+      app_path: app_path,
+      cache_path: cache_path,
+      ruby_version: ruby_version,
+      gemfile_lock: gemfile_lock,
+      environment_name: environment_name
+    )
       pack.topic("Compiling #{pack.name}")
       pack.compile
     end
@@ -107,7 +107,7 @@ module LanguagePack
 
   # detects which language pack to use
   def self.detect(arch:, app_path:, cache_path:, environment_name:, gemfile_lock:, new_app:, ruby_version:, warn_io:, bundler:)
-    pack_klass = [ Rails8, Rails7, Rails6, Rails5, Rails4, Rails3, Rails2, Rack, Ruby ].detect do |klass|
+    pack_klass = [Rails8, Rails7, Rails6, Rails5, Rails4, Rails3, Rails2, Rack, Ruby].detect do |klass|
       klass.use?(bundler: bundler)
     end
 
@@ -121,10 +121,8 @@ module LanguagePack
         cache_path: cache_path,
         environment_name: environment_name,
         gemfile_lock: gemfile_lock,
-        ruby_version: ruby_version,
+        ruby_version: ruby_version
       )
-    else
-      nil
     end
   end
 end
@@ -132,7 +130,7 @@ end
 $:.unshift File.expand_path("../../vendor", __FILE__)
 $:.unshift File.expand_path("..", __FILE__)
 
-require 'heroku_build_report'
+require "heroku_build_report"
 
 require "language_pack/helpers/plugin_installer"
 require "language_pack/helpers/stale_file_cleaner"

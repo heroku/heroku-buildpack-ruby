@@ -6,11 +6,10 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   # detects if this is a Rails 3.x app
   # @return [Boolean] true if it's a Rails 3.x app
   def self.use?(bundler:)
-    rails_version = bundler.gem_version('railties')
+    rails_version = bundler.gem_version("railties")
     return false unless rails_version
-    is_rails3 = rails_version >= Gem::Version.new('3.0.0') &&
-                rails_version <  Gem::Version.new('4.0.0')
-    return is_rails3
+    rails_version >= Gem::Version.new("3.0.0") &&
+      rails_version < Gem::Version.new("4.0.0")
   end
 
   def name
@@ -33,7 +32,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     {
       "RAILS_ENV" => @environment_name,
       "RACK_ENV" => @environment_name,
-      "RAILS_GROUPS" => "assets",
+      "RAILS_GROUPS" => "assets"
     }.merge(super)
   end
 
@@ -44,7 +43,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   def config_detect
     super
     @assets_compile_config = @rails_runner.detect("assets.compile")
-    @x_sendfile_config     = @rails_runner.detect("action_dispatch.x_sendfile_header")
+    @x_sendfile_config = @rails_runner.detect("action_dispatch.x_sendfile_header")
   end
 
   def best_practice_warnings
@@ -54,23 +53,23 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     if assets_compile_enabled?
       safe_sprockets_version_needed = sprocket_version_upgrade_needed
       if safe_sprockets_version_needed
-        message = <<ERROR
-A security vulnerability has been detected in your application.
-To protect your application you must take action. Your application
-is currently exposing its credentials via an easy to exploit directory
-traversal.
-
-To protect your application you must either upgrade to Sprockets version "#{safe_sprockets_version_needed}"
-or disable dynamic compilation at runtime by setting:
-
-```
-config.assets.compile = false # Disables security vulnerability
-```
-
-To read more about this security vulnerability please refer to this blog post:
-  https://blog.heroku.com/rails-asset-pipeline-vulnerability
-
-ERROR
+        message = <<~ERROR
+          A security vulnerability has been detected in your application.
+          To protect your application you must take action. Your application
+          is currently exposing its credentials via an easy to exploit directory
+          traversal.
+          
+          To protect your application you must either upgrade to Sprockets version "#{safe_sprockets_version_needed}"
+          or disable dynamic compilation at runtime by setting:
+          
+          ```
+          config.assets.compile = false # Disables security vulnerability
+          ```
+          
+          To read more about this security vulnerability please refer to this blog post:
+            https://blog.heroku.com/rails-asset-pipeline-vulnerability
+          
+        ERROR
         error(message)
       end
 
@@ -85,7 +84,7 @@ ERROR
     end
   end
 
-private
+  private
 
   def warn_x_sendfile_use!
     return false unless @x_sendfile_config.success?
@@ -121,30 +120,30 @@ private
   def has_apache?
     path = run("which apachectl")
     return true if path && $?.success?
-    return false
+    false
   end
 
   def has_nginx?
     path = run("which nginx")
     return true if path && $?.success?
-    return false
+    false
   end
 
   def sprocket_version_upgrade_needed
     # Due to https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-3760
-    sprockets_version = bundler.gem_version('sprockets')
+    sprockets_version = bundler.gem_version("sprockets")
     if sprockets_version.nil?
-      return false
+      false
     elsif sprockets_version < Gem::Version.new("2.12.5")
-      return "2.12.5"
+      "2.12.5"
     elsif sprockets_version > Gem::Version.new("3") &&
-          sprockets_version < Gem::Version.new("3.7.2")
-      return "3.7.2"
+        sprockets_version < Gem::Version.new("3.7.2")
+      "3.7.2"
     elsif sprockets_version > Gem::Version.new("4") &&
-          sprockets_version < Gem::Version.new("4.0.0.beta8")
-      return "4.0.0.beta8"
+        sprockets_version < Gem::Version.new("4.0.0.beta8")
+      "4.0.0.beta8"
     else
-      return false
+      false
     end
   end
 
@@ -154,9 +153,9 @@ private
   end
 
   def install_plugins
-    return false if bundler.has_gem?('rails_12factor')
-    plugins = {"rails_log_stdout" => "rails_stdout_logging", "rails3_serve_static_assets" => "rails_serve_static_assets" }.
-                reject { |plugin, gem| bundler.has_gem?(gem) }
+    return false if bundler.has_gem?("rails_12factor")
+    plugins = {"rails_log_stdout" => "rails_stdout_logging", "rails3_serve_static_assets" => "rails_serve_static_assets"}
+      .reject { |plugin, gem| bundler.has_gem?(gem) }
     return false if plugins.empty?
     plugins.each do |plugin, gem|
       warn "Injecting plugin '#{plugin}'"
@@ -193,13 +192,13 @@ private
     scheme =
       if bundler.has_gem?("pg") || bundler.has_gem?("jdbc-postgres")
         "postgres"
-    elsif bundler.has_gem?("mysql")
-      "mysql"
-    elsif bundler.has_gem?("mysql2")
-      "mysql2"
-    elsif bundler.has_gem?("sqlite3") || bundler.has_gem?("sqlite3-ruby")
-      "sqlite3"
-    end
+      elsif bundler.has_gem?("mysql")
+        "mysql"
+      elsif bundler.has_gem?("mysql2")
+        "mysql2"
+      elsif bundler.has_gem?("sqlite3") || bundler.has_gem?("sqlite3-ruby")
+        "sqlite3"
+      end
     "#{scheme}://user:pass@127.0.0.1/dbname"
   end
 end

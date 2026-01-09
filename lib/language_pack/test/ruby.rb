@@ -7,9 +7,9 @@ class LanguagePack::Ruby
   def compile
     @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
-      fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(multi_arch_stacks: MULTI_ARCH_STACKS, stack: stack, arch: @arch),
+      fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(multi_arch_stacks: MULTI_ARCH_STACKS, stack: stack, arch: @arch)
     ).call
-    @warn_io.warnings.each { |warning| self.warnings << warning }
+    @warn_io.warnings.each { |warning| warnings << warning }
     post_bundler(ruby_version: @ruby_version, app_path: app_path)
     create_database_yml
     install_binaries
@@ -21,7 +21,7 @@ class LanguagePack::Ruby
   end
 
   def db_prepare_test_rake_tasks
-    ["db:schema:load", "db:migrate"].map {|name| rake.task(name) }
+    ["db:schema:load", "db:migrate"].map { |name| rake.task(name) }
   end
 
   def prepare_tests

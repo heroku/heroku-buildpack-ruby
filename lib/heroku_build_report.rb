@@ -1,6 +1,6 @@
-require 'yaml'
-require 'json'
-require 'pathname'
+require "yaml"
+require "json"
+require "pathname"
 
 # Observability reporting for builds
 #
@@ -17,7 +17,7 @@ module HerokuBuildReport
     MALFORMED_JSON_KEY = "build_report_file_malformed"
     attr_reader :data
 
-    def initialize(path: , io: $stdout)
+    def initialize(path:, io: $stdout)
       @io = io
       @path = Pathname(path).expand_path
       @path.dirname.mkpath
@@ -35,9 +35,9 @@ module HerokuBuildReport
       else
         JSON.parse(contents)
       end
-    rescue => e
+    rescue
       @io.puts "Internal Warning: Expected build report to be JSON, but it is malformed: #{contents.inspect}"
-      { MALFORMED_JSON_KEY => true }
+      {MALFORMED_JSON_KEY => true}
     end
 
     def complex_object?(value)
@@ -64,7 +64,7 @@ module HerokuBuildReport
   end
 
   # Current load order of the various "language packs"
-  def self.set_global(path: )
+  def self.set_global(path:)
     JsonReport.new(path: path).tap { |report|
       # Silence warning about setting a constant
       begin
@@ -82,5 +82,5 @@ module HerokuBuildReport
     JsonReport.new(path: "/dev/null")
   end
 
-  GLOBAL = self.dev_null # Changed via `set_global`
+  GLOBAL = dev_null # Changed via `set_global`
 end

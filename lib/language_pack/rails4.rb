@@ -8,11 +8,10 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   # detects if this is a Rails 4.x app
   # @return [Boolean] true if it's a Rails 4.x app
   def self.use?(bundler:)
-    rails_version = bundler.gem_version('railties')
+    rails_version = bundler.gem_version("railties")
     return false unless rails_version
-    is_rails4 = rails_version >= Gem::Version.new('4.0.0.beta') &&
-                rails_version <  Gem::Version.new('5.x')
-    return is_rails4
+    rails_version >= Gem::Version.new("4.0.0.beta") &&
+      rails_version < Gem::Version.new("5.x")
   end
 
   def name
@@ -21,7 +20,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
 
   def default_process_types
     super.merge({
-      "web"     => "bin/rails server -p ${PORT:-5000} -e $RAILS_ENV",
+      "web" => "bin/rails server -p ${PORT:-5000} -e $RAILS_ENV",
       "console" => "bin/rails console"
     })
   end
@@ -33,7 +32,7 @@ class LanguagePack::Rails4 < LanguagePack::Rails3
   private
 
   def install_plugins
-    return false if bundler.has_gem?('rails_12factor')
+    return false if bundler.has_gem?("rails_12factor")
     plugins = ["rails_serve_static_assets", "rails_stdout_logging"].reject { |plugin| bundler.has_gem?(plugin) }
     return false if plugins.empty?
 

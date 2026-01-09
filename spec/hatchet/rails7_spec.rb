@@ -1,8 +1,8 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe "Rails 7" do
   it "should detect successfully" do
-    Hatchet::App.new('rails-jsbundling').in_directory_fork do
+    Hatchet::App.new("rails-jsbundling").in_directory_fork do
       bundler = LanguagePack::Helpers::BundlerWrapper.new(
         bundler_path: Dir.mktmpdir,
         bundler_version: LanguagePack::Helpers::BundlerWrapper::DEFAULT_VERSION

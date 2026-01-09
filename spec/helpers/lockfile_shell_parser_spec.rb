@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe LanguagePack::Helpers::LockfileShellParser do
   describe ".call" do
@@ -46,7 +46,7 @@ describe LanguagePack::Helpers::LockfileShellParser do
 
     it "reports error on invalid lockfile contents" do
       Dir.mktmpdir do |dir|
-        lockfile_path = Pathname(dir).join("Gemfile.lock").tap {|p|
+        lockfile_path = Pathname(dir).join("Gemfile.lock").tap { |p|
           # Write invalid UTF-8 bytes to trigger Bundler::LockfileError
           p.binwrite("\xff\xfe")
         }
@@ -109,4 +109,3 @@ describe LanguagePack::Helpers::LockfileShellParser do
     end
   end
 end
-

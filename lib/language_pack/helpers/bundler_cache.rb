@@ -10,10 +10,10 @@ class LanguagePack::BundlerCache
   # @param [LanguagePack::Cache] cache object
   # @param [String] stack buildpack is running on
   def initialize(cache, stack = nil)
-    @cache       = cache
-    @stack       = stack
+    @cache = cache
+    @stack = stack
     @bundler_dir = Pathname.new("vendor/bundle")
-    @stack_dir   = @stack ? Pathname.new(@stack) + @bundler_dir : @bundler_dir
+    @stack_dir = @stack ? Pathname.new(@stack) + @bundler_dir : @bundler_dir
   end
 
   # removes the bundler cache dir BOTH in the cache and local directory
