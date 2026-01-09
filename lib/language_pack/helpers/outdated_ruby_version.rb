@@ -61,8 +61,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
 
     @suggested_minor_version = @minor_versions
       .map { |v| v.sub("ruby-", "") }
-      .sort_by { |v| Gem::Version.new(v) }
-      .last
+      .max_by { |v| Gem::Version.new(v) }
 
     @suggested_eol_version = @eol_versions
       .map { |v| v.sub("ruby-", "") }
