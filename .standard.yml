@@ -1,0 +1,5 @@
+# StandardRB configuration
+# https://github.com/standardrb/standard
+
+ignore:
+  - "repos/**/*"  # Test fixture repos (external Rails apps for integration tests)
