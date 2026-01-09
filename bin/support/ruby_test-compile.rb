@@ -16,7 +16,7 @@ $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
 require "language_pack/test"
-include LanguagePack::ShellHelpers
+include LanguagePack::ShellHelpers # standard:disable Style/MixinUsage
 
 begin
   app_path = Pathname(ARGV[0])
@@ -32,6 +32,6 @@ begin
     bundle_default_without: "development",
     environment_name: "test"
   )
-rescue Exception => e
+rescue Exception => e # standard:disable Lint/RescueException
   LanguagePack::ShellHelpers.display_error_and_exit(e)
 end
