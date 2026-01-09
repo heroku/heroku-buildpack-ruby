@@ -630,7 +630,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       WARNING
     end
 
-      bundle_command = +""
+    bundle_command = +""
     bundle_command << "BUNDLE_WITHOUT='#{ENV["BUNDLE_WITHOUT"]}' "
     bundle_command << "BUNDLE_PATH=#{ENV["BUNDLE_PATH"]} "
     bundle_command << "BUNDLE_BIN=#{ENV["BUNDLE_BIN"]} "
