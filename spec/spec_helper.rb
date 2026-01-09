@@ -2,7 +2,6 @@ require "rspec/core"
 require "hatchet"
 require "fileutils"
 require "stringio"
-require "hatchet"
 require "rspec/retry"
 require "language_pack"
 require "language_pack/shell_helpers"
@@ -76,7 +75,7 @@ def set_bundler_version(version:)
   else
     "BUNDLED WITH\n   #{version}"
   end
-  gemfile_lock.gsub!(/^BUNDLED WITH$(\r?\n) {2,3}(?<major>\d+)\.(?<minor>\d+)\.\d+/m, version)
+  gemfile_lock.gsub!(/^BUNDLED WITH$(?:\r?\n) {2,3}(?<major>\d+)\.(?<minor>\d+)\.\d+/m, version)
   gemfile_lock << "\n#{version}" unless gemfile_lock.match?(/^BUNDLED WITH/)
 
   Pathname("Gemfile.lock").write(gemfile_lock)
@@ -88,10 +87,6 @@ end
 
 def rails_lts_stack
   "heroku-22"
-end
-
-def hatchet_path(path = "")
-  Pathname.new(__FILE__).join("../../repos").expand_path.join(path)
 end
 
 def dyno_status(app, ps_name = "web")

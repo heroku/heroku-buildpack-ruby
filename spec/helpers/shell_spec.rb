@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe "ShellHelpers" do
-  module RecordPuts
+  module RecordPuts # standard:disable Lint/ConstantDefinitionInBlock
     attr_reader :puts_calls, :print_calls
     def puts(*args)
       @puts_calls ||= []
@@ -14,7 +14,7 @@ describe "ShellHelpers" do
     end
   end
 
-  class FakeShell
+  class FakeShell # standard:disable Lint/ConstantDefinitionInBlock
     include RecordPuts
     include LanguagePack::ShellHelpers
   end

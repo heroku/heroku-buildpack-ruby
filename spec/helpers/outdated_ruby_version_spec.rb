@@ -104,7 +104,7 @@ describe LanguagePack::Helpers::OutdatedRubyVersion do
     outdated.call
 
     good_version = outdated.suggest_ruby_eol_version.sub("x", "0")
-    ruby_version = LanguagePack::RubyVersion.default(last_version: "#{good_version}")
+    ruby_version = LanguagePack::RubyVersion.default(last_version: good_version)
 
     outdated = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,

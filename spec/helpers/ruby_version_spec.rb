@@ -23,7 +23,7 @@ describe "RubyVersion" do
   end
 
   it "correctly sets default ruby versions" do
-    Hatchet::App.new("default_ruby").in_directory_fork do |dir|
+    Hatchet::App.new("default_ruby").in_directory_fork do |_dir|
       dir = Pathname(Dir.pwd)
       ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
         ruby: LanguagePack::Helpers::GemfileLock.new(
