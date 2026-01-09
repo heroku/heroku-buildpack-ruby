@@ -14,4 +14,5 @@ group :development, :test do
   gem 'rspec-retry'
   gem 'json'
   gem 'redis'
+  gem 'standard'
 end
