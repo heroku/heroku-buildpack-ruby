@@ -106,7 +106,7 @@ class DeployCheck
 
   def remote_tag_array
     @remote_tag_array ||= begin
-      cmd = String.new("")
+      cmd = +""
       cmd << "git ls-remote --tags #{@github_url}"
       cmd << "| awk '{print $2}' | cut -d '/' -f 3 | cut -d '^' -f 1"
       run!(cmd).each_line.map(&:strip).select { |line| line.strip.match?(/^v\d+$/) } # https://rubular.com/r/8eFB9r8nOVrM7H

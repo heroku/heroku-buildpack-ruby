@@ -45,7 +45,7 @@ class LanguagePack::Helpers::BinstubWrapper < SimpleDelegator
     @shebang ||= begin
       @binstub.open(&:readline)
     rescue EOFError
-      String.new("")
+      +""
     end
   end
 

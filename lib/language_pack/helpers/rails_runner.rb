@@ -43,7 +43,7 @@ class LanguagePack::Helpers::RailsRunner
       @did_time_out = false
       @heroku_key = "heroku.detecting.config.for.#{config}"
 
-      @rails_config = String.new('#{')
+      @rails_config = +'#{'
       @rails_config << "Rails.application.config"
       config.split(".").each do |part|
         @rails_config << ".try(:#{part})"
@@ -60,7 +60,7 @@ class LanguagePack::Helpers::RailsRunner
     end
 
     def to_command
-      cmd = String.new("begin; ")
+      cmd = +"begin; "
       cmd << "puts %Q{"
       cmd << "#{@heroku_key}=#{@rails_config}"
       cmd << "}; "
@@ -124,11 +124,11 @@ class LanguagePack::Helpers::RailsRunner
     out = process.output
 
     if timeout?
-      message = String.new("Detecting rails configuration timeout\n")
+      message = +"Detecting rails configuration timeout\n"
       message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
       warn(message)
     elsif !@success
-      message = String.new("Detecting rails configuration failed\n")
+      message = +"Detecting rails configuration failed\n"
       message << "set HEROKU_DEBUG_RAILS_RUNNER=1 to debug" unless @debug
       warn(message)
     end
