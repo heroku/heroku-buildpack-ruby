@@ -172,12 +172,22 @@ private
 
     if old_bundler_version && old_bundler_version != bundler_version
       warn(<<~WARNING, inline: true)
-        Your app was upgraded to bundler #{ bundler_version }.
-        Previously you had a successful deploy with bundler #{ old_bundler_version }.
+        Your bundler version changed from `#{old_bundler_version}` to `#{bundler_version}`.
 
-        If you see problems related to the bundler version please refer to:
-        https://devcenter.heroku.com/articles/bundler-version#known-upgrade-issues
+        If you see problems related to the new bundler version, you can revert to the previous version
+        by updating the `BUNDLED WITH` value in your `Gemfile.lock`. For example:
 
+        ```
+        BUNDLED WITH
+           #{old_bundler_version}
+        ```
+
+        Commit the results to git before redeploying:
+
+        ```
+        $ git add Gemfile.lock
+        $ git commit -m "Revert to previous bundler version"
+        ```
       WARNING
     end
   end

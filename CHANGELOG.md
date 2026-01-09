@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Update bundler version warning output (https://github.com/heroku/heroku-buildpack-ruby/pull/1697)
 
 ## [v341] - 2026-01-09
 
