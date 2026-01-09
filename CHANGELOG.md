@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v341] - 2026-01-09
+
 - Bundler version installed now directly matches the value in `BUNDLED WITH` from the `Gemfile.lock`
   Previously, this value was converted to a "known good version." For example:
 
@@ -1870,7 +1873,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v340...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v341...main
+[v341]: https://github.com/heroku/heroku-buildpack-ruby/compare/v340...v341
 [v340]: https://github.com/heroku/heroku-buildpack-ruby/compare/v339...v340
 [v339]: https://github.com/heroku/heroku-buildpack-ruby/compare/v338...v339
 [v338]: https://github.com/heroku/heroku-buildpack-ruby/compare/v337...v338
