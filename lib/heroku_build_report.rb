@@ -46,7 +46,7 @@ module HerokuBuildReport
 
     def capture(metrics = {})
       metrics.each do |(key, value)|
-        return if key.nil? || key.to_s.strip.empty?
+        next if key.nil? || key.to_s.strip.empty?
 
         key = key&.strip
         raise "Key cannot be empty (#{key.inspect} => #{value})" if key.nil? || key.empty?
@@ -56,7 +56,7 @@ module HerokuBuildReport
           value = value.to_s
         end
 
-        @data["#{key}"] = value
+        @data[key.to_s] = value
       end
 
       @path.write(@data.to_json)
