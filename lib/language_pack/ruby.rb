@@ -625,7 +625,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       WARNING
     end
 
-    bundle_command = String.new("")
+      bundle_command = +""
     bundle_command << "BUNDLE_WITHOUT='#{ENV["BUNDLE_WITHOUT"]}' "
     bundle_command << "BUNDLE_PATH=#{ENV["BUNDLE_PATH"]} "
     bundle_command << "BUNDLE_BIN=#{ENV["BUNDLE_BIN"]} "
@@ -749,7 +749,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       # Make available to future buildpacks (export), but not runtime (profile.d)
       set_export_default "UV_USE_IO_URING", "0"
 
-      if version != version
+      if old_version != version
         warn(<<~WARNING, inline: true)
           Default version of Node.js changed (#{old_version} to #{version})
         WARNING
@@ -784,7 +784,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       # Make available to future buildpacks (export), but not runtime (profile.d)
       set_export_default "UV_USE_IO_URING", "0"
 
-      if version != version
+      if old_version != version
         warn(<<~WARNING, inline: true)
           Default version of Yarn changed (#{old_version} to #{version})
         WARNING
