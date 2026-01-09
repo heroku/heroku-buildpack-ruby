@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+- Bundler version installed now directly matches the value in `BUNDLED WITH` from the `Gemfile.lock`
+  Previously, this value was converted to a "known good version." For example:
+
+  `BUNDLED WITH` 2.7.x installs `bundler 2.7.2`
+
+  Now, the exact version from the `Gemfile.lock` is installed instead. Applications without
+  a `BUNDLED WITH` value will receive a default bundler version. (https://github.com/heroku/heroku-buildpack-ruby/pull/1695)
 
 ## [v340] - 2026-01-06
 

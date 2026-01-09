@@ -3,7 +3,10 @@ require_relative '../spec_helper'
 describe "Rails 7" do
   it "should detect successfully" do
     Hatchet::App.new('rails-jsbundling').in_directory_fork do
-      bundler = LanguagePack::Helpers::BundlerWrapper.new(bundler_path: Dir.mktmpdir)
+      bundler = LanguagePack::Helpers::BundlerWrapper.new(
+        bundler_path: Dir.mktmpdir,
+        bundler_version: LanguagePack::Helpers::BundlerWrapper::DEFAULT_VERSION
+      )
       expect(LanguagePack::Rails6.use?(bundler: bundler)).to eq(false)
       expect(LanguagePack::Rails7.use?(bundler: bundler)).to eq(true)
     end

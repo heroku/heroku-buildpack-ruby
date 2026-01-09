@@ -32,6 +32,30 @@ describe LanguagePack::Helpers::LockfileShellParser do
       end
     end
 
+    it "reports error on nil input" do
+      expect {
+        LanguagePack::Helpers::LockfileShellParser.call(lockfile_path: nil)
+      }.to raise_error(StandardError, /no implicit conversion of nil into String/)
+    end
+
+    it "reports error on file that does not exist" do
+      expect {
+        LanguagePack::Helpers::LockfileShellParser.call(lockfile_path: "does-not-exist.lock")
+      }.to raise_error(StandardError, /No such file or directory/)
+    end
+
+    it "reports error on invalid lockfile contents" do
+      Dir.mktmpdir do |dir|
+        lockfile_path = Pathname(dir).join("Gemfile.lock").tap {|p|
+          # Write invalid UTF-8 bytes to trigger Bundler::LockfileError
+          p.binwrite("\xff\xfe")
+        }
+        expect {
+          LanguagePack::Helpers::LockfileShellParser.call(lockfile_path: lockfile_path)
+        }.to raise_error(StandardError, /Your lockfile is unreadable/)
+      end
+    end
+
     it "parses multiple gems from a Gemfile.lock" do
       Dir.mktmpdir do |dir|
         lockfile_path = Pathname(dir).join("Gemfile.lock")
