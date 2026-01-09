@@ -89,7 +89,7 @@ module LanguagePack
       stream_to_user: !bundler_output.match?(/Installing|Fetching|Using/)
     )
 
-    if pack = LanguagePack.detect(
+    if (pack = LanguagePack.detect(
       arch: arch,
       new_app: new_app,
       warn_io: warn_io,
@@ -99,7 +99,7 @@ module LanguagePack
       ruby_version: ruby_version,
       gemfile_lock: gemfile_lock,
       environment_name: environment_name
-    )
+    ))
       pack.topic("Compiling #{pack.name}")
       pack.compile
     end
@@ -111,19 +111,17 @@ module LanguagePack
       klass.use?(bundler: bundler)
     end
 
-    if pack_klass
-      pack_klass.new(
-        arch: arch,
-        bundler: bundler,
-        new_app: new_app,
-        warn_io: warn_io,
-        app_path: app_path,
-        cache_path: cache_path,
-        environment_name: environment_name,
-        gemfile_lock: gemfile_lock,
-        ruby_version: ruby_version
-      )
-    end
+    pack_klass&.new(
+      arch: arch,
+      bundler: bundler,
+      new_app: new_app,
+      warn_io: warn_io,
+      app_path: app_path,
+      cache_path: cache_path,
+      environment_name: environment_name,
+      gemfile_lock: gemfile_lock,
+      ruby_version: ruby_version
+    )
   end
 end
 
