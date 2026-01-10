@@ -16,7 +16,7 @@
 class DeployCheck
   attr_reader :github_url
 
-  def initialize(github: , next_version: ENV["RELEASE_VERSION"])
+  def initialize(github:, next_version: ENV["RELEASE_VERSION"])
     @github = github
     @github_url = "https://github.com/#{github}"
     @next_version = next_version
@@ -106,16 +106,16 @@ class DeployCheck
 
   def remote_tag_array
     @remote_tag_array ||= begin
-      cmd = String.new("")
+      cmd = +""
       cmd << "git ls-remote --tags #{@github_url}"
       cmd << "| awk '{print $2}' | cut -d '/' -f 3 | cut -d '^' -f 1"
-      run!(cmd).each_line.map(&:strip).select {|line| line.strip.match?(/^v\d+$/) } # https://rubular.com/r/8eFB9r8nOVrM7H
+      run!(cmd).each_line.map(&:strip).select { |line| line.strip.match?(/^v\d+$/) } # https://rubular.com/r/8eFB9r8nOVrM7H
     end
   end
 
   private def next_version_number
-   integer_tag_array = remote_tag_array.map {|line| line.sub(/^v/, '').to_i }.sort # Ascending order
-   integer_tag_array.last.next
+    integer_tag_array = remote_tag_array.map { |line| line.sub(/^v/, "").to_i }.sort # Ascending order
+    integer_tag_array.last.next
   end
 
   def run!(cmd)

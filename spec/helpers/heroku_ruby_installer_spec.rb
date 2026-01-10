@@ -63,7 +63,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
         Dir.chdir(dir) do
           dir = Pathname(dir).expand_path
           report = HerokuBuildReport.dev_null
-          env = { "PATH" => "priorpath" }
+          env = {"PATH" => "priorpath"}
           gemfile_lock = LanguagePack::Helpers::GemfileLock.new(report: report, contents: <<~EOF)
             RUBY VERSION
                ruby 3.5.0.preview1
@@ -86,7 +86,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
           }
 
           expect(sort_hash(report.data)).to eq(sort_hash(expected))
-          expect(env).to eq({ "PATH" => "#{dir.join("vendor/ruby/bin")}:priorpath" })
+          expect(env).to eq({"PATH" => "#{dir.join("vendor/ruby/bin")}:priorpath"})
         end
       end
     end
@@ -101,7 +101,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
                ruby 3.1.4p001 (jruby 9.4.9.0)
           EOF
 
-          env = { "PATH" => "priorpath" }
+          env = {"PATH" => "priorpath"}
 
           LanguagePack::Installers::HerokuRubyInstaller.new(
             multi_arch_stacks: ["heroku-24"],
@@ -126,7 +126,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
 
           expect(sort_hash(report.data)).to eq(sort_hash(expected))
 
-          expect(env).to eq({ "JRUBY_OPTS" => nil, "PATH" => "#{dir.join("vendor/ruby/bin")}:priorpath" })
+          expect(env).to eq({"JRUBY_OPTS" => nil, "PATH" => "#{dir.join("vendor/ruby/bin")}:priorpath"})
         end
       end
     end

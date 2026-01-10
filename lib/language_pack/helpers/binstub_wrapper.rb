@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'delegate'
+require "delegate"
 
 # This is a helper class, it wraps a pathname object
 # and adds helper methods used to pull out the first line of the file ("the shebang")
@@ -13,7 +13,7 @@ require 'delegate'
 class LanguagePack::Helpers::BinstubWrapper < SimpleDelegator
   def initialize(string_or_pathname)
     @binstub = Pathname.new(string_or_pathname)
-    super @binstub
+    super(@binstub)
   end
 
   # Returns false if the shebang line has a ruby binary
@@ -45,7 +45,7 @@ class LanguagePack::Helpers::BinstubWrapper < SimpleDelegator
     @shebang ||= begin
       @binstub.open(&:readline)
     rescue EOFError
-      String.new("")
+      +""
     end
   end
 

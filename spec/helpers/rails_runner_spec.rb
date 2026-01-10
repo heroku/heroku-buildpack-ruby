@@ -1,11 +1,11 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Rails Runner" do
   def isolate(&block)
     # Process and disk isolation
     Hatchet::App.new("default_ruby").in_directory_fork do
-      original_path = ENV["PATH"]
-      ENV["PATH"] = "./bin/:#{ENV['PATH']}"
+      ENV["PATH"]
+      ENV["PATH"] = "./bin/:#{ENV["PATH"]}"
 
       Dir.mktmpdir do |tmpdir|
         Dir.chdir(tmpdir) do
@@ -17,8 +17,8 @@ describe "Rails Runner" do
 
   it "config objects build propperly formatted commands" do
     isolate do
-      rails_runner  = LanguagePack::Helpers::RailsRunner.new
-      local_storage = rails_runner.detect("active_storage.service")
+      rails_runner = LanguagePack::Helpers::RailsRunner.new
+      rails_runner.detect("active_storage.service")
 
       expected = 'rails runner "begin; puts %Q{heroku.detecting.config.for.active_storage.service=#{Rails.application.config.try(:active_storage).try(:service)}}; rescue => e; end;"'
       expect(rails_runner.command).to eq(expected)
@@ -32,9 +32,16 @@ describe "Rails Runner" do
 
   it "calls run through child object" do
     isolate do
-      rails_runner  = LanguagePack::Helpers::RailsRunner.new
-      def rails_runner.call; @called ||= 0 ; @called += 1; "" end
-      def rails_runner.called; @called; end
+      rails_runner = LanguagePack::Helpers::RailsRunner.new
+      def rails_runner.call
+        @called ||= 0
+        @called += 1
+        ""
+      end
+
+      def rails_runner.called
+        @called
+      end
 
       local_storage = rails_runner.detect("active_storage.service")
       local_storage.success?
@@ -51,9 +58,9 @@ describe "Rails Runner" do
       mock_rails_runner
       expect(File.executable?("bin/rails")).to eq(true)
 
-      rails_runner  = LanguagePack::Helpers::RailsRunner.new
-      local_storage = rails_runner.detect("active_storage.service")
-      local_storage = rails_runner.detect("foo.bar")
+      rails_runner = LanguagePack::Helpers::RailsRunner.new
+      rails_runner.detect("active_storage.service")
+      rails_runner.detect("foo.bar")
 
       expect(rails_runner.output).to match("heroku.detecting.config.for.active_storage.service=active_storage.service")
       expect(rails_runner.output).to match("heroku.detecting.config.for.foo.bar=foo.bar")
@@ -66,8 +73,8 @@ describe "Rails Runner" do
       mock_rails_runner("pid = Process.spawn('sleep 5'); Process.wait(pid)")
 
       diff = time_it do
-        rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
-        local_storage = rails_runner.detect("active_storage.service")
+        rails_runner = LanguagePack::Helpers::RailsRunner.new(false, 0.01)
+        rails_runner.detect("active_storage.service")
         expect(rails_runner.success?).to eq(false)
         expect(rails_runner.timeout?).to eq(true)
       end
@@ -80,11 +87,11 @@ describe "Rails Runner" do
     isolate do
       mock_rails_runner('raise "bad" if value == :bad')
 
-      rails_runner  = LanguagePack::Helpers::RailsRunner.new(false, 1)
-      bad_value     = rails_runner.detect("bad.value")
+      rails_runner = LanguagePack::Helpers::RailsRunner.new(false, 1)
+      bad_value = rails_runner.detect("bad.value")
       local_storage = rails_runner.detect("active_storage.service")
 
-      expect(!!bad_value.success?).to     eq(false)
+      expect(!!bad_value.success?).to eq(false)
       expect(!!local_storage.success?).to eq(true)
     end
   end
@@ -93,7 +100,7 @@ describe "Rails Runner" do
     isolate do
       mock_rails_runner('puts "hi \255"')
 
-      rails_runner  = LanguagePack::Helpers::RailsRunner.new
+      rails_runner = LanguagePack::Helpers::RailsRunner.new
       local_storage = rails_runner.detect("active_storage.service")
 
       expect(local_storage.success?).to be_truthy
@@ -103,7 +110,7 @@ describe "Rails Runner" do
   def time_it
     start = Time.now
     yield
-    return Time.now - start
+    Time.now - start
   end
 
   def mock_rails_runner(try_code = "")
@@ -144,6 +151,6 @@ describe "Rails Runner" do
     FILE
     FileUtils.mkdir("bin")
     File.open("bin/rails", "w") { |f| f << executable_contents }
-    File.chmod(0777, "bin/rails")
+    File.chmod(0o777, "bin/rails")
   end
 end

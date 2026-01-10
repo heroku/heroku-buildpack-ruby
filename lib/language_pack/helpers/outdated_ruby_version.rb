@@ -18,9 +18,9 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   DEFAULT_RANGE = 1..5
   attr_reader :current_ruby_version
 
-  def initialize(current_ruby_version: , fetcher:)
+  def initialize(current_ruby_version:, fetcher:)
     @current_ruby_version = current_ruby_version
-    @fetcher      = fetcher
+    @fetcher = fetcher
     @already_joined = false
 
     @minor_versions = []
@@ -59,14 +59,12 @@ class LanguagePack::Helpers::OutdatedRubyVersion
     @minor_versions = @minor_version_threads.map(&:value).compact
     @minor_versions << current_ruby_version.ruby_version
 
-
     @suggested_minor_version = @minor_versions
-      .map { |v| v.sub('ruby-', '') }
-      .sort_by { |v| Gem::Version.new(v) }
-      .last
+      .map { |v| v.sub("ruby-", "") }
+      .max_by { |v| Gem::Version.new(v) }
 
     @suggested_eol_version = @eol_versions
-      .map { |v| v.sub('ruby-', '') }
+      .map { |v| v.sub("ruby-", "") }
       .sort_by { |v| Gem::Version.new(v) }
       .last(3)
       .first
@@ -87,20 +85,20 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   def eol?
     join
 
-    return @eol_versions.length > 3
+    @eol_versions.length > 3
   end
 
   # Account for preview releases
   def maybe_eol?
     join
 
-    return @eol_versions.length > 2
+    @eol_versions.length > 2
   end
 
   def suggest_ruby_eol_version
     return false unless maybe_eol?
     @suggested_eol_version
-      .sub(/0$/, 'x')
+      .sub(/0$/, "x")
   end
 
   # Checks for a range of "tiny" versions in parallel
@@ -123,7 +121,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
 
         if i == range.last
           check_minor_versions(
-            range: Range.new(i+1, i+i),
+            range: Range.new(i + 1, i + i),
             base_version: base_version
           )
         end
@@ -149,7 +147,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
 
         if i == range.last
           check_eol_versions_minor(
-            range: Range.new(i+1, i+i),
+            range: Range.new(i + 1, i + i),
             base_version: base_version
           )
         end

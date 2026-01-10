@@ -1,17 +1,16 @@
-require 'rspec/core'
-require 'hatchet'
-require 'fileutils'
-require 'stringio'
-require 'hatchet'
-require 'rspec/retry'
-require 'language_pack'
-require 'language_pack/shell_helpers'
+require "rspec/core"
+require "hatchet"
+require "fileutils"
+require "stringio"
+require "rspec/retry"
+require "language_pack"
+require "language_pack/shell_helpers"
 
 ENV["HATCHET_BUILDPACK_BASE"] ||= "https://github.com/heroku/heroku-buildpack-ruby"
 
-ENV['RACK_ENV'] = 'test'
+ENV["RACK_ENV"] = "test"
 
-DEFAULT_STACK = 'heroku-24'
+DEFAULT_STACK = "heroku-24"
 
 def hatchet_path(path = "")
   Pathname(__FILE__).join("../../repos").expand_path.join(path)
@@ -19,9 +18,9 @@ end
 
 RSpec.configure do |config|
   config.alias_example_to :fit, focused: true
-  config.full_backtrace      = true
-  config.verbose_retry       = true # show retry status in spec process
-  config.example_status_persistence_file_path = 'spec/examples.txt'
+  config.full_backtrace = true
+  config.verbose_retry = true # show retry status in spec process
+  config.example_status_persistence_file_path = "spec/examples.txt"
 
   config.expect_with :rspec do |c|
     c.max_formatted_output_length = Float::INFINITY
@@ -34,12 +33,12 @@ end
 def successful_body(app, options = {})
   retry_limit = options[:retry_limit] || 50
   url = "http://#{app.name}.herokuapp.com"
-  Excon.get(url, :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
+  Excon.get(url, idempotent: true, expects: 200, retry_limit: retry_limit).body
 end
 
 def create_file_with_size_in(size, dir)
   name = File.join(dir, SecureRandom.hex(16))
-  File.open(name, 'w') {|f| f.print([ 1 ].pack("C") * size) }
+  File.open(name, "w") { |f| f.print([1].pack("C") * size) }
   Pathname.new name
 end
 
@@ -55,7 +54,7 @@ def set_lts_ruby_version
   set_ruby_version(version: "3.3.6")
 end
 
-def set_ruby_version(version: )
+def set_ruby_version(version:)
   # Last ruby declaration in the gemfile wins
   Pathname("Gemfile").write("\nruby '#{version}'", mode: "a")
 
@@ -68,30 +67,26 @@ def set_ruby_version(version: )
   Pathname("Gemfile.lock").write(contents)
 end
 
-def set_bundler_version(version: )
+def set_bundler_version(version:)
   gemfile_lock = Pathname("Gemfile.lock").read
 
-  if version == :default
-    version = ""
+  version = if version == :default
+    ""
   else
-    version = "BUNDLED WITH\n   #{version}"
+    "BUNDLED WITH\n   #{version}"
   end
-  gemfile_lock.gsub!(/^BUNDLED WITH$(\r?\n) {2,3}(?<major>\d+)\.(?<minor>\d+)\.\d+/m, version)
+  gemfile_lock.gsub!(/^BUNDLED WITH$(?:\r?\n) {2,3}(?<major>\d+)\.(?<minor>\d+)\.\d+/m, version)
   gemfile_lock << "\n#{version}" unless gemfile_lock.match?(/^BUNDLED WITH/)
 
   Pathname("Gemfile.lock").write(gemfile_lock)
 end
 
 def rails_lts_config
-  { 'BUNDLE_GEMS__RAILSLTS__COM' => ENV["RAILS_LTS_CREDS"] }
+  {"BUNDLE_GEMS__RAILSLTS__COM" => ENV["RAILS_LTS_CREDS"]}
 end
 
 def rails_lts_stack
   "heroku-22"
-end
-
-def hatchet_path(path = "")
-  Pathname.new(__FILE__).join("../../repos").expand_path.join(path)
 end
 
 def dyno_status(app, ps_name = "web")
@@ -99,7 +94,7 @@ def dyno_status(app, ps_name = "web")
     .api_rate_limit.call
     .dyno
     .list(app.name)
-    .detect {|x| x["type"] == ps_name }
+    .detect { |x| x["type"] == ps_name }
 end
 
 def wait_for_dyno_boot(app, ps_name = "web", sleep_val = 1)
@@ -126,7 +121,7 @@ class EnvDiff
     if build_dir_pattern
       build_dir = output.match(build_dir_pattern)&.[](1)&.strip
       if build_dir
-        output = output.gsub(build_dir, '<build dir>')
+        output = output.gsub(build_dir, "<build dir>")
       else
         raise "build_dir_pattern #{build_dir_pattern.inspect} not found in output:\n#{output}"
       end
@@ -163,7 +158,7 @@ class EnvDiff
     current_env = {}
 
     output.each_line do |line|
-      clean = line.gsub(/^\s*remote:\s*/, '').strip
+      clean = line.gsub(/^\s*remote:\s*/, "").strip
       case clean
       when start_marker
         in_section = true
@@ -172,8 +167,8 @@ class EnvDiff
         sections << current_env
         in_section = false
       else
-        if in_section && clean.include?('=')
-          key, value = clean.split('=', 2)
+        if in_section && clean.include?("=")
+          key, value = clean.split("=", 2)
           current_env[key] = value
         end
       end
@@ -182,12 +177,12 @@ class EnvDiff
   end
 end
 
-private def extract_remote_lines(output, start_marker: , end_marker: )
+private def extract_remote_lines(output, start_marker:, end_marker:)
   lines = []
   in_section = false
 
   output.each_line do |line|
-    clean = line.gsub(/^\s*remote:\s*/, '').strip
+    clean = line.gsub(/^\s*remote:\s*/, "").strip
     case clean
     when start_marker
       in_section = true

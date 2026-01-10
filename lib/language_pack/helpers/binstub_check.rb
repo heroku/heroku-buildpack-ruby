@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'language_pack/helpers/binstub_wrapper'
+require "language_pack/helpers/binstub_wrapper"
 # This class is designed to check for binstubs for validity
 #
 # Example:
@@ -10,7 +10,7 @@ require 'language_pack/helpers/binstub_wrapper'
 class LanguagePack::Helpers::BinstubCheck
   attr_reader :bad_binstubs
 
-  def initialize(app_root_dir:, warn_object: )
+  def initialize(app_root_dir:, warn_object:)
     @bin_dir = Pathname.new(app_root_dir).join("bin")
     @warn_object = warn_object
     @bad_binstubs = []
@@ -46,7 +46,7 @@ class LanguagePack::Helpers::BinstubCheck
 
       The following file(s) have appear to contain a problematic "shebang" line
 
-      #{@bad_binstubs.map {|binstub| "  - bin/#{binstub.basename}" }.join("\n")}
+      #{@bad_binstubs.map { |binstub| "  - bin/#{binstub.basename}" }.join("\n")}
 
       For example bin/#{@bad_binstubs.first.basename} has the shebang line:
 

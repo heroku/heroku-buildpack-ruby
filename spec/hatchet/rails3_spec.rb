@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe "Rails 3.x" do
   it "should deploy and inject plugins" do

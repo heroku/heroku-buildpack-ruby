@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix yarn and nodejs version change warnings (https://github.com/heroku/heroku-buildpack-ruby/pull/1699)
 
 ## [v342] - 2026-01-09
 

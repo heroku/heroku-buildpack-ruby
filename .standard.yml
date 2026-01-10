@@ -1,0 +1,7 @@
+# StandardRB configuration
+# https://github.com/standardrb/standard
+
+ignore:
+  - "repos/**/*"  # Test fixture repos (external Rails apps for integration tests)
+  - "lib/language_pack/ruby.rb":
+    - Lint/IneffectiveAccessModifier  # Class methods after `private` are intentionally public; private only affects instance methods

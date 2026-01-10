@@ -12,7 +12,7 @@ require "language_pack/shell_helpers"
 require "language_pack/test"
 require "language_pack/ruby"
 
-include LanguagePack::ShellHelpers
+include LanguagePack::ShellHelpers # standard:disable Style/MixinUsage
 
 def execute_test(command)
   topic("Running test: #{command}")
@@ -26,7 +26,7 @@ def execute_command(command)
   # having no whitespace before output. To avoid adding whitespace
   # for the original Kernel.puts to be used by passing in the
   # Kernel object.
-  pipe(command, :user_env => true, :output_object => Kernel)
+  pipe(command, user_env: true, output_object: Kernel)
 end
 
 # $ bin/test app_path ENV_DIR ARTIFACT_DIR
@@ -35,7 +35,7 @@ LanguagePack::ShellHelpers.initialize_env(env_dir)
 Dir.chdir(app_path)
 
 gems_list = LanguagePack::Helpers::BundleList::HumanCommand.new(
-  stream_to_user: false,
+  stream_to_user: false
 ).call
 
 execute_test(
@@ -53,4 +53,3 @@ execute_test(
     "rake test"
   end
 )
-

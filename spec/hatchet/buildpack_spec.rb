@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe "Buildpack internals" do
   it "handles PATH with a newline in it correctly" do

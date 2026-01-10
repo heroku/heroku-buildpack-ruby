@@ -8,7 +8,7 @@ require "language_pack/base"
 # for persistant generated data such as SECRET_KEY_BASE that would otherwise
 # cause session invalidation if it changed unexpectedly between deploys.
 class LanguagePack::Metadata
-  def initialize(cache_path: )
+  def initialize(cache_path:)
     @dir = Pathname(cache_path)
       .join("vendor")
       .join("heroku")
@@ -22,8 +22,6 @@ class LanguagePack::Metadata
   def try_read(key)
     if exists?(key)
       read(key)
-    else
-      nil
     end
   end
 

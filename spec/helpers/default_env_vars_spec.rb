@@ -1,5 +1,4 @@
-
-require 'spec_helper'
+require "spec_helper"
 
 describe LanguagePack::Helpers::DefaultEnvVars do
   it "returns when everything falsey" do
@@ -13,7 +12,7 @@ describe LanguagePack::Helpers::DefaultEnvVars do
 
     expect(env).to eq({
       "LANG" => "en_US.UTF-8",
-      "PUMA_PERSISTENT_TIMEOUT" => "95",
+      "PUMA_PERSISTENT_TIMEOUT" => "95"
     })
   end
 
@@ -49,17 +48,17 @@ describe LanguagePack::Helpers::DefaultEnvVars do
     })
   end
 
-    # if rails_version&. >= Gem::Version.new("4.1.0.beta1")
-    #   out["SECRET_KEY_BASE"] = secret_key_base
-    # end
+  # if rails_version&. >= Gem::Version.new("4.1.0.beta1")
+  #   out["SECRET_KEY_BASE"] = secret_key_base
+  # end
 
-    # if rails_version&. >= Gem::Version.new("4.2.0")
-    #   out["RAILS_SERVE_STATIC_FILES"] = "enabled"
-    # end
+  # if rails_version&. >= Gem::Version.new("4.2.0")
+  #   out["RAILS_SERVE_STATIC_FILES"] = "enabled"
+  # end
 
-    # if rails_version&. >= Gem::Version.new("5.0.0")
-    #   out["RAILS_LOG_TO_STDOUT"] = "enabled"
-    # end
+  # if rails_version&. >= Gem::Version.new("5.0.0")
+  #   out["RAILS_LOG_TO_STDOUT"] = "enabled"
+  # end
 
   it "rails 4.1" do
     env = LanguagePack::Helpers::DefaultEnvVars.call(

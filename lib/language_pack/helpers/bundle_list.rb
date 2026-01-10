@@ -31,6 +31,7 @@ module LanguagePack::Helpers
     #    ).call
     class HumanCommand
       include LanguagePack::ShellHelpers
+
       private attr_reader :stream_to_user, :io
 
       def initialize(stream_to_user:, io: self)
@@ -58,10 +59,10 @@ module LanguagePack::Helpers
       end
     end
 
-    def initialize(output: )
+    def initialize(output:)
       @raw = output
       @gems = {}
-      @raw.scan(/\* (?<name>\S+) \((?<version>[a-zA-Z0-9\.]+)(?<git_sha> [a-zA-Z0-9]+)?\)/) do
+      @raw.scan(/\* (?<name>\S+) \((?<version>[a-zA-Z0-9.]+)(?<git_sha> [a-zA-Z0-9]+)?\)/) do
         captures = Regexp.last_match.named_captures
         @gems[captures["name"]] = captures["version"]
       end
@@ -76,7 +77,7 @@ module LanguagePack::Helpers
     end
 
     def gem_version(name)
-      if version = @gems[name]
+      if (version = @gems[name])
         Gem::Version.new(version)
       end
     end
