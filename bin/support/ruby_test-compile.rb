@@ -16,7 +16,6 @@ $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
 require "language_pack/test"
-include LanguagePack::ShellHelpers # standard:disable Style/MixinUsage
 
 begin
   app_path = Pathname(ARGV[0])
