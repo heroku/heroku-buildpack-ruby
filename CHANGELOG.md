@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v343] - 2026-01-13
+
+- Ruby 4.0.1 is now available
+
+
 ## [v342] - 2026-01-09
 
 - Update bundler version warning output (https://github.com/heroku/heroku-buildpack-ruby/pull/1697)
@@ -1877,7 +1882,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v342...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v343...main
+[v343]: https://github.com/heroku/heroku-buildpack-ruby/compare/v342...v343
 [v342]: https://github.com/heroku/heroku-buildpack-ruby/compare/v341...v342
 [v341]: https://github.com/heroku/heroku-buildpack-ruby/compare/v340...v341
 [v340]: https://github.com/heroku/heroku-buildpack-ruby/compare/v339...v340
