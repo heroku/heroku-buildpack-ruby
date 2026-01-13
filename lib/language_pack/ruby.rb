@@ -240,18 +240,22 @@ private
       256)
         export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-512}
         export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+        export WEB_CONCURRENCY_SET_BY=heroku/ruby
         ;;
       512)
         export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-1024}
         export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
+        export WEB_CONCURRENCY_SET_BY=heroku/ruby
         ;;
       16384)
         export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-2560}
         export WEB_CONCURRENCY=${WEB_CONCURRENCY:-8}
+        export WEB_CONCURRENCY_SET_BY=heroku/ruby
         ;;
       32768)
         export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-6144}
         export WEB_CONCURRENCY=${WEB_CONCURRENCY:-16}
+        export WEB_CONCURRENCY_SET_BY=heroku/ruby
         ;;
       *)
         ;;

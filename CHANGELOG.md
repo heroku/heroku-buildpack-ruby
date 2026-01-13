@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Set `WEB_CONCURRENCY_SET_BY=heroku/ruby` if `WEB_CONCURRENCY` gets set in (deprecated) `SENSIBLE_DEFAULTS` mode (https://github.com/heroku/heroku-buildpack-ruby/pull/1700)
 
 ## [v342] - 2026-01-09
 
