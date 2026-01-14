@@ -37,17 +37,31 @@ describe "A helper class for deploying" do
   describe "tests that do NOT hit github" do
     it "checks multiple things" do
       deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby")
-      deploy.instance_variable_set("@methods_called", [])
+      deploy.instance_variable_set(:@methods_called, [])
 
-      def deploy.check_version!; @methods_called << :check_version! ;end
-      def deploy.check_unstaged!; @methods_called << :check_unstaged! ;end
-      def deploy.check_branch!; @methods_called << :check_branch! ;end
-      def deploy.check_changelog!; @methods_called << :check_changelog! ;end
-      def deploy.check_sync!; @methods_called << :check_sync! ;end
+      def deploy.check_version!
+        @methods_called << :check_version!
+      end
+
+      def deploy.check_unstaged!
+        @methods_called << :check_unstaged!
+      end
+
+      def deploy.check_branch!
+        @methods_called << :check_branch!
+      end
+
+      def deploy.check_changelog!
+        @methods_called << :check_changelog!
+      end
+
+      def deploy.check_sync!
+        @methods_called << :check_sync!
+      end
 
       deploy.check!
 
-      methods_called = deploy.instance_variable_get("@methods_called")
+      methods_called = deploy.instance_variable_get(:@methods_called)
       expect(methods_called).to include(:check_version!)
       expect(methods_called).to include(:check_unstaged!)
       expect(methods_called).to include(:check_branch!)
@@ -85,13 +99,17 @@ describe "A helper class for deploying" do
     it "knows the next version" do
       deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby", next_version: "v123")
 
-      def deploy.remote_tag_array; [ "v123" ] ; end
+      def deploy.remote_tag_array
+        ["v123"]
+      end
 
       expect(deploy.tag_exists_on_remote?).to be_truthy
 
       deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby", next_version: "v124")
 
-      def deploy.remote_tag_array; [ "v123" ] ; end
+      def deploy.remote_tag_array
+        ["v123"]
+      end
 
       expect(deploy.tag_exists_on_remote?).to be_falsey
     end
@@ -99,7 +117,9 @@ describe "A helper class for deploying" do
     it "checks remote tags for existance" do
       deploy = DeployCheck.new(github: "heroku/heroku-buildpack-ruby")
 
-      def deploy.remote_tag_array; [ "v123" ] ; end
+      def deploy.remote_tag_array
+        ["v123"]
+      end
 
       expect(deploy.next_version).to eq("v124")
     end

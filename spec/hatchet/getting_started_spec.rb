@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe "Heroku ruby getting started" do
   it "works on Heroku-24" do

@@ -1,4 +1,3 @@
-
 module LanguagePack::Helpers::DefaultEnvVars
   # Returns a hash of default environment variables for the given inputs
   #
@@ -15,7 +14,7 @@ module LanguagePack::Helpers::DefaultEnvVars
   # @param secret_key_base [String] the secret key base for the app
   # @param environment_name [String] the environment name to use for RACK_ENV/RAILS_ENV
   # @return [Hash] a hash of default environment variables
-  def self.call(is_jruby:, rack_version: , rails_version:, secret_key_base:, environment_name:)
+  def self.call(is_jruby:, rack_version:, rails_version:, secret_key_base:, environment_name:)
     out = {}
     out["LANG"] = "en_US.UTF-8"
     out["PUMA_PERSISTENT_TIMEOUT"] = "95"
@@ -32,19 +31,19 @@ module LanguagePack::Helpers::DefaultEnvVars
       out["RAILS_ENV"] = environment_name
     end
 
-    if rails_version&. >= Gem::Version.new("4.1.0.beta1")
-      if secret_key_base = secret_key_base&.to_s
+    if rails_version&.>= Gem::Version.new("4.1.0.beta1")
+      if (secret_key_base = secret_key_base&.to_s)
         out["SECRET_KEY_BASE"] = secret_key_base
       else
         raise ArgumentError, "secret_key_base is required for rails 4.1+. Provided: #{secret_key_base.inspect}"
       end
     end
 
-    if rails_version&. >= Gem::Version.new("4.2.0")
+    if rails_version&.>= Gem::Version.new("4.2.0")
       out["RAILS_SERVE_STATIC_FILES"] = "enabled"
     end
 
-    if rails_version&. >= Gem::Version.new("5.0.0")
+    if rails_version&.>= Gem::Version.new("5.0.0")
       out["RAILS_LOG_TO_STDOUT"] = "enabled"
     end
 

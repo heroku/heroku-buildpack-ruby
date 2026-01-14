@@ -5,10 +5,8 @@ require "language_pack"
 class LanguagePack::Cache
   # @param [String] path to the cache store
   def initialize(cache_path)
-    if cache_path
-      @cache_base = Pathname.new(cache_path)
-    else
-      @cache_base = nil
+    @cache_base = if cache_path
+      Pathname.new(cache_path)
     end
   end
 
@@ -54,7 +52,7 @@ class LanguagePack::Cache
     copy (@cache_base + path), dest
   end
 
-  def load_without_overwrite(path, dest=nil)
+  def load_without_overwrite(path, dest = nil)
     return unless @cache_base
 
     dest ||= path
@@ -70,7 +68,7 @@ class LanguagePack::Cache
   # copy cache contents
   # @param [String] source directory
   # @param [String] destination directory
-  def copy(from, to, options='-a')
+  def copy(from, to, options = "-a")
     return unless @cache_base
 
     return false unless File.exist?(from)
@@ -83,7 +81,7 @@ class LanguagePack::Cache
   # copy contents between to places in the cache
   # @param [String] source cache directory
   # @param [String] destination directory
-  def cache_copy(from,to)
+  def cache_copy(from, to)
     return unless @cache_base
 
     copy(@cache_base + from, @cache_base + to)

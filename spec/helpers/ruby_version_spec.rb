@@ -1,10 +1,10 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "RubyVersion" do
   it "knows the next logical version" do
     version_number = "2.5.0"
-    ruby_version   = LanguagePack::RubyVersion.default(last_version: version_number)
-    version        = "ruby-#{version_number}"
+    ruby_version = LanguagePack::RubyVersion.default(last_version: version_number)
+    version = "ruby-#{version_number}"
 
     expect(ruby_version.version_for_download).to eq(version)
     expect(ruby_version.next_logical_version).to eq("ruby-2.5.1")
@@ -23,7 +23,7 @@ describe "RubyVersion" do
   end
 
   it "correctly sets default ruby versions" do
-    Hatchet::App.new("default_ruby").in_directory_fork do |dir|
+    Hatchet::App.new("default_ruby").in_directory_fork do |_dir|
       dir = Pathname(Dir.pwd)
       ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
         ruby: LanguagePack::Helpers::GemfileLock.new(
@@ -32,7 +32,7 @@ describe "RubyVersion" do
       )
       version = LanguagePack::RubyVersion::DEFAULT_VERSION
       version_number = LanguagePack::RubyVersion::DEFAULT_VERSION_NUMBER
-      major, minor, patch = version_number.split(".")
+      major, minor, _ = version_number.split(".")
       expect(ruby_version.version_for_download).to eq(version)
       expect(ruby_version.engine_version).to eq(version_number)
       expect(ruby_version.to_gemfile).to eq("ruby '#{version_number}'")
@@ -67,7 +67,7 @@ describe "RubyVersion" do
       EOF
 
       version_number = "3.2.3"
-      version        = "ruby-#{version_number}"
+      version = "ruby-#{version_number}"
       ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
         ruby: LanguagePack::Helpers::GemfileLock.new(
           contents: dir.join("Gemfile.lock").read
@@ -104,7 +104,7 @@ describe "RubyVersion" do
       EOF
 
       version_number = "3.2.3"
-      version        = "ruby-#{version_number}.rc1"
+      version = "ruby-#{version_number}.rc1"
 
       # Shadow logic validation
       ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
@@ -143,7 +143,7 @@ describe "RubyVersion" do
       EOF
 
       version_number = "3.2.3"
-      version        = "ruby-#{version_number}.lol"
+      version = "ruby-#{version_number}.lol"
 
       ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
         ruby: LanguagePack::Helpers::GemfileLock.new(

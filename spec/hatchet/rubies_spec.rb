@@ -1,30 +1,30 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe "Ruby versions" do
   it "should deploy jdk on heroku-24" do
     Hatchet::Runner.new("default_ruby", stack: "heroku-24").tap do |app|
       app.before_deploy do |app|
         Pathname("Gemfile.lock").write(<<~EOM)
-         GEM
-           remote: https://rubygems.org/
-           specs:
-             rack (3.1.8)
-             rake (13.2.1)
-             webrick (1.9.1)
+          GEM
+            remote: https://rubygems.org/
+            specs:
+              rack (3.1.8)
+              rake (13.2.1)
+              webrick (1.9.1)
 
-         PLATFORMS
-           java
+          PLATFORMS
+            java
 
-         DEPENDENCIES
-           rack
-           rake
-           webrick
+          DEPENDENCIES
+            rack
+            rake
+            webrick
 
-         RUBY VERSION
-            ruby 3.1.4p0 (jruby 9.4.8.0)
+          RUBY VERSION
+             ruby 3.1.4p0 (jruby 9.4.8.0)
 
-         BUNDLED WITH
-            2.5.23
+          BUNDLED WITH
+             2.5.23
         EOM
 
         Pathname("Rakefile").write(<<~'EOM')

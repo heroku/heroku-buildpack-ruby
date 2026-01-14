@@ -1,9 +1,9 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Build report" do
   it "loads previously written report" do
     Dir.mktmpdir do |dir|
-      path = Pathname(dir).join(".report.json").tap {|p| p.write('{ "prior": true }') }
+      path = Pathname(dir).join(".report.json").tap { |p| p.write('{ "prior": true }') }
       io = StringIO.new
       report = HerokuBuildReport::JsonReport.new(
         io: io,
@@ -16,7 +16,7 @@ describe "Build report" do
 
   it "handles malformed json" do
     Dir.mktmpdir do |dir|
-      path = Pathname(dir).join(".report.json").tap {|p| p.write('zomg') }
+      path = Pathname(dir).join(".report.json").tap { |p| p.write("zomg") }
       io = StringIO.new
       report = HerokuBuildReport::JsonReport.new(
         io: io,
@@ -55,10 +55,10 @@ describe "Build report" do
         "string" => "'with single quotes'",
         "string_plain" => "plain",
         "number" => 22,
-        "boolean" => true,
+        "boolean" => true
       )
 
-      parsed = JSON.parse(path.read).sort_by {|k, _| k}.to_h
+      parsed = JSON.parse(path.read).sort_by { |k, _| k }.to_h
       expect(parsed).to eq(
         {
           "string" => "'with single quotes'",

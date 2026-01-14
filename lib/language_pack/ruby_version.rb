@@ -8,21 +8,13 @@ module LanguagePack
         msg << output
         msg << "Can not parse Ruby Version:\n"
         msg << "Valid versions listed on: https://devcenter.heroku.com/articles/ruby-support\n"
-        super msg
+        super(msg)
       end
     end
 
     BOOTSTRAP_VERSION_NUMBER = "3.3.9".freeze
     DEFAULT_VERSION_NUMBER = "3.3.9".freeze
-    DEFAULT_VERSION        = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
-    RUBY_VERSION_REGEX     = %r{
-        (?<ruby_version>\d+\.\d+\.\d+){0}
-        (?<patchlevel>p-?\d+){0}
-        (?<engine>\w+){0}
-        (?<engine_version>.+){0}
-
-        ruby-\g<ruby_version>(-\g<patchlevel>)?(\.(?<pre>\S*))?(-\g<engine>-\g<engine_version>)?
-      }x
+    DEFAULT_VERSION = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
 
     # String formatted `<major>.<minor>.<patch>` for Ruby and JRuby
     attr_reader :ruby_version,
@@ -32,7 +24,7 @@ module LanguagePack
       # i.e. `<major>.<minor>.<patch>`
       :engine_version
 
-    def self.from_gemfile_lock(ruby: , last_version: nil)
+    def self.from_gemfile_lock(ruby:, last_version: nil)
       if ruby.empty?
         default(last_version: last_version)
       else
@@ -41,34 +33,34 @@ module LanguagePack
           engine: ruby.engine,
           default: false,
           ruby_version: ruby.ruby_version,
-          engine_version: ruby.engine_version,
+          engine_version: ruby.engine_version
         )
       end
     end
 
-    def self.default(last_version: )
+    def self.default(last_version:)
       ruby_version = last_version&.split("-")&.last || DEFAULT_VERSION_NUMBER
       new(
         pre: nil,
         engine: :ruby,
         default: true,
         ruby_version: ruby_version,
-        engine_version: ruby_version,
+        engine_version: ruby_version
       )
     end
 
     def initialize(
-        pre:,
-        engine:,
-        default:,
-        ruby_version:,
-        engine_version:
-      )
-        @pre = pre
-        @engine = engine
-        @default = default
-        @ruby_version = ruby_version
-        @engine_version = engine_version
+      pre:,
+      engine:,
+      default:,
+      ruby_version:,
+      engine_version:
+    )
+      @pre = pre
+      @engine = engine
+      @default = default
+      @ruby_version = ruby_version
+      @engine_version = engine_version
     end
 
     # Also used as for metrics to track unique installs
@@ -90,7 +82,7 @@ module LanguagePack
       elsif @pre
         "#{engine_version}.#{@pre}"
       else
-        "#{engine_version}"
+        engine_version.to_s
       end
     end
 

@@ -7,15 +7,14 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   # detects if this is a valid Rails 2 app
   # @return [Boolean] true if it's a Rails 2 app
   def self.use?(bundler:)
-    rails_version = bundler.gem_version('rails')
+    rails_version = bundler.gem_version("rails")
     return false unless rails_version
-    is_rails2 = rails_version >= Gem::Version.new('2.0.0') &&
-                rails_version <  Gem::Version.new('3.0.0')
-    return is_rails2
+    rails_version >= Gem::Version.new("2.0.0") &&
+      rails_version < Gem::Version.new("3.0.0")
   end
 
   def initialize(...)
-    super(...)
+    super
     @rails_runner = LanguagePack::Helpers::RailsRunner.new
   end
 
@@ -29,8 +28,8 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
       "bundle exec ruby script/server -p ${PORT:-5000}"
 
     process_types = super
-    process_types["web"]     = web_process
-    process_types["worker"]  = "bundle exec rake jobs:work" if has_jobs_work_task?
+    process_types["web"] = web_process
+    process_types["worker"] = "bundle exec rake jobs:work" if has_jobs_work_task?
     process_types["console"] = "bundle exec script/console"
     process_types
   end
@@ -43,7 +42,7 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
   def best_practice_warnings
     if env("RAILS_ENV") != "production"
       warn(<<~WARNING)
-        You are deploying to a non-production environment: #{ env("RAILS_ENV").inspect }.
+        You are deploying to a non-production environment: #{env("RAILS_ENV").inspect}.
         This is not recommended.
         See https://devcenter.heroku.com/articles/deploying-to-a-custom-rails-environment for more information.
       WARNING
@@ -51,7 +50,8 @@ class LanguagePack::Rails2 < LanguagePack::Ruby
     super
   end
 
-private
+  private
+
   def has_jobs_work_task?
     rake.task("jobs:work").is_defined?
   end

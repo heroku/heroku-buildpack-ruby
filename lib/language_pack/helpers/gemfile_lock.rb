@@ -19,7 +19,7 @@ module LanguagePack
     class GemfileLock
       attr_reader :ruby, :bundler, :contents
 
-      def initialize(contents: , report: HerokuBuildReport::GLOBAL)
+      def initialize(contents:, report: HerokuBuildReport::GLOBAL)
         @ruby = RubyVersionParse.new(contents: contents, report: report)
         @bundler = BundlerVersionParse.new(contents: contents, report: report)
         @contents = contents
@@ -40,15 +40,15 @@ module LanguagePack
           # i.e. `<major>.<minor>.<patch>`
           :engine_version
 
-        def initialize(contents: , report: HerokuBuildReport::GLOBAL)
-          if match = contents.match(/^RUBY VERSION(\r?\n) {2,3}ruby (?<version>\d+\.\d+\.\d+)((\-|\.)(?<pre>\S*))?/m)
+        def initialize(contents:, report: HerokuBuildReport::GLOBAL)
+          if (match = contents.match(/^RUBY VERSION(?:\r?\n) {2,3}ruby (?<version>\d+\.\d+\.\d+)(?:(?:-|\.)(?<pre>\S*))?/m))
             @pre = match[:pre]
             @empty = false
             @ruby_version = match[:version]
           else
             if contents.match?(/RUBY VERSION/)
               report.capture("gemfile_lock.ruby_version.failed_parse" => true)
-              if match = contents.match(/(?<contents>RUBY VERSION(\r?\n).*)$/)
+              if (match = contents.match(/(?<contents>RUBY VERSION(?:\r?\n).*)$/))
                 report.capture("gemfile_lock.ruby_version.failed_contents" => match[:contents])
               end
             end
@@ -57,7 +57,7 @@ module LanguagePack
             @ruby_version = nil
           end
 
-          if jruby = contents.to_s.match(/^RUBY VERSION(\r?\n) {2,3}ruby [^\(]*\(jruby (?<version>(\d+|\.)+)\)/m)
+          if (jruby = contents.to_s.match(/^RUBY VERSION(?:\r?\n) {2,3}ruby [^(]*\(jruby (?<version>(?:\d+|\.)+)\)/m))
             @engine = :jruby
             @engine_version = jruby[:version]
           else
@@ -75,14 +75,14 @@ module LanguagePack
         # Bundler value from `Gemfile.lock` (String or nil) i.e. `2.5.23`
         attr_reader :version
 
-        def initialize(contents: , report: HerokuBuildReport::GLOBAL)
-          if match = contents.match(/^BUNDLED WITH(\r?\n) {2,3}(?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m)
+        def initialize(contents:, report: HerokuBuildReport::GLOBAL)
+          if (match = contents.match(/^BUNDLED WITH(?:\r?\n) {2,3}(?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m))
             @empty = false
             @version = match[:version]
           else
             if contents.match?(/BUNDLED WITH/)
               report.capture("gemfile_lock.bundler_version.failed_parse" => true)
-              if match = contents.match(/(?<contents>BUNDLED WITH(\r?\n).*)$/)
+              if (match = contents.match(/(?<contents>BUNDLED WITH(?:\r?\n).*)$/))
                 report.capture("gemfile_lock.bundler_version.failed_contents" => match[:contents])
               end
             end

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "CI" do
   it "Does not cause the double ruby rainbow bug" do
@@ -58,7 +58,7 @@ describe "CI" do
     Hatchet::Runner.new("ruby_no_rails_test").run_ci do |test_run|
       # Test no whitespace in front of output
       expect(test_run.output).to_not match(/^ +Finished in/)
-      expect(test_run.output).to     match(/^Finished in/)
+      expect(test_run.output).to match(/^Finished in/)
     end
   end
 

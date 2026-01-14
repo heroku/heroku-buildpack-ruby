@@ -47,7 +47,7 @@ module LanguagePack
       #
       def self.call(lockfile_path:)
         lockfile_path = Pathname(lockfile_path)
-        Tempfile.create(['lockfile_parser', '.rb']) do |tempfile|
+        Tempfile.create(["lockfile_parser", ".rb"]) do |tempfile|
           tempfile.write(RUBY_PARSER_CODE)
           tempfile.flush
 
@@ -76,4 +76,3 @@ module LanguagePack
     end
   end
 end
-

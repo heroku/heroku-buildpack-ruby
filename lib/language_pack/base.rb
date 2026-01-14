@@ -15,14 +15,14 @@ class LanguagePack::Base
   include LanguagePack::ShellHelpers
   extend LanguagePack::ShellHelpers
 
-  VENDOR_URL           = ENV['BUILDPACK_VENDOR_URL'] || "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com"
-  ROOT_DIR             = File.expand_path("../../..", __FILE__)
-  MULTI_ARCH_STACKS    = ["heroku-24"]
-  KNOWN_ARCHITECTURES  = ["amd64", "arm64"]
+  VENDOR_URL = ENV["BUILDPACK_VENDOR_URL"] || "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com"
+  ROOT_DIR = File.expand_path("../../..", __FILE__)
+  MULTI_ARCH_STACKS = ["heroku-24"]
+  KNOWN_ARCHITECTURES = ["amd64", "arm64"]
 
   attr_reader :app_path, :bundler, :cache, :environment_name, :stack
 
-  def initialize(app_path: , arch: , bundler: , cache_path: , environment_name: , gemfile_lock: , new_app: , ruby_version: , warn_io: )
+  def initialize(app_path:, arch:, bundler:, cache_path:, environment_name:, gemfile_lock:, new_app:, ruby_version:, warn_io:)
     @app_path = app_path
     @arch = arch
     @bundler = bundler
@@ -31,11 +31,11 @@ class LanguagePack::Base
     @new_app = new_app
     @ruby_version = ruby_version
     @warn_io = warn_io
-    @stack         = ENV.fetch("STACK")
-    @cache         = LanguagePack::Cache.new(cache_path)
-    @metadata      = LanguagePack::Metadata.new(cache_path: cache_path)
+    @stack = ENV.fetch("STACK")
+    @cache = LanguagePack::Cache.new(cache_path)
+    @metadata = LanguagePack::Metadata.new(cache_path: cache_path)
     @bundler_cache = LanguagePack::BundlerCache.new(@cache, @stack)
-    @fetchers      = {:buildpack => LanguagePack::Fetcher.new(VENDOR_URL) }
+    @fetchers = {buildpack: LanguagePack::Fetcher.new(VENDOR_URL)}
     @report = HerokuBuildReport::GLOBAL
   end
 
@@ -84,7 +84,7 @@ class LanguagePack::Base
     write_release_yaml
     Kernel.puts ""
     warnings.each do |warning|
-      Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m"# Bold yellow
+      Kernel.puts "\e[1m\e[33m###### WARNING:\e[0m" # Bold yellow
       Kernel.puts ""
       puts warning
       Kernel.puts ""
@@ -94,7 +94,7 @@ class LanguagePack::Base
 
   def build_release
     release = {}
-    release["addons"]                = default_addons
+    release["addons"] = default_addons
     release["default_process_types"] = default_process_types
 
     release
@@ -103,23 +103,20 @@ class LanguagePack::Base
   def write_release_yaml
     release = build_release
     FileUtils.mkdir("tmp") unless File.exist?("tmp")
-    File.open("tmp/heroku-buildpack-release-step.yml", 'w') do |f|
-      f.write(release.to_yaml)
-    end
+    File.write("tmp/heroku-buildpack-release-step.yml", release.to_yaml)
 
     warn_webserver
   end
 
   def warn_webserver
     return if File.exist?("Procfile")
-    msg =  "No Procfile detected, using the default web server.\n"
+    msg = "No Procfile detected, using the default web server.\n"
     msg << "We recommend explicitly declaring how to boot your server process via a Procfile.\n"
     msg << "https://devcenter.heroku.com/articles/ruby-default-web-server"
     warn msg
   end
 
-private ##################################
-
+  private ##################################
 
   def add_to_profiled(string, filename: "ruby.sh", mode: "a")
     profiled_path = "#{app_path}/.profile.d/"
@@ -135,7 +132,7 @@ private ##################################
   end
 
   def set_env_override(key, val)
-    add_to_profiled %{export #{key}="#{val.gsub('"','\"')}"}
+    add_to_profiled %(export #{key}="#{val.gsub('"', '\"')}")
   end
 
   def add_to_export(string)
@@ -150,11 +147,11 @@ private ##################################
   def export(key, val, option: nil)
     string =
       if option == :default
-        %{export #{key}="${#{key}:-#{val}}"}
+        %(export #{key}="${#{key}:-#{val}}")
       elsif option == :path
-        %{export #{key}="#{val}:$#{key}"}
+        %(export #{key}="#{val}:$#{key}")
       else
-        %{export #{key}="#{val.gsub('"','\"')}"}
+        %(export #{key}="#{val.gsub('"', '\"')}")
       end
 
     export = File.join(ROOT_DIR, "export")
