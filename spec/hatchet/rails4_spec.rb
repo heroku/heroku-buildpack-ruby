@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe "Rails 4.x" do
   it "should be able to run a migration without heroku specific database.yml" do
@@ -27,7 +27,10 @@ describe "Rails 4.x" do
       app.before_deploy do
         set_lts_ruby_version
         set_bundler_version(version: :default)
-        Pathname("public/assets/manifest-ccf61eade4793995271564a4767ce6b6.json").tap {|p| p.dirname.mkpath; FileUtils.touch(p) }
+        Pathname("public/assets/manifest-ccf61eade4793995271564a4767ce6b6.json").tap { |p|
+          p.dirname.mkpath
+          FileUtils.touch(p)
+        }
       end
 
       app.deploy do
@@ -43,7 +46,10 @@ describe "Rails 4.x" do
       app.before_deploy do
         set_lts_ruby_version
         set_bundler_version(version: :default)
-        Pathname("public/assets/.sprockets-manifest-040763ccc5036260c52c6adcf77d73f7.json").tap {|p| p.dirname.mkpath; FileUtils.touch(p) }
+        Pathname("public/assets/.sprockets-manifest-040763ccc5036260c52c6adcf77d73f7.json").tap { |p|
+          p.dirname.mkpath
+          FileUtils.touch(p)
+        }
       end
 
       app.deploy do

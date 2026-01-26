@@ -17,34 +17,34 @@
 #    puts download.valid_stack_list #=> ['heroku-22', 'heroku-24']
 class LanguagePack::Helpers::DownloadPresence
   # heroku-22 and heroku-24 have identical ruby versions supported
-  STACKS = ['heroku-22', 'heroku-24']
+  STACKS = ["heroku-22", "heroku-24"]
 
-  def initialize(file_name:, arch: , multi_arch_stacks:, stacks: STACKS )
+  def initialize(file_name:, arch:, multi_arch_stacks:, stacks: STACKS)
     @file_name = file_name
     @stacks = stacks
     @fetchers = []
     @threads = []
     @stacks.each do |stack|
-      if multi_arch_stacks.include?(stack)
-        @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack, arch: arch)
+      @fetchers << if multi_arch_stacks.include?(stack)
+        LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack, arch: arch)
       else
-        @fetchers << LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack)
+        LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack)
       end
     end
   end
 
-  def supported_stack?(current_stack: )
+  def supported_stack?(current_stack:)
     @stacks.include?(current_stack)
   end
 
-  def next_stack(current_stack: )
+  def next_stack(current_stack:)
     return unless supported_stack?(current_stack: current_stack)
 
     next_index = @stacks.index(current_stack) + 1
     @stacks[next_index]
   end
 
-  def exists_on_next_stack?(current_stack: )
+  def exists_on_next_stack?(current_stack:)
     return false unless supported_stack?(current_stack: current_stack)
 
     next_index = @stacks.index(current_stack) + 1
@@ -62,7 +62,7 @@ class LanguagePack::Helpers::DownloadPresence
   def exists?
     raise "not invoked yet, use the `call` method first" if @threads.empty?
 
-    @threads.any? {|t| t.value }
+    @threads.any? { |t| t.value }
   end
 
   def does_not_exist?

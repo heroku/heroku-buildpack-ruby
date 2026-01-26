@@ -16,7 +16,6 @@ $:.unshift File.expand_path("../../../lib", __FILE__)
 require "language_pack"
 require "language_pack/shell_helpers"
 require "language_pack/test"
-include LanguagePack::ShellHelpers
 
 begin
   app_path = Pathname(ARGV[0])
@@ -30,8 +29,8 @@ begin
     cache_path: cache_path,
     gemfile_lock: gemfile_lock,
     bundle_default_without: "development",
-    environment_name: "test",
+    environment_name: "test"
   )
-rescue Exception => e
+rescue Exception => e # standard:disable Lint/RescueException
   LanguagePack::ShellHelpers.display_error_and_exit(e)
 end

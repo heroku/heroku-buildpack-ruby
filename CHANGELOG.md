@@ -4,6 +4,7 @@
 
 - Set `WEB_CONCURRENCY_SET_BY=heroku/ruby` if `WEB_CONCURRENCY` gets set in (deprecated) `SENSIBLE_DEFAULTS` mode (https://github.com/heroku/heroku-buildpack-ruby/pull/1700)
 - Default Node.js version now 24.13.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/1704)
+- Fix yarn and nodejs version change warnings (https://github.com/heroku/heroku-buildpack-ruby/pull/1699)
 
 ## [v344] - 2026-01-14
 
@@ -13,7 +14,6 @@
 ## [v343] - 2026-01-13
 
 - Ruby 4.0.1 is now available
-
 
 ## [v342] - 2026-01-09
 

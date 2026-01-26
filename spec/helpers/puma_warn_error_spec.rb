@@ -41,7 +41,7 @@ describe LanguagePack::Helpers::PumaWarnError do
   it "warns, but does not error if customer manually set PUMA_PERSISTENT_TIMEOUT" do
     puma_warn_error = LanguagePack::Helpers::PumaWarnError.new(
       puma_version: Gem::Version.new("7.0.0"),
-      env: { "PUMA_PERSISTENT_TIMEOUT" => "95" }
+      env: {"PUMA_PERSISTENT_TIMEOUT" => "95"}
     )
     expect(puma_warn_error.error).to be_nil
     expect(puma_warn_error.warnings.join).to include("Heroku recommends using Puma 7.0.3+ for compatibility with Router 2.0")

@@ -13,7 +13,7 @@ end
 module LanguagePack
   module ShellHelpers
     @@user_env_hash = {}
-    @@warnings      = []
+    @@warnings = []
 
     def warnings
       @@warnings
@@ -32,14 +32,14 @@ module LanguagePack
     end
 
     def self.blacklist?(key)
-      %w(PATH GEM_PATH GEM_HOME GIT_DIR JRUBY_OPTS JAVA_OPTS JAVA_TOOL_OPTIONS RUBYOPT).include?(key)
+      %w[PATH GEM_PATH GEM_HOME GIT_DIR JRUBY_OPTS JAVA_OPTS JAVA_TOOL_OPTIONS RUBYOPT].include?(key)
     end
 
     def self.initialize_env(path)
-      env_dir = Pathname.new("#{path}")
+      env_dir = Pathname.new(path.to_s)
       if env_dir.exist? && env_dir.directory?
         env_dir.each_child do |file|
-          key   = file.basename.to_s
+          key = file.basename.to_s
           value = file.read.strip
           user_env_hash[key] = value unless blacklist?(key)
         end
@@ -69,8 +69,8 @@ module LanguagePack
     # @option options [Integer] :max_attempts Number of times to attempt command before raising
     def run!(command, options = {})
       max_attempts = options[:max_attempts] || 1
-      error_class  = options[:error_class] || StandardError
-      silent       = options.key?(:silent) ? options[:silent] : false
+      error_class = options[:error_class] || StandardError
+      silent = options.key?(:silent) ? options[:silent] : false
       max_attempts.times do |attempt_number|
         result = run(command, options)
         if $?.success?
@@ -89,7 +89,7 @@ module LanguagePack
     # @param [String] command to be run
     # @return [String] output of stdout
     def run_no_pipe(command, options = {})
-      run(command, options.merge({:out => ""}))
+      run(command, options.merge({out: ""}))
     end
 
     # run a shell command and pipe stderr to stdout
@@ -98,14 +98,14 @@ module LanguagePack
     # @option options [Hash] :env explicit environment to run command in
     # @option options [Boolean] :user_env whether or not a user's environment variables will be loaded
     def run(command, options = {})
-      %x{ #{command_options_to_string(command, options)} }
+      `#{command_options_to_string(command, options)}`
     end
 
     def command_options_to_string(command, options)
       options[:env] ||= {}
       options[:out] ||= "2>&1"
       options[:env] = user_env_hash.merge(options[:env]) if options[:user_env]
-      env = options[:env].map {|key, value| "#{key.shellescape}=#{value.shellescape}" }.join(" ")
+      env = options[:env].map { |key, value| "#{key.shellescape}=#{value.shellescape}" }.join(" ")
       "/usr/bin/env #{env} bash -c #{command.shellescape} #{options[:out]} "
     end
 
@@ -139,7 +139,7 @@ module LanguagePack
 
       def initialize(command, options = {})
         @timeout_value = options.delete(:timeout)
-        @file          = options.delete(:file)
+        @file = options.delete(:file)
         if @file
           raise "Cannot specify :file, and :out" if options[:out]
           @file = Pathname.new(@file)
@@ -149,15 +149,15 @@ module LanguagePack
           options[:out] = ">> #{@file} 2>&1"
         end
 
-        @command       = command_options_to_string(command, options)
-        @did_time_out  = false
-        @success       = false
+        @command = command_options_to_string(command, options)
+        @did_time_out = false
+        @success = false
       end
 
       def output
         raise "no file name given" if @file.nil?
         exec_once
-        @file.read.encode('UTF-8', invalid: :replace)
+        @file.read.encode("UTF-8", invalid: :replace)
       end
 
       def timeout?
@@ -170,7 +170,8 @@ module LanguagePack
         @success
       end
 
-    private
+      private
+
       def exec_once
         return if @exec_once
         @exec_once = true
@@ -187,7 +188,7 @@ module LanguagePack
       rescue Timeout::Error
         Process.kill("SIGKILL", pid)
         @did_time_out = true
-        @success      = false
+        @success = false
       end
     end
 
@@ -233,7 +234,7 @@ module LanguagePack
         $stdout.flush
       rescue ArgumentError, Encoding::CompatibilityError => e
         error_message = e.message
-        raise e if error_message !~ /invalid byte sequence/
+        raise e if !/invalid byte sequence/.match?(error_message)
 
         error_message << "\n       Invalid string: #{message}"
         raise e, error_message
@@ -265,9 +266,7 @@ module LanguagePack
         @warnings = []
       end
 
-      def warnings
-        @warnings
-      end
+      attr_reader :warnings
     end
 
     def noshellescape(string)

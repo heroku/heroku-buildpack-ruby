@@ -9,7 +9,7 @@ module LanguagePack
       include LanguagePack::ShellHelpers
 
       def initialize(plugins, vendor_url = LanguagePack::Base::VENDOR_URL)
-        @plugins    = plugins || []
+        @plugins = plugins || []
         @vendor_url = vendor_url
       end
 
@@ -35,7 +35,7 @@ module LanguagePack
       end
 
       def curl_connect_timeout_in_seconds
-        env('CURL_CONNECT_TIMEOUT') || 3
+        env("CURL_CONNECT_TIMEOUT") || 3
       end
     end
   end

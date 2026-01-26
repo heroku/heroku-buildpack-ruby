@@ -25,8 +25,8 @@ begin
     app_path: app_path,
     cache_path: cache_path,
     gemfile_lock: gemfile_lock,
-    bundle_default_without: "development:test",
+    bundle_default_without: "development:test"
   )
-rescue Exception => e
+rescue Exception => e # standard:disable Lint/RescueException
   LanguagePack::ShellHelpers.display_error_and_exit(e)
 end

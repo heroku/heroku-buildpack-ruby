@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Bundler" do
   it "can be configured with BUNDLE_WITHOUT env var with spaces in it" do

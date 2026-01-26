@@ -1,5 +1,5 @@
-require 'language_pack/base'
-require 'language_pack/shell_helpers'
+require "language_pack/base"
+require "language_pack/shell_helpers"
 
 module LanguagePack::Installers; end
 
@@ -7,16 +7,17 @@ class LanguagePack::Installers::HerokuRubyInstaller
   BASE_URL = LanguagePack::Base::VENDOR_URL
 
   include LanguagePack::ShellHelpers
+
   attr_reader :fetcher, :environment
 
-  def initialize(stack: , multi_arch_stacks: , arch: , app_path: , env: , report: HerokuBuildReport::GLOBAL)
+  def initialize(stack:, multi_arch_stacks:, arch:, app_path:, env:, report: HerokuBuildReport::GLOBAL)
     @report = report
     @environment = env
     @app_path = Pathname.new(app_path).expand_path
     @fetcher = self.class.fetcher(multi_arch_stacks: multi_arch_stacks, stack: stack, arch: arch)
   end
 
-  def self.fetcher(multi_arch_stacks: , stack: , arch: )
+  def self.fetcher(multi_arch_stacks:, stack:, arch:)
     if multi_arch_stacks.include?(stack)
       LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
     else
@@ -32,7 +33,7 @@ class LanguagePack::Installers::HerokuRubyInstaller
       # i.e. `ruby-3.4.2-jruby-10.0.2.0` or `ruby-3.4.2` or `ruby-3.5.0.pre1`
       "ruby_version_unique" => ruby_version.version_for_download,
       # i.e. `default` or `Gemfile.lock`
-      "ruby_version_origin" => ruby_version.default? ? "default" : "Gemfile.lock",
+      "ruby_version_origin" => ruby_version.default? ? "default" : "Gemfile.lock"
     )
 
     case ruby_version.engine

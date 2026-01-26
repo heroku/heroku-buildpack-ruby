@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Node and Yarn" do
   it "works without the node buildpack" do
@@ -42,4 +42,3 @@ describe "Node and Yarn" do
     end
   end
 end
-
