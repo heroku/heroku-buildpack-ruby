@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Default Node.js version now 24.13.0 (https://github.com/heroku/heroku-buildpack-ruby/pull/1704)
 
 ## [v344] - 2026-01-14
 
