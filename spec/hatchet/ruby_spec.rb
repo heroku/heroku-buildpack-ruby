@@ -382,10 +382,10 @@ describe "WEB_CONCURRENCY.sh" do
   end
 
   it "with SENSIBLE_DEFAULTS on sets environment variables" do
-    Hatchet::Runner.new('default_ruby', stack: DEFAULT_STACK, config: { "SENSIBLE_DEFAULTS" => "1" }).deploy do |app|
+    Hatchet::Runner.new("default_ruby", stack: DEFAULT_STACK, config: {"SENSIBLE_DEFAULTS" => "1"}).deploy do |app|
       expect(app.run("cat .profile.d/WEB_CONCURRENCY.sh").strip).not_to be_empty
       expect(app.run("echo $HEROKU_RAM_LIMIT_MB $WEB_CONCURRENCY $WEB_CONCURRENCY_SET_BY").strip).to eq("512 2 heroku/ruby")
-      expect(app.run("echo $WEB_CONCURRENCY", :heroku => {:env => "WEB_CONCURRENCY=3"}).strip).to eq("3")
+      expect(app.run("echo $WEB_CONCURRENCY", heroku: {env: "WEB_CONCURRENCY=3"}).strip).to eq("3")
     end
   end
 end
