@@ -15,7 +15,7 @@ class LanguagePack::Ruby
     install_binaries
     prepare_tests
     default_config_vars = self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler, environment_name: environment_name)
-    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version, default_config_vars: default_config_vars) # $HOME is set to /app at run time
+    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version, default_config_vars: default_config_vars, report: @report) # $HOME is set to /app at run time
     setup_export(app_path: app_path, ruby_version: @ruby_version, default_config_vars: default_config_vars)
     super
   end

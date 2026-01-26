@@ -113,7 +113,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     best_practice_warnings
     warn_outdated_ruby
     default_config_vars = self.class.default_config_vars(metadata: @metadata, ruby_version: @ruby_version, bundler: bundler, environment_name: environment_name)
-    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version, default_config_vars: default_config_vars) # $HOME is set to /app at run time
+    setup_profiled(ruby_layer_path: "$HOME", gem_layer_path: "$HOME", ruby_version: @ruby_version, default_config_vars: default_config_vars, report: @report) # $HOME is set to /app at run time
     setup_export(app_path: app_path, ruby_version: @ruby_version, default_config_vars: default_config_vars)
     cleanup
     super
@@ -240,18 +240,22 @@ private
       256)
         export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-512}
         export WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+        export WEB_CONCURRENCY_SET_BY=heroku/ruby
         ;;
       512)
         export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-1024}
         export WEB_CONCURRENCY=${WEB_CONCURRENCY:-4}
+        export WEB_CONCURRENCY_SET_BY=heroku/ruby
         ;;
       16384)
         export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-2560}
         export WEB_CONCURRENCY=${WEB_CONCURRENCY:-8}
+        export WEB_CONCURRENCY_SET_BY=heroku/ruby
         ;;
       32768)
         export HEROKU_RAM_LIMIT_MB=${HEROKU_RAM_LIMIT_MB:-6144}
         export WEB_CONCURRENCY=${WEB_CONCURRENCY:-16}
+        export WEB_CONCURRENCY_SET_BY=heroku/ruby
         ;;
       *)
         ;;
@@ -335,7 +339,7 @@ private
   end
 
   # sets up the profile.d script for this buildpack
-  def setup_profiled(ruby_layer_path: , gem_layer_path:, ruby_version: , default_config_vars: )
+  def setup_profiled(ruby_layer_path: , gem_layer_path:, ruby_version: , default_config_vars: , report:)
     profiled_path = []
 
     default_config_vars.each do |key, value|
@@ -361,6 +365,7 @@ private
     set_env_default "MALLOC_ARENA_MAX", "2"     if default_malloc_arena_max?
 
     web_concurrency = env("SENSIBLE_DEFAULTS") ? set_default_web_concurrency : ""
+    report.capture("web_concurrency.sensible_defaults" => web_concurrency.empty?)
     add_to_profiled(web_concurrency, filename: "WEB_CONCURRENCY.sh", mode: "w") # always write that file, even if its empty (meaning no defaults apply), for interop with other buildpacks - and we overwrite the file rather than appending (which is the default)
 
     # TODO handle JRUBY
