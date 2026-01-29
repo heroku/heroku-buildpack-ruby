@@ -30,7 +30,7 @@ class LanguagePack::Helpers::BundlerWrapper
   include LanguagePack::ShellHelpers
 
   # Heroku-22's oldest Ruby version is 3.1
-  DEFAULT_VERSION = "2.3.25"
+  DEFAULT_VERSION = "2.3.27"
 
   attr_reader :bundler_path
 

@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Default Ruby version is now 2.3.27
 
 ## [v345] - 2026-01-26
 
