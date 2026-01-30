@@ -89,6 +89,8 @@ module LanguagePack
             @empty = true
             @version = nil
           end
+
+          report.capture("gemfile_lock.bundled_with.empty" => @empty)
         end
 
         def empty?

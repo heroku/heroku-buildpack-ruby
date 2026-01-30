@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Add metric: Track apps with and without `BUNDLED WITH` in the `Gemfile.lock`
 
 ## [v345] - 2026-01-26
 

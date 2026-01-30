@@ -82,7 +82,8 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
             "ruby_version_major_minor" => "3.5",
             "ruby_version_full" => "3.5.0.preview1",
             "ruby_version_origin" => "Gemfile.lock",
-            "ruby_version_unique" => "ruby-3.5.0.preview1"
+            "ruby_version_unique" => "ruby-3.5.0.preview1",
+            "gemfile_lock.bundled_with.empty" => true
           }
 
           expect(sort_hash(report.data)).to eq(sort_hash(expected))
@@ -121,7 +122,8 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
             "jruby_version_major_minor" => "9.4",
             "jruby_version_ruby_version" => "3.1.4",
             "ruby_version_origin" => "Gemfile.lock",
-            "ruby_version_unique" => "ruby-3.1.4-jruby-9.4.9.0"
+            "ruby_version_unique" => "ruby-3.1.4-jruby-9.4.9.0",
+            "gemfile_lock.bundled_with.empty" => true
           }
 
           expect(sort_hash(report.data)).to eq(sort_hash(expected))
