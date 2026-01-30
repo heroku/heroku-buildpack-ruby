@@ -15,7 +15,7 @@ describe LanguagePack::Helpers::GemfileLock do
 
     expect(gemfile_lock.bundler.version).to eq(nil)
     expect(gemfile_lock.bundler.empty?).to eq(true)
-    expect(report.data).to be_empty
+    expect(report.data).to eq({"gemfile_lock.bundled_with.empty" => true})
   end
 
   it "records invalid parsing" do
