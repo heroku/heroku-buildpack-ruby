@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Add metric: Track apps with and without `BUNDLED WITH` in the `Gemfile.lock`
+- Default bundler version changed from `2.3.25` to `2.5.23`. Ruby's [standard version of bundler](https://stdgems.org/bundler/) will take precedence if it is greater than Heroku's installed version. When there is no `BUNDLED WITH` in the `Gemfile.lock`, then `bundle install` will use the highest version of Bundler available.
 
 ## [v345] - 2026-01-26
 
