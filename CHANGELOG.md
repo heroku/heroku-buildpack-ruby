@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v347] - 2026-02-02
+
+- JRuby 10.0.3.0 is now available
+
+
 ## [v346] - 2026-02-02
 
 - Add metric: Track apps with and without `BUNDLED WITH` in the `Gemfile.lock`
@@ -1897,7 +1902,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v346...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v347...main
+[v347]: https://github.com/heroku/heroku-buildpack-ruby/compare/v346...v347
 [v346]: https://github.com/heroku/heroku-buildpack-ruby/compare/v345...v346
 [v345]: https://github.com/heroku/heroku-buildpack-ruby/compare/v344...v345
 [v344]: https://github.com/heroku/heroku-buildpack-ruby/compare/v343...v344
