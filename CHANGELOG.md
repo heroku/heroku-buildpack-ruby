@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v346] - 2026-02-02
+
 - Add metric: Track apps with and without `BUNDLED WITH` in the `Gemfile.lock`
 - Default bundler version changed from `2.3.25` to `2.5.23`. Ruby's [standard version of bundler](https://stdgems.org/bundler/) will take precedence if it is greater than Heroku's installed version. When there is no `BUNDLED WITH` in the `Gemfile.lock`, then `bundle install` will use the highest version of Bundler available.
 
@@ -1894,7 +1897,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v345...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v346...main
+[v346]: https://github.com/heroku/heroku-buildpack-ruby/compare/v345...v346
 [v345]: https://github.com/heroku/heroku-buildpack-ruby/compare/v344...v345
 [v344]: https://github.com/heroku/heroku-buildpack-ruby/compare/v343...v344
 [v343]: https://github.com/heroku/heroku-buildpack-ruby/compare/v342...v343
