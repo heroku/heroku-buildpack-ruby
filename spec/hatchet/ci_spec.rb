@@ -74,6 +74,31 @@ describe "CI" do
     end
   end
 
+  it "Purges cache when stack changes" do
+    Hatchet::Runner.new("ruby_no_rails_test", stack: "heroku-24").tap do |app|
+      app.before_deploy do
+        Pathname("app.json").write(<<~EOF)
+          { "stack": "heroku-24" }
+        EOF
+      end
+
+      app.run_ci do |test_run|
+        expect(test_run.output).to include("Fetching rake")
+        expect(test_run.output).to_not include("Purging Cache")
+
+        # Change stack from heroku-24 to heroku-22
+        Pathname("app.json").write(<<~EOF)
+          { "stack": "heroku-22" }
+        EOF
+        run!("git add app.json && git commit -m 'Change stack to heroku-22'")
+
+        test_run.run_again
+
+        expect(test_run.output).to include("Purging Cache. Changing stack from heroku-24 to heroku-22")
+      end
+    end
+  end
+
   it "CI build time config var behavior" do
     script = "echo '## PRINTING ENV ##' && env | sort && echo '## PRINTING ENV DONE ##'; echo '## PRINTING BIN ## ' && ls -1 ./bin | sort && echo '## PRINTING BIN DONE ##'"
 
