@@ -18,7 +18,7 @@ class LanguagePack::Base
   VENDOR_URL = ENV["BUILDPACK_VENDOR_URL"] || "https://heroku-buildpack-ruby.s3.dualstack.us-east-1.amazonaws.com"
   ROOT_DIR = File.expand_path("../../..", __FILE__)
   AMD_ONLY_STACKS = ["heroku-22"]
-  KNOWN_ARCHITECTURES = ["amd64", "arm64"]
+  KNOWN_ARCHITECTURES = ["amd64", "arm64", "x86_64", "aarch64"]
 
   attr_reader :app_path, :bundler, :cache, :environment_name, :stack
 
@@ -40,7 +40,7 @@ class LanguagePack::Base
   end
 
   def self.get_arch
-    command = "dpkg --print-architecture"
+    command = "uname -m"
     arch = run!(command, silent: true).strip
 
     if !KNOWN_ARCHITECTURES.include?(arch)
