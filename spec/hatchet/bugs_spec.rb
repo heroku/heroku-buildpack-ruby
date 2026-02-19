@@ -24,6 +24,14 @@ describe "Bugs" do
         end
       end
     end
+
+    it "does not generate an incorrect DATABASE_URL if adapter is not known" do
+      Hatchet::Runner.new("rails_8_1_trilogy_db_minimal").tap do |app|
+        app.deploy do
+          # Works
+        end
+      end
+    end
   end
 
   it "detect fails when no Gemfile is present" do
