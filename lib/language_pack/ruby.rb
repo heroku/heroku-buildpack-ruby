@@ -822,7 +822,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     return @node_preinstall_bin_path if defined?(@node_preinstall_bin_path)
 
     legacy_path = "#{Dir.pwd}/#{NODE_BP_PATH}"
-    path = run("which node").strip
+    path = run("command -v node").strip
     @node_preinstall_bin_path = if path && $?.success?
       path
     elsif run("#{legacy_path}/node -v") && $?.success?
@@ -850,7 +850,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   def self.yarn_preinstall_binary_path
     return @yarn_preinstall_binary_path if defined?(@yarn_preinstall_binary_path)
 
-    path = run("which yarn").strip
+    path = run("command -v yarn").strip
     @yarn_preinstall_binary_path = if path && $?.success?
       path
     else
