@@ -199,6 +199,9 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
       elsif bundler.has_gem?("sqlite3") || bundler.has_gem?("sqlite3-ruby")
         "sqlite3"
       end
-    "#{scheme}://user:pass@127.0.0.1/dbname"
+
+    if scheme
+      "#{scheme}://user:pass@127.0.0.1/dbname"
+    end
   end
 end

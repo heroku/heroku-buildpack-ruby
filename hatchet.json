@@ -26,7 +26,8 @@
     "sharpstone/rails61",
     "sharpstone/rails-jsbundling",
     "sharpstone/rails_8_ruby_schema",
-    "sharpstone/rails_8_sql_schema"
+    "sharpstone/rails_8_sql_schema",
+    "sharpstone/rails_8_1_trilogy_db_minimal"
   ],
   "heroku": [
     "heroku/ruby-getting-started"

@@ -23,6 +23,8 @@
   - fbdaf031823f09d1514ec1d55dcb04ca2f4264ca
 - - "./repos/rails_versions/rails61"
   - 47828a3e8c79b7869ca0d9a3afa4be065fa46e96
+- - "./repos/rails_versions/rails_8_1_trilogy_db_minimal"
+  - 3a4ac8b53c68c504b980c4403f6b27b5cf57dd4b
 - - "./repos/rails_versions/rails_8_ruby_schema"
   - a993a3f00c8e09f733bc3b783f7e37148d0af1d4
 - - "./repos/rails_versions/rails_8_sql_schema"

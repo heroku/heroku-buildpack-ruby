@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix bug where an invalid DATABASE_URL is set when the adapter is not known (https://github.com/heroku/heroku-buildpack-ruby/pull/1715).
 
 ## [v347] - 2026-02-02
 
