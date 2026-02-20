@@ -21,7 +21,7 @@ describe "Heroku ruby getting started" do
       # Assert no warnings from `cp`
       # https://github.com/heroku/heroku-buildpack-ruby/pull/1586/files#r2064284286
       expect(app.output).to_not include("cp --help")
-      expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
+      expect(app.run("command -v ruby").strip).to eq("/app/bin/ruby")
 
       environment_variables = app.run("env")
       expect(environment_variables).to match("PUMA_PERSISTENT_TIMEOUT")
@@ -66,7 +66,7 @@ describe "Heroku ruby getting started" do
       # Assert no warnings from `cp`
       # https://github.com/heroku/heroku-buildpack-ruby/pull/1586/files#r2064284286
       expect(app.output).to_not include("cp --help")
-      expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
+      expect(app.run("command -v ruby").strip).to eq("/app/bin/ruby")
     end
   end
 end

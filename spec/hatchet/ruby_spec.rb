@@ -207,7 +207,7 @@ describe "Ruby apps" do
             raise e
           end
 
-          expect(app.run("which ruby").strip).to eq("/app/bin/ruby")
+          expect(app.run("command -v ruby").strip).to eq("/app/bin/ruby")
         end
       end
     end

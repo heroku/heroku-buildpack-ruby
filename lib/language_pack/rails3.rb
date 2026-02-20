@@ -118,13 +118,13 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
   end
 
   def has_apache?
-    path = run("which apachectl")
+    path = run("command -v apachectl")
     return true if path && $?.success?
     false
   end
 
   def has_nginx?
-    path = run("which nginx")
+    path = run("command -v nginx")
     return true if path && $?.success?
     false
   end

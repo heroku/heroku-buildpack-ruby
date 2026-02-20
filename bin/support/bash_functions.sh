@@ -33,7 +33,7 @@ curl_retry_on_18() {
 
 which_java()
 {
-  which java > /dev/null
+  command -v java > /dev/null
 }
 
 # Detects if a given Gemfile.lock has jruby in it
