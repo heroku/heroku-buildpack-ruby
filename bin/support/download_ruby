@@ -32,9 +32,9 @@ ruby_url() {
   if [ "$stack" == "heroku-24" ]; then
     local arch
     arch=$(dpkg --print-architecture)
-    echo "${BUILDPACK_VENDOR_URL:-https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com}/$stack/$arch/ruby-$version.tgz"
+    echo "${BUILDPACK_VENDOR_URL:-https://heroku-buildpack-ruby.s3.dualstack.us-east-1.amazonaws.com}/$stack/$arch/ruby-$version.tgz"
   else
-    echo "${BUILDPACK_VENDOR_URL:-https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com}/$stack/ruby-$version.tgz"
+    echo "${BUILDPACK_VENDOR_URL:-https://heroku-buildpack-ruby.s3.dualstack.us-east-1.amazonaws.com}/$stack/ruby-$version.tgz"
   fi
 }
 
