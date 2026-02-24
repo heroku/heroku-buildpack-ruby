@@ -2,12 +2,12 @@
 
 ## [Unreleased]
 
+- Changed the S3 URLs used for downloads to use AWS' dual-stack (IPv6 compatible) endpoint. ([#1717](https://github.com/heroku/heroku-buildpack-ruby/pull/1717))
 - Fix bug where an invalid DATABASE_URL is set when the adapter is not known (https://github.com/heroku/heroku-buildpack-ruby/pull/1715).
 
 ## [v347] - 2026-02-02
 
 - JRuby 10.0.3.0 is now available
-
 
 ## [v346] - 2026-02-02
 

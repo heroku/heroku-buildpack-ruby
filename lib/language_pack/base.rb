@@ -15,7 +15,7 @@ class LanguagePack::Base
   include LanguagePack::ShellHelpers
   extend LanguagePack::ShellHelpers
 
-  VENDOR_URL = ENV["BUILDPACK_VENDOR_URL"] || "https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com"
+  VENDOR_URL = ENV["BUILDPACK_VENDOR_URL"] || "https://heroku-buildpack-ruby.s3.dualstack.us-east-1.amazonaws.com"
   ROOT_DIR = File.expand_path("../../..", __FILE__)
   MULTI_ARCH_STACKS = ["heroku-24"]
   KNOWN_ARCHITECTURES = ["amd64", "arm64"]
