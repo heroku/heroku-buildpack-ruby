@@ -2,7 +2,7 @@ require_relative "../spec_helper"
 
 describe LanguagePack::Helpers::BinstubCheck do
   def get_ruby_path!
-    out = `command -v ruby`.strip
+    out = `command -v ruby 2>/dev/null`.strip
     raise "command `command -v ruby` failed with output: #{out}" unless $?.success?
 
     Pathname.new(out)
