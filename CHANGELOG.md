@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v348] - 2026-02-26
+
 - Changed the S3 URLs used for downloads to use AWS' dual-stack (IPv6 compatible) endpoint. ([#1717](https://github.com/heroku/heroku-buildpack-ruby/pull/1717))
 - Fix bug where an invalid DATABASE_URL is set when the adapter is not known (https://github.com/heroku/heroku-buildpack-ruby/pull/1715).
 
@@ -1903,7 +1906,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v347...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v348...main
+[v348]: https://github.com/heroku/heroku-buildpack-ruby/compare/v347...v348
 [v347]: https://github.com/heroku/heroku-buildpack-ruby/compare/v346...v347
 [v346]: https://github.com/heroku/heroku-buildpack-ruby/compare/v345...v346
 [v345]: https://github.com/heroku/heroku-buildpack-ruby/compare/v344...v345
