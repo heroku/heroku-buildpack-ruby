@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v349] - 2026-03-06
+
+- JRuby 10.0.4.0 is now available
+
+
 ## [v348] - 2026-03-02
 
 - Changed the S3 URLs used for downloads to use AWS' dual-stack (IPv6 compatible) endpoint. ([#1717](https://github.com/heroku/heroku-buildpack-ruby/pull/1717))
@@ -1906,7 +1911,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v348...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v349...main
+[v349]: https://github.com/heroku/heroku-buildpack-ruby/compare/v348...v349
 [v348]: https://github.com/heroku/heroku-buildpack-ruby/compare/v347...v348
 [v347]: https://github.com/heroku/heroku-buildpack-ruby/compare/v346...v347
 [v346]: https://github.com/heroku/heroku-buildpack-ruby/compare/v345...v346
