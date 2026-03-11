@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v350] - 2026-03-11
+
+- Ruby 3.3.9 is now available
+
+
 ## [v349] - 2026-03-06
 
 - JRuby 10.0.4.0 is now available
@@ -1911,7 +1916,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v349...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v350...main
+[v350]: https://github.com/heroku/heroku-buildpack-ruby/compare/v349...v350
 [v349]: https://github.com/heroku/heroku-buildpack-ruby/compare/v348...v349
 [v348]: https://github.com/heroku/heroku-buildpack-ruby/compare/v347...v348
 [v347]: https://github.com/heroku/heroku-buildpack-ruby/compare/v346...v347
