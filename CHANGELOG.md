@@ -8,11 +8,6 @@
 - Ruby 3.4.9 is now available
 
 
-## [v350] - 2026-03-11
-
-- Ruby 3.3.9 is now available
-
-
 ## [v349] - 2026-03-06
 
 - JRuby 10.0.4.0 is now available
