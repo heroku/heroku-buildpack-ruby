@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v352] - 2026-03-16
+
+- Ruby 4.0.2 is now available
+
+
 ## [v351] - 2026-03-11
 
 - Ruby 3.4.9 is now available
@@ -1916,7 +1921,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v351...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v352...main
+[v352]: https://github.com/heroku/heroku-buildpack-ruby/compare/v351...v352
 [v351]: https://github.com/heroku/heroku-buildpack-ruby/compare/v350...v351
 [v350]: https://github.com/heroku/heroku-buildpack-ruby/compare/v349...v350
 [v349]: https://github.com/heroku/heroku-buildpack-ruby/compare/v348...v349
