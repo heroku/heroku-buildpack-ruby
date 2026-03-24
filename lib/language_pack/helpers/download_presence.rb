@@ -19,16 +19,16 @@ class LanguagePack::Helpers::DownloadPresence
   # heroku-22 and heroku-24 have identical ruby versions supported
   STACKS = ["heroku-22", "heroku-24"]
 
-  def initialize(file_name:, arch:, multi_arch_stacks:, stacks: STACKS)
+  def initialize(file_name:, arch:, amd_only_stacks:, stacks: STACKS)
     @file_name = file_name
     @stacks = stacks
     @fetchers = []
     @threads = []
     @stacks.each do |stack|
-      @fetchers << if multi_arch_stacks.include?(stack)
-        LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack, arch: arch)
-      else
+      @fetchers << if amd_only_stacks.include?(stack)
         LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack)
+      else
+        LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, stack: stack, arch: arch)
       end
     end
   end

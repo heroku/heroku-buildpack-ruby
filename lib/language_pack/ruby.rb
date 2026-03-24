@@ -79,7 +79,7 @@ class LanguagePack::Ruby < LanguagePack::Base
   def compile
     @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
-      fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(multi_arch_stacks: MULTI_ARCH_STACKS, stack: stack, arch: @arch)
+      fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(amd_only_stacks: AMD_ONLY_STACKS, stack: stack, arch: @arch)
     ).call
 
     @warn_io.warnings.each { |warning| warnings << warning }
@@ -477,7 +477,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     return false unless ruby_version
 
     installer = LanguagePack::Installers::HerokuRubyInstaller.new(
-      multi_arch_stacks: MULTI_ARCH_STACKS,
+      amd_only_stacks: AMD_ONLY_STACKS,
       stack: stack,
       arch: arch,
       app_path: app_path,
@@ -485,7 +485,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     )
 
     @ruby_download_check = LanguagePack::Helpers::DownloadPresence.new(
-      multi_arch_stacks: MULTI_ARCH_STACKS,
+      amd_only_stacks: AMD_ONLY_STACKS,
       file_name: ruby_version.file_name,
       arch: arch
     )

@@ -10,18 +10,18 @@ class LanguagePack::Installers::HerokuRubyInstaller
 
   attr_reader :fetcher, :environment
 
-  def initialize(stack:, multi_arch_stacks:, arch:, app_path:, env:, report: HerokuBuildReport::GLOBAL)
+  def initialize(stack:, amd_only_stacks:, arch:, app_path:, env:, report: HerokuBuildReport::GLOBAL)
     @report = report
     @environment = env
     @app_path = Pathname.new(app_path).expand_path
-    @fetcher = self.class.fetcher(multi_arch_stacks: multi_arch_stacks, stack: stack, arch: arch)
+    @fetcher = self.class.fetcher(amd_only_stacks: amd_only_stacks, stack: stack, arch: arch)
   end
 
-  def self.fetcher(multi_arch_stacks:, stack:, arch:)
-    if multi_arch_stacks.include?(stack)
-      LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
-    else
+  def self.fetcher(amd_only_stacks:, stack:, arch:)
+    if amd_only_stacks.include?(stack)
       LanguagePack::Fetcher.new(BASE_URL, stack: stack)
+    else
+      LanguagePack::Fetcher.new(BASE_URL, stack: stack, arch: arch)
     end
   end
 
