@@ -169,7 +169,7 @@ function checks::ensure_supported_stack() {
 
 	case "${stack}" in
 		# When removing support from a stack, move it to the bottom of the list
-		heroku-22 | heroku-24)
+		heroku-22 | heroku-24 | heroku-26)
 			return 0
 			;;
 		heroku-18 | heroku-20)
