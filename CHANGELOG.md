@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Warn when app has a `bin/bundle` binstub that can cause bundler version issues ([#1728](https://github.com/heroku/heroku-buildpack-ruby/pull/1728))
 
 ## [v352] - 2026-03-16
 
