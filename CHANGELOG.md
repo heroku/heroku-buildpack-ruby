@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v353] - 2026-03-25
+
 - Add heroku-26 stack support
 
 ## [v352] - 2026-03-16
@@ -1922,7 +1925,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v352...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v353...main
+[v353]: https://github.com/heroku/heroku-buildpack-ruby/compare/v352...v353
 [v352]: https://github.com/heroku/heroku-buildpack-ruby/compare/v351...v352
 [v351]: https://github.com/heroku/heroku-buildpack-ruby/compare/v350...v351
 [v350]: https://github.com/heroku/heroku-buildpack-ruby/compare/v349...v350
