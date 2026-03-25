@@ -29,12 +29,12 @@ ruby_url() {
   local stack=$1
   local version=$2
 
-  if [ "$stack" == "heroku-24" ]; then
+  if [ "$stack" == "heroku-22" ]; then
+    echo "${BUILDPACK_VENDOR_URL:-https://heroku-buildpack-ruby.s3.dualstack.us-east-1.amazonaws.com}/$stack/ruby-$version.tgz"
+  else
     local arch
     arch=$(dpkg --print-architecture)
     echo "${BUILDPACK_VENDOR_URL:-https://heroku-buildpack-ruby.s3.dualstack.us-east-1.amazonaws.com}/$stack/$arch/ruby-$version.tgz"
-  else
-    echo "${BUILDPACK_VENDOR_URL:-https://heroku-buildpack-ruby.s3.dualstack.us-east-1.amazonaws.com}/$stack/ruby-$version.tgz"
   fi
 }
 

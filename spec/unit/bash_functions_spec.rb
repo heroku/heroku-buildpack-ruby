@@ -137,6 +137,14 @@ describe "Bash functions" do
     expect(out).to be_empty
   end
 
+  it "knows heroku-26" do
+    out = exec_with_bash_functions(<<~EOM)
+      checks::ensure_supported_stack "heroku-26"
+    EOM
+
+    expect(out).to be_empty
+  end
+
   it "Detects jruby in the Gemfile.lock" do
     Dir.mktmpdir do |dir|
       dir = Pathname(dir)

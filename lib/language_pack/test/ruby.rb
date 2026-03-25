@@ -7,7 +7,7 @@ class LanguagePack::Ruby
   def compile
     @outdated_version_check = LanguagePack::Helpers::OutdatedRubyVersion.new(
       current_ruby_version: ruby_version,
-      fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(multi_arch_stacks: MULTI_ARCH_STACKS, stack: stack, arch: @arch)
+      fetcher: LanguagePack::Installers::HerokuRubyInstaller.fetcher(amd_only_stacks: AMD_ONLY_STACKS, stack: stack, arch: @arch)
     ).call
     @warn_io.warnings.each { |warning| warnings << warning }
     post_bundler(ruby_version: @ruby_version, app_path: app_path)

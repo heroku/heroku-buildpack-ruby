@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Add heroku-26 stack support
 
 ## [v352] - 2026-03-16
 

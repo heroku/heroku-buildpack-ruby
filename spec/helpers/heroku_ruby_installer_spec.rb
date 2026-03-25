@@ -3,7 +3,7 @@ require "spec_helper"
 describe LanguagePack::Installers::HerokuRubyInstaller do
   def installer(app_path:, report: HerokuBuildReport::GLOBAL, env: {})
     LanguagePack::Installers::HerokuRubyInstaller.new(
-      multi_arch_stacks: ["heroku-24"],
+      amd_only_stacks: LanguagePack::Base::AMD_ONLY_STACKS,
       stack: "heroku-24",
       arch: "amd64",
       app_path: app_path,
@@ -105,7 +105,7 @@ describe LanguagePack::Installers::HerokuRubyInstaller do
           env = {"PATH" => "priorpath"}
 
           LanguagePack::Installers::HerokuRubyInstaller.new(
-            multi_arch_stacks: ["heroku-24"],
+            amd_only_stacks: LanguagePack::Base::AMD_ONLY_STACKS,
             stack: "heroku-24",
             arch: "arm64",
             app_path: dir,

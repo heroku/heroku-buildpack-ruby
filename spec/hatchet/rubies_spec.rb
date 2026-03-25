@@ -48,6 +48,21 @@ describe "Ruby versions" do
   end
 end
 
+describe "Ruby on heroku-26" do
+  it "deploys Ruby 3.3.10" do
+    pending("heroku-26 not yet available on the platform")
+    Hatchet::Runner.new("default_ruby", stack: "heroku-26").tap do |app|
+      app.before_deploy do
+        set_ruby_version(version: "3.3.10")
+      end
+
+      app.deploy do |app|
+        expect(app.run("command -v ruby").strip).to eq("/app/bin/ruby")
+      end
+    end
+  end
+end
+
 describe "Upgrading ruby apps" do
   it "works when changing versions" do
     version = "3.3.1"
