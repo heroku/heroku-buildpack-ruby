@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v354] - 2026-03-26
+
+- Ruby 3.3.11 is now available
+
+
 ## [v353] - 2026-03-25
 
 - Add heroku-26 stack support
@@ -1925,7 +1930,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v353...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v354...main
+[v354]: https://github.com/heroku/heroku-buildpack-ruby/compare/v353...v354
 [v353]: https://github.com/heroku/heroku-buildpack-ruby/compare/v352...v353
 [v352]: https://github.com/heroku/heroku-buildpack-ruby/compare/v351...v352
 [v351]: https://github.com/heroku/heroku-buildpack-ruby/compare/v350...v351
