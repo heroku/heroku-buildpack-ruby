@@ -767,7 +767,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         Heroku recommends placing the `heroku/nodejs` buildpack in front of
         `heroku/ruby` to install a specific version of node:
 
-        https://devcenter.heroku.com/articles/ruby-support#node-js-support
+        https://devcenter.heroku.com/articles/ruby-support-reference#node-js-and-yarn-support
       WARNING
 
       [@node_installer.binary_path]
@@ -803,7 +803,7 @@ class LanguagePack::Ruby < LanguagePack::Base
         buildpack as it offers more comprehensive Node.js support, including the ability to
         customise the Node.js version:
 
-        https://devcenter.heroku.com/articles/ruby-support#node-js-support
+        https://devcenter.heroku.com/articles/ruby-support-reference#node-js-and-yarn-support
       WARNING
 
       [@yarn_installer.name]
