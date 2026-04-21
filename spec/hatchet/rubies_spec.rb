@@ -50,7 +50,6 @@ end
 
 describe "Ruby on heroku-26" do
   it "deploys Ruby 3.3.10" do
-    pending("heroku-26 not yet available on the platform")
     Hatchet::Runner.new("default_ruby", stack: "heroku-26").tap do |app|
       app.before_deploy do
         set_ruby_version(version: "3.3.10")
