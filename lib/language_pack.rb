@@ -44,6 +44,7 @@ module LanguagePack
     Ruby.remove_vendor_bundle(app_path: app_path)
     Ruby.warn_bundler_upgrade(metadata: metadata, bundler_version: bundler_version)
     Ruby.warn_bad_binstubs(app_path: app_path, warn_object: warn_io)
+    Ruby.warn_bundle_binstub(app_path: app_path, warn_object: warn_io)
     Ruby.install_ruby(
       app_path: app_path,
       ruby_version: ruby_version,
