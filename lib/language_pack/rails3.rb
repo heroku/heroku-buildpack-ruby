@@ -192,6 +192,8 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     scheme =
       if bundler.has_gem?("pg") || bundler.has_gem?("jdbc-postgres")
         "postgres"
+      elsif bundler.has_gem?("trilogy")
+        "trilogy"
       elsif bundler.has_gem?("mysql")
         "mysql"
       elsif bundler.has_gem?("mysql2")
