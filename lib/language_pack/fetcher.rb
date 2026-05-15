@@ -27,7 +27,7 @@ module LanguagePack
     end
 
     def fetch_untar(path, files_to_extract = nil, strip_components: 0)
-      curl = curl_command("#{@host_url.join(path)} -s -o")
+      curl = curl_command("#{@host_url.join(path)} --no-progress-meter -o")
       tar_cmd = ["tar", "--strip-components=#{strip_components}", "-xzf", "- #{files_to_extract}"]
       run! "#{curl} - | #{tar_cmd.join(" ")}",
         error_class: FetchError,
@@ -35,7 +35,7 @@ module LanguagePack
     end
 
     def fetch_bunzip2(path, files_to_extract = nil)
-      curl = curl_command("#{@host_url.join(path)} -s -o")
+      curl = curl_command("#{@host_url.join(path)} --no-progress-meter -o")
       run!("#{curl} - | tar jxf - #{files_to_extract}", error_class: FetchError)
     end
 
