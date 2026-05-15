@@ -641,7 +641,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     env_vars = {}
 
     env_vars["BUNDLE_GEMFILE"] = app_path.join("Gemfile").to_s
-    env_vars["BUNDLE_CONFIG"] = app_path.join("/.bundle/config").to_s
+    env_vars["BUNDLE_CONFIG"] = app_path.join(".bundle/config").to_s
     env_vars["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "true"
     env_vars["BUNDLE_DISABLE_VERSION_CHECK"] = "true"
 
