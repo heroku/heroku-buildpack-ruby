@@ -86,7 +86,7 @@ compile_buildpack_v2()
 
     if [[ "$url" =~ \.tgz$ ]] || [[ "$url" =~ \.tgz\? ]]; then
       mkdir -p "$dir"
-      if curl_retry_on_18 -s --fail --show-error --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" "$url" | tar xz -C "$dir"; then
+      if curl_retry_on_18 --no-progress-meter --fail --retry 3 --retry-connrefused --connect-timeout "${CURL_CONNECT_TIMEOUT:-3}" "$url" | tar xz -C "$dir"; then
         :
       else
         echo "Failed to download $url"
