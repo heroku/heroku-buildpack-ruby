@@ -30,7 +30,7 @@ module LanguagePack
         return true if directory.exist?
         directory.mkpath
         Dir.chdir(directory) do |dir|
-          run("curl #{vendor_url}/#{name}.tgz --no-progress-meter --fail --retry 3 --retry-connrefused --connect-timeout #{curl_connect_timeout_in_seconds} -o - | tar xzf -")
+          run("curl #{vendor_url}/#{name}.tgz --no-progress-meter --fail --retry 3 --retry-connrefused --connect-timeout #{curl_connect_timeout_in_seconds} --output - | tar xzf -")
         end
       end
 
