@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Changed curl calls from `--silent` to `--no-progress-meter`. Using `curl -s` without `--show-error` silently swallows error messages when downloads fail, making failures hard to debug. Replace with `--no-progress-meter` which hides only the progress bar while still showing error messages and retry backoff status.
 
 ## [v357] - 2026-04-21
 
