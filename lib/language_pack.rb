@@ -141,6 +141,7 @@ require "language_pack/helpers/lockfile_shell_parser"
 require "language_pack/helpers/default_env_vars"
 require "language_pack/helpers/outdated_ruby_version"
 require "language_pack/helpers/download_presence"
+require "language_pack/helpers/dot_ruby_version_file"
 require "language_pack/installers/heroku_ruby_installer"
 
 require "language_pack/ruby"
