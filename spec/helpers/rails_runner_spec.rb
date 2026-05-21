@@ -87,7 +87,7 @@ describe "Rails Runner" do
     isolate do
       mock_rails_runner('raise "bad" if value == :bad')
 
-      rails_runner = LanguagePack::Helpers::RailsRunner.new(false, 1)
+      rails_runner = LanguagePack::Helpers::RailsRunner.new(false, 15)
       bad_value = rails_runner.detect("bad.value")
       local_storage = rails_runner.detect("active_storage.service")
 
