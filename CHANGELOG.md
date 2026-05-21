@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v359] - 2026-05-20
+
+- Ruby 4.0.5 is now available
+
+
 ## [v358] - 2026-05-18
 
 - Changed curl calls from `--silent` to `--no-progress-meter`. Using `curl -s` without `--show-error` silently swallows error messages when downloads fail, making failures hard to debug. Replace with `--no-progress-meter` which hides only the progress bar while still showing error messages and retry backoff status.
@@ -1949,7 +1954,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v358...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v359...main
+[v359]: https://github.com/heroku/heroku-buildpack-ruby/compare/v358...v359
 [v358]: https://github.com/heroku/heroku-buildpack-ruby/compare/v357...v358
 [v357]: https://github.com/heroku/heroku-buildpack-ruby/compare/v356...v357
 [v356]: https://github.com/heroku/heroku-buildpack-ruby/compare/v355...v356
