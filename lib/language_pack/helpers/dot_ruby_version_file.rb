@@ -112,7 +112,7 @@ module LanguagePack
 
       private def strip_ruby_prefix_and_at_suffix(line)
         version = line.delete_prefix("ruby-")
-        version.split("@").first
+        version.split("@").first || ""
       end
     end
   end

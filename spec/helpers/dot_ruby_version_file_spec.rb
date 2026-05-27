@@ -168,4 +168,11 @@ describe "DotRubyVersionFile" do
     expect(result.warnings.length).to eq(1)
     expect(result.warnings.first).to include("Only full version specifiers")
   end
+
+  it "does not crash on bare ruby- prefix" do
+    result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "ruby-").call
+    expect(result.ruby_version).to be_nil
+    expect(result.warnings.length).to eq(1)
+    expect(result.warnings.first).to include("Cannot parse")
+  end
 end
