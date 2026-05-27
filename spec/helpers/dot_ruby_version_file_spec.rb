@@ -63,6 +63,7 @@ describe "DotRubyVersionFile" do
   it "parses pre-release with dot syntax" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "3.4.0.rc1").call
     expect(result.ruby_version.ruby_version).to eq("3.4.0")
+    expect(result.ruby_version.pre).to eq("rc1")
     expect(result.ruby_version.version_for_download).to eq("ruby-3.4.0.rc1")
     expect(result.warnings).to eq([])
   end
@@ -70,6 +71,7 @@ describe "DotRubyVersionFile" do
   it "normalizes pre-release dash syntax to dot syntax" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "3.4.0-preview2").call
     expect(result.ruby_version.ruby_version).to eq("3.4.0")
+    expect(result.ruby_version.pre).to eq("preview2")
     expect(result.ruby_version.version_for_download).to eq("ruby-3.4.0.preview2")
     expect(result.warnings).to eq([])
   end
@@ -77,7 +79,23 @@ describe "DotRubyVersionFile" do
   it "normalizes pre-release with ruby- prefix" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "ruby-3.4.0-rc1").call
     expect(result.ruby_version.ruby_version).to eq("3.4.0")
+    expect(result.ruby_version.pre).to eq("rc1")
     expect(result.ruby_version.version_for_download).to eq("ruby-3.4.0.rc1")
+    expect(result.warnings).to eq([])
+  end
+
+  it "handles combined prefix strip, gemset strip, and pre-release" do
+    result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "ruby-3.4.0-rc1@gemset").call
+    expect(result.ruby_version.ruby_version).to eq("3.4.0")
+    expect(result.ruby_version.pre).to eq("rc1")
+    expect(result.ruby_version.version_for_download).to eq("ruby-3.4.0.rc1")
+    expect(result.warnings).to eq([])
+  end
+
+  it "handles CRLF line endings" do
+    result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "3.4.8\r\n").call
+    expect(result.ruby_version.ruby_version).to eq("3.4.8")
+    expect(result.ruby_version.version_for_download).to eq("ruby-3.4.8")
     expect(result.warnings).to eq([])
   end
 

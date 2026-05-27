@@ -22,7 +22,9 @@ module LanguagePack
       :engine,
       # `engine_version` is the Jruby version or for MRI it is the same as `ruby_version`
       # i.e. `<major>.<minor>.<patch>`
-      :engine_version
+      :engine_version,
+      # Pre-release identifier e.g. "rc1", "preview2", or nil for stable releases
+      :pre
 
     def self.from_gemfile_lock(ruby:, last_version: nil)
       if ruby.empty?
