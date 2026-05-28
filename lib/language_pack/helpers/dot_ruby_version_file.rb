@@ -15,7 +15,7 @@ module LanguagePack
     class DotRubyVersionFile
       VERSION_PATTERN = /\A(?<version>\d+\.\d+\.\d+)(?:[.-](?<pre>\S+))?\z/
       JRUBY_PATTERN = /\Ajruby-/i
-      SPECIFIER_PATTERN = /(>=|<=|~>|>|<)/
+      SPECIFIER_PATTERN = /((>|<|~|=)+)/
 
       Result = Data.define(:ruby_version, :warnings)
 
