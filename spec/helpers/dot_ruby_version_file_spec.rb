@@ -138,41 +138,41 @@ describe "DotRubyVersionFile" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "ruby >= 3.1.6, < 3.3").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("version specifiers")
+    expect(result.warnings.first).to include("Only exact versions are supported")
   end
 
   it "warns for ~> specifier" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "~> 3.1").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("version specifiers")
+    expect(result.warnings.first).to include("Only exact versions are supported")
   end
 
   it "warns for >= specifier" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: ">= 3.1.6").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("version specifiers")
+    expect(result.warnings.first).to include("Only exact versions are supported")
   end
 
   it "warns for garbage input" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "not-a-version").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("Cannot parse")
+    expect(result.warnings.first).to include("Cannot parse Ruby version from")
   end
 
   it "warns for two-part version like 3.4" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "3.4").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("Only full version specifiers")
+    expect(result.warnings.first).to include("Only full version specifiers with major, minor, and patch are supported")
   end
 
   it "does not crash on bare ruby- prefix" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "ruby-").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("Cannot parse")
+    expect(result.warnings.first).to include("Cannot parse Ruby version from")
   end
 end
