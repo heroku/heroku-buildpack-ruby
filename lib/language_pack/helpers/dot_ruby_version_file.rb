@@ -15,7 +15,7 @@ module LanguagePack
     class DotRubyVersionFile
       VERSION_PATTERN = /\A(?<version>\d+\.\d+\.\d+)(?:[.-](?<pre>\S+))?\z/
       JRUBY_PATTERN = /\Ajruby-/i
-      SPECIFIER_PATTERN = />=|<=|~>|>|</
+      SPECIFIER_PATTERN = /(>=|<=|~>|>|<)/
 
       Result = Data.define(:ruby_version, :warnings)
 
@@ -62,9 +62,10 @@ module LanguagePack
           EOF
         end
 
-        if version_string.match?(SPECIFIER_PATTERN)
+        if (match = version_string.match(SPECIFIER_PATTERN))
+          specifier = match[1]
           warnings << <<~EOF
-            Cannot parse version specifiers in `.ruby-version` file.
+            Cannot parse `.ruby-version` file, version specifiers (`#{specifier}`) are not supported.
 
             Only exact versions are supported such as `3.4.8` or `ruby-3.4.8`.
             Got:
