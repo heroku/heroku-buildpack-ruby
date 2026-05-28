@@ -92,7 +92,7 @@ module LanguagePack
           warnings << <<~EOF
             Cannot parse Ruby version from `.ruby-version` file.
 
-            Only full version specifiers with major, minor, and patch are supported
+            Only full Ruby versions with major, minor, and patch are supported
             such as `3.4.8` or `ruby-3.4.8`. Got:
 
             ```
