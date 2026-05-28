@@ -218,17 +218,15 @@ class LanguagePack::Ruby < LanguagePack::Base
     if dot_ruby_version_result&.ruby_version
       report.capture("ruby.dot_ruby_version.version" => dot_ruby_version_result.ruby_version.ruby_version)
 
-      unless lockfile_ruby_version.default?
-        dot_v = Gem::Version.new(dot_ruby_version_result.ruby_version.ruby_version)
-        lock_v = Gem::Version.new(lockfile_ruby_version.ruby_version)
-        comparison = if dot_v == lock_v
-          "match"
-        elsif dot_v > lock_v
-          "dot_ruby_version_higher"
-        else
-          "gemfile_lock_higher"
-        end
-        report.capture("ruby.dot_ruby_version.vs_gemfile_lock" => comparison)
+      if !lockfile_ruby_version.default?
+        report.capture(
+          "ruby.dot_ruby_version.vs_gemfile_lock" =>
+            case Gem::Version.new(dot_ruby_version_result.ruby_version.ruby_version) <=> Gem::Version.new(lockfile_ruby_version.ruby_version)
+            when 0 then "match"
+            when 1 then "dot_ruby_version_higher"
+            when -1 then "gemfile_lock_higher"
+            end
+        )
       end
     end
 
