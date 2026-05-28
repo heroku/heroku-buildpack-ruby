@@ -45,7 +45,7 @@ class LanguagePack::Helpers::BundlerWrapper
 
     dot_ruby_version_file = @gemfile_lock_path.join("..").join(".ruby-version")
     @report.capture(
-      "ruby.dot_ruby_version" => dot_ruby_version_file.exist? ? dot_ruby_version_file.read&.strip : nil
+      "dot_ruby_version.contents" => dot_ruby_version_file.exist? ? dot_ruby_version_file.read&.strip : nil
     )
     @version = bundler_version
     parts = @version.split(".")

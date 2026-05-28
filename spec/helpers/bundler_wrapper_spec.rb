@@ -14,7 +14,7 @@ describe "Multiple platform detection" do
       )
       expect(report.data).to eq(
         {
-          "ruby.dot_ruby_version" => nil,
+          "dot_ruby_version.contents" => nil,
           "bundler.major" => "2",
           "bundler.minor" => "5",
           "bundler.patch" => "7",

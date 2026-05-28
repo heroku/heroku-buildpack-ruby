@@ -202,8 +202,8 @@ describe "Ruby apps" do
             yaml = report_match[:yaml].gsub("remote: ", "")
             report = YAML.load(yaml)
             expect(report.fetch("ruby_version_full")).to eq(expected)
-            expect(report.fetch("ruby.dot_ruby_version.version")).to eq(expected)
-            expect(report.fetch("ruby.dot_ruby_version.vs_gemfile_lock")).to eq("match")
+            expect(report.fetch("dot_ruby_version.version")).to eq(expected)
+            expect(report.fetch("dot_ruby_version.vs_gemfile_lock")).to eq("match")
           rescue Exception => e # standard:disable Lint/RescueException
             puts app.output
             puts yaml if yaml
