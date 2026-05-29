@@ -35,10 +35,18 @@ module LanguagePack
     metadata = LanguagePack::Metadata.new(cache_path: cache_path)
     new_app = metadata.empty?
 
+    dot_ruby_version_path = app_path.join(".ruby-version")
+    dot_ruby_version_result = if dot_ruby_version_path.exist?
+      LanguagePack::Helpers::DotRubyVersionFile.new(
+        contents: dot_ruby_version_path.read
+      ).call
+    end
+
     ruby_version = Ruby.get_ruby_version(
       report: HerokuBuildReport::GLOBAL,
       metadata: metadata,
-      gemfile_lock: gemfile_lock
+      gemfile_lock: gemfile_lock,
+      dot_ruby_version_result: dot_ruby_version_result
     )
 
     Ruby.remove_vendor_bundle(app_path: app_path)

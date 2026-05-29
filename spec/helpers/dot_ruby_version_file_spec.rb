@@ -138,21 +138,42 @@ describe "DotRubyVersionFile" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "ruby >= 3.1.6, < 3.3").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("Only exact versions are supported")
+    expect(result.warnings.first).to include("Cannot parse `.ruby-version` file, version specifiers (`>=`) are not supported.")
   end
 
   it "warns for ~> specifier" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "~> 3.1").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("Only exact versions are supported")
+    expect(result.warnings.first).to include("Cannot parse `.ruby-version` file, version specifiers (`~>`) are not supported.")
   end
 
   it "warns for >= specifier" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: ">= 3.1.6").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("Only exact versions are supported")
+    expect(result.warnings.first).to include("Cannot parse `.ruby-version` file, version specifiers (`>=`) are not supported.")
+  end
+
+  it "warns for > specifier" do
+    result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "> 3.1.6").call
+    expect(result.ruby_version).to be_nil
+    expect(result.warnings.length).to eq(1)
+    expect(result.warnings.first).to include("Cannot parse `.ruby-version` file, version specifiers (`>`) are not supported.")
+  end
+
+  it "warns for < specifier" do
+    result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "< 3.1.6").call
+    expect(result.ruby_version).to be_nil
+    expect(result.warnings.length).to eq(1)
+    expect(result.warnings.first).to include("Cannot parse `.ruby-version` file, version specifiers (`<`) are not supported.")
+  end
+
+  it "warns for = specifier" do
+    result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "=3.1.6").call
+    expect(result.ruby_version).to be_nil
+    expect(result.warnings.length).to eq(1)
+    expect(result.warnings.first).to include("Cannot parse `.ruby-version` file, version specifiers (`=`) are not supported.")
   end
 
   it "warns for garbage input" do
@@ -166,7 +187,7 @@ describe "DotRubyVersionFile" do
     result = LanguagePack::Helpers::DotRubyVersionFile.new(contents: "3.4").call
     expect(result.ruby_version).to be_nil
     expect(result.warnings.length).to eq(1)
-    expect(result.warnings.first).to include("Only full version specifiers with major, minor, and patch are supported")
+    expect(result.warnings.first).to include("Only full Ruby versions with major, minor, and patch are supported")
   end
 
   it "does not crash on bare ruby- prefix" do

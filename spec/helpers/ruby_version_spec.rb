@@ -192,3 +192,104 @@ describe "RubyVersion" do
     end
   end
 end
+
+describe "get_ruby_version .ruby-version comparison" do
+  def gemfile_lock_with_ruby(version)
+    LanguagePack::Helpers::GemfileLock.new(
+      report: HerokuBuildReport.dev_null,
+      contents: <<~EOF
+        RUBY VERSION
+           ruby #{version}
+        BUNDLED WITH
+           2.5.23
+      EOF
+    )
+  end
+
+  def gemfile_lock_default
+    LanguagePack::Helpers::GemfileLock.new(
+      report: HerokuBuildReport.dev_null,
+      contents: <<~EOF
+        BUNDLED WITH
+           2.5.23
+      EOF
+    )
+  end
+
+  def dot_ruby_version_result(version)
+    LanguagePack::Helpers::DotRubyVersionFile.new(contents: version).call
+  end
+
+  def get_ruby_version(gemfile_lock:, dot_ruby_version_result: nil)
+    report = HerokuBuildReport.dev_null
+    Dir.mktmpdir do |dir|
+      metadata = LanguagePack::Metadata.new(cache_path: dir)
+      LanguagePack::Ruby.get_ruby_version(
+        metadata: metadata,
+        gemfile_lock: gemfile_lock,
+        dot_ruby_version_result: dot_ruby_version_result,
+        report: report
+      )
+    end
+    report
+  end
+
+  it "sets no comparison keys when .ruby-version is absent" do
+    report = get_ruby_version(gemfile_lock: gemfile_lock_with_ruby("3.4.2"))
+
+    expect(report.data).not_to have_key("dot_ruby_version.version")
+    expect(report.data).not_to have_key("dot_ruby_version.vs_gemfile_lock")
+  end
+
+  it "sets no comparison keys when .ruby-version is unparseable" do
+    result = dot_ruby_version_result("not-a-version")
+    report = get_ruby_version(
+      gemfile_lock: gemfile_lock_with_ruby("3.4.2"),
+      dot_ruby_version_result: result
+    )
+
+    expect(result.ruby_version).to be_nil
+    expect(report.data).not_to have_key("dot_ruby_version.version")
+    expect(report.data).not_to have_key("dot_ruby_version.vs_gemfile_lock")
+  end
+
+  it "reports match when versions are equal" do
+    report = get_ruby_version(
+      gemfile_lock: gemfile_lock_with_ruby("3.4.2"),
+      dot_ruby_version_result: dot_ruby_version_result("3.4.2")
+    )
+
+    expect(report.data["dot_ruby_version.version"]).to eq("3.4.2")
+    expect(report.data["dot_ruby_version.vs_gemfile_lock"]).to eq("match")
+  end
+
+  it "reports dot_ruby_version_higher when .ruby-version is newer" do
+    report = get_ruby_version(
+      gemfile_lock: gemfile_lock_with_ruby("3.4.2"),
+      dot_ruby_version_result: dot_ruby_version_result("3.5.0")
+    )
+
+    expect(report.data["dot_ruby_version.version"]).to eq("3.5.0")
+    expect(report.data["dot_ruby_version.vs_gemfile_lock"]).to eq("dot_ruby_version_higher")
+  end
+
+  it "reports gemfile_lock_higher when Gemfile.lock is newer" do
+    report = get_ruby_version(
+      gemfile_lock: gemfile_lock_with_ruby("3.4.2"),
+      dot_ruby_version_result: dot_ruby_version_result("3.3.0")
+    )
+
+    expect(report.data["dot_ruby_version.version"]).to eq("3.3.0")
+    expect(report.data["dot_ruby_version.vs_gemfile_lock"]).to eq("gemfile_lock_higher")
+  end
+
+  it "sets version but skips comparison when Gemfile.lock has no ruby version" do
+    report = get_ruby_version(
+      gemfile_lock: gemfile_lock_default,
+      dot_ruby_version_result: dot_ruby_version_result("3.4.2")
+    )
+
+    expect(report.data["dot_ruby_version.version"]).to eq("3.4.2")
+    expect(report.data).not_to have_key("dot_ruby_version.vs_gemfile_lock")
+  end
+end

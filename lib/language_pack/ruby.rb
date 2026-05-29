@@ -200,7 +200,7 @@ class LanguagePack::Ruby < LanguagePack::Base
     @ruby_version or raise "Internal error: @ruby_version is not set. Call `get_ruby_version` and set @ruby_version"
   end
 
-  def self.get_ruby_version(metadata:, gemfile_lock:, report: HerokuBuildReport::GLOBAL)
+  def self.get_ruby_version(metadata:, gemfile_lock:, dot_ruby_version_result: nil, report: HerokuBuildReport::GLOBAL)
     lockfile_ruby_version = LanguagePack::RubyVersion.from_gemfile_lock(
       ruby: gemfile_lock.ruby,
       last_version: metadata.try_read("buildpack_ruby_version")
@@ -214,6 +214,21 @@ class LanguagePack::Ruby < LanguagePack::Base
       "gemfile_lock.ruby_version.patch" => lockfile_ruby_version.patch,
       "gemfile_lock.ruby_version.default" => lockfile_ruby_version.default?
     )
+
+    if dot_ruby_version_result&.ruby_version
+      report.capture("dot_ruby_version.version" => dot_ruby_version_result.ruby_version.ruby_version)
+
+      if !lockfile_ruby_version.default?
+        report.capture(
+          "dot_ruby_version.vs_gemfile_lock" =>
+            case Gem::Version.new(dot_ruby_version_result.ruby_version.ruby_version) <=> Gem::Version.new(lockfile_ruby_version.ruby_version)
+            when 0 then "match"
+            when 1 then "dot_ruby_version_higher"
+            when -1 then "gemfile_lock_higher"
+            end
+        )
+      end
+    end
 
     lockfile_ruby_version
   end
