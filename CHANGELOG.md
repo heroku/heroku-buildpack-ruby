@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 
+## [v359] - 2026-05-29
+
+
 ## [v359] - 2026-05-20
 
 - Ruby 4.0.5 is now available
@@ -1955,6 +1958,7 @@ Bugfixes:
 * use `$RACK_ENV` when thin is detected for rack apps
 
 [unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v359...main
+[v359]: https://github.com/heroku/heroku-buildpack-ruby/compare/v358...v359
 [v359]: https://github.com/heroku/heroku-buildpack-ruby/compare/v358...v359
 [v358]: https://github.com/heroku/heroku-buildpack-ruby/compare/v357...v358
 [v357]: https://github.com/heroku/heroku-buildpack-ruby/compare/v356...v357
