@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [v361] - 2026-06-11
+
+- JRuby 10.0.6.0 is now available
+
+
 ## [v360] - 2026-06-08
 
 - JRuby 9.4.15.0 is now available
@@ -1962,7 +1967,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v360...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v361...main
+[v361]: https://github.com/heroku/heroku-buildpack-ruby/compare/v360...v361
 [v360]: https://github.com/heroku/heroku-buildpack-ruby/compare/v359...v360
 [v359]: https://github.com/heroku/heroku-buildpack-ruby/compare/v358...v359
 [v359]: https://github.com/heroku/heroku-buildpack-ruby/compare/v358...v359
