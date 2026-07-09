@@ -25,8 +25,8 @@ describe LanguagePack::Helpers::BundleBinstubCheck do
         app_root_dir: dir,
         warn_object: warn_obj
       )
+      check.call
 
-      expect(check.call).to eq(true)
       expect(warn_obj.msg).to include("bin/bundle")
       expect(warn_obj.msg).to include("rm bin/bundle")
     end
@@ -43,8 +43,8 @@ describe LanguagePack::Helpers::BundleBinstubCheck do
         app_root_dir: dir,
         warn_object: warn_obj
       )
+      check.call
 
-      expect(check.call).to eq(false)
       expect(warn_obj.msg).to be_nil
     end
   end
@@ -56,8 +56,8 @@ describe LanguagePack::Helpers::BundleBinstubCheck do
         app_root_dir: dir,
         warn_object: warn_obj
       )
+      check.call
 
-      expect(check.call).to eq(false)
       expect(warn_obj.msg).to be_nil
     end
   end

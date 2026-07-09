@@ -26,15 +26,12 @@ class LanguagePack::Helpers::BundleBinstubCheck
   end
 
   def call
-    return false unless @bin_bundle.exist?
-
-    @warn_object.warn(warning_message, inline: true)
-    true
+    if @bin_bundle.exist?
+      @warn_object.warn(warning_message, inline: true)
+    end
   end
 
-  private
-
-  def warning_message
+  private def warning_message
     <<~WARNING
       Your app has a `bin/bundle` binstub that may cause bundler to
       malfunction. We recommend you remove it.
