@@ -59,7 +59,11 @@ describe "Ruby apps" do
         end
         app.deploy do
           expect(app.output).to match("custom rake binstub called")
-          expect(app.run("rake")).to match("custom rake binstub called")
+          # Using `bash -c rake` here to bypass heroku process type detection because
+          # rake = "bundle exec rake" is a process type. This test was previously
+          # relying on a bug in the CLI that was fixed in https://github.com/heroku/cli/pull/3804.
+          # The goal is to test PATH resolution at build/runtime.
+          expect(app.run("bash -c rake")).to match("custom rake binstub called")
         end
       end
     end
