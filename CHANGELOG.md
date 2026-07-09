@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Remove `rake` default process type. Now `heroku run rake` will perform a `PATH` lookup which matches existing build and runtime behavior.
 
 ## [v361] - 2026-06-11
 
