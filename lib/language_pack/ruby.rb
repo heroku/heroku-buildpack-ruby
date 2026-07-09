@@ -9,6 +9,7 @@ require "language_pack/helpers/nodebin"
 require "language_pack/helpers/node_installer"
 require "language_pack/helpers/yarn_installer"
 require "language_pack/helpers/binstub_check"
+require "language_pack/helpers/bundle_binstub_check"
 require "language_pack/version"
 
 # base Ruby Language Pack. This is for any base ruby app.
@@ -152,6 +153,14 @@ class LanguagePack::Ruby < LanguagePack::Base
   #
   def self.warn_bad_binstubs(app_path:, warn_object:)
     check = LanguagePack::Helpers::BinstubCheck.new(
+      warn_object: warn_object,
+      app_root_dir: app_path
+    )
+    check.call
+  end
+
+  def self.warn_bundle_binstub(app_path:, warn_object:)
+    check = LanguagePack::Helpers::BundleBinstubCheck.new(
       warn_object: warn_object,
       app_root_dir: app_path
     )
