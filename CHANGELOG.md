@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v362] - 2026-08-25
+
 - Yarn is now downloaded from the npm registry instead of the `heroku-nodebin` S3 bucket ([#1761](https://github.com/heroku/heroku-buildpack-ruby/pull/1761))
 - Warn when app has a `bin/bundle` binstub that can cause bundler version issues ([#1728](https://github.com/heroku/heroku-buildpack-ruby/pull/1728))
 
@@ -1969,7 +1972,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v361...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v362...main
+[v362]: https://github.com/heroku/heroku-buildpack-ruby/compare/v361...v362
 [v361]: https://github.com/heroku/heroku-buildpack-ruby/compare/v360...v361
 [v360]: https://github.com/heroku/heroku-buildpack-ruby/compare/v359...v360
 [v359]: https://github.com/heroku/heroku-buildpack-ruby/compare/v358...v359
