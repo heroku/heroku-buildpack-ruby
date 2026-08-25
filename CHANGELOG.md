@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Yarn is now downloaded from the npm registry instead of the `heroku-nodebin` S3 bucket ([#1761](https://github.com/heroku/heroku-buildpack-ruby/pull/1761))
 - Warn when app has a `bin/bundle` binstub that can cause bundler version issues ([#1728](https://github.com/heroku/heroku-buildpack-ruby/pull/1728))
 
 ## [v361] - 2026-06-11
