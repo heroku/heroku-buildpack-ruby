@@ -53,7 +53,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   def join
     return unless can_check?
     return true if @already_joined
-    raise "Must initalize threads with `call()` before joining" if @minor_version_threads.empty?
+    raise "Must initialize threads with `call()` before joining" if @minor_version_threads.empty?
 
     @eol_versions = @eol_version_threads.map(&:value).compact
     @minor_versions = @minor_version_threads.map(&:value).compact
@@ -103,14 +103,14 @@ class LanguagePack::Helpers::OutdatedRubyVersion
 
   # Checks for a range of "tiny" versions in parallel
   #
-  # For example if 2.5.0 is given it will check for the existance of
+  # For example if 2.5.0 is given it will check for the existence of
   # - 2.5.1
   # - 2.5.2
   # - 2.5.3
   # - 2.5.4
   # - 2.5.5
   #
-  # If the last elment in the series exists, it will continue to
+  # If the last element in the series exists, it will continue to
   # search by enqueuing additional numbers until the final
   # value in the series is found
   private def check_minor_versions(range: DEFAULT_RANGE, base_version: current_ruby_version, &block)
@@ -133,7 +133,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
 
   # Checks to see if 3 minor versions exist above current version
   #
-  # for example 2.4.0 would check for existance of:
+  # for example 2.4.0 would check for existence of:
   #   - 2.5.0
   #   - 2.6.0
   #   - 2.7.0
@@ -160,7 +160,7 @@ class LanguagePack::Helpers::OutdatedRubyVersion
   # Checks to see if one major version exists above current version
   # if it does, then it will check for minor versions of that version
   #
-  # For checking 2.5. it would check for the existance of 3.0.0
+  # For checking 2.5. it would check for the existence of 3.0.0
   #
   # If 3.0.0 exists then it will check for:
   #   - 3.1.0
