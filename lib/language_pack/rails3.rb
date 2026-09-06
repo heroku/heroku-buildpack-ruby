@@ -77,7 +77,7 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
         You set your `config.assets.compile = true` in production.
         This can negatively impact the performance of your application.
 
-        For more information can be found in this article:
+        More information can be found in this article:
           https://devcenter.heroku.com/articles/rails-asset-pipeline#compile-set-to-true-in-production
 
       WARNING

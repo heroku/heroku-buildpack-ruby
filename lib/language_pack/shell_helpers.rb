@@ -65,7 +65,7 @@ module LanguagePack
     # run a shell command (deferring to #run), and raise an error if it fails
     # @param [String] command to be run
     # @return [String] result of #run
-    # @option options [Error] :error_class Class of error to raise, defaults to Standard Error
+    # @option options [Error] :error_class Class of error to raise, defaults to StandardError
     # @option options [Integer] :max_attempts Number of times to attempt command before raising
     def run!(command, options = {})
       max_attempts = options[:max_attempts] || 1

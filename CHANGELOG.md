@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fixed typos in code comments, YARD docs, and user-facing warning and error messages (no behavior change)
 
 ## [v362] - 2026-08-25
 
