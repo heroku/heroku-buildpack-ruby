@@ -5,6 +5,9 @@ updates:
     open-pull-requests-limit: 1 # Limit concurrent CI runs from executing, do not remove
     schedule:
       interval: "monthly"
+    allow:
+      # Update transitive dependencies too.
+      - dependency-type: "all"
     labels:
       - "dependencies"
       - "ruby"
