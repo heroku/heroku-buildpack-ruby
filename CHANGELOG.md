@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Fixed typos in code comments, YARD docs, and user-facing warning and error messages (no behavior change)
+- Fixed typos in warning and error messages [#1765](https://github.com/heroku/heroku-buildpack-ruby/pull/1765)
 
 ## [v362] - 2026-08-25
 
