@@ -6,7 +6,7 @@ module LanguagePack
       def initialize(output = "")
         msg = ""
         msg << output
-        msg << "Can not parse Ruby Version:\n"
+        msg << "Cannot parse Ruby Version:\n"
         msg << "Valid versions listed on: https://devcenter.heroku.com/articles/ruby-support\n"
         super(msg)
       end

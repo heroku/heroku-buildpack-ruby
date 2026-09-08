@@ -42,7 +42,7 @@ class DeployCheck
     EOM
   end
 
-  # Returns tuthy value if the remote contains the next version already
+  # Returns truthy value if the remote contains the next version already
   def tag_exists_on_remote?
     remote_tag_array.include?(next_version)
   end
@@ -78,7 +78,7 @@ class DeployCheck
 
     raise <<~EOM
       Must be in-sync with #{@github}. Local commit: #{local_sha.inspect} #{@github}: #{remote_sha.inspect}
-      "Make sure that you've pulled: `git pull --rebase #{@github_url} main`
+      Make sure that you've pulled: `git pull --rebase #{@github_url} main`
     EOM
   end
 
