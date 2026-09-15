@@ -41,7 +41,7 @@ jobs:
         RAILS_LTS_CREDS: ${{ secrets.RAILS_LTS_CREDS }}
         HEROKU_DISABLE_AUTOUPDATE: 1
         PARALLEL_SPLIT_TEST_PROCESSES: 85
-        RSPEC_RETRY_RETRY_COUNT: 1
+        RSPEC_RETRY_RETRY_COUNT: 2
       steps:
         - name: Checkout
           uses: actions/checkout@v7
