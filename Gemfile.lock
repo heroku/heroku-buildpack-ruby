@@ -6,7 +6,7 @@ GEM
     citrus (3.0.2)
     connection_pool (3.0.2)
     diff-lcs (1.6.2)
-    excon (1.7.1)
+    excon (1.7.2)
       logger
     heroics (0.1.4)
       base64
@@ -25,7 +25,7 @@ GEM
     lint_roller (1.1.0)
     logger (1.7.0)
     moneta (1.0.0)
-    parallel (2.1.0)
+    parallel (2.2.0)
     parallel_split_test (0.10.0)
       parallel (>= 0.5.13)
       rspec-core (>= 3.9.0)
@@ -45,7 +45,7 @@ GEM
       redis-client (>= 0.22.0)
     redis-client (0.30.1)
       connection_pool
-    regexp_parser (2.12.0)
+    regexp_parser (2.13.1)
     rrrretry (1.0.0)
     rspec-core (3.13.6)
       rspec-support (~> 3.13.0)
@@ -91,9 +91,9 @@ GEM
     toml-rb (4.2.1)
       citrus (~> 3.0, > 3.0)
       racc (~> 1.7)
-    unicode-display_width (3.2.0)
-      unicode-emoji (~> 4.1)
-    unicode-emoji (4.2.0)
+    unicode-display_width (3.3.0)
+      unicode-emoji (~> 4.3)
+    unicode-emoji (4.3.0)
     webrick (1.9.2)
 
 PLATFORMS
