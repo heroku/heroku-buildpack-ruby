@@ -192,4 +192,16 @@ describe LanguagePack::Helpers::GemfileLock do
     expect(gemfile_lock.ruby.empty?).to eq(false)
     expect(gemfile_lock.ruby.engine_version).to eq("3.4.0")
   end
+
+  it "handles Bundler prereleases" do
+    gemfile_lock = LanguagePack::Helpers::GemfileLock.new(
+      contents: <<~EOF
+        RUBY VERSION
+          ruby 3.4.0
+        BUNDLED WITH
+          4.1.0.beta2
+      EOF
+    )
+    expect(gemfile_lock.bundler.version).to eq("4.1.0.beta2")
+  end
 end

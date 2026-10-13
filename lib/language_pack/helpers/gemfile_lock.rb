@@ -76,7 +76,7 @@ module LanguagePack
         attr_reader :version
 
         def initialize(contents:, report: HerokuBuildReport::GLOBAL)
-          if (match = contents.match(/^BUNDLED WITH(?:\r?\n) {2,3}(?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+)/m))
+          if (match = contents.match(/^BUNDLED WITH(?:\r?\n) {2,3}(?<version>(?<major>\d+)\.(?<minor>\d+)\.\d+(?:\.(?<pre>[\w\.]+))?)/m))
             @empty = false
             @version = match[:version]
           else
