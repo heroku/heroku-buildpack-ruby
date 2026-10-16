@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v363] - 2026-10-16
+
 - Support bundler beta versions such as `4.1.0.beta2` [#1771](https://github.com/heroku/heroku-buildpack-ruby/pull/1771)
 - Fixed typos in warning and error messages [#1765](https://github.com/heroku/heroku-buildpack-ruby/pull/1765)
 
@@ -1974,7 +1977,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v362...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v363...main
+[v363]: https://github.com/heroku/heroku-buildpack-ruby/compare/v362...v363
 [v362]: https://github.com/heroku/heroku-buildpack-ruby/compare/v361...v362
 [v361]: https://github.com/heroku/heroku-buildpack-ruby/compare/v360...v361
 [v360]: https://github.com/heroku/heroku-buildpack-ruby/compare/v359...v360
