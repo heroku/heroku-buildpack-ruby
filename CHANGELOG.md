@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Support bundler beta versions such as `4.1.0.beta2` [#1771](https://github.com/heroku/heroku-buildpack-ruby/pull/1771)
 - Fixed typos in warning and error messages [#1765](https://github.com/heroku/heroku-buildpack-ruby/pull/1765)
 
 ## [v362] - 2026-08-25
