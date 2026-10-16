@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix `buildpack_version` cache metadata reporting `v334` instead of the current release [#1774](https://github.com/heroku/heroku-buildpack-ruby/pull/1774)
 
 ## [v363] - 2026-10-16
 

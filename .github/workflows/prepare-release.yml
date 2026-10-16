@@ -15,8 +15,9 @@ jobs:
         set -euo pipefail
 
         sed --in-place --regexp-extended \
-          --expression "s/v${EXISTING_VERSION}/v${NEW_VERSION}/" \
+          --expression "s/BUILDPACK_VERSION = \"v[0-9]+\"/BUILDPACK_VERSION = \"v${NEW_VERSION}\"/" \
           lib/language_pack/version.rb
+        grep --quiet "BUILDPACK_VERSION = \"v${NEW_VERSION}\"" lib/language_pack/version.rb
 
         if compgen -G 'changelogs/unreleased/*.md' > /dev/null; then
           # The unreleased changelogs directory contains a `.gitkeep` file, so we have to
