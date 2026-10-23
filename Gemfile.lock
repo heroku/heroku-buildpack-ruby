@@ -3,6 +3,7 @@ GEM
   specs:
     ast (2.4.3)
     base64 (0.3.0)
+    benchmark (0.5.0)
     citrus (3.0.2)
     connection_pool (3.0.2)
     diff-lcs (1.6.2)
@@ -100,6 +101,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  benchmark
   excon
   heroku_hatchet
   json
