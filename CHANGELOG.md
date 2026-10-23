@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v364] - 2026-10-23
+
 - Default Ruby version is now 3.4.12 (https://github.com/heroku/heroku-buildpack-ruby/pull/1776)
 
 ## [v363] - 2026-10-16
@@ -1978,7 +1981,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v363...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v364...main
+[v364]: https://github.com/heroku/heroku-buildpack-ruby/compare/v363...v364
 [v363]: https://github.com/heroku/heroku-buildpack-ruby/compare/v362...v363
 [v362]: https://github.com/heroku/heroku-buildpack-ruby/compare/v361...v362
 [v361]: https://github.com/heroku/heroku-buildpack-ruby/compare/v360...v361
