@@ -1,6 +1,6 @@
 [buildpack]
 name = "Ruby"
-ruby_version = "3.3.9"
+ruby_version = "3.4.12"
 
 [publish.Ignore]
 files = [

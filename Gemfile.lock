@@ -113,7 +113,7 @@ DEPENDENCIES
   toml-rb
 
 RUBY VERSION
-   ruby 3.3.9p170
+   ruby 3.4.12p148
 
 BUNDLED WITH
    2.5.22

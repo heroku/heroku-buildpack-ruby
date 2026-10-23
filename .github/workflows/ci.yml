@@ -21,7 +21,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          ruby-version: "3.3.9"
+          ruby-version: "3.4.12"
       - name: Run StandardRB
         run: bundle exec standardrb
       - name: Run ShellCheck bin top level
@@ -49,7 +49,7 @@ jobs:
           uses: ruby/setup-ruby@v1
           with:
             bundler-cache: true
-            ruby-version: "3.3.9"
+            ruby-version: "3.4.12"
         - name: Hatchet setup
           run: bundle exec hatchet ci:setup
         - name: Run Hatchet integration tests
