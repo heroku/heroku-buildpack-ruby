@@ -1,9 +1,10 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.3.9"
+ruby "3.4.12"
 
 group :development, :test do
+  gem "benchmark"
   gem "toml-rb"
   gem "heroku_hatchet"
   gem "rspec-core"

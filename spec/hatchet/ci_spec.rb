@@ -164,7 +164,7 @@ describe "CI" do
           BUNDLE_PATH=vendor/bundle
           BUNDLE_WITHOUT=development
           DISABLE_SPRING=1
-          GEM_PATH=/app/vendor/bundle/ruby/3.3.0:
+          GEM_PATH=/app/vendor/bundle/ruby/3.4.0:
           LANG=en_US.UTF-8
           MALLOC_ARENA_MAX=2
           PUMA_PERSISTENT_TIMEOUT=95
@@ -176,7 +176,7 @@ describe "CI" do
           [
             "/app/bin",
             "/app/vendor/bundle/bin",
-            "/app/vendor/bundle/ruby/3.3.0/bin"
+            "/app/vendor/bundle/ruby/3.4.0/bin"
           ].join(":")
         )
 

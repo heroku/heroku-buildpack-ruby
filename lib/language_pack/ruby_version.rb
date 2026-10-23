@@ -12,8 +12,8 @@ module LanguagePack
       end
     end
 
-    BOOTSTRAP_VERSION_NUMBER = "3.3.9".freeze
-    DEFAULT_VERSION_NUMBER = "3.3.9".freeze
+    BOOTSTRAP_VERSION_NUMBER = "3.4.12".freeze
+    DEFAULT_VERSION_NUMBER = "3.4.12".freeze
     DEFAULT_VERSION = "ruby-#{DEFAULT_VERSION_NUMBER}".freeze
 
     # String formatted `<major>.<minor>.<patch>` for Ruby and JRuby
