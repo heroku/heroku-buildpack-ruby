@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v365] - 2026-10-26
+
 - Fix `buildpack_version` cache metadata reporting `v334` instead of the current release [#1774](https://github.com/heroku/heroku-buildpack-ruby/pull/1774)
 - Default Node.js version now 24.22.1 [#1778](https://github.com/heroku/heroku-buildpack-ruby/pull/1778)
 
@@ -1983,7 +1986,8 @@ Bugfixes:
 * Change gem detection to use lockfile parser
 * use `$RACK_ENV` when thin is detected for rack apps
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v364...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-ruby/compare/v365...main
+[v365]: https://github.com/heroku/heroku-buildpack-ruby/compare/v364...v365
 [v364]: https://github.com/heroku/heroku-buildpack-ruby/compare/v363...v364
 [v363]: https://github.com/heroku/heroku-buildpack-ruby/compare/v362...v363
 [v362]: https://github.com/heroku/heroku-buildpack-ruby/compare/v361...v362
