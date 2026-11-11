@@ -1,0 +1,75 @@
+name: Update default Node.js version && prepare release
+run-name: "Update default Node.js version to ${{ inputs.node_version }} and prepare a release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      node_version:
+          description: "The Node.js version to install by default (e.g. 26.13.1)"
+          type: string
+          required: true
+
+# Disable all GITHUB_TOKEN permissions, since the GitHub App token is used instead.
+permissions: {}
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate Node.js version
+        env:
+          NODE_VERSION: ${{ inputs.node_version }}
+        run: |
+          set -euo pipefail
+          if [[ ! "${NODE_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Expected a version like 26.13.1, got '${NODE_VERSION}'"
+            exit 1
+          fi
+          for arch in x64 arm64; do
+            url="https://nodejs.org/download/release/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${arch}.tar.gz"
+            curl --fail --silent --show-error --head --location --retry 3 "${url}" > /dev/null
+            echo "Found ${url}"
+          done
+
+  prepare-release:
+    needs: validate
+    uses: heroku/languages-github-actions/.github/workflows/_classic-buildpack-prepare-release.yml@latest
+    secrets: inherit
+    with:
+      custom_update_command: |
+        set -euo pipefail
+        NODE_VERSION='${{ inputs.node_version }}'
+        DATE_TODAY="$(date --utc --iso-8601)"
+
+        sed --in-place --regexp-extended \
+          --expression "s/NODE_VERSION = \"[^\"]+\"/NODE_VERSION = \"${NODE_VERSION}\"/" \
+          lib/language_pack/helpers/nodebin.rb
+        grep --quiet "NODE_VERSION = \"${NODE_VERSION}\"" lib/language_pack/helpers/nodebin.rb
+
+        sed --in-place "/## \[v${NEW_VERSION}\] - ${DATE_TODAY}/a\\
+        \\
+        - Default Node.js version now ${NODE_VERSION}" CHANGELOG.md
+        grep --quiet -- "- Default Node.js version now ${NODE_VERSION}" CHANGELOG.md
+
+        cat > "changelogs/unreleased/node-${NODE_VERSION}.md" <<CHANGELOG
+        ## Ruby apps now default to Node version ${NODE_VERSION}
+
+        Applications using the \`heroku/ruby\` buildpack that do not have a version of Node installed by another buildpack (such as the \`heroku/nodejs\` buildpack) will now receive:
+
+        - Node version ${NODE_VERSION}
+
+        These versions and instructions on how to specify a specific version of these binaries can be found on the [installed binaries section of the Heroku Ruby Support page](https://devcenter.heroku.com/articles/ruby-support#installed-binaries).
+        CHANGELOG
+
+        sed --in-place --regexp-extended \
+          --expression "s/BUILDPACK_VERSION = \"v[0-9]+\"/BUILDPACK_VERSION = \"v${NEW_VERSION}\"/" \
+          lib/language_pack/version.rb
+        grep --quiet "BUILDPACK_VERSION = \"v${NEW_VERSION}\"" lib/language_pack/version.rb
+
+        if compgen -G 'changelogs/unreleased/*.md' > /dev/null; then
+          # The unreleased changelogs directory contains a `.gitkeep` file, so we have to
+          # copy the markdown files individually instead of renaming the directory.
+          NEW_CHANGELOG_DIR="changelogs/v${NEW_VERSION}/"
+          mkdir -p "${NEW_CHANGELOG_DIR}"
+          mv changelogs/unreleased/*.md "${NEW_CHANGELOG_DIR}"
+        fi
