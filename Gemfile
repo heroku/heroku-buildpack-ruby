@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.4.12"
+ruby "3.4.13"
 
 group :development, :test do
   gem "benchmark"

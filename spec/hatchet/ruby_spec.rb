@@ -367,7 +367,7 @@ describe "build time config var behavior" do
             "<build dir>/bin",
             "<build dir>/vendor/bundle/bin",
             "<build dir>/vendor/bundle/ruby/3.4.0/bin",
-            "<build dir>/vendor/ruby-3.4.12/bin"
+            "<build dir>/vendor/ruby-3.4.13/bin"
           ].join(":")
         )
       end
